@@ -62,6 +62,12 @@ export class EllipseService extends Tool {
     }
 
     private drawLine(ctx: CanvasRenderingContext2D): void {
+        if (this.mouseDown) {
+            ctx.beginPath();
+            ctx.rect(this.pathStart.x, this.pathStart.y, this.width, this.height);
+            ctx.stroke();
+        }
+
         const radius: Vec2 = { x: this.width / 2, y: this.height / 2 };
         ctx.beginPath();
         ctx.ellipse(this.pathStart.x + radius.x, this.pathStart.y + radius.y, Math.abs(radius.x), Math.abs(radius.y), 0, 0, 2 * Math.PI);
