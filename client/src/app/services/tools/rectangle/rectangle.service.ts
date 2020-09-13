@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
+import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
@@ -19,6 +20,7 @@ export class RectangleService extends Tool {
     private startingY: number;
     private width: number;
     private height: number;
+    private shiftDown: boolean = false;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
@@ -36,9 +38,13 @@ export class RectangleService extends Tool {
     onMouseUp(event: MouseEvent): void {
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
-            this.width = mousePosition.x - this.startingX;
-            this.height = mousePosition.y - this.startingY;
-            this.drawRect(this.drawingService.baseCtx);
+            this.computeDimensions(mousePosition);
+            if (this.shiftDown) {
+                this.width = Math.abs(this.width) < Math.abs(this.height) ? this.width : this.height;
+                this.height = this.width;
+            }
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.drawFillRect(this.drawingService.baseCtx);
         }
         this.mouseDown = false;
     }
@@ -46,16 +52,56 @@ export class RectangleService extends Tool {
     onMouseMove(event: MouseEvent): void {
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
-            this.width = mousePosition.x - this.startingX;
-            this.height = mousePosition.y - this.startingY;
+            this.computeDimensions(mousePosition);
 
+            let isWidthSmallest: boolean | undefined;
+            if (this.shiftDown) {
+                isWidthSmallest = Math.abs(this.width) < Math.abs(this.height) ? true : false;
+            }
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawRect(this.drawingService.previewCtx);
+            if (typeof isWidthSmallest === 'boolean') {
+                this.drawingService.previewCtx.fillStyle = 'white';
+            }
+            this.drawFillRect(this.drawingService.previewCtx);
+            this.drawStrokeRect(this.drawingService.previewCtx);
+            if (typeof isWidthSmallest) {
+                this.drawingService.previewCtx.fillStyle = 'black';
+
+                if (isWidthSmallest) {
+                    this.drawingService.previewCtx.fillStyle = 'black';
+                    this.drawCustomRect(this.drawingService.previewCtx, this.width, this.width);
+                } else {
+                    this.drawCustomRect(this.drawingService.previewCtx, this.height, this.height);
+                }
+            }
         }
     }
 
-    private drawRect(ctx: CanvasRenderingContext2D): void {
+    onKeyDown(event: KeyboardEvent): void {
+        console.log(event);
+        if (event.key === 'Shift') this.shiftDown = true;
+    }
+
+    onKeyUp(event: KeyboardEvent): void {
+        if (event.key === 'Shift') this.shiftDown = false;
+    }
+
+    computeDimensions(mousePosition: Vec2): void {
+        this.width = mousePosition.x - this.startingX;
+        this.height = mousePosition.y - this.startingY;
+    }
+
+    private drawFillRect(ctx: CanvasRenderingContext2D): void {
         ctx.fillRect(this.startingX, this.startingY, this.width, this.height);
+    }
+
+    private drawStrokeRect(ctx: CanvasRenderingContext2D): void {
+        ctx.strokeRect(this.startingX, this.startingY, this.width, this.height);
+    }
+
+    private drawCustomRect(ctx: CanvasRenderingContext2D, width: number, height: number): void {
+        ctx.fillRect(this.startingX, this.startingY, width, height);
+        ctx.strokeRect(this.startingX, this.startingY, width, height);
     }
 }
