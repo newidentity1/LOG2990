@@ -54,37 +54,44 @@ export class RectangleService extends Tool {
             const mousePosition = this.getPositionFromMouse(event);
             this.computeDimensions(mousePosition);
 
-            let isWidthSmallest: boolean | undefined;
-            if (this.shiftDown) {
-                isWidthSmallest = Math.abs(this.width) < Math.abs(this.height) ? true : false;
-            }
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            if (typeof isWidthSmallest === 'boolean') {
-                this.drawingService.previewCtx.fillStyle = 'white';
-            }
-            this.drawFillRect(this.drawingService.previewCtx);
-            this.drawStrokeRect(this.drawingService.previewCtx);
-            if (typeof isWidthSmallest) {
-                this.drawingService.previewCtx.fillStyle = 'black';
-
-                if (isWidthSmallest) {
-                    this.drawingService.previewCtx.fillStyle = 'black';
-                    this.drawCustomRect(this.drawingService.previewCtx, this.width, this.width);
-                } else {
-                    this.drawCustomRect(this.drawingService.previewCtx, this.height, this.height);
-                }
-            }
+            this.drawPreview();
         }
     }
 
     onKeyDown(event: KeyboardEvent): void {
-        console.log(event);
-        if (event.key === 'Shift') this.shiftDown = true;
+        if (event.key === 'Shift') {
+            this.shiftDown = true;
+            this.drawPreview();
+        }
     }
 
     onKeyUp(event: KeyboardEvent): void {
         if (event.key === 'Shift') this.shiftDown = false;
+    }
+
+    private drawPreview(): void {
+        let isWidthSmallest: boolean | undefined;
+        if (this.shiftDown) {
+            isWidthSmallest = Math.abs(this.width) < Math.abs(this.height) ? true : false;
+        }
+
+        if (typeof isWidthSmallest === 'boolean') {
+            this.drawingService.previewCtx.fillStyle = 'white';
+        }
+
+        this.drawFillRect(this.drawingService.previewCtx);
+        this.drawStrokeRect(this.drawingService.previewCtx);
+        if (typeof isWidthSmallest === 'boolean') {
+            this.drawingService.previewCtx.fillStyle = 'black';
+
+            if (isWidthSmallest) {
+                this.drawCustomRect(this.drawingService.previewCtx, this.width, this.width);
+            } else {
+                this.drawCustomRect(this.drawingService.previewCtx, this.height, this.height);
+            }
+        }
     }
 
     computeDimensions(mousePosition: Vec2): void {
