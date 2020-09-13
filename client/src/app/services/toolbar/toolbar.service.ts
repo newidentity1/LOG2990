@@ -13,4 +13,8 @@ export class ToolbarService {
         this.tools = [pencilService];
         this.currentTool = this.tools[0];
     }
+
+    getTools(): Tool[] {
+        return this.tools;
+    }
 }

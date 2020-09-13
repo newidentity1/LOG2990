@@ -24,6 +24,7 @@ export class PencilService extends Tool {
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
+        this.name = 'Crayon';
         this.clearPath();
     }
 
