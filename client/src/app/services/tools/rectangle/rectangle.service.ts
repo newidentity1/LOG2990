@@ -16,11 +16,11 @@ export enum MouseButton {
     providedIn: 'root',
 })
 export class RectangleService extends Tool {
-    private startingX: number;
-    private startingY: number;
-    private width: number;
-    private height: number;
-    private shiftDown: boolean = false;
+    startingX: number;
+    startingY: number;
+    width: number;
+    height: number;
+    shiftDown: boolean = false;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
@@ -40,7 +40,7 @@ export class RectangleService extends Tool {
             const mousePosition = this.getPositionFromMouse(event);
             this.computeDimensions(mousePosition);
             if (this.shiftDown) {
-                this.width = Math.abs(this.width) < Math.abs(this.height) ? this.width : this.height;
+                this.width = this.isWidthSmallest() ? this.width : this.height;
                 this.height = this.width;
             }
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
@@ -74,7 +74,7 @@ export class RectangleService extends Tool {
     private drawPreview(): void {
         let isWidthSmallest: boolean | undefined;
         if (this.shiftDown) {
-            isWidthSmallest = Math.abs(this.width) < Math.abs(this.height) ? true : false;
+            isWidthSmallest = this.isWidthSmallest() ? true : false;
         }
 
         if (typeof isWidthSmallest === 'boolean') {
@@ -97,6 +97,10 @@ export class RectangleService extends Tool {
     computeDimensions(mousePosition: Vec2): void {
         this.width = mousePosition.x - this.startingX;
         this.height = mousePosition.y - this.startingY;
+    }
+
+    isWidthSmallest(): boolean {
+        return Math.abs(this.width) < Math.abs(this.height);
     }
 
     private drawFillRect(ctx: CanvasRenderingContext2D): void {

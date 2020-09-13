@@ -4,6 +4,7 @@ import { Tool } from '@app/classes/tool';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PencilService } from '@app/services/tools/pencil-service';
 import { DrawingComponent } from './drawing.component';
+import { RectangleService } from '@app/services/tools/rectangle/rectangle.service';
 
 class ToolStub extends Tool {}
 
@@ -25,6 +26,7 @@ describe('DrawingComponent', () => {
             declarations: [DrawingComponent],
             providers: [
                 { provide: PencilService, useValue: toolStub },
+                { provide: RectangleService, useValue: toolStub },
                 { provide: DrawingService, useValue: drawingStub },
             ],
         }).compileComponents();
