@@ -68,7 +68,10 @@ export class RectangleService extends Tool {
     }
 
     onKeyUp(event: KeyboardEvent): void {
-        if (event.key === 'Shift') this.shiftDown = false;
+        if (event.key === 'Shift') {
+            this.shiftDown = false;
+            this.drawPreview();
+        }
     }
 
     private drawPreview(): void {
