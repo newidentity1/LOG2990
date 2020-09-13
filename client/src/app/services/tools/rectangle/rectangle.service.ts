@@ -88,12 +88,26 @@ export class RectangleService extends Tool {
         this.drawStrokeRect(this.drawingService.previewCtx);
         if (typeof isWidthSmallest === 'boolean') {
             this.drawingService.previewCtx.fillStyle = 'black';
+            let squareWidth;
+            let squareHeight;
+            const canvasMaxX = this.drawingService.canvas.width;
+            const canvasMaxY = this.drawingService.canvas.height;
 
             if (isWidthSmallest) {
-                this.drawCustomRect(this.drawingService.previewCtx, this.width, this.width);
+                squareWidth = squareHeight = this.width;
+                // check if the square is gonna be out of bounds
+                if (this.width + this.startingX < 0 || this.width + this.startingX > canvasMaxX) squareWidth = -this.width;
+
+                if (this.width + this.startingY < 0 || this.width + this.startingY > canvasMaxY) squareHeight = -this.width;
             } else {
-                this.drawCustomRect(this.drawingService.previewCtx, this.height, this.height);
+                squareWidth = squareHeight = this.height;
+                // check if the square is gonna be out of bounds
+                if (this.height + this.startingX < 0 || this.height + this.startingX > canvasMaxX) squareWidth = -this.height;
+
+                if (this.height + this.startingY < 0 || this.height + this.startingY > canvasMaxY) squareHeight = -this.height;
             }
+
+            this.drawCustomRect(this.drawingService.previewCtx, squareWidth, squareHeight);
         }
     }
 

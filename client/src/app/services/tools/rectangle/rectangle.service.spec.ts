@@ -19,6 +19,7 @@ describe('RectangleService', () => {
     beforeEach(() => {
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
+
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
         TestBed.configureTestingModule({
             providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
@@ -32,6 +33,7 @@ describe('RectangleService', () => {
         // tslint:disable:no-string-literal
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
         service['drawingService'].previewCtx = previewCtxStub;
+        service['drawingService'].canvas = canvasTestHelper.canvas;
 
         mouseEvent = {
             offsetX: 100,
@@ -84,7 +86,6 @@ describe('RectangleService', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
 
         service.onMouseUp(mouseEvent);
-        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
         expect(isWidthSmallestSpy).not.toHaveBeenCalled();
     });
 
