@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
-import { PencilService } from '@app/services/tools/pencil-service';
+import { PencilService } from '@app/services/tools/pencil/pencil-service';
 
 @Injectable({
     providedIn: 'root',
