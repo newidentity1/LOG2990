@@ -4,10 +4,12 @@ import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { RectangleService } from './rectangle.service';
 
+// tslint:disable:no-any
 describe('RectangleService', () => {
     let service: RectangleService;
     let mouseEvent: MouseEvent;
     let keyboardEvent: KeyboardEvent;
+    let negativePoint: Vec2;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
 
     let baseCtxStub: CanvasRenderingContext2D;
@@ -42,6 +44,8 @@ describe('RectangleService', () => {
         } as MouseEvent;
 
         keyboardEvent = new KeyboardEvent('keyDown', { key: 'Shift' });
+
+        negativePoint = { x: -1, y: -2 };
     });
 
     it('should be created', () => {
@@ -133,8 +137,8 @@ describe('RectangleService', () => {
     });
 
     it(' computeDimensions should set the value of width and height correctly', () => {
-        service.startingX = 100;
-        service.startingY = 100;
+        service.startingX = mouseEvent.offsetX;
+        service.startingY = mouseEvent.offsetY;
         const fakeMousePosition: Vec2 = { x: 200, y: 200 };
         const expectedResult: Vec2 = { x: 100, y: 100 };
         service.computeDimensions(fakeMousePosition);
@@ -143,14 +147,14 @@ describe('RectangleService', () => {
     });
 
     it(' isWidthSmallest should return true when the absolute width is smaller', () => {
-        service.width = -9;
-        service.height = -10;
+        service.width = negativePoint.x;
+        service.height = negativePoint.y;
         expect(service.isWidthSmallest()).toEqual(true);
     });
 
     it(' isWidthSmallest should return false when the absolute width is higher', () => {
-        service.width = -10;
-        service.height = 9;
+        service.width = negativePoint.y;
+        service.height = negativePoint.x;
         expect(service.isWidthSmallest()).toEqual(false);
     });
 });
