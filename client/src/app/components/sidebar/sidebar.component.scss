@@ -17,5 +17,13 @@
 
     li {
         padding: 4px 0px;
+
+        button mat-icon {
+            color: gray;
+        }
     }
+}
+
+.currentTool {
+    background-color: rgb(255, 149, 10);
 }

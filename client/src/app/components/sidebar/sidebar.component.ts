@@ -9,8 +9,21 @@ import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 })
 export class SidebarComponent {
     tools: Tool[];
+    currentTool: Tool;
 
-    constructor(toolbarService: ToolbarService) {
+    constructor(protected toolbarService: ToolbarService) {
         this.tools = toolbarService.getTools();
+        this.currentTool = toolbarService.currentTool;
+    }
+
+    isCurrentTool(tool: Tool): boolean {
+        return tool === this.currentTool;
+    }
+
+    onToolChanged(tool: Tool): void {
+        if (tool !== this.currentTool) {
+            this.currentTool = tool;
+            this.toolbarService.currentTool = tool;
+        }
     }
 }
