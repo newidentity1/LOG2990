@@ -24,6 +24,7 @@ export class EllipseService extends Tool {
     private width: number;
     private height: number;
     private shiftDown: boolean = false;
+    private mousePosition: Vec2;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
@@ -39,38 +40,36 @@ export class EllipseService extends Tool {
 
     onMouseUp(event: MouseEvent): void {
         if (this.mouseDown) {
-            const mousePosition = this.getPositionFromMouse(event);
-            this.computeDimensions(mousePosition);
+            this.mousePosition = this.getPositionFromMouse(event);
+            this.computeDimensions();
 
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.mouseDown = false;
-            this.drawLine(this.drawingService.baseCtx);
+            this.drawEllipse(this.drawingService.baseCtx);
         }
         this.mouseDown = false;
     }
 
     onMouseMove(event: MouseEvent): void {
         if (this.mouseDown) {
-            const mousePosition = this.getPositionFromMouse(event);
-            this.computeDimensions(mousePosition);
-
-            // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawLine(this.drawingService.previewCtx);
+            this.mousePosition = this.getPositionFromMouse(event);
+            this.drawPreview();
         }
     }
 
     onKeyDown(event: KeyboardEvent): void {
         this.shiftDown = event.key === 'Shift';
+        if (this.mouseDown) this.drawPreview();
     }
 
     onKeyUp(event: KeyboardEvent): void {
         this.shiftDown = !(event.key === 'Shift');
+        if (this.mouseDown) this.drawPreview();
     }
 
-    computeDimensions(mousePosition: Vec2): void {
-        this.width = mousePosition.x - this.pathStart.x;
-        this.height = mousePosition.y - this.pathStart.y;
+    computeDimensions(): void {
+        this.width = this.mousePosition.x - this.pathStart.x;
+        this.height = this.mousePosition.y - this.pathStart.y;
 
         if (this.shiftDown) {
             const max = Math.max(Math.abs(this.width), Math.abs(this.height));
@@ -79,7 +78,15 @@ export class EllipseService extends Tool {
         }
     }
 
-    private drawLine(ctx: CanvasRenderingContext2D): void {
+    private drawPreview(): void {
+        this.computeDimensions();
+
+        // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.drawEllipse(this.drawingService.previewCtx);
+    }
+
+    private drawEllipse(ctx: CanvasRenderingContext2D): void {
         if (this.mouseDown) {
             ctx.beginPath();
             ctx.rect(this.pathStart.x, this.pathStart.y, this.width, this.height);
