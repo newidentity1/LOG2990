@@ -1,4 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { DrawingComponent } from '@app/components/drawing/drawing.component';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { EditorComponent } from './editor.component';
@@ -10,6 +12,7 @@ describe('EditorComponent', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [EditorComponent, DrawingComponent, SidebarComponent],
+            imports: [MatIconModule, MatTooltipModule],
         }).compileComponents();
     }));
 
