@@ -1,7 +1,9 @@
 <div class="container">
-    <ul>
-        <li *ngFor="let tool of tools">
-            {{ tool.name }}
+    <ul id="tools">
+        <li *ngFor="let tool of tools" matTooltip="{{ tool.tooltip }}" [matTooltipPosition]="'right'">
+            <button mat-raised-button>
+                <mat-icon>{{ tool.iconName }}</mat-icon>
+            </button>
         </li>
     </ul>
 </div>
