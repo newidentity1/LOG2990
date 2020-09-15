@@ -6,6 +6,9 @@ import { Vec2 } from './vec2';
 export abstract class Tool {
     mouseDownCoord: Vec2;
     mouseDown: boolean = false;
+    name: string;
+    tooltip: string;
+    iconName: string;
 
     constructor(protected drawingService: DrawingService) {}
 
@@ -14,6 +17,10 @@ export abstract class Tool {
     onMouseUp(event: MouseEvent): void {}
 
     onMouseMove(event: MouseEvent): void {}
+
+    onMouseEnter(event: MouseEvent): void {}
+
+    onMouseLeave(event: MouseEvent): void {}
 
     onKeyDown(event: KeyboardEvent): void {}
 
