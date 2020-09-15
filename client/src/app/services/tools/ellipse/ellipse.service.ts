@@ -28,6 +28,9 @@ export class EllipseService extends Tool {
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
+        this.name = 'Ellipse';
+        this.tooltip = 'Ellipse';
+        this.iconName = 'panorama_fish_eye';
     }
 
     onMouseDown(event: MouseEvent): void {
