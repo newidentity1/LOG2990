@@ -9,7 +9,6 @@ describe('RectangleService', () => {
     let service: RectangleService;
     let mouseEvent: MouseEvent;
     let keyboardEvent: KeyboardEvent;
-    let negativePoint: Vec2;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
 
     let baseCtxStub: CanvasRenderingContext2D;
@@ -44,8 +43,6 @@ describe('RectangleService', () => {
         } as MouseEvent;
 
         keyboardEvent = new KeyboardEvent('keyDown', { key: 'Shift' });
-
-        negativePoint = { x: -1, y: -2 };
     });
 
     it('should be created', () => {
@@ -147,14 +144,52 @@ describe('RectangleService', () => {
     });
 
     it(' isWidthSmallest should return true when the absolute width is smaller', () => {
+        const negativePoint = { x: -1, y: -2 };
         service.width = negativePoint.x;
         service.height = negativePoint.y;
         expect(service.isWidthSmallest()).toEqual(true);
     });
 
     it(' isWidthSmallest should return false when the absolute width is higher', () => {
+        const negativePoint = { x: -1, y: -2 };
         service.width = negativePoint.y;
         service.height = negativePoint.x;
         expect(service.isWidthSmallest()).toEqual(false);
+    });
+
+    it(' transformToSquare should return the a positive width and a positive height if the coords are on quadrant1', () => {
+        const fakeRectangle: Vec2 = { x: 150, y: 200 };
+        service.width = fakeRectangle.x;
+        service.height = fakeRectangle.y;
+        const expectedResult: Vec2 = { x: 150, y: 150 };
+
+        expect(service.transformToSquare(fakeRectangle.x, fakeRectangle.y)).toEqual(expectedResult);
+    });
+
+    it(' transformToSquare should return the a negative width and a positive height if the coords are on quadrant2', () => {
+        const fakeRectangle: Vec2 = { x: -150, y: 200 };
+        service.width = fakeRectangle.x;
+        service.height = fakeRectangle.y;
+        const expectedResult: Vec2 = { x: -150, y: 150 };
+
+        expect(service.transformToSquare(fakeRectangle.x, fakeRectangle.y)).toEqual(expectedResult);
+    });
+
+    it(' transformToSquare should return the a negative width and a negative height if the coords are on quadrant3', () => {
+        const fakeRectangle: Vec2 = { x: -150, y: -200 };
+        service.width = fakeRectangle.x;
+        service.height = fakeRectangle.y;
+        const expectedResult: Vec2 = { x: -150, y: -150 };
+
+        expect(service.transformToSquare(fakeRectangle.x, fakeRectangle.y)).toEqual(expectedResult);
+    });
+
+    it(' transformToSquare should return the a positive width and a negative height if the coords are on quadrant4', () => {
+        const fakeRectangle: Vec2 = { x: 150, y: -200 };
+        service.width = fakeRectangle.x;
+        service.height = fakeRectangle.y;
+        const expectedResult: Vec2 = { x: 150, y: -150 };
+
+        expect(service.transformToSquare(fakeRectangle.x, fakeRectangle.y)).toEqual(expectedResult);
     });
 });

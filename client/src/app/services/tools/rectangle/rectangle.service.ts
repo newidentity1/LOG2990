@@ -43,11 +43,12 @@ export class RectangleService extends Tool {
             const mousePosition = this.getPositionFromMouse(event);
             this.computeDimensions(mousePosition);
             if (this.shiftDown) {
-                this.width = this.isWidthSmallest() ? this.width : this.height;
-                this.height = this.width;
+                const square = this.transformToSquare(this.width, this.height);
+                this.width = square.x;
+                this.height = square.y;
             }
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawFillRect(this.drawingService.baseCtx);
+            this.drawFillRect(this.drawingService.baseCtx, this.width, this.height);
         }
         this.mouseDown = false;
     }
@@ -78,40 +79,38 @@ export class RectangleService extends Tool {
     }
 
     private drawPreview(): void {
-        let isWidthSmallest: boolean | undefined;
+        let previewWidth = this.width;
+        let previewHeight = this.height;
         if (this.shiftDown) {
-            isWidthSmallest = this.isWidthSmallest() ? true : false;
+            const square: Vec2 = this.transformToSquare(previewWidth, previewHeight);
+            previewWidth = square.x;
+            previewHeight = square.y;
         }
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.drawFillRect(this.drawingService.previewCtx, previewWidth, previewHeight);
+        this.drawStrokeRect(this.drawingService.previewCtx, previewWidth, previewHeight);
+    }
 
-        if (typeof isWidthSmallest === 'boolean') {
-            this.drawingService.previewCtx.fillStyle = 'white';
-        }
+    transformToSquare(width: number, height: number): Vec2 {
+        // already a square
+        if (Math.abs(width) === Math.abs(height)) return { x: width, y: height };
+        let squareWidth = Math.abs(this.isWidthSmallest() ? width : height);
+        let squareHeight = squareWidth;
 
-        this.drawFillRect(this.drawingService.previewCtx);
-        this.drawStrokeRect(this.drawingService.previewCtx);
-        if (typeof isWidthSmallest === 'boolean') {
-            this.drawingService.previewCtx.fillStyle = 'black';
-            let squareWidth;
-            let squareHeight;
-            const canvasMaxX = this.drawingService.canvas.width;
-            const canvasMaxY = this.drawingService.canvas.height;
-
-            if (isWidthSmallest) {
-                squareWidth = squareHeight = this.width;
-                // check if the square is gonna be out of bounds
-                if (this.width + this.startingX < 0 || this.width + this.startingX > canvasMaxX) squareWidth = -this.width;
-
-                if (this.width + this.startingY < 0 || this.width + this.startingY > canvasMaxY) squareHeight = -this.width;
-            } else {
-                squareWidth = squareHeight = this.height;
-                // check if the square is gonna be out of bounds
-                if (this.height + this.startingX < 0 || this.height + this.startingX > canvasMaxX) squareWidth = -this.height;
-
-                if (this.height + this.startingY < 0 || this.height + this.startingY > canvasMaxY) squareHeight = -this.height;
+        if (width > 0) {
+            if (height < 0) {
+                // Quadrant2
+                squareHeight = -squareHeight;
             }
-
-            this.drawCustomRect(this.drawingService.previewCtx, squareWidth, squareHeight);
+        } else {
+            squareWidth = -squareWidth;
+            if (height < 0) {
+                // Quadrant3
+                squareHeight = -squareHeight;
+            }
         }
+
+        return { x: squareWidth, y: squareHeight };
     }
 
     computeDimensions(mousePosition: Vec2): void {
@@ -123,16 +122,11 @@ export class RectangleService extends Tool {
         return Math.abs(this.width) < Math.abs(this.height);
     }
 
-    private drawFillRect(ctx: CanvasRenderingContext2D): void {
-        ctx.fillRect(this.startingX, this.startingY, this.width, this.height);
-    }
-
-    private drawStrokeRect(ctx: CanvasRenderingContext2D): void {
-        ctx.strokeRect(this.startingX, this.startingY, this.width, this.height);
-    }
-
-    private drawCustomRect(ctx: CanvasRenderingContext2D, width: number, height: number): void {
+    private drawFillRect(ctx: CanvasRenderingContext2D, width: number, height: number): void {
         ctx.fillRect(this.startingX, this.startingY, width, height);
+    }
+
+    private drawStrokeRect(ctx: CanvasRenderingContext2D, width: number, height: number): void {
         ctx.strokeRect(this.startingX, this.startingY, width, height);
     }
 }
