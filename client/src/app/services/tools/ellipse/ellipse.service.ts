@@ -72,9 +72,9 @@ export class EllipseService extends Tool {
         this.height = this.mousePosition.y - this.pathStart.y;
 
         if (this.shiftDown) {
-            const max = Math.max(Math.abs(this.width), Math.abs(this.height));
-            this.width = this.width < 0 ? -max : max;
-            this.height = this.height < 0 ? -max : max;
+            const min = Math.min(Math.abs(this.width), Math.abs(this.height));
+            this.width = this.width < 0 ? -min : min;
+            this.height = this.height < 0 ? -min : min;
         }
     }
 
