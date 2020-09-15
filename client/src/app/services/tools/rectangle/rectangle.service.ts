@@ -26,7 +26,7 @@ export class RectangleService extends Tool {
         super(drawingService);
         this.name = 'Rectangle';
         this.tooltip = 'Rectangle';
-        this.iconName = 'crop_16_9';
+        this.iconName = 'crop_square';
     }
 
     onMouseDown(event: MouseEvent): void {
