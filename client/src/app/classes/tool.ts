@@ -6,7 +6,7 @@ import { Vec2 } from './vec2';
 export abstract class Tool {
     mouseDownCoord: Vec2;
     mouseDown: boolean = false;
-    protected name: string;
+    name: string;
     tooltip: string;
     iconName: string;
 
