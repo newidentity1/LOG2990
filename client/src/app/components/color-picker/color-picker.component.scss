@@ -1,0 +1,16 @@
+#colorPickerCanvas {
+    border: solid black 2px;
+}
+
+#canvas-container {
+    display: grid;
+}
+
+#canvas-container > * {
+    grid-column-start: 1;
+    grid-row-start: 1;
+}
+
+#cursorCanvas {
+    filter: invert(1);
+}
