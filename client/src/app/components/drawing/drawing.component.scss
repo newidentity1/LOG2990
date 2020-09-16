@@ -3,15 +3,11 @@ canvas {
     position: absolute;
     left: 0;
     top: 0;
-    background-color: white;
 }
 
 #canvas {
     z-index: 0;
-}
-
-#drawCanvas {
-    z-index: 1;
+    background-color: white;
 }
 
 #canvas-container {
