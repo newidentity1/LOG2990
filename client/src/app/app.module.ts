@@ -13,9 +13,21 @@ import { DrawingComponent } from './components/drawing/drawing.component';
 import { EditorComponent } from './components/editor/editor.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { EllipseComponent } from './components/tools-options/ellipse/ellipse.component';
+import { PencilComponent } from './components/tools-options/pencil/pencil.component';
+import { RectangleComponent } from './components/tools-options/rectangle/rectangle.component';
 
 @NgModule({
-    declarations: [AppComponent, EditorComponent, SidebarComponent, DrawingComponent, MainPageComponent],
+    declarations: [
+        AppComponent,
+        EditorComponent,
+        SidebarComponent,
+        DrawingComponent,
+        MainPageComponent,
+        PencilComponent,
+        RectangleComponent,
+        EllipseComponent,
+    ],
     imports: [
         BrowserModule,
         HttpClientModule,

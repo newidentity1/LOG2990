@@ -6,7 +6,11 @@ import { Component, OnInit } from '@angular/core';
     styleUrls: ['./rectangle.component.scss'],
 })
 export class RectangleComponent implements OnInit {
-    constructor() {}
+    constructor() {
+        // TODO à  implementer
+    }
 
-    ngOnInit(): void {}
+    ngOnInit(): void {
+        // TODO à implementer
+    }
 }

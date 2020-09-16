@@ -6,7 +6,11 @@ import { Component, OnInit } from '@angular/core';
     styleUrls: ['./ellipse.component.scss'],
 })
 export class EllipseComponent implements OnInit {
-    constructor() {}
+    constructor() {
+        // TODO à  implementer
+    }
 
-    ngOnInit(): void {}
+    ngOnInit(): void {
+        // TODO à implementer
+    }
 }

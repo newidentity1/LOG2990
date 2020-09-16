@@ -4,6 +4,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { EllipseComponent } from '@app/components/tools-options/ellipse/ellipse.component';
+import { PencilComponent } from '@app/components/tools-options/pencil/pencil.component';
+import { RectangleComponent } from '@app/components/tools-options/rectangle/rectangle.component';
 import { SidebarComponent } from './sidebar.component';
 
 describe('SidebarComponent', () => {
@@ -12,7 +15,7 @@ describe('SidebarComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [SidebarComponent],
+            declarations: [SidebarComponent, EllipseComponent, PencilComponent, RectangleComponent],
             imports: [MatIconModule, MatTooltipModule, MatSidenavModule, BrowserAnimationsModule],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
