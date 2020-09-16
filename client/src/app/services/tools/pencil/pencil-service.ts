@@ -22,7 +22,6 @@ export enum MouseButton {
 export class PencilService extends Tool {
     private pathData: Vec2[];
     thickness: number = 20; // TODO: Utiliser un properties service
-    inCanvas: boolean;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
@@ -46,11 +45,7 @@ export class PencilService extends Tool {
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
-            if (this.inCanvas) {
-                this.drawLine(this.drawingService.baseCtx, this.pathData);
-            } else {
-                this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            }
+            this.drawLine(this.drawingService.baseCtx, this.pathData);
         }
         this.mouseDown = false;
         this.clearPath();
@@ -58,21 +53,19 @@ export class PencilService extends Tool {
 
     onMouseMove(event: MouseEvent): void {
         const mousePosition = this.getPositionFromMouse(event);
+        console.log(mousePosition);
         if (this.mouseDown) {
             this.pathData.push(mousePosition);
-
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawLine(this.drawingService.previewCtx, this.pathData);
         } else {
-            this.drawCursor(this.drawingService.previewCtx, mousePosition);
+            this.drawCursor(mousePosition);
         }
     }
 
     onMouseEnter(event: MouseEvent): void {
-        this.inCanvas = true;
         if (this.mouseDown) {
-            this.drawLine(this.drawingService.baseCtx, this.pathData);
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
             this.drawLine(this.drawingService.previewCtx, this.pathData);
@@ -81,13 +74,13 @@ export class PencilService extends Tool {
     }
 
     onMouseLeave(event: MouseEvent): void {
-        this.inCanvas = false;
         const mousePosition = this.getPositionFromMouse(event);
         this.pathData.push(mousePosition);
         if (this.mouseDown) {
-            this.drawLine(this.drawingService.previewCtx, this.pathData);
+            this.drawLine(this.drawingService.baseCtx, this.pathData);
+            this.clearPath();
         } else {
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.drawCursor(mousePosition);
         }
     }
 
@@ -101,11 +94,12 @@ export class PencilService extends Tool {
         ctx.stroke();
     }
 
-    private drawCursor(ctx: CanvasRenderingContext2D, position: Vec2): void {
-        this.drawingService.clearCanvas(ctx);
-        ctx.beginPath();
-        ctx.arc(position.x, position.y, this.thickness / 2, 0, Math.PI * 2);
-        ctx.fill();
+    private drawCursor(position: Vec2): void {
+        const cursorCtx = this.drawingService.previewCtx;
+        this.drawingService.clearCanvas(cursorCtx);
+        cursorCtx.beginPath();
+        cursorCtx.arc(position.x, position.y, this.drawingService.getThickness() / 2, 0, Math.PI * 2);
+        cursorCtx.fill();
     }
 
     private clearPath(): void {
