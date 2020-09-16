@@ -1,7 +1,9 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SidebarComponent } from './sidebar.component';
 
 describe('SidebarComponent', () => {
@@ -11,7 +13,7 @@ describe('SidebarComponent', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [SidebarComponent],
-            imports: [MatIconModule, MatTooltipModule],
+            imports: [MatIconModule, MatTooltipModule, MatSidenavModule, BrowserAnimationsModule],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
     }));
