@@ -1,19 +1,20 @@
 canvas {
     cursor: crosshair;
-    border: 2px solid #000000;
     position: absolute;
     left: 0;
     top: 0;
+    background-color: white;
 }
 
-#canvas{
+#canvas {
     z-index: 0;
 }
 
-#drawCanvas{
+#drawCanvas {
     z-index: 1;
 }
 
-#canvas-container{
+#canvas-container {
     position: relative;
+    margin: 5px 0px 0px 5px;
 }
