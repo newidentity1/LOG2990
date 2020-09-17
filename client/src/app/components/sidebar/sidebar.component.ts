@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
+import { MatSidenav } from '@angular/material/sidenav';
 import { Tool } from '@app/classes/tool';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 
@@ -10,6 +11,7 @@ import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 export class SidebarComponent {
     tools: Tool[];
     currentTool: Tool;
+    @ViewChild('toolProperties') sidenavProperties: MatSidenav;
 
     constructor(protected toolbarService: ToolbarService) {
         this.tools = toolbarService.getTools();
@@ -24,6 +26,9 @@ export class SidebarComponent {
         if (tool !== this.currentTool) {
             this.currentTool = tool;
             this.toolbarService.currentTool = tool;
+            this.sidenavProperties.open();
+        } else {
+            this.sidenavProperties.toggle();
         }
     }
 }
