@@ -29,15 +29,15 @@ export class Color {
     }
 
     setRedHex(hexValue: string): void {
-        this.redValue = this.hexToBin(hexValue);
+        this.red = this.hexToBin(hexValue);
     }
 
     setGreenHex(hexValue: string): void {
-        this.greenValue = this.hexToBin(hexValue);
+        this.green = this.hexToBin(hexValue);
     }
 
     setBlueHex(hexValue: string): void {
-        this.blueValue = this.hexToBin(hexValue);
+        this.blue = this.hexToBin(hexValue);
     }
 
     getRedHex(): string {
@@ -58,9 +58,9 @@ export class Color {
 
     private computeRBGFromHex(): void {
         const hexValue = this.hex.replace('#', '');
-        this.setRedHex(hexValue.substring(0, CONSTANTS.RED_POSITION_IN_HEX_STRING));
-        this.setGreenHex(hexValue.substring(CONSTANTS.RED_POSITION_IN_HEX_STRING, CONSTANTS.GREEN_POSITION_IN_HEX_STRING));
-        this.setBlueHex(hexValue.substring(CONSTANTS.GREEN_POSITION_IN_HEX_STRING, CONSTANTS.BLUE_POSITION_IN_HEX_STRING));
+        this.redValue = this.hexToBin(hexValue.substring(0, CONSTANTS.RED_POSITION_IN_HEX_STRING));
+        this.greenValue = this.hexToBin(hexValue.substring(CONSTANTS.RED_POSITION_IN_HEX_STRING, CONSTANTS.GREEN_POSITION_IN_HEX_STRING));
+        this.blueValue = this.hexToBin(hexValue.substring(CONSTANTS.GREEN_POSITION_IN_HEX_STRING, CONSTANTS.BLUE_POSITION_IN_HEX_STRING));
     }
 
     private computeHexFromRGB(): void {

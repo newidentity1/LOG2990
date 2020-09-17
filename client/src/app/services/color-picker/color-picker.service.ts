@@ -61,12 +61,17 @@ export class ColorPickerService extends Tool {
 
     confirmSelectedColor(isSecondaryColorPicker: boolean): void {
         if (isSecondaryColorPicker) {
+            if (this.selectedColor.hex !== this.secondaryColor.hex) {
+                this.addToRecentColors(new Color(this.selectedColor.hex));
+            }
             this.secondaryColor = new Color(this.selectedColor.hex, this.selectedColor.alpha);
         } else {
+            if (this.selectedColor.hex !== this.primaryColor.hex) {
+                this.addToRecentColors(new Color(this.selectedColor.hex));
+            }
             this.primaryColor = new Color(this.selectedColor.hex, this.selectedColor.alpha);
             this.updateDrawingColor();
         }
-        this.addToRecentColors(this.selectedColor);
     }
 
     resetSelectedColor(isSecondaryColorPicker: boolean): void {
@@ -104,6 +109,7 @@ export class ColorPickerService extends Tool {
         color.red = rgbData[0];
         color.green = rgbData[1];
         color.blue = rgbData[2];
+        color.alpha = this.selectedColor.alpha;
 
         return color;
     }

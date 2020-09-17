@@ -94,8 +94,11 @@ export class ColorPickerComponent implements AfterViewInit {
         return this.colorPickerService.selectedColor;
     }
 
+    getPreviousColor(): Color {
+        return this.data.isSecondaryColorPicker ? this.colorPickerService.secondaryColor : this.colorPickerService.primaryColor;
+    }
+
     changeOpacity(value: number): void {
-        console.log(value);
         this.colorPickerService.selectedColor.alpha = value;
     }
 
