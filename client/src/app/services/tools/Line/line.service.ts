@@ -41,6 +41,9 @@ export class LineService extends Tool {
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
+        this.name = 'Line';
+        this.tooltip = 'Line';
+        this.iconName = 'show_chart';
         this.clearPath();
         this.clear();
     }
@@ -115,10 +118,9 @@ export class LineService extends Tool {
         this.pathPreiew.push(this.startPoint);
         this.pathPreiew.push(mousePosition);
         // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
-        setTimeout(() => {
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawLine(this.drawingService.previewCtx, this.pathPreiew);
-        }, 1);
+
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.drawLine(this.drawingService.previewCtx, this.pathPreiew);
     }
 
     private clearPath(): void {
