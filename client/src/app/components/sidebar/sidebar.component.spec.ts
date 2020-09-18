@@ -9,6 +9,7 @@ import { ColorToolComponent } from '@app/components/color-tool/color-tool.compon
 import { EllipseComponent } from '@app/components/tools-options/ellipse/ellipse.component';
 import { PencilComponent } from '@app/components/tools-options/pencil/pencil.component';
 import { RectangleComponent } from '@app/components/tools-options/rectangle/rectangle.component';
+import { RecentColorsComponent } from '@app/recent-colors/recent-colors.component';
 import { SidebarComponent } from './sidebar.component';
 
 describe('SidebarComponent', () => {
@@ -17,7 +18,7 @@ describe('SidebarComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [SidebarComponent, EllipseComponent, PencilComponent, RectangleComponent, ColorToolComponent],
+            declarations: [SidebarComponent, EllipseComponent, PencilComponent, RectangleComponent, ColorToolComponent, RecentColorsComponent],
             imports: [MatIconModule, MatTooltipModule, MatSidenavModule, BrowserAnimationsModule],
             providers: [{ provide: MatDialog, useValue: {} }],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],

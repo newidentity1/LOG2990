@@ -1,14 +1,14 @@
 import * as CONSTANTS from '@app/constants/constants';
 
 export class Color {
+    private hexString: string;
     private redValue: number;
     private greenValue: number;
     private blueValue: number;
     alpha: number;
-    hex: string;
 
     constructor(hex?: string, alpha?: number) {
-        this.hex = hex ? hex : CONSTANTS.BLACK;
+        this.hexString = hex ? hex : CONSTANTS.BLACK;
         this.alpha = alpha ? alpha : CONSTANTS.DEFAULT_COLOR_OPACITY;
         this.computeRBGFromHex();
     }
@@ -26,6 +26,15 @@ export class Color {
     set blue(value: number) {
         this.blueValue = value;
         this.computeHexFromRGB();
+    }
+
+    get hex(): string {
+        return this.hexString;
+    }
+
+    set hex(value: string) {
+        this.hexString = value;
+        this.computeRBGFromHex();
     }
 
     setRedHex(hexValue: string): void {
@@ -57,14 +66,14 @@ export class Color {
     }
 
     private computeRBGFromHex(): void {
-        const hexValue = this.hex.replace('#', '');
+        const hexValue = this.hexString.replace('#', '');
         this.redValue = this.hexToBin(hexValue.substring(0, CONSTANTS.RED_POSITION_IN_HEX_STRING));
         this.greenValue = this.hexToBin(hexValue.substring(CONSTANTS.RED_POSITION_IN_HEX_STRING, CONSTANTS.GREEN_POSITION_IN_HEX_STRING));
         this.blueValue = this.hexToBin(hexValue.substring(CONSTANTS.GREEN_POSITION_IN_HEX_STRING, CONSTANTS.BLUE_POSITION_IN_HEX_STRING));
     }
 
     private computeHexFromRGB(): void {
-        this.hex = '#' + this.binToHex(this.redValue) + this.binToHex(this.greenValue) + this.binToHex(this.blueValue);
+        this.hexString = '#' + this.binToHex(this.redValue) + this.binToHex(this.greenValue) + this.binToHex(this.blueValue);
     }
 
     private binToHex(bin: number): string {

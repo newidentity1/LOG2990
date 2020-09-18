@@ -23,9 +23,6 @@
         <input type="number" #alphaInput [value]="getCurrentColor().alpha" (input)="changeOpacity(alphaInput)" min="0" max="1" step="0.01" />
     </p>
 
-    <!-- TODO: Move to a side panel instead of dialog -->
-    <app-recent-colors></app-recent-colors>
-
     <div>
         <button (click)="onConfirm()">OK</button>
         <button mat-dialog-close>Annuler</button>

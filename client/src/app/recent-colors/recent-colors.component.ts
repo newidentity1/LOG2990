@@ -15,12 +15,11 @@ export class RecentColorsComponent {
     }
 
     selectAsPrimaryColor(color: Color): void {
-        const opacity = this.colorService.primaryColor.alpha;
-        this.colorService.primaryColor = new Color(color.hex, opacity);
+        this.colorService.applyRecentColor(color, false);
     }
 
     selectAsSecondaryColor(event: MouseEvent, color: Color): void {
         event.preventDefault();
-        this.colorService.secondaryColor = color;
+        this.colorService.applyRecentColor(color, true);
     }
 }

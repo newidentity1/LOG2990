@@ -87,6 +87,15 @@ export class ColorPickerService extends Tool {
         this.updateDrawingColor();
     }
 
+    applyRecentColor(color: Color, isSecondaryColor: boolean): void {
+        if (isSecondaryColor) {
+            this.secondaryColor.hex = color.hex;
+        } else {
+            this.primaryColor.hex = color.hex;
+            this.updateDrawingColor();
+        }
+    }
+
     private drawCursor(ctx: CanvasRenderingContext2D, position: Vec2): void {
         ctx.strokeStyle = this.selectedColor.toStringRGBA();
         ctx.beginPath();
