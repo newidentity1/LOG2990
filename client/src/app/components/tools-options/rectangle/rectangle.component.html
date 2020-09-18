@@ -1,9 +1,9 @@
 <h3>Propriété du rectangle</h3>
 <label id="type-drawing-label">Choissisez le type de rectangle que vous souhaitez dessiner:</label>
 <mat-radio-group aria-labelledby="type-drawing-label" id="type-drawing-group" [(ngModel)]="currentType" ngDefaultControl>
-    <mat-radio-button class="type-drawing" *ngFor="let type of typesDrawing" [value]="type">
+    <mat-radio-button class="type-drawing" *ngFor="let type of typesDrawing" [value]="type" (change)="onThicknessChange($event)">
         {{ type }}
     </mat-radio-button>
 </mat-radio-group>
 
-<mat-slider thumbLabel [displayWith]="" tickInterval="1" min="1" max="100"> </mat-slider>
+<mat-slider thumbLabel (change)="onTypeDrawingChange($event)" tickInterval="1" min="1" max="100"> </mat-slider>
