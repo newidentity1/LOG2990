@@ -91,6 +91,7 @@ export class RectangleService extends Tool {
         }
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         const rectangleProperties = this.toolProperties as BasicShapeProperties;
+
         if (rectangleProperties.currentType === 'Plein') {
             this.drawFillRect(ctx, width, height);
         } else if (rectangleProperties.currentType === 'Contour') {
