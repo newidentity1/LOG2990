@@ -9,7 +9,7 @@
 
     <button class="button" mat-button routerLink="/editor">Créer un nouveau dessin</button>
     <button class="button" mat-button routerLink="/" disabled>Ouvrir le carrousel de dessins</button>
-    <button class="button" mat-button routerLink="/">Afficher le Guide d'utilisation</button>
+    <button class="button" mat-button (click)="openDialog()">Afficher le Guide d'utilisation</button>
     <button class="button" mat-button routerLink="/" disabled>Continuer un dessin</button>
 
     <div class="footer-item">
