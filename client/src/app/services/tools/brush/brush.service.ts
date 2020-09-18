@@ -61,9 +61,12 @@ export class BrushService extends Tool {
 
     private paintLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
-        ctx.strokeStyle = 'black';
-        ctx.filter = 'url(#filter0)';
         ctx.lineCap = 'round';
+        // customizable settings
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 20.0;
+        ctx.filter = 'url(#filter4)';
+        // Draw
         for (const point of path) {
             ctx.lineTo(point.x, point.y);
         }
