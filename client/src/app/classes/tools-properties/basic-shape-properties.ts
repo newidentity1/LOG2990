@@ -1,13 +1,14 @@
+import { DrawingType } from '@app/enums/drawing-type.enum';
 import { BasicToolProperties } from './basic-tool-properties';
 
 export class BasicShapeProperties extends BasicToolProperties {
     thickness: number = 1;
-    // TODO créer un enum pour les types possibles
-    typesDrawing: ['Contour', 'Plein', 'Plein avec contour'];
-    currentType: string = 'Contour';
+
+    typesDrawing: string[] = [DrawingType.Contour, DrawingType.Plein, DrawingType.PleinEtContour];
+    currentType: string = DrawingType.Contour;
 
     resetProperties(): void {
         this.thickness = 1;
-        this.currentType = 'Contour';
+        this.currentType = DrawingType.Contour;
     }
 }
