@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
+import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 import { Vec2 } from '@app/classes/vec2';
 import { MouseButton } from '@app/enums/mouse-button.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -13,13 +14,13 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 })
 export class PencilService extends Tool {
     private pathData: Vec2[];
-    thickness: number = 20; // TODO: Utiliser un properties service
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.name = 'Crayon';
         this.tooltip = 'Crayon';
         this.iconName = 'create';
+        this.toolProperties = new BasicShapeProperties();
         this.clearPath();
     }
 
@@ -45,7 +46,6 @@ export class PencilService extends Tool {
 
     onMouseMove(event: MouseEvent): void {
         const mousePosition = this.getPositionFromMouse(event);
-        console.log(mousePosition);
         if (this.mouseDown) {
             this.pathData.push(mousePosition);
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
@@ -90,7 +90,7 @@ export class PencilService extends Tool {
         const cursorCtx = this.drawingService.previewCtx;
         this.drawingService.clearCanvas(cursorCtx);
         cursorCtx.beginPath();
-        cursorCtx.arc(position.x, position.y, this.thickness / 2, 0, Math.PI * 2);
+        cursorCtx.arc(position.x, position.y, this.toolProperties.thickness / 2, 0, Math.PI * 2);
         cursorCtx.fill();
     }
 

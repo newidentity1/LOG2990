@@ -22,6 +22,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { EllipseComponent } from './components/tools-options/ellipse/ellipse.component';
 import { PencilComponent } from './components/tools-options/pencil/pencil.component';
 import { RectangleComponent } from './components/tools-options/rectangle/rectangle.component';
+import { ThicknessSliderComponent } from './components/tools-options/thickness-slider/thickness-slider.component';
 import { RecentColorsComponent } from './recent-colors/recent-colors.component';
 
 @NgModule({
@@ -37,6 +38,7 @@ import { RecentColorsComponent } from './recent-colors/recent-colors.component';
         PencilComponent,
         RectangleComponent,
         EllipseComponent,
+        ThicknessSliderComponent,
     ],
     imports: [
         BrowserModule,
