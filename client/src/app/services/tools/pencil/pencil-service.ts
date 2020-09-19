@@ -90,7 +90,7 @@ export class PencilService extends Tool {
         const cursorCtx = this.drawingService.previewCtx;
         this.drawingService.clearCanvas(cursorCtx);
         cursorCtx.beginPath();
-        cursorCtx.arc(position.x, position.y, this.drawingService.getThickness() / 2, 0, Math.PI * 2);
+        cursorCtx.arc(position.x, position.y, this.thickness / 2, 0, Math.PI * 2);
         cursorCtx.fill();
     }
 
