@@ -116,13 +116,14 @@ export class EllipseService extends Tool {
 
     private drawEllipse(ctx: CanvasRenderingContext2D): void {
         const radius: Vec2 = { x: this.width / 2, y: this.height / 2 };
-        const thickness = this.toolProperties.thickness;
+        const ellipseProperties = this.toolProperties as BasicShapeProperties;
+        const thickness = ellipseProperties.currentType === 'Plein' ? this.boxGuideThickness : this.toolProperties.thickness;
         const dx = this.width < 0 ? -thickness / 2 : thickness / 2;
         const dy = this.height < 0 ? -thickness / 2 : thickness / 2;
 
         ctx.lineWidth = this.toolProperties.thickness;
         ctx.beginPath();
-        if (Math.abs(radius.x) > Math.abs(dx) && Math.abs(radius.y) > Math.abs(dy)) {
+        if (Math.abs(radius.x) > thickness && Math.abs(radius.y) > thickness) {
             ctx.ellipse(
                 this.pathStart.x + radius.x,
                 this.pathStart.y + radius.y,
@@ -132,7 +133,13 @@ export class EllipseService extends Tool {
                 0,
                 2 * Math.PI,
             );
-            ctx.stroke();
+
+            if (ellipseProperties.currentType === 'Plein') ctx.fill();
+            else if (ellipseProperties.currentType === 'Contour') ctx.stroke();
+            else {
+                ctx.stroke();
+                ctx.fill();
+            }
         }
         this.drawBoxGuide(ctx);
     }
