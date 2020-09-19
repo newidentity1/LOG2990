@@ -1,5 +1,5 @@
 export enum DrawingType {
-    Contour = 'Countour',
-    Plein = 'Plein',
-    PleinEtContour = 'Plein avec contour',
+    Stroke = 'Contour',
+    Fill = 'Plein',
+    FillAndStroke = 'Plein avec contour',
 }

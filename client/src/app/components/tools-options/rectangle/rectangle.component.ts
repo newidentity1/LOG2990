@@ -12,7 +12,7 @@ import { RectangleService } from '@app/services/tools/rectangle/rectangle.servic
 })
 export class RectangleComponent implements OnInit {
     typesDrawing: typeof DrawingType = DrawingType;
-    currentType: string = DrawingType.Contour;
+    currentType: string = DrawingType.Stroke;
 
     constructor(public rectangleService: RectangleService) {
         // TODO à  implementer

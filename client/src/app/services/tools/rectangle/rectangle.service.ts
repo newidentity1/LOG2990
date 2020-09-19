@@ -94,13 +94,13 @@ export class RectangleService extends Tool {
         const rectangleProperties = this.toolProperties as BasicShapeProperties;
 
         switch (rectangleProperties.currentType) {
-            case DrawingType.Plein:
+            case DrawingType.Fill:
                 this.drawFillRect(ctx, width, height);
                 break;
-            case DrawingType.Contour:
+            case DrawingType.Stroke:
                 this.drawStrokeRect(ctx, width, height);
                 break;
-            case DrawingType.PleinEtContour:
+            case DrawingType.FillAndStroke:
                 this.drawFillStrokeRect(ctx, width, height);
         }
     }
