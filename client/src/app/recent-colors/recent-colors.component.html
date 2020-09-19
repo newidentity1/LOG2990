@@ -1,0 +1,9 @@
+<div>
+    <button
+        class="recentColorButton"
+        *ngFor="let color of getRecentColors()"
+        [ngStyle]="{ backgroundColor: color.toStringRGBA() }"
+        (click)="selectAsPrimaryColor(color)"
+        (contextmenu)="selectAsSecondaryColor($event, color)"
+    ></button>
+</div>

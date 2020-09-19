@@ -1,4 +1,5 @@
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { BasicToolProperties } from './tools-properties/basic-tool-properties';
 import { Vec2 } from './vec2';
 
 // Ceci est justifié vu qu'on a des fonctions qui seront gérés par les classes enfant
@@ -9,6 +10,7 @@ export abstract class Tool {
     name: string;
     tooltip: string;
     iconName: string;
+    toolProperties: BasicToolProperties;
 
     constructor(protected drawingService: DrawingService) {}
 

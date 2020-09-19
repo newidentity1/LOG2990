@@ -24,6 +24,9 @@ export class SidebarComponent {
 
     onToolChanged(tool: Tool): void {
         if (tool !== this.currentTool) {
+            if (this.currentTool.toolProperties)
+                // TODO: enlever le if quand tous les outils auront leurs proprietes
+                this.currentTool.toolProperties.resetProperties();
             this.currentTool = tool;
             this.toolbarService.currentTool = tool;
             this.sidenavProperties.open();
