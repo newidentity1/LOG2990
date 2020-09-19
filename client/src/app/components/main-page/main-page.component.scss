@@ -1,15 +1,27 @@
+@import '../../style/color.scss';
+
 .container {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     align-items: center;
     min-height: 100vh;
     height: auto;
+    background-color: $primaryColor;
+}
+
+#divider {
+    width: 50%;
 }
 
 .button {
-    margin-top: 10px;
+    margin-top: 22px;
     text-align: center;
+    background-color: transparent;
+    border-radius: 10px;
+    color: $textColor;
+    width: 240px;
+    height: 55px;
+    border: 1px solid white;
 }
 
 .team-name {
@@ -20,10 +32,18 @@
 .header-item {
     justify-content: center;
     text-align: center;
+    font-size: xxx-large;
+    color: $textColor;
+    padding: 75px 0 10px;
 }
 
 .footer-item {
     text-align: center;
+    color: $secondaryColor;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
 }
 
 .server-message {
