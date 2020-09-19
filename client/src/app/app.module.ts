@@ -1,9 +1,12 @@
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
+import { MatRadioModule } from '@angular/material/radio';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSliderModule } from '@angular/material/slider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -38,6 +41,9 @@ import { RectangleComponent } from './components/tools-options/rectangle/rectang
         MatDividerModule,
         BrowserAnimationsModule,
         MatSidenavModule,
+        MatRadioModule,
+        FormsModule,
+        MatSliderModule,
     ],
     providers: [],
     bootstrap: [AppComponent],
