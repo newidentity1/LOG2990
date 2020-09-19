@@ -70,7 +70,7 @@ export class EllipseService extends Tool {
     }
 
     onKeyUp(event: KeyboardEvent): void {
-        this.shiftDown = !(event.key === 'Shift');
+        this.shiftDown = event.key === 'Shift' ? false : this.shiftDown;
         if (this.mouseDown) this.drawPreview();
     }
 
@@ -123,29 +123,18 @@ export class EllipseService extends Tool {
                 : this.toolProperties.thickness < Math.min(Math.abs(radius.x), Math.abs(radius.y))
                 ? this.toolProperties.thickness
                 : Math.min(Math.abs(radius.x), Math.abs(radius.y));
-
         const dx = this.width < 0 ? -thickness / 2 : thickness / 2;
         const dy = this.height < 0 ? -thickness / 2 : thickness / 2;
 
         ctx.lineWidth = thickness;
         ctx.beginPath();
-        if (Math.abs(radius.x) >= thickness && Math.abs(radius.y) >= thickness) {
-            ctx.ellipse(
-                this.pathStart.x + radius.x,
-                this.pathStart.y + radius.y,
-                Math.abs(radius.x - dx),
-                Math.abs(radius.y - dy),
-                0,
-                0,
-                2 * Math.PI,
-            );
+        ctx.ellipse(this.pathStart.x + radius.x, this.pathStart.y + radius.y, Math.abs(radius.x - dx), Math.abs(radius.y - dy), 0, 0, 2 * Math.PI);
 
-            if (ellipseProperties.currentType === 'Contour') ctx.stroke();
-            else if (ellipseProperties.currentType === 'Plein') ctx.fill();
-            else {
-                ctx.fill();
-                ctx.stroke();
-            }
+        if (ellipseProperties.currentType === 'Contour') ctx.stroke();
+        else if (ellipseProperties.currentType === 'Plein') ctx.fill();
+        else {
+            ctx.fill();
+            ctx.stroke();
         }
         this.drawBoxGuide(ctx);
     }
