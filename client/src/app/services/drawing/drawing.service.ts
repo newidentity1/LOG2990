@@ -14,5 +14,13 @@ export class DrawingService {
 
     setThickness(thickness: number): void {
         this.baseCtx.lineWidth = thickness;
+        this.previewCtx.lineWidth = thickness;
+    }
+
+    setColor(color: string): void {
+        this.baseCtx.fillStyle = color;
+        this.previewCtx.fillStyle = color;
+        this.baseCtx.strokeStyle = color;
+        this.previewCtx.strokeStyle = color;
     }
 }
