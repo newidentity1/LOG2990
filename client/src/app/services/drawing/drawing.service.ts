@@ -30,6 +30,5 @@ export class DrawingService {
     setStrokeColor(color: string): void {
         this.baseCtx.strokeStyle = color;
         this.previewCtx.strokeStyle = color;
-        console.log(this.previewCtx.strokeStyle);
     }
 }
