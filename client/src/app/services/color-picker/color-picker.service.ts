@@ -70,8 +70,8 @@ export class ColorPickerService extends Tool {
                 this.addToRecentColors(new Color(this.selectedColor.hex));
             }
             this.primaryColor = new Color(this.selectedColor.hex, this.selectedColor.alpha);
-            this.updateDrawingColor();
         }
+        this.updateDrawingColor();
     }
 
     resetSelectedColor(isSecondaryColorPicker: boolean): void {
@@ -124,7 +124,8 @@ export class ColorPickerService extends Tool {
     }
 
     private updateDrawingColor(): void {
-        this.drawingService.setColor(this.primaryColor.toStringRGBA());
+        this.drawingService.setFillColor(this.primaryColor.toStringRGBA());
+        this.drawingService.setStrokeColor(this.secondaryColor.toStringRGBA());
     }
 
     private addToRecentColors(color: Color): void {
