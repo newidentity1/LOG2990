@@ -81,15 +81,18 @@ export class LineService extends Tool {
     onKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
         if (event.key === 'Shift') {
-            // this.drawLine(this.drawingService.baseCtx, this.pathData);
+            this.drawLine(this.drawingService.baseCtx, this.pathData);
             this.shiftPress = true;
             console.log('SHIFT-DOWN');
         }
         if (event.code === 'Space') {
-            this.clearPath();
-            this.clear();
-            this.index = 1;
-            // this.drawingService.clearCanvas(this.drawingService.baseCtx);
+            if (this.pathData.length >= 2) {
+                this.pathData.pop();
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                // this.drawingService.clearCanvas(this.drawingService.baseCtx);
+                this.drawLine(this.drawingService.baseCtx, this.pathData);
+                this.index = this.index - 1;
+            }
         }
     }
 
