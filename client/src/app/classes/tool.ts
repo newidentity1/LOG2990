@@ -33,4 +33,11 @@ export abstract class Tool {
     getPositionFromMouse(event: MouseEvent): Vec2 {
         return { x: event.offsetX, y: event.offsetY };
     }
+
+    setThickness(value: number | null): void {
+        // TODO possiblement ajouter de la validation ici aussi
+        value = value === null ? 1 : value;
+        this.toolProperties.thickness = value;
+        this.drawingService.setThickness(value);
+    }
 }
