@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
+import { LineService } from '@app/services/tools/Line/line.service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle.service';
 
@@ -11,8 +12,13 @@ export class ToolbarService {
     private tools: Tool[];
     currentTool: Tool;
 
-    constructor(protected pencilService: PencilService, protected rectangleService: RectangleService, protected ellipseService: EllipseService) {
-        this.tools = [pencilService, rectangleService, ellipseService];
+    constructor(
+        protected pencilService: PencilService,
+        protected rectangleService: RectangleService,
+        protected ellipseService: EllipseService,
+        protected lineService: LineService,
+    ) {
+        this.tools = [pencilService, rectangleService, ellipseService, lineService];
         this.currentTool = this.tools[0];
     }
 
