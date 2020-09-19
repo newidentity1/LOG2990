@@ -1,9 +1,11 @@
+@import '../../style/color.scss';
+
 .container {
     height: auto;
-    min-height: 98vh;
-    border: 1px solid black;
+    min-height: 100vh;
     padding: 0 5px 0 5px;
-    margin-right: 5px;
+    background-color: $primaryColor;
+    overflow: hidden;
 }
 
 .sidebar-container {
@@ -18,12 +20,23 @@
     li {
         padding: 4px 0px;
 
-        button mat-icon {
-            color: gray;
+        button {
+            padding: 0;
+            margin: 0;
+            background-color: transparent;
+            border-radius: 10px;
+            color: $textColor;
+            margin-bottom: 5px;
+            border: 1px solid white;
         }
     }
 }
 
 .currentTool {
-    background-color: rgb(255, 149, 10);
+    background-color: white !important;
+}
+
+mat-sidenav {
+    margin-left: 80px;
+    width: 150px;
 }

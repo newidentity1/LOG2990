@@ -1,8 +1,8 @@
 <div class="container">
     <h1 class="header-item">PolyDessin</h1>
-
+    <mat-divider id="divider"></mat-divider>
     <div id="server-message">
-        <p>Petit message du serveur : {{ message | async }}</p>
+        <!-- <p>Petit message du serveur : {{ message | async }}</p> -->
         <button class="button" (click)="getMessagesFromServer()">Récuper un message du serveur</button>
         <button class="button" (click)="sendTimeToServer()">Envoyer un message au serveur</button>
     </div>

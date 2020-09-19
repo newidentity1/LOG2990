@@ -1,6 +1,9 @@
+@import '../../style/color.scss';
+
 .container {
     height: 100%;
     display: flex;
+    background-color: gray;
 }
 
 .drawing-container {
@@ -13,4 +16,3 @@
     width: min-content;
     outline: none;
 }
-  
