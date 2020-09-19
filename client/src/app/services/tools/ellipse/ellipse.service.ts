@@ -98,8 +98,6 @@ export class EllipseService extends Tool {
 
     private drawPreview(): void {
         this.computeDimensions();
-
-        // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.drawEllipse(this.drawingService.previewCtx);
     }
@@ -115,6 +113,13 @@ export class EllipseService extends Tool {
         }
     }
 
+    /**
+     * @description Draws the ellipse with the correct thickness and prioritizes
+     * the dimensions of the guide perimeter (boxGuide) which follow the mouse
+     * movements. When the thickness is too big for the ellipse to be drawn
+     * inside the perimeter, the ctx.lineWidth is assigned to the half of the
+     * smallest of its sides.
+     */
     private drawEllipse(ctx: CanvasRenderingContext2D): void {
         const radius: Vec2 = { x: this.width / 2, y: this.height / 2 };
         const ellipseProperties = this.toolProperties as BasicShapeProperties;
