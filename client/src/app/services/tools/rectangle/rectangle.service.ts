@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 import { Vec2 } from '@app/classes/vec2';
+import { DrawingType } from '@app/enums/drawing-type.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
@@ -26,7 +27,7 @@ export class RectangleService extends Tool {
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.name = 'Rectangle';
-        this.tooltip = 'Rectangle';
+        this.tooltip = 'Rectangle(1)';
         this.iconName = 'crop_square';
         this.toolProperties = new BasicShapeProperties();
     }
@@ -92,12 +93,15 @@ export class RectangleService extends Tool {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         const rectangleProperties = this.toolProperties as BasicShapeProperties;
 
-        if (rectangleProperties.currentType === 'Plein') {
-            this.drawFillRect(ctx, width, height);
-        } else if (rectangleProperties.currentType === 'Contour') {
-            this.drawStrokeRect(ctx, width, height);
-        } else {
-            this.drawFillStrokeRect(ctx, width, height);
+        switch (rectangleProperties.currentType) {
+            case DrawingType.Fill:
+                this.drawFillRect(ctx, width, height);
+                break;
+            case DrawingType.Stroke:
+                this.drawStrokeRect(ctx, width, height);
+                break;
+            case DrawingType.FillAndStroke:
+                this.drawFillStrokeRect(ctx, width, height);
         }
     }
 
@@ -133,6 +137,7 @@ export class RectangleService extends Tool {
     }
 
     setThickness(value: number | null): void {
+        // TODO possiblement ajouter de la validation ici aussi
         value = value === null ? 1 : value;
         this.toolProperties.thickness = value;
         this.drawingService.previewCtx.lineWidth = value;
