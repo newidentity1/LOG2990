@@ -28,6 +28,10 @@ export abstract class Tool {
 
     onKeyUp(event: KeyboardEvent): void {}
 
+    onDoubleClick(event: MouseEvent): void {}
+
+    onClick(event: MouseEvent): void {}
+
     getPositionFromMouse(event: MouseEvent): Vec2 {
         return { x: event.offsetX, y: event.offsetY };
     }

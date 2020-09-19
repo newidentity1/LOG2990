@@ -71,6 +71,16 @@ export class DrawingComponent implements AfterViewInit {
         this.toolbarService.currentTool.onMouseLeave(event);
     }
 
+    @HostListener('dblclick', ['$event'])
+    onDoubleClick(event: MouseEvent): void {
+        this.toolbarService.currentTool.onDoubleClick(event);
+    }
+
+    @HostListener('click', ['$event'])
+    onClick(event: MouseEvent): void {
+        this.toolbarService.currentTool.onClick(event);
+    }
+
     get width(): number {
         return this.canvasSize.x;
     }
