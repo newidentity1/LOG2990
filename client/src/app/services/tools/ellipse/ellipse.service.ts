@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 import { Vec2 } from '@app/classes/vec2';
+import { DrawingType } from '@app/enums/drawing-type.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
@@ -118,7 +119,7 @@ export class EllipseService extends Tool {
         const radius: Vec2 = { x: this.width / 2, y: this.height / 2 };
         const ellipseProperties = this.toolProperties as BasicShapeProperties;
         const thickness =
-            ellipseProperties.currentType === 'Plein'
+            ellipseProperties.currentType === DrawingType.Fill
                 ? this.boxGuideThickness
                 : this.toolProperties.thickness < Math.min(Math.abs(radius.x), Math.abs(radius.y))
                 ? this.toolProperties.thickness
@@ -130,12 +131,18 @@ export class EllipseService extends Tool {
         ctx.beginPath();
         ctx.ellipse(this.pathStart.x + radius.x, this.pathStart.y + radius.y, Math.abs(radius.x - dx), Math.abs(radius.y - dy), 0, 0, 2 * Math.PI);
 
-        if (ellipseProperties.currentType === 'Contour') ctx.stroke();
-        else if (ellipseProperties.currentType === 'Plein') ctx.fill();
-        else {
-            ctx.fill();
-            ctx.stroke();
+        switch (ellipseProperties.currentType) {
+            case DrawingType.Stroke:
+                ctx.stroke();
+                break;
+            case DrawingType.Fill:
+                ctx.fill();
+                break;
+            default:
+                ctx.fill();
+                ctx.stroke();
         }
+
         this.drawBoxGuide(ctx);
     }
 }
