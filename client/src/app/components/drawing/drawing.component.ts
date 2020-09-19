@@ -9,6 +9,11 @@ import { PencilService } from '@app/services/tools/pencil-service';
 export const DEFAULT_WIDTH = 1000;
 export const DEFAULT_HEIGHT = 800;
 
+export enum keyCode {
+    C = 67,
+    W = 87,
+}
+
 @Component({
     selector: 'app-drawing',
     templateUrl: './drawing.component.html',
@@ -27,7 +32,7 @@ export class DrawingComponent implements AfterViewInit {
     private tools: Tool[];
     currentTool: Tool;
     constructor(private drawingService: DrawingService, pencilService: PencilService, brushService: BrushService) {
-        this.tools = [brushService, pencilService];
+        this.tools = [pencilService, brushService];
         this.currentTool = this.tools[0];
     }
 
@@ -54,7 +59,19 @@ export class DrawingComponent implements AfterViewInit {
         this.currentTool.onMouseUp(event);
     }
 
-    @HostListener('keypress', ['$event'])
+    // Depending if using keydown or keypress, the keyCode changes ***
+    // Only works once
+    // @HostListener('window:keydown', ['$event'])
+    // ToolSelector(event: KeyboardEvent): void {
+    //     // KeyCode number of letter 'C' is 67
+    //     if (event.keyCode === keyCode.C) {
+    //         this.currentTool = this.tools[0];
+    //     } else if (event.keyCode === keyCode.W) {
+    //         this.currentTool = this.tools[1];
+    //     }
+    //     console.log(event);
+    // }
+
     get width(): number {
         return this.canvasSize.x;
     }
