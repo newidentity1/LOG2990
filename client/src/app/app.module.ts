@@ -19,6 +19,7 @@ import { DrawingComponent } from './components/drawing/drawing.component';
 import { EditorComponent } from './components/editor/editor.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { SVGFilterComponent } from './components/svgfilter/svgfilter.component';
 import { EllipseComponent } from './components/tools-options/ellipse/ellipse.component';
 import { PencilComponent } from './components/tools-options/pencil/pencil.component';
 import { RectangleComponent } from './components/tools-options/rectangle/rectangle.component';
@@ -39,6 +40,7 @@ import { RecentColorsComponent } from './recent-colors/recent-colors.component';
         RectangleComponent,
         EllipseComponent,
         ThicknessSliderComponent,
+        SVGFilterComponent,
     ],
     imports: [
         BrowserModule,
