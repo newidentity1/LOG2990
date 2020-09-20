@@ -26,14 +26,13 @@ export class LineService extends Tool {
     // ligne principale
     private pathData: Vec2[];
     // private indexLine: number =0;
+
     // angle
     // private setAngle: boolean = false;
     // ligne précedente
     // private priviousLine: Vec2[];
-    private base: CanvasRenderingContext2D = this.drawingService.baseCtx;
+
     // segment de prévisualisation et point de depart de ce segment
-    private pathPreiew: Vec2[];
-    private startPoint: Vec2;
 
     // une ligne est tracé que si le nombre de point est >= 2
     private index: number = 0;
@@ -47,7 +46,6 @@ export class LineService extends Tool {
         this.tooltip = 'Line';
         this.iconName = 'show_chart';
         this.clearPath();
-        this.clear();
     }
 
     onClick(event: MouseEvent): void {
@@ -57,31 +55,26 @@ export class LineService extends Tool {
         this.index++;
         console.log(this.index);
         const mousePosition = this.getPositionFromMouse(event);
-        this.startPoint = mousePosition;
 
         if (this.index < 2) {
             this.pathData.push(mousePosition);
         } else {
-            this.pathPreiew.push(this.startPoint);
             this.pathData.push(mousePosition);
             // this.drawingService.clearCanvas(this.drawingService.baseCtx);
-            this.drawLine(this.base, this.pathData);
+
+            this.drawLine(this.drawingService.previewCtx, this.pathData);
         }
     }
 
     onMouseMove(event: MouseEvent): void {
-        if (this.shiftPress) {
-            this.afficherSegementPreview(event);
-        }
+        this.afficherSegementPreview(event);
     }
 
     // SHIFT appuyé
     onKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
         if (event.key === 'Shift') {
-            // this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawLine(this.drawingService.baseCtx, this.pathData);
-            this.drawLine(this.drawingService.previewCtx, this.pathPreiew);
+            this.drawLine(this.drawingService.previewCtx, this.pathData);
             this.shiftPress = true;
             console.log('SHIFT-DOWN');
         }
@@ -90,7 +83,7 @@ export class LineService extends Tool {
                 this.pathData.pop();
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 // this.drawingService.clearCanvas(this.drawingService.baseCtx);
-                this.drawLine(this.drawingService.baseCtx, this.pathData);
+                this.drawLine(this.drawingService.previewCtx, this.pathData);
                 this.index = this.index - 1;
             }
         }
@@ -114,18 +107,16 @@ export class LineService extends Tool {
                     this.pathData.pop();
 
                     this.index = this.index - 2;
-                    this.drawLine(this.drawingService.baseCtx, this.pathData);
+                    // this.drawLine(this.drawingService.previewCtx, this.pathData);
                     this.drawingService.clearCanvas(this.drawingService.previewCtx);
                     this.pathData.push(this.pathData[0]);
                     this.drawLine(this.drawingService.baseCtx, this.pathData);
                     this.clearPath();
-                    this.clear();
                     this.index = 1;
                 } else {
                     console.log('DOUBLE-CLICK');
                     this.drawLine(this.drawingService.baseCtx, this.pathData);
                     this.clearPath();
-                    this.clear();
                     this.index = 1;
                     // this.drawingService.clearCanvas(this.drawingService.baseCtx);
                 }
@@ -138,7 +129,7 @@ export class LineService extends Tool {
         if (event.key === 'Shift') {
             this.shiftPress = false;
             console.log('SHIFT-UP');
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            // this.drawingService.clearCanvas(this.drawingService.previewCtx);
         }
     }
 
@@ -155,16 +146,12 @@ export class LineService extends Tool {
     private afficherSegementPreview(event: MouseEvent): void {
         const mousePosition = this.getPositionFromMouse(event);
         // si on a pas encore commencer de ligne
-        if (this.index < 2) {
-            this.startPoint = mousePosition;
-        }
+        this.pathData.push(mousePosition);
         // on suprime l'ancien segment et on définit le nouveau
-        this.clear();
-        this.pathPreiew.push(this.startPoint);
-        this.pathPreiew.push(mousePosition);
         // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        this.drawLine(this.drawingService.previewCtx, this.pathPreiew);
+        this.drawLine(this.drawingService.previewCtx, this.pathData);
+        this.pathData.pop();
     }
 
     private clearPath(): void {
@@ -172,7 +159,4 @@ export class LineService extends Tool {
     }
 
     // nettoit le segment de prévisualisation
-    private clear(): void {
-        this.pathPreiew = [];
-    }
 }

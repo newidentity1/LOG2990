@@ -23,6 +23,7 @@ import { EllipseComponent } from './components/tools-options/ellipse/ellipse.com
 import { PencilComponent } from './components/tools-options/pencil/pencil.component';
 import { RectangleComponent } from './components/tools-options/rectangle/rectangle.component';
 import { RecentColorsComponent } from './recent-colors/recent-colors.component';
+import { LineComponent } from './components/tools-options/line/line.component';
 
 @NgModule({
     declarations: [
@@ -37,6 +38,7 @@ import { RecentColorsComponent } from './recent-colors/recent-colors.component';
         PencilComponent,
         RectangleComponent,
         EllipseComponent,
+        LineComponent,
     ],
     imports: [
         BrowserModule,
