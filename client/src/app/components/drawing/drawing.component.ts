@@ -49,6 +49,8 @@ export class DrawingComponent implements AfterViewInit {
     @HostListener('keydown', ['$event'])
     onKeyDown(event: KeyboardEvent): void {
         this.toolbarService.currentTool.onKeyDown(event);
+        // Send the event to toolbar
+        this.toolbarService.onKeyDown(event);
     }
 
     @HostListener('keypress', ['$event'])
