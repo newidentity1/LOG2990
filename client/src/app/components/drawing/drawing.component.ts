@@ -46,9 +46,21 @@ export class DrawingComponent implements AfterViewInit {
         this.toolbarService.currentTool.onMouseUp(event);
     }
 
+    @HostListener('mouseenter', ['$event'])
+    onMouseEnter(event: MouseEvent): void {
+        this.toolbarService.currentTool.onMouseEnter(event);
+    }
+
+    @HostListener('mouseleave', ['$event'])
+    onMouseLeave(event: MouseEvent): void {
+        this.toolbarService.currentTool.onMouseLeave(event);
+    }
+
     @HostListener('keydown', ['$event'])
     onKeyDown(event: KeyboardEvent): void {
         this.toolbarService.currentTool.onKeyDown(event);
+        // Send the event to toolbar
+        this.toolbarService.onKeyDown(event);
     }
 
     @HostListener('keypress', ['$event'])
@@ -59,16 +71,6 @@ export class DrawingComponent implements AfterViewInit {
     @HostListener('keyup', ['$event'])
     onKeyUp(event: KeyboardEvent): void {
         this.toolbarService.currentTool.onKeyUp(event);
-    }
-
-    @HostListener('mouseenter', ['$event'])
-    onMouseEnter(event: MouseEvent): void {
-        this.toolbarService.currentTool.onMouseEnter(event);
-    }
-
-    @HostListener('mouseleave', ['$event'])
-    onMouseLeave(event: MouseEvent): void {
-        this.toolbarService.currentTool.onMouseLeave(event);
     }
 
     @HostListener('dblclick', ['$event'])
