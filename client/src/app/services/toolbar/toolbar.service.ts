@@ -39,28 +39,28 @@ export class ToolbarService {
 
     // TODO: Change also change icon when switches
     onKeyDown(event: KeyboardEvent): void {
-        switch (event.keyCode) {
-            case keyCode.C:
+        switch (event.key) {
+            case 'c':
                 this.currentTool = this.tools[toolsIndex.pencil];
                 break;
 
             // Pinceau
-            case keyCode.W:
+            case 'w':
                 this.currentTool = this.tools[toolsIndex.brush];
                 break;
 
             // Rectangle
-            case keyCode.One:
+            case '1':
                 this.currentTool = this.tools[toolsIndex.rectangle];
                 break;
 
             // Ellipse
-            case keyCode.Two:
+            case '2':
                 this.currentTool = this.tools[toolsIndex.ellipse];
                 break;
 
             // Lines
-            case keyCode.L:
+            case 'l':
                 this.currentTool = this.tools[toolsIndex.lines];
                 break;
         }
