@@ -38,7 +38,7 @@ export class LineService extends Tool {
     private index: number = 0;
 
     // quand la touche SHIFT est appuyé
-    private shiftPress: boolean = false;
+    // private shiftPress: boolean = false;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
@@ -75,7 +75,7 @@ export class LineService extends Tool {
         event.preventDefault();
         if (event.key === 'Shift') {
             this.drawLine(this.drawingService.previewCtx, this.pathData);
-            this.shiftPress = true;
+            // this.shiftPress = true;
             console.log('SHIFT-DOWN');
         }
         if (event.code === 'Space') {
@@ -127,7 +127,7 @@ export class LineService extends Tool {
     // SHIFT relaché
     onKeyUp(event: KeyboardEvent): void {
         if (event.key === 'Shift') {
-            this.shiftPress = false;
+            // this.shiftPress = false;
             console.log('SHIFT-UP');
             // this.drawingService.clearCanvas(this.drawingService.previewCtx);
         }

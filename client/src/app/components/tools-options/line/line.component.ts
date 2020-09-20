@@ -6,7 +6,11 @@ import { Component, OnInit } from '@angular/core';
     styleUrls: ['./line.component.scss'],
 })
 export class LineComponent implements OnInit {
-    constructor() {}
+    constructor() {
+        // TODO
+    }
 
-    ngOnInit(): void {}
+    ngOnInit(): void {
+        // TODO
+    }
 }
