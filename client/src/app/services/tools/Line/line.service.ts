@@ -26,12 +26,11 @@ export class LineService extends Tool {
     // ligne principale
     private pathData: Vec2[];
     // private indexLine: number =0;
-
     // angle
     // private setAngle: boolean = false;
     // ligne précedente
     // private priviousLine: Vec2[];
-
+    private base: CanvasRenderingContext2D = this.drawingService.baseCtx;
     // segment de prévisualisation et point de depart de ce segment
     private pathPreiew: Vec2[];
     private startPoint: Vec2;
@@ -66,8 +65,7 @@ export class LineService extends Tool {
             this.pathPreiew.push(this.startPoint);
             this.pathData.push(mousePosition);
             // this.drawingService.clearCanvas(this.drawingService.baseCtx);
-
-            this.drawLine(this.drawingService.previewCtx, this.pathData);
+            this.drawLine(this.base, this.pathData);
         }
     }
 
@@ -81,7 +79,9 @@ export class LineService extends Tool {
     onKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
         if (event.key === 'Shift') {
+            // this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawLine(this.drawingService.baseCtx, this.pathData);
+            this.drawLine(this.drawingService.previewCtx, this.pathPreiew);
             this.shiftPress = true;
             console.log('SHIFT-DOWN');
         }
@@ -163,7 +163,6 @@ export class LineService extends Tool {
         this.pathPreiew.push(this.startPoint);
         this.pathPreiew.push(mousePosition);
         // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
-
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.drawLine(this.drawingService.previewCtx, this.pathPreiew);
     }
