@@ -1,23 +1,22 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatSliderModule } from '@angular/material/slider';
-import { ThicknessSliderComponent } from '@app/components/tools-options/thickness-slider/thickness-slider.component';
-import { PencilComponent } from './pencil.component';
+import { ThicknessSliderComponent } from './thickness-slider.component';
 
-describe('PencilComponent', () => {
-    let component: PencilComponent;
-    let fixture: ComponentFixture<PencilComponent>;
+describe('ThicknessSliderComponent', () => {
+    let component: ThicknessSliderComponent;
+    let fixture: ComponentFixture<ThicknessSliderComponent>;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [PencilComponent, ThicknessSliderComponent],
+            declarations: [ThicknessSliderComponent],
             imports: [MatSliderModule],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
     }));
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(PencilComponent);
+        fixture = TestBed.createComponent(ThicknessSliderComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });
