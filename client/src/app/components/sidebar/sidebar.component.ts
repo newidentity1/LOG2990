@@ -29,6 +29,7 @@ export class SidebarComponent {
                 this.currentTool.toolProperties.resetProperties();
             this.currentTool = tool;
             this.toolbarService.currentTool = tool;
+            this.toolbarService.applyCurrentToolColor();
             this.sidenavProperties.open();
         } else {
             this.sidenavProperties.toggle();
