@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
-import { keyCode } from '@app/enums/keyCodes.enum';
 import { BrushService } from '@app/services/tools/brush/brush.service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
 import { LineService } from '@app/services/tools/Line/line.service';
