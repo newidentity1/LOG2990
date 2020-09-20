@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
+import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 import { Vec2 } from '@app/classes/vec2';
+import { DrawingType } from '@app/enums/drawing-type.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
@@ -25,12 +27,15 @@ export class EllipseService extends Tool {
     private height: number;
     private shiftDown: boolean = false;
     private mousePosition: Vec2;
+    private boxGuideThickness: number = 1;
+    private boxGuideDashedSegments: number = 6;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.name = 'Ellipse';
         this.tooltip = 'Ellipse';
         this.iconName = 'panorama_fish_eye';
+        this.toolProperties = new BasicShapeProperties();
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -66,7 +71,7 @@ export class EllipseService extends Tool {
     }
 
     onKeyUp(event: KeyboardEvent): void {
-        this.shiftDown = !(event.key === 'Shift');
+        this.shiftDown = event.key === 'Shift' ? false : this.shiftDown;
         if (this.mouseDown) this.drawPreview();
     }
 
@@ -81,24 +86,68 @@ export class EllipseService extends Tool {
         }
     }
 
+    setThickness(value: number | null): void {
+        value = value === null ? 1 : value;
+        this.toolProperties.thickness = value;
+    }
+
+    setTypeDrawing(value: string): void {
+        const ellipseProperties = this.toolProperties as BasicShapeProperties;
+        ellipseProperties.currentType = value;
+    }
+
     private drawPreview(): void {
         this.computeDimensions();
-
-        // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.drawEllipse(this.drawingService.previewCtx);
     }
 
-    private drawEllipse(ctx: CanvasRenderingContext2D): void {
+    private drawBoxGuide(ctx: CanvasRenderingContext2D): void {
         if (this.mouseDown) {
+            ctx.lineWidth = this.boxGuideThickness;
+
+            ctx.setLineDash([this.boxGuideDashedSegments]);
             ctx.beginPath();
-            ctx.rect(this.pathStart.x, this.pathStart.y, this.width, this.height);
-            ctx.stroke();
+            ctx.strokeRect(this.pathStart.x, this.pathStart.y, this.width, this.height);
+            ctx.setLineDash([0]);
+        }
+    }
+
+    /**
+     * @description Draws the ellipse with the correct thickness and prioritizes
+     * the dimensions of the guide perimeter (boxGuide) which follow the mouse
+     * movements. When the thickness is too big for the ellipse to be drawn
+     * inside the perimeter, the ctx.lineWidth is assigned to the half of the
+     * smallest of its sides.
+     */
+    private drawEllipse(ctx: CanvasRenderingContext2D): void {
+        const radius: Vec2 = { x: this.width / 2, y: this.height / 2 };
+        const ellipseProperties = this.toolProperties as BasicShapeProperties;
+        const thickness =
+            ellipseProperties.currentType === DrawingType.Fill
+                ? this.boxGuideThickness
+                : this.toolProperties.thickness < Math.min(Math.abs(radius.x), Math.abs(radius.y))
+                ? this.toolProperties.thickness
+                : Math.min(Math.abs(radius.x), Math.abs(radius.y));
+        const dx = this.width < 0 ? -thickness / 2 : thickness / 2;
+        const dy = this.height < 0 ? -thickness / 2 : thickness / 2;
+
+        ctx.lineWidth = thickness;
+        ctx.beginPath();
+        ctx.ellipse(this.pathStart.x + radius.x, this.pathStart.y + radius.y, Math.abs(radius.x - dx), Math.abs(radius.y - dy), 0, 0, 2 * Math.PI);
+
+        switch (ellipseProperties.currentType) {
+            case DrawingType.Stroke:
+                ctx.stroke();
+                break;
+            case DrawingType.Fill:
+                ctx.fill();
+                break;
+            default:
+                ctx.fill();
+                ctx.stroke();
         }
 
-        const radius: Vec2 = { x: this.width / 2, y: this.height / 2 };
-        ctx.beginPath();
-        ctx.ellipse(this.pathStart.x + radius.x, this.pathStart.y + radius.y, Math.abs(radius.x), Math.abs(radius.y), 0, 0, 2 * Math.PI);
-        ctx.stroke();
+        this.drawBoxGuide(ctx);
     }
 }
