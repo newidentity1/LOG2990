@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Tool } from '@app/classes/tool';
+import { ShapeTool } from '@app/classes/shape-tool';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingType } from '@app/enums/drawing-type.enum';
@@ -17,7 +17,7 @@ export enum MouseButton {
 @Injectable({
     providedIn: 'root',
 })
-export class RectangleService extends Tool {
+export class RectangleService extends ShapeTool {
     startingX: number;
     startingY: number;
     width: number;
@@ -140,8 +140,7 @@ export class RectangleService extends Tool {
         // TODO possiblement ajouter de la validation ici aussi
         value = value === null ? 1 : value;
         this.toolProperties.thickness = value;
-        this.drawingService.previewCtx.lineWidth = value;
-        this.drawingService.baseCtx.lineWidth = value;
+        this.drawingService.setThickness(value);
     }
 
     setTypeDrawing(value: string): void {
