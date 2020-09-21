@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Color } from '@app/classes/color/color';
 import { Tool } from '@app/classes/tool';
 import { BrushService } from '@app/services/tools/brush/brush.service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
@@ -20,6 +21,8 @@ export enum toolsIndex {
 export class ToolbarService {
     private tools: Tool[];
     currentTool: Tool;
+    primaryColor: Color;
+    secondaryColor: Color;
 
     constructor(
         protected pencilService: PencilService,
@@ -34,6 +37,16 @@ export class ToolbarService {
 
     getTools(): Tool[] {
         return this.tools;
+    }
+
+    setColors(primaryColor: Color, secondaryColor: Color): void {
+        this.primaryColor = primaryColor;
+        this.secondaryColor = secondaryColor;
+        this.applyCurrentToolColor();
+    }
+
+    applyCurrentToolColor(): void {
+        this.currentTool.setColors(this.primaryColor, this.secondaryColor);
     }
 
     // TODO: Change also change icon when switches
