@@ -23,12 +23,7 @@ export class SidebarComponent {
 
     onToolChanged(tool: Tool): void {
         if (tool !== this.currentTool) {
-            if (this.currentTool.toolProperties) {
-                // TODO: enlever le reset pour un save properties?
-                this.currentTool.toolProperties.resetProperties();
-            }
             // TODO voir comment on peut faire un "historique de propriétés"
-            this.drawingService.setThickness(1);
             this.currentTool = tool;
             this.toolbarService.applyCurrentToolColor();
             this.sidenavProperties.open();
