@@ -1,4 +1,5 @@
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { Color } from './color/color';
 import { BasicToolProperties } from './tools-properties/basic-tool-properties';
 import { Vec2 } from './vec2';
 
@@ -30,6 +31,10 @@ export abstract class Tool {
 
     onKeyUp(event: KeyboardEvent): void {}
 
+    onDoubleClick(event: MouseEvent): void {}
+
+    onClick(event: MouseEvent): void {}
+
     getPositionFromMouse(event: MouseEvent): Vec2 {
         return { x: event.offsetX, y: event.offsetY };
     }
@@ -40,4 +45,6 @@ export abstract class Tool {
         this.toolProperties.thickness = value;
         this.drawingService.setThickness(value);
     }
+
+    setColors(primaryColor: Color, secondaryColor: Color): void {}
 }
