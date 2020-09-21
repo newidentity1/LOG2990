@@ -25,20 +25,7 @@ export enum MouseButton {
 export class LineService extends Tool {
     // ligne principale
     private pathData: Vec2[];
-    // private indexLine: number =0;
-
-    // angle
-    // private setAngle: boolean = false;
-    // ligne précedente
-    // private priviousLine: Vec2[];
-
-    // segment de prévisualisation et point de depart de ce segment
-
-    // une ligne est tracé que si le nombre de point est >= 2
     private index: number = 0;
-
-    // quand la touche SHIFT est appuyé
-    // private shiftPress: boolean = false;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
@@ -107,7 +94,6 @@ export class LineService extends Tool {
                     this.pathData.pop();
 
                     this.index = this.index - 2;
-                    // this.drawLine(this.drawingService.previewCtx, this.pathData);
                     this.drawingService.clearCanvas(this.drawingService.previewCtx);
                     this.pathData.push(this.pathData[0]);
                     this.drawLine(this.drawingService.baseCtx, this.pathData);
@@ -118,7 +104,6 @@ export class LineService extends Tool {
                     this.drawLine(this.drawingService.baseCtx, this.pathData);
                     this.clearPath();
                     this.index = 1;
-                    // this.drawingService.clearCanvas(this.drawingService.baseCtx);
                 }
             }
         }
@@ -127,9 +112,7 @@ export class LineService extends Tool {
     // SHIFT relaché
     onKeyUp(event: KeyboardEvent): void {
         if (event.key === 'Shift') {
-            // this.shiftPress = false;
             console.log('SHIFT-UP');
-            // this.drawingService.clearCanvas(this.drawingService.previewCtx);
         }
     }
 
@@ -157,6 +140,4 @@ export class LineService extends Tool {
     private clearPath(): void {
         this.pathData = [];
     }
-
-    // nettoit le segment de prévisualisation
 }
