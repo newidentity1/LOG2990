@@ -18,7 +18,7 @@ export class PencilService extends Tool {
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.name = 'Crayon';
-        this.tooltip = 'Crayon';
+        this.tooltip = 'Crayon(c)';
         this.iconName = 'create';
         this.toolProperties = new BasicShapeProperties();
         this.clearPath();

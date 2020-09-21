@@ -25,7 +25,7 @@ export class BrushService extends Tool {
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.name = 'Brush';
-        this.tooltip = 'Brush';
+        this.tooltip = 'Brush(w)';
         this.iconName = 'brush';
         this.clearPath();
     }
