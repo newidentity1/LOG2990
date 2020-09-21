@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Tool } from '@app/classes/tool';
+import { ShapeTool } from '@app/classes/shape-tool';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 import { Vec2 } from '@app/classes/vec2';
 import { DASHED_SEGMENTS, MINIMUM_THICKNESS } from '@app/constants/constants';
@@ -14,7 +14,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 @Injectable({
     providedIn: 'root',
 })
-export class EllipseService extends Tool {
+export class EllipseService extends ShapeTool {
     private pathStart: Vec2;
     private width: number;
     private height: number;
