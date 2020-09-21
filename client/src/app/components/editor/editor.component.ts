@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+// import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 
 @Component({
     selector: 'app-editor',

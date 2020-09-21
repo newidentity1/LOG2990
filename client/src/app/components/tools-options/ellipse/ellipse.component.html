@@ -1,1 +1,9 @@
-<p>ellipse works!</p>
+<h3>Propriété de l'ellipse</h3>
+<label id="type-drawing-label">Choissisez le type d'ellipse que vous souhaitez dessiner:</label>
+<mat-radio-group aria-labelledby="type-drawing-label" id="type-drawing-group" [(ngModel)]="currentType" ngDefaultControl>
+    <mat-radio-button class="type-drawing" *ngFor="let type of typesDrawing" [value]="type" (change)="onTypeDrawingChange($event)">
+        {{ type }}
+    </mat-radio-button>
+</mat-radio-group>
+
+<mat-slider thumbLabel (change)="onThicknessChange($event)" tickInterval="1" min="1" max="100"> </mat-slider>
