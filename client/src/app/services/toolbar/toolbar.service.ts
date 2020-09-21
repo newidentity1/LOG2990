@@ -51,6 +51,7 @@ export class ToolbarService {
 
     // TODO: Change also change icon when switches
     onKeyDown(event: KeyboardEvent): void {
+        this.currentTool.onKeyDown(event);
         switch (event.key) {
             case 'c':
                 this.currentTool = this.tools[toolsIndex.pencil];

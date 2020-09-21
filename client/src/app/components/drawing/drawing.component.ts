@@ -58,23 +58,6 @@ export class DrawingComponent implements AfterViewInit {
         this.toolbarService.currentTool.onMouseLeave(event);
     }
 
-    @HostListener('keydown', ['$event'])
-    onKeyDown(event: KeyboardEvent): void {
-        this.toolbarService.currentTool.onKeyDown(event);
-        // Send the event to toolbar
-        this.toolbarService.onKeyDown(event);
-    }
-
-    @HostListener('keypress', ['$event'])
-    onKeyPress(event: KeyboardEvent): void {
-        this.toolbarService.currentTool.onKeyPress(event);
-    }
-
-    @HostListener('keyup', ['$event'])
-    onKeyUp(event: KeyboardEvent): void {
-        this.toolbarService.currentTool.onKeyUp(event);
-    }
-
     @HostListener('dblclick', ['$event'])
     onDoubleClick(event: MouseEvent): void {
         this.toolbarService.currentTool.onDoubleClick(event);
