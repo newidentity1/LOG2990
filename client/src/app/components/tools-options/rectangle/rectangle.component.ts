@@ -20,7 +20,6 @@ export class RectangleComponent {
         const rectangleProperties = rectangleService.toolProperties as BasicShapeProperties;
         this.currentType = rectangleProperties.currentType;
         this.currentThickness = rectangleProperties.thickness;
-        console.log(this.currentThickness);
         this.rectangleService.setThickness(rectangleProperties.thickness);
     }
 
