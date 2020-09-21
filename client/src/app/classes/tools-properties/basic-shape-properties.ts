@@ -6,9 +6,4 @@ export class BasicShapeProperties extends BasicToolProperties {
 
     typesDrawing: string[] = [DrawingType.Stroke, DrawingType.Fill, DrawingType.FillAndStroke];
     currentType: string = DrawingType.Stroke;
-
-    resetProperties(): void {
-        this.thickness = 1;
-        this.currentType = DrawingType.Stroke;
-    }
 }
