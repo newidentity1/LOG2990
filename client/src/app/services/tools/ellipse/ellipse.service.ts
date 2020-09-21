@@ -123,7 +123,7 @@ export class EllipseService extends Tool {
         const dx = this.width < 0 ? -thickness / 2 : thickness / 2;
         const dy = this.height < 0 ? -thickness / 2 : thickness / 2;
 
-        ctx.lineWidth = thickness;
+        this.drawingService.setThickness(thickness);
         ctx.beginPath();
         ctx.ellipse(this.pathStart.x + radius.x, this.pathStart.y + radius.y, Math.abs(radius.x - dx), Math.abs(radius.y - dy), 0, 0, 2 * Math.PI);
 
