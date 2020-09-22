@@ -8,6 +8,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ColorToolComponent } from '@app/components//color-tool/color-tool.component';
 import { DrawingComponent } from '@app/components/drawing/drawing.component';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
+import { SVGFilterComponent } from '@app/components/svgfilter/svgfilter.component';
 import { EllipseComponent } from '@app/components/tools-options/ellipse/ellipse.component';
 import { PencilComponent } from '@app/components/tools-options/pencil/pencil.component';
 import { RectangleComponent } from '@app/components/tools-options/rectangle/rectangle.component';
@@ -31,6 +32,7 @@ describe('EditorComponent', () => {
                 ColorToolComponent,
                 RecentColorsComponent,
                 ThicknessSliderComponent,
+                SVGFilterComponent,
             ],
             imports: [MatIconModule, MatTooltipModule, MatSidenavModule, BrowserAnimationsModule, MatSliderModule],
             providers: [{ provide: MatDialog, useValue: {} }],

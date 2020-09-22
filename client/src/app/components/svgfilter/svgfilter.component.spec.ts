@@ -1,5 +1,4 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { SVGFilterComponent } from './svgfilter.component';
 
 describe('SVGFilterComponent', () => {

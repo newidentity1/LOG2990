@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Tool } from '@app/classes/tool';
+import { ShapeTool } from '@app/classes/shape-tool';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 import { Vec2 } from '@app/classes/vec2';
+import { DASHED_SEGMENTS, MINIMUM_THICKNESS } from '@app/constants/constants';
 import { DrawingType } from '@app/enums/drawing-type.enum';
 import { MouseButton } from '@app/enums/mouse-button.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -13,14 +14,12 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 @Injectable({
     providedIn: 'root',
 })
-export class EllipseService extends Tool {
+export class EllipseService extends ShapeTool {
     private pathStart: Vec2;
     private width: number;
     private height: number;
     private shiftDown: boolean = false;
     private mousePosition: Vec2;
-    private boxGuideThickness: number = 1;
-    private boxGuideDashedSegments: number = 6;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
@@ -96,9 +95,9 @@ export class EllipseService extends Tool {
 
     private drawBoxGuide(ctx: CanvasRenderingContext2D): void {
         if (this.mouseDown) {
-            ctx.lineWidth = this.boxGuideThickness;
+            ctx.lineWidth = MINIMUM_THICKNESS;
 
-            ctx.setLineDash([this.boxGuideDashedSegments]);
+            ctx.setLineDash([DASHED_SEGMENTS]);
             ctx.beginPath();
             ctx.strokeRect(this.pathStart.x, this.pathStart.y, this.width, this.height);
             ctx.setLineDash([0]);
@@ -117,14 +116,14 @@ export class EllipseService extends Tool {
         const ellipseProperties = this.toolProperties as BasicShapeProperties;
         const thickness =
             ellipseProperties.currentType === DrawingType.Fill
-                ? this.boxGuideThickness
+                ? MINIMUM_THICKNESS
                 : this.toolProperties.thickness < Math.min(Math.abs(radius.x), Math.abs(radius.y))
                 ? this.toolProperties.thickness
                 : Math.min(Math.abs(radius.x), Math.abs(radius.y));
         const dx = this.width < 0 ? -thickness / 2 : thickness / 2;
         const dy = this.height < 0 ? -thickness / 2 : thickness / 2;
 
-        ctx.lineWidth = thickness;
+        this.drawingService.setThickness(thickness);
         ctx.beginPath();
         ctx.ellipse(this.pathStart.x + radius.x, this.pathStart.y + radius.y, Math.abs(radius.x - dx), Math.abs(radius.y - dy), 0, 0, 2 * Math.PI);
 
