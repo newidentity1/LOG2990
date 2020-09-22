@@ -5,7 +5,7 @@ export class Color {
     private redValue: number;
     private greenValue: number;
     private blueValue: number;
-    alpha: number;
+    private alpha: number;
 
     constructor(hex?: string, alpha?: number) {
         this.hexString = hex ? hex : CONSTANTS.BLACK;
@@ -37,16 +37,31 @@ export class Color {
         this.computeRBGFromHex();
     }
 
+    get opacity(): number {
+        return this.alpha;
+    }
+
+    set opacity(value: number) {
+        if (value >= 0 && value <= 1) {
+            this.alpha = value;
+        }
+    }
+
     setRedHex(hexValue: string): void {
-        this.red = this.hexToBin(hexValue);
+        const bin = this.hexToBin(hexValue);
+        if (bin > 0 && bin <= 255) {
+            this.red = bin;
+        }
     }
 
     setGreenHex(hexValue: string): void {
-        this.green = this.hexToBin(hexValue);
+        const bin = this.hexToBin(hexValue);
+        this.green = isNaN(bin) ? this.greenValue : bin;
     }
 
     setBlueHex(hexValue: string): void {
-        this.blue = this.hexToBin(hexValue);
+        const bin = this.hexToBin(hexValue);
+        this.blue = isNaN(bin) ? this.blueValue : bin;
     }
 
     getRedHex(): string {

@@ -67,21 +67,21 @@ export class ColorPickerService extends Tool {
             if (this.selectedColor.hex !== this.secondaryColor.hex) {
                 this.addToRecentColors(new Color(this.selectedColor.hex));
             }
-            this.secondaryColor = new Color(this.selectedColor.hex, this.selectedColor.alpha);
+            this.secondaryColor = new Color(this.selectedColor.hex, this.selectedColor.opacity);
         } else {
             if (this.selectedColor.hex !== this.primaryColor.hex) {
                 this.addToRecentColors(new Color(this.selectedColor.hex));
             }
-            this.primaryColor = new Color(this.selectedColor.hex, this.selectedColor.alpha);
+            this.primaryColor = new Color(this.selectedColor.hex, this.selectedColor.opacity);
         }
         this.updateDrawingColor();
     }
 
     resetSelectedColor(isSecondaryColorPicker: boolean): void {
         if (isSecondaryColorPicker) {
-            this.selectedColor = new Color(this.secondaryColor.hex, this.secondaryColor.alpha);
+            this.selectedColor = new Color(this.secondaryColor.hex, this.secondaryColor.opacity);
         } else {
-            this.selectedColor = new Color(this.primaryColor.hex, this.primaryColor.alpha);
+            this.selectedColor = new Color(this.primaryColor.hex, this.primaryColor.opacity);
         }
     }
 
@@ -125,7 +125,7 @@ export class ColorPickerService extends Tool {
         color.red = rgbData[0];
         color.green = rgbData[1];
         color.blue = rgbData[2];
-        color.alpha = this.selectedColor.alpha;
+        color.opacity = this.selectedColor.opacity;
 
         return color;
     }
