@@ -20,3 +20,5 @@ export const COLOR_PICKER_CURSOR_RADIUS = 10;
 export const MINIMUM_THICKNESS = 1;
 export const MAXIMUM_THICKNESS = 100;
 export const DASHED_SEGMENTS = 6;
+
+export const MAX_COLOR_VALUE = 255;

@@ -49,7 +49,7 @@ export class Color {
 
     setRedHex(hexValue: string): void {
         const bin = this.hexToBin(hexValue);
-        if (bin > 0 && bin <= 255) {
+        if (bin > 0 && bin <= CONSTANTS.MAX_COLOR_VALUE) {
             this.red = bin;
         }
     }

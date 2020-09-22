@@ -8,7 +8,7 @@ import { Color } from '@app/classes/color/color';
     styleUrls: ['./color-picker-form.component.scss'],
 })
 export class ColorPickerFormComponent implements OnInit {
-    @Input() color: Color;
+    @Input() color: Color = new Color(); // TODO remove initialization after tests are done
     @Output() confirm: EventEmitter<null> = new EventEmitter();
     red: FormControl;
     green: FormControl;
