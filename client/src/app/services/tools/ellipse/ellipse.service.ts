@@ -20,7 +20,6 @@ export class EllipseService extends ShapeTool {
     private height: number;
     private shiftDown: boolean = false;
     private escapeDown: boolean = false;
-    private mousePosition: Vec2;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
@@ -51,7 +50,7 @@ export class EllipseService extends ShapeTool {
 
     onMouseMove(event: MouseEvent): void {
         if (this.mouseDown) {
-            this.mousePosition = this.getPositionFromMouse(event);
+            this.mouseDownCoord = this.getPositionFromMouse(event);
             this.drawPreview();
         }
     }
@@ -70,8 +69,8 @@ export class EllipseService extends ShapeTool {
     }
 
     computeDimensions(): void {
-        this.width = this.mousePosition.x - this.pathStart.x;
-        this.height = this.mousePosition.y - this.pathStart.y;
+        this.width = this.mouseDownCoord.x - this.pathStart.x;
+        this.height = this.mouseDownCoord.y - this.pathStart.y;
 
         if (this.shiftDown) {
             const min = Math.min(Math.abs(this.width), Math.abs(this.height));
