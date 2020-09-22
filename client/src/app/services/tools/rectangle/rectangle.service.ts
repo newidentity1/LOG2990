@@ -23,6 +23,7 @@ export class RectangleService extends ShapeTool {
     width: number;
     height: number;
     shiftDown: boolean = false;
+    currentMousePosition: Vec2;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
@@ -43,8 +44,7 @@ export class RectangleService extends ShapeTool {
 
     onMouseUp(event: MouseEvent): void {
         if (this.mouseDown) {
-            const mousePosition = this.getPositionFromMouse(event);
-            this.computeDimensions(mousePosition);
+            this.computeDimensions(this.currentMousePosition);
             if (this.shiftDown) {
                 const square = this.transformToSquare(this.width, this.height);
                 this.width = square.x;
@@ -58,8 +58,8 @@ export class RectangleService extends ShapeTool {
 
     onMouseMove(event: MouseEvent): void {
         if (this.mouseDown) {
-            const mousePosition = this.getPositionFromMouse(event);
-            this.computeDimensions(mousePosition);
+            this.currentMousePosition = this.getPositionFromMouse(event);
+            this.computeDimensions(this.currentMousePosition);
 
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             const previewCtx = this.drawingService.previewCtx;
