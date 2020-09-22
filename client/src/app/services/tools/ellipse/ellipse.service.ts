@@ -39,7 +39,6 @@ export class EllipseService extends ShapeTool {
 
     onMouseUp(event: MouseEvent): void {
         if (this.mouseDown) {
-            this.mousePosition = this.getPositionFromMouse(event);
             this.computeDimensions();
 
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
