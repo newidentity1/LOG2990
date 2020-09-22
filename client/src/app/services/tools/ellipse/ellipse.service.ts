@@ -19,6 +19,7 @@ export class EllipseService extends ShapeTool {
     private width: number;
     private height: number;
     private shiftDown: boolean = false;
+    private escapeDown: boolean = false;
     private mousePosition: Vec2;
 
     constructor(drawingService: DrawingService) {
@@ -32,6 +33,7 @@ export class EllipseService extends ShapeTool {
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
         if (this.mouseDown) {
+            this.escapeDown = false;
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.pathStart = this.mouseDownCoord;
         }
@@ -40,7 +42,6 @@ export class EllipseService extends ShapeTool {
     onMouseUp(event: MouseEvent): void {
         if (this.mouseDown) {
             this.computeDimensions();
-
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.mouseDown = false;
             this.drawEllipse(this.drawingService.baseCtx);
@@ -56,12 +57,15 @@ export class EllipseService extends ShapeTool {
     }
 
     onKeyDown(event: KeyboardEvent): void {
+        this.escapeDown = event.key === 'Escape';
         this.shiftDown = event.key === 'Shift';
+
         if (this.mouseDown) this.drawPreview();
     }
 
     onKeyUp(event: KeyboardEvent): void {
         this.shiftDown = event.key === 'Shift' ? false : this.shiftDown;
+        this.escapeDown = event.key === 'Escape' ? false : this.shiftDown;
         if (this.mouseDown) this.drawPreview();
     }
 
@@ -111,6 +115,11 @@ export class EllipseService extends ShapeTool {
      * smallest of its sides.
      */
     private drawEllipse(ctx: CanvasRenderingContext2D): void {
+        if (this.escapeDown) {
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            return;
+        }
+
         const radius: Vec2 = { x: this.width / 2, y: this.height / 2 };
         const ellipseProperties = this.toolProperties as BasicShapeProperties;
         const thickness =
