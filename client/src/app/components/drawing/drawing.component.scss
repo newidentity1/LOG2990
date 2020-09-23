@@ -32,7 +32,6 @@ canvas {
 }
 
 .resizable {
-    z-index: 2;
     position: absolute;
     margin: $margin-canvas;
     box-sizing: border-box;
@@ -45,6 +44,7 @@ canvas {
     background: $primaryColor;
     border: 2px solid $primaryColor;
     position: absolute;
+    z-index: 2;
 }
 
 .resizable .resizer.right-center {

@@ -34,21 +34,21 @@ export class DrawingComponent implements AfterViewInit {
         this.colorService.updateDrawingColor();
     }
 
-    // @HostListener('mousemove', ['$event'])
     onMouseMove(event: MouseEvent): void {
-        this.toolbarService.currentTool.onMouseMove(event);
+        if (!this.isResizingWidth && !this.isResizingHeight) {
+            this.toolbarService.currentTool.onMouseMove(event);
+        }
     }
 
-    // @HostListener('mousedown', ['$event'])
     onMouseDown(event: MouseEvent): void {
-        if (!this.isResizingWidth && !this.isResizingWidth) {
+        if (!this.isResizingWidth && !this.isResizingHeight) {
             this.toolbarService.currentTool.onMouseDown(event);
         }
     }
 
     @HostListener('window:mouseup', ['$event'])
     onMouseUp(event: MouseEvent): void {
-        //console.log(event.target);
+        console.log(event.target);
         if (this.isResizingWidth || this.isResizingHeight) {
             const newWidth = this.isResizingWidth ? this.previewCanvas.nativeElement.width : this.width;
             const newHeight = this.isResizingHeight ? this.previewCanvas.nativeElement.height : this.height;
@@ -67,22 +67,18 @@ export class DrawingComponent implements AfterViewInit {
         }
     }
 
-    @HostListener('mouseenter', ['$event'])
     onMouseEnter(event: MouseEvent): void {
         this.toolbarService.currentTool.onMouseEnter(event);
     }
 
-    @HostListener('mouseleave', ['$event'])
     onMouseLeave(event: MouseEvent): void {
         this.toolbarService.currentTool.onMouseLeave(event);
     }
 
-    @HostListener('dblclick', ['$event'])
     onDoubleClick(event: MouseEvent): void {
         this.toolbarService.currentTool.onDoubleClick(event);
     }
 
-    @HostListener('click', ['$event'])
     onClick(event: MouseEvent): void {
         this.toolbarService.currentTool.onClick(event);
     }

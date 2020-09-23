@@ -10,6 +10,11 @@
         [attr.height]="height"
         (mousedown)="onMouseDown($event)"
         (mousemove)="onMouseMove($event)"
+        (mouseup)="onMouseUp($event)"
+        (mouseenter)="onMouseEnter($event)"
+        (mouseleave)="onMouseLeave($event)"
+        (dblclick)="onDoubleClick($event)"
+        (click)="onClick($event)"
     ></canvas>
 </div>
 
