@@ -65,7 +65,7 @@ export class LineService extends Tool {
             // this.shiftPress = true;
             console.log('SHIFT-DOWN');
         }
-        if (event.code === 'Space') {
+        if (event.code === 'Backspace') {
             if (this.pathData.length >= 2) {
                 this.pathData.pop();
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
@@ -73,6 +73,10 @@ export class LineService extends Tool {
                 this.drawLine(this.drawingService.previewCtx, this.pathData);
                 this.index = this.index - 1;
             }
+        }
+        if (event.code === 'Escape') {
+            this.clearPath();
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
         }
     }
 

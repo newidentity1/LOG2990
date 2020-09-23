@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-
 @Component({
-    selector: 'app-line',
+    selector: 'app-line-option',
     templateUrl: './line.component.html',
     styleUrls: ['./line.component.scss'],
 })
