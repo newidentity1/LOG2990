@@ -14,7 +14,17 @@
 </div>
 
 <div class="resizable" [style.width.px]="width" [style.height.px]="height">
-    <div class="resizer right-center" (mousedown)="onResizeWidthStart($event)" (mousemove)="onResize($event)"></div>
-    <div class="resizer bottom-center" (mousedown)="onResizeHeightStart($event)" (mousemove)="onResize($event)"></div>
+    <div
+        class="resizer right-center"
+        [ngStyle]="{ 'top.px': this.height / 2 }"
+        (mousedown)="onResizeWidthStart($event)"
+        (mousemove)="onResize($event)"
+    ></div>
+    <div
+        class="resizer bottom-center"
+        [ngStyle]="{ 'left.px': this.width / 2 }"
+        (mousedown)="onResizeHeightStart($event)"
+        (mousemove)="onResize($event)"
+    ></div>
     <div class="resizer bottom-right" (mousedown)="onResizeBothStart($event)" (mousemove)="onResize($event)"></div>
 </div>
