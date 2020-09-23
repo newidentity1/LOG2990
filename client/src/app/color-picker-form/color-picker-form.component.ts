@@ -10,51 +10,44 @@ import { Color } from '@app/classes/color/color';
 export class ColorPickerFormComponent implements OnInit {
     @Input() color: Color = new Color(); // TODO remove initialization after tests are done
     @Output() confirm: EventEmitter<null> = new EventEmitter();
-    red: FormControl;
-    green: FormControl;
-    blue: FormControl;
-    alpha: FormControl;
+    redForm: FormControl;
+    greenForm: FormControl;
+    blueForm: FormControl;
+    alphaForm: FormControl;
 
     ngOnInit(): void {
-        this.red = new FormControl(this.color.getRedHex(), [Validators.pattern(/^[0-9A-F]{2}$/i), Validators.required]);
-        this.green = new FormControl(this.color.getGreenHex(), [Validators.pattern(/^[0-9A-F]{2}$/i), Validators.required]);
-        this.blue = new FormControl(this.color.getBlueHex(), [Validators.pattern(/^[0-9A-F]{2}$/i), Validators.required]);
-        this.alpha = new FormControl(this.color.opacity, [Validators.required]);
+        this.redForm = new FormControl(this.color.getRedHex(), [Validators.pattern(/^[0-9A-F]{2}$/i), Validators.required]);
+        this.greenForm = new FormControl(this.color.getGreenHex(), [Validators.pattern(/^[0-9A-F]{2}$/i), Validators.required]);
+        this.blueForm = new FormControl(this.color.getBlueHex(), [Validators.pattern(/^[0-9A-F]{2}$/i), Validators.required]);
+        this.alphaForm = new FormControl(this.color.opacity, [Validators.required]);
     }
 
     onRedChange(value: string): void {
         this.color.setRedHex(value);
-        this.red.setValue(this.color.getRedHex());
+        this.redForm.setValue(this.color.getRedHex());
+        this.redForm.updateValueAndValidity();
     }
 
     onGreenChange(value: string): void {
         this.color.setGreenHex(value);
-        this.green.setValue(this.color.getGreenHex());
+        this.greenForm.setValue(this.color.getGreenHex());
     }
 
     onBlueChange(value: string): void {
         this.color.setBlueHex(value);
-        this.blue.setValue(this.color.getBlueHex());
+        this.blueForm.setValue(this.color.getBlueHex());
     }
 
     changeOpacity(value: number): void {
         this.color.opacity = value;
-        this.alpha.setValue(this.color.opacity);
+        this.alphaForm.setValue(this.color.opacity);
     }
 
     closeDialog(): void {
         this.confirm.emit();
     }
 
-    getColorErrorMessage(form: FormControl): string {
-        return form.errors ? 'Couleur non valide' : '';
-    }
-
-    getOpacityErrorMessage(): string {
-        return this.alpha.errors ? 'SVP saisir une valeur entre 0 et 1' : '';
-    }
-
     isColorInvalid(): boolean {
-        return this.red.invalid || this.green.invalid || this.blue.invalid || this.alpha.invalid;
+        return this.redForm.invalid || this.greenForm.invalid || this.blueForm.invalid || this.alphaForm.invalid;
     }
 }

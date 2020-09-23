@@ -2,21 +2,29 @@
     <mat-form-field appearance="fill">
         <mat-label>Red</mat-label>
         <span matPrefix>#</span>
-        <mat-error>{{ getColorErrorMessage(red) }}</mat-error>
-        <input #redInput [value]="color.getRedHex()" type="text" (blur)="onRedChange(redInput.value)" maxlength="2" [formControl]="red" matInput />
+        <mat-error>Couleur non valide</mat-error>
+        <input
+            #redInput
+            [value]="color.getRedHex()"
+            type="text"
+            (blur)="onRedChange(redInput.value)"
+            maxlength="2"
+            [formControl]="redForm"
+            matInput
+        />
     </mat-form-field>
 
     <mat-form-field appearance="fill">
         <mat-label>Green</mat-label>
         <span matPrefix>#</span>
-        <mat-error>{{ getColorErrorMessage(green) }}</mat-error>
+        <mat-error>Couleur non valide</mat-error>
         <input
             #greenInput
             [value]="color.getGreenHex()"
             type="text"
             (blur)="onGreenChange(greenInput.value)"
             maxlength="2"
-            [formControl]="green"
+            [formControl]="greenForm"
             matInput
         />
     </mat-form-field>
@@ -24,14 +32,14 @@
     <mat-form-field appearance="fill">
         <mat-label>Blue</mat-label>
         <span matPrefix>#</span>
-        <mat-error>{{ getColorErrorMessage(blue) }}</mat-error>
+        <mat-error>Couleur non valide</mat-error>
         <input
             #blueInput
             [value]="color.getBlueHex()"
             type="text"
             (blur)="onBlueChange(blueInput.value)"
             maxlength="2"
-            [formControl]="blue"
+            [formControl]="blueForm"
             matInput
         />
     </mat-form-field>
@@ -39,7 +47,7 @@
     <div>
         <mat-form-field appearance="fill">
             <mat-label>Opacity</mat-label>
-            <mat-error>{{ getOpacityErrorMessage() }}</mat-error>
+            <mat-error>SVP saisir une valeur entre 0 et 1</mat-error>
             <input
                 #alphaInput
                 type="text"
@@ -49,7 +57,7 @@
                 max="1"
                 step="0.01"
                 maxlength="4"
-                [formControl]="alpha"
+                [formControl]="alphaForm"
                 matInput
             />
         </mat-form-field>

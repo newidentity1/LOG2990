@@ -2,6 +2,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { ErrorStateMatcher, ShowOnDirtyErrorStateMatcher } from '@angular/material/core';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -29,7 +30,6 @@ import { PencilComponent } from './components/tools-options/pencil/pencil.compon
 import { RectangleComponent } from './components/tools-options/rectangle/rectangle.component';
 import { ThicknessSliderComponent } from './components/tools-options/thickness-slider/thickness-slider.component';
 import { RecentColorsComponent } from './recent-colors/recent-colors.component';
-
 @NgModule({
     declarations: [
         AppComponent,
@@ -68,7 +68,7 @@ import { RecentColorsComponent } from './recent-colors/recent-colors.component';
         MatFormFieldModule,
         MatButtonModule,
     ],
-    providers: [],
+    providers: [{ provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher }],
     bootstrap: [AppComponent],
 })
 export class AppModule {}

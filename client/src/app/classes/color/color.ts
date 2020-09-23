@@ -49,19 +49,23 @@ export class Color {
 
     setRedHex(hexValue: string): void {
         const bin = this.hexToBin(hexValue);
-        if (bin > 0 && bin <= CONSTANTS.MAX_COLOR_VALUE) {
+        if (bin !== null && bin > 0 && bin <= CONSTANTS.MAX_COLOR_VALUE) {
             this.red = bin;
         }
     }
 
     setGreenHex(hexValue: string): void {
         const bin = this.hexToBin(hexValue);
-        this.green = isNaN(bin) ? this.greenValue : bin;
+        if (bin !== null && bin > 0 && bin <= CONSTANTS.MAX_COLOR_VALUE) {
+            this.green = bin;
+        }
     }
 
     setBlueHex(hexValue: string): void {
         const bin = this.hexToBin(hexValue);
-        this.blue = isNaN(bin) ? this.blueValue : bin;
+        if (bin !== null && bin > 0 && bin <= CONSTANTS.MAX_COLOR_VALUE) {
+            this.blue = bin;
+        }
     }
 
     getRedHex(): string {
@@ -82,9 +86,12 @@ export class Color {
 
     private computeRBGFromHex(): void {
         const hexValue = this.hexString.replace('#', '');
-        this.redValue = this.hexToBin(hexValue.substring(0, CONSTANTS.RED_POSITION_IN_HEX_STRING));
-        this.greenValue = this.hexToBin(hexValue.substring(CONSTANTS.RED_POSITION_IN_HEX_STRING, CONSTANTS.GREEN_POSITION_IN_HEX_STRING));
-        this.blueValue = this.hexToBin(hexValue.substring(CONSTANTS.GREEN_POSITION_IN_HEX_STRING, CONSTANTS.BLUE_POSITION_IN_HEX_STRING));
+        const redBin = this.hexToBin(hexValue.substring(0, CONSTANTS.RED_POSITION_IN_HEX_STRING));
+        this.redValue = redBin !== null ? redBin : this.redValue;
+        const greenBin = this.hexToBin(hexValue.substring(CONSTANTS.RED_POSITION_IN_HEX_STRING, CONSTANTS.GREEN_POSITION_IN_HEX_STRING));
+        this.greenValue = greenBin !== null ? greenBin : this.greenValue;
+        const blueBin = this.hexToBin(hexValue.substring(CONSTANTS.GREEN_POSITION_IN_HEX_STRING, CONSTANTS.BLUE_POSITION_IN_HEX_STRING));
+        this.blueValue = blueBin !== null ? blueBin : this.blueValue;
     }
 
     private computeHexFromRGB(): void {
@@ -96,7 +103,10 @@ export class Color {
         return hex.length === 1 ? '0' + hex : hex;
     }
 
-    private hexToBin(hex: string): number {
-        return parseInt(hex, CONSTANTS.HEX_BASE);
+    private hexToBin(hex: string): number | null {
+        if (hex.match(/[0-9A-F]{1,2}$/i)) {
+            return parseInt(hex, CONSTANTS.HEX_BASE);
+        }
+        return null;
     }
 }
