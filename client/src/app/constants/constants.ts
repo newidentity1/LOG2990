@@ -28,3 +28,6 @@ export const CANVAS_MIN_WIDTH = 250;
 export const CANVAS_MIN_HEIGHT = 250;
 export const CANVAS_MARGIN_LEFT = 15;
 export const CANVAS_MARGIN_TOP = 20;
+
+export const MAX_COLOR_VALUE = 255;
+
