@@ -1,0 +1,18 @@
+<div>
+    <div id="canvas-container">
+        <canvas id="colorPickerCanvas" #colorPickerCanvas class="color-canvas" [attr.width]="width" [attr.height]="height"></canvas>
+        <canvas
+            #cursorCanvas
+            id="cursorCanvas"
+            [attr.width]="width"
+            [attr.height]="height"
+            (mousedown)="onMouseDown($event)"
+            (mousemove)="onMouseMove($event)"
+        >
+        </canvas>
+    </div>
+
+    <div id="currentColorPreview" [ngStyle]="{ backgroundColor: getCurrentColor().toStringRGBA() }"></div>
+    <div id="currentColorPreview" [ngStyle]="{ backgroundColor: getPreviousColor().toStringRGBA() }"></div>
+    <app-color-picker-form [color]="getCurrentColor()" (confirm)="onDialogClose()"></app-color-picker-form>
+</div>

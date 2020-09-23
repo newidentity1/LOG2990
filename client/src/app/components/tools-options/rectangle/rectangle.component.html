@@ -1,1 +1,11 @@
-<p>rectangle works!</p>
+<h3>Propriété du rectangle</h3>
+<label id="type-drawing-label">Choisissez le type de rectangle que vous souhaitez dessiner:</label>
+<mat-radio-group aria-labelledby="type-drawing-label" id="type-drawing-group" [(ngModel)]="currentType" ngDefaultControl>
+    <mat-radio-button class="type-drawing" *ngFor="let type of typesDrawing | keyvalue" [value]="type.value" (change)="onTypeDrawingChange($event)">
+        {{ type.value }}
+    </mat-radio-button>
+</mat-radio-group>
+
+<label id="type-drawing-label">Choisissez la valeur de l'épaisseur:</label>
+
+<app-thickness-slider (thicknessChange)="onThicknessChange($event)" [startingValue]="this.currentThickness"></app-thickness-slider>

@@ -13,8 +13,7 @@ describe('RectangleService', () => {
 
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
-    let drawFillRectSpy: jasmine.Spy<any>;
-    let drawPreviewSpy: jasmine.Spy<any>;
+    let drawSpy: jasmine.Spy<any>;
     let isWidthSmallestSpy: jasmine.Spy<any>;
 
     beforeEach(() => {
@@ -26,8 +25,7 @@ describe('RectangleService', () => {
             providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
         });
         service = TestBed.inject(RectangleService);
-        drawFillRectSpy = spyOn<any>(service, 'drawFillRect').and.callThrough();
-        drawPreviewSpy = spyOn<any>(service, 'drawPreview').and.callThrough();
+        drawSpy = spyOn<any>(service, 'draw').and.callThrough();
         isWidthSmallestSpy = spyOn<any>(service, 'isWidthSmallest').and.callThrough();
 
         // Configuration du spy du service
@@ -56,20 +54,20 @@ describe('RectangleService', () => {
         expect(service.startingY).toEqual(expectedResult.y);
     });
 
-    it(' onMouseUp should call drawFillRect if mouse was already down', () => {
+    it(' onMouseUp should call draw if mouse was already down', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = true;
 
         service.onMouseUp(mouseEvent);
-        expect(drawFillRectSpy).toHaveBeenCalled();
+        expect(drawSpy).toHaveBeenCalled();
     });
 
-    it(' onMouseUp should not call drawFillRect if mouse was not already down', () => {
+    it(' onMouseUp should not call draw if mouse was not already down', () => {
         service.mouseDown = false;
         service.mouseDownCoord = { x: 0, y: 0 };
 
         service.onMouseUp(mouseEvent);
-        expect(drawFillRectSpy).not.toHaveBeenCalled();
+        expect(drawSpy).not.toHaveBeenCalled();
     });
 
     it(' onMouseUp should call isWidthSmallest if shift and mouse is down', () => {
@@ -90,20 +88,20 @@ describe('RectangleService', () => {
         expect(isWidthSmallestSpy).not.toHaveBeenCalled();
     });
 
-    it(' onMouseMove should call drawPreview if mouse was already down', () => {
+    it(' onMouseMove should call draw if mouse was already down', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = true;
 
         service.onMouseMove(mouseEvent);
-        expect(drawPreviewSpy).toHaveBeenCalled();
+        expect(drawSpy).toHaveBeenCalled();
     });
 
-    it(' onMouseMove should not call drawPreview if mouse was not already down', () => {
+    it(' onMouseMove should not call draw if mouse was not already down', () => {
         service.mouseDown = false;
         service.mouseDownCoord = { x: 0, y: 0 };
 
         service.onMouseUp(mouseEvent);
-        expect(drawPreviewSpy).not.toHaveBeenCalled();
+        expect(drawSpy).not.toHaveBeenCalled();
     });
 
     it(' onKeyDown should set shiftDown to true if shift is down', () => {

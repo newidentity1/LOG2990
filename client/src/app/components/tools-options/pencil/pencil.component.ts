@@ -1,16 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { MatSliderChange } from '@angular/material/slider';
+import { PencilService } from '@app/services/tools/pencil/pencil-service';
 
 @Component({
     selector: 'app-pencil-options',
     templateUrl: './pencil.component.html',
     styleUrls: ['./pencil.component.scss'],
 })
-export class PencilComponent implements OnInit {
-    constructor() {
-        // TODO à  implementer
+export class PencilComponent {
+    currentThickness: number;
+
+    constructor(private pencilService: PencilService) {
+        this.currentThickness = this.pencilService.toolProperties.thickness;
     }
 
-    ngOnInit(): void {
-        // TODO à implementer
+    onThicknessChange(event: MatSliderChange): void {
+        this.pencilService.setThickness(event.value);
     }
 }
