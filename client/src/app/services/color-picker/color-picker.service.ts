@@ -1,15 +1,18 @@
 import { Injectable } from '@angular/core';
-import { Color } from '@app/classes/color';
+import { Color } from '@app/classes/color/color';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import * as CONSTANTS from '@app/constants/constants';
 import { MouseButton } from '@app/enums/mouse-button.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class ColorPickerService extends Tool {
+    // TODO: do not extend from Tool?
+
     colorCanvasCtx: CanvasRenderingContext2D;
     cursorCanvasCtx: CanvasRenderingContext2D;
 
@@ -18,7 +21,7 @@ export class ColorPickerService extends Tool {
     selectedColor: Color;
     recentColors: Color[];
 
-    constructor(protected drawingService: DrawingService) {
+    constructor(protected drawingService: DrawingService, private toolbarService: ToolbarService) {
         super(drawingService);
         this.primaryColor = new Color(CONSTANTS.BLACK);
         this.secondaryColor = new Color(CONSTANTS.WHITE);
@@ -96,6 +99,10 @@ export class ColorPickerService extends Tool {
         }
     }
 
+    updateDrawingColor(): void {
+        this.toolbarService.setColors(this.primaryColor, this.secondaryColor);
+    }
+
     private drawCursor(ctx: CanvasRenderingContext2D, position: Vec2): void {
         ctx.strokeStyle = this.selectedColor.toStringRGBA();
         ctx.beginPath();
@@ -121,11 +128,6 @@ export class ColorPickerService extends Tool {
         color.alpha = this.selectedColor.alpha;
 
         return color;
-    }
-
-    private updateDrawingColor(): void {
-        this.drawingService.setFillColor(this.primaryColor.toStringRGBA());
-        this.drawingService.setStrokeColor(this.secondaryColor.toStringRGBA());
     }
 
     private addToRecentColors(color: Color): void {

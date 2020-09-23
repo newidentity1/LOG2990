@@ -1,5 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Tool } from '@app/classes/tool';
+import { SVGFilterComponent } from '@app/components/svgfilter/svgfilter.component';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle.service';
@@ -22,7 +23,7 @@ describe('DrawingComponent', () => {
         drawingStub = new DrawingService();
 
         TestBed.configureTestingModule({
-            declarations: [DrawingComponent],
+            declarations: [DrawingComponent, SVGFilterComponent],
             providers: [
                 { provide: PencilService, useValue: toolStub },
                 { provide: RectangleService, useValue: toolStub },
