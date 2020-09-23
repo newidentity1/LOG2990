@@ -8,7 +8,11 @@ import { PencilService } from '@app/services/tools/pencil/pencil-service';
     styleUrls: ['./pencil.component.scss'],
 })
 export class PencilComponent {
-    constructor(private pencilService: PencilService) {}
+    currentThickness: number;
+
+    constructor(private pencilService: PencilService) {
+        this.currentThickness = this.pencilService.toolProperties.thickness;
+    }
 
     onThicknessChange(event: MatSliderChange): void {
         this.pencilService.setThickness(event.value);
