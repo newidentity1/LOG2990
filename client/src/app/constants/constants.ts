@@ -21,4 +21,12 @@ export const MINIMUM_THICKNESS = 1;
 export const MAXIMUM_THICKNESS = 100;
 export const DASHED_SEGMENTS = 6;
 
+export const DEFAULT_WIDTH = 1000;
+export const DEFAULT_HEIGHT = 800;
+
+export const CANVAS_MIN_WIDTH = 250;
+export const CANVAS_MIN_HEIGHT = 250;
+export const CANVAS_MARGIN_LEFT = 15;
+export const CANVAS_MARGIN_TOP = 20;
+
 export const MAX_COLOR_VALUE = 255;
