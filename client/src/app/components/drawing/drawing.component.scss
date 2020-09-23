@@ -6,11 +6,55 @@ canvas {
 }
 
 #canvas {
-    z-index: 0;
+    z-index: 1;
     background-color: white;
 }
 
 #canvas-container {
     position: relative;
     margin: 5px 0px 0px 5px;
+}
+
+#previewLayer {
+    z-index: 2;
+}
+
+.showOutline {
+    outline: 1px dashed black;
+}
+
+#filters {
+    display: none;
+}
+
+.resizable {
+    z-index: 0;
+    position: absolute;
+    margin: 5px 0px 0px 5px;
+    box-sizing: border-box;
+}
+
+.resizable .resizer {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: purple;
+    border: 3px solid purple;
+    position: absolute;
+}
+
+.resizable .resizer.right-center {
+    right: -10px;
+    top: -10px;
+    cursor: e-resize;
+}
+.resizable .resizer.bottom-center {
+    left: -10px;
+    bottom: -10px;
+    cursor: s-resize;
+}
+.resizable .resizer.bottom-right {
+    right: -10px;
+    bottom: -10px;
+    cursor: nwse-resize;
 }

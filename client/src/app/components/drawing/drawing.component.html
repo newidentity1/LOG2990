@@ -1,7 +1,20 @@
 <div id="canvas-container">
-
-    <svgfilter id="filters" (contextmenu)="false" #drawing [attr.width]="width" [attr.height]="height" > </svgfilter>
+    <svgfilter id="filters" (contextmenu)="(false)" #drawing [attr.width]="width" [attr.height]="height"> </svgfilter>
 
     <canvas id="canvas" #baseCanvas [attr.width]="width" [attr.height]="height"></canvas>
-    <canvas id="previewLayer" #previewCanvas [attr.width]="width" [attr.height]="height"></canvas>
+    <canvas
+        id="previewLayer"
+        [ngClass]="{ showOutline: isResizingWidth || isResizingHeight }"
+        #previewCanvas
+        [attr.width]="width"
+        [attr.height]="height"
+        (mousedown)="onMouseDown($event)"
+        (mousemove)="onMouseMove($event)"
+    ></canvas>
+</div>
+
+<div class="resizable" [style.width.px]="width" [style.height.px]="height">
+    <div class="resizer right-center" (mousedown)="onResizeWidthStart($event)" (mousemove)="onResize($event)"></div>
+    <div class="resizer bottom-center" (mousedown)="onResizeHeightStart($event)" (mousemove)="onResize($event)"></div>
+    <div class="resizer bottom-right" (mousedown)="onResizeBothStart($event)" (mousemove)="onResize($event)"></div>
 </div>
