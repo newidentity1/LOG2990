@@ -4,7 +4,6 @@ import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
 const MINIMAL_DISTANCE = 50;
-const LINE_WIDTH = 10;
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
 export enum MouseButton {
@@ -122,7 +121,6 @@ export class LineService extends Tool {
 
     // dessine la ligne
     private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        ctx.lineWidth = LINE_WIDTH;
         ctx.beginPath();
         for (const point of path) {
             ctx.lineTo(point.x, point.y);
@@ -143,5 +141,12 @@ export class LineService extends Tool {
 
     private clearPath(): void {
         this.pathData = [];
+    }
+
+    setThickness(value: number | null): void {
+        // TODO possiblement ajouter de la validation ici aussi
+        value = value === null ? 1 : value;
+        this.toolProperties.thickness = value;
+        this.drawingService.setThickness(value);
     }
 }
