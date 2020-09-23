@@ -74,18 +74,6 @@ export class ColorPickerComponent implements AfterViewInit {
         this.colorPickerService.onMouseUp(event);
     }
 
-    onRedChange(value: string): void {
-        this.colorPickerService.setRedHex(value);
-    }
-
-    onGreenChange(value: string): void {
-        this.colorPickerService.setGreenHex(value);
-    }
-
-    onBlueChange(value: string): void {
-        this.colorPickerService.setBlueHex(value);
-    }
-
     getRecentColors(): Color[] {
         return this.colorPickerService.recentColors;
     }
@@ -98,11 +86,7 @@ export class ColorPickerComponent implements AfterViewInit {
         return this.data.isSecondaryColorPicker ? this.colorPickerService.secondaryColor : this.colorPickerService.primaryColor;
     }
 
-    changeOpacity(value: number): void {
-        this.colorPickerService.selectedColor.alpha = value;
-    }
-
-    onConfirm(): void {
+    onDialogClose(): void {
         this.colorPickerService.confirmSelectedColor(this.data.isSecondaryColorPicker);
         this.dialogRef.close();
     }
