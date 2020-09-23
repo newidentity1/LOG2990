@@ -79,3 +79,6 @@ export class ToolbarService {
         }
     }
 }
+import { DrawingService } from '@app/services/drawing/drawing.service';
+        protected drawingService: DrawingService,
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
