@@ -64,7 +64,6 @@ export class EllipseService extends ShapeTool {
 
     onKeyUp(event: KeyboardEvent): void {
         this.shiftDown = event.key === 'Shift' ? false : this.shiftDown;
-        this.escapeDown = event.key === 'Escape' ? false : this.shiftDown;
         if (this.mouseDown) this.drawPreview();
     }
 
