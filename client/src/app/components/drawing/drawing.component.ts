@@ -1,6 +1,6 @@
-import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
-import { CANVAS_MIN_HEIGHT, CANVAS_MIN_WIDTH, DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants/constants';
+import { CANVAS_MARGIN_LEFT, CANVAS_MARGIN_TOP, CANVAS_MIN_HEIGHT, CANVAS_MIN_WIDTH, DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants/constants';
 import { MouseButton } from '@app/enums/mouse-button.enum';
 import { ColorPickerService } from '@app/services/color-picker/color-picker.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -15,6 +15,9 @@ export class DrawingComponent implements AfterViewInit {
     @ViewChild('baseCanvas', { static: false }) baseCanvas: ElementRef<HTMLCanvasElement>;
     // On utilise ce canvas pour dessiner sans affecter le dessin final
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
+
+    @Input() drawingContainerWidth: number;
+    @Input() drawingContainerHeight: number;
 
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
@@ -48,7 +51,6 @@ export class DrawingComponent implements AfterViewInit {
 
     @HostListener('window:mouseup', ['$event'])
     onMouseUp(event: MouseEvent): void {
-        console.log(event.target);
         if (this.isResizingWidth || this.isResizingHeight) {
             const newWidth = this.isResizingWidth ? this.previewCanvas.nativeElement.width : this.width;
             const newHeight = this.isResizingHeight ? this.previewCanvas.nativeElement.height : this.height;
@@ -89,7 +91,8 @@ export class DrawingComponent implements AfterViewInit {
             event.preventDefault();
             const newWidth = event.clientX - this.baseCanvas.nativeElement.getBoundingClientRect().x;
             if (newWidth >= CANVAS_MIN_WIDTH) {
-                this.previewCanvas.nativeElement.width = newWidth;
+                this.previewCanvas.nativeElement.width =
+                    newWidth >= this.drawingContainerWidth - CANVAS_MARGIN_LEFT ? this.drawingContainerWidth - CANVAS_MARGIN_LEFT : newWidth;
             }
         }
 
@@ -97,7 +100,8 @@ export class DrawingComponent implements AfterViewInit {
             event.preventDefault();
             const newHeight = event.clientY - this.baseCanvas.nativeElement.getBoundingClientRect().y;
             if (newHeight >= CANVAS_MIN_HEIGHT) {
-                this.previewCanvas.nativeElement.height = newHeight;
+                this.previewCanvas.nativeElement.height =
+                    newHeight >= this.drawingContainerHeight - CANVAS_MARGIN_TOP ? this.drawingContainerHeight - CANVAS_MARGIN_TOP : newHeight;
             }
         }
     }
