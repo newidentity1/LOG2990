@@ -86,6 +86,7 @@ export class DrawingComponent implements AfterViewInit {
     @HostListener('window:mousemove', ['$event'])
     onResize(event: MouseEvent): void {
         if (this.isResizingWidth) {
+            event.preventDefault();
             const newWidth = event.clientX - this.baseCanvas.nativeElement.getBoundingClientRect().x;
             if (newWidth >= CANVAS_MIN_WIDTH) {
                 this.previewCanvas.nativeElement.width = newWidth;
@@ -93,6 +94,7 @@ export class DrawingComponent implements AfterViewInit {
         }
 
         if (this.isResizingHeight) {
+            event.preventDefault();
             const newHeight = event.clientY - this.baseCanvas.nativeElement.getBoundingClientRect().y;
             if (newHeight >= CANVAS_MIN_HEIGHT) {
                 this.previewCanvas.nativeElement.height = newHeight;
