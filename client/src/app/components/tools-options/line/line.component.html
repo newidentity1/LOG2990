@@ -1,1 +1,2 @@
 <label id="type-drawing-label">Choisissez la valeur de l'épaisseur:</label>
+<mat-slider thumbLabel (change)="onThicknessChange($event)" tickInterval="1" min="1" max="100" [value]="this.currentThickness"> </mat-slider>

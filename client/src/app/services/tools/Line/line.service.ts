@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Tool } from '@app/classes/tool';
+import { ShapeTool } from '@app/classes/shape-tool';
+import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
@@ -21,54 +22,82 @@ export enum MouseButton {
 @Injectable({
     providedIn: 'root',
 })
-export class LineService extends Tool {
+export class LineService extends ShapeTool {
     // ligne principale
     private pathData: Vec2[];
     private index: number = 0;
+    private mouse: Vec2;
+    private shift: boolean = false;
+    private lock180: boolean = false;
+    private lock90: boolean = false;
+    private lock45: boolean = false;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.name = 'Line';
         this.tooltip = 'Line';
         this.iconName = 'show_chart';
+        this.toolProperties = new BasicShapeProperties();
         this.clearPath();
     }
 
     onClick(event: MouseEvent): void {
         console.log('CLICK');
         this.mouseDown = event.button === MouseButton.Left;
-
         this.index++;
-        console.log(this.index);
         const mousePosition = this.getPositionFromMouse(event);
-
+        const point: Vec2 = mousePosition;
         if (this.index < 2) {
             this.pathData.push(mousePosition);
         } else {
-            this.pathData.push(mousePosition);
-            // this.drawingService.clearCanvas(this.drawingService.baseCtx);
-
+            const dx = mousePosition.x - this.pathData[this.pathData.length - 1].x;
+            const dy = mousePosition.y - this.pathData[this.pathData.length - 1].y;
+            if (this.lock180) {
+                // TODO
+                point.y = this.pathData[this.pathData.length - 1].y;
+                this.pathData.push(point);
+            } else if (this.lock45) {
+                // TODO
+                if ((dx > 0 && dy > 0) || (dx < 0 && dy < 0)) {
+                    point.y = Math.tan(45) * (point.x - this.pathData[this.pathData.length - 1].x) + this.pathData[this.pathData.length - 1].y;
+                }
+                if ((dx > 0 && dy < 0) || (dx < 0 && dy > 0)) {
+                    // TODO
+                    point.y = -Math.tan(45) * (point.x - this.pathData[this.pathData.length - 1].x) + this.pathData[this.pathData.length - 1].y;
+                }
+                this.pathData.push(point);
+            } else if (this.lock90) {
+                // TODO
+                point.x = this.pathData[this.pathData.length - 1].x;
+                this.pathData.push(point);
+            } else {
+                this.pathData.push(mousePosition);
+            }
             this.drawLine(this.drawingService.previewCtx, this.pathData);
         }
     }
 
     onMouseMove(event: MouseEvent): void {
-        this.afficherSegementPreview(event);
+        this.mouse = this.getPositionFromMouse(event);
+        if (this.shift) {
+            this.clearlock();
+            this.ajustementAngle(event);
+        } else {
+            this.afficherSegementPreview(event);
+        }
     }
 
     // SHIFT appuyé
     onKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
         if (event.key === 'Shift') {
-            this.drawLine(this.drawingService.previewCtx, this.pathData);
-            // this.shiftPress = true;
             console.log('SHIFT-DOWN');
+            this.shift = true;
         }
         if (event.code === 'Backspace') {
             if (this.pathData.length >= 2) {
                 this.pathData.pop();
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                // this.drawingService.clearCanvas(this.drawingService.baseCtx);
                 this.drawLine(this.drawingService.previewCtx, this.pathData);
                 this.index = this.index - 1;
             }
@@ -115,7 +144,18 @@ export class LineService extends Tool {
     // SHIFT relaché
     onKeyUp(event: KeyboardEvent): void {
         if (event.key === 'Shift') {
-            console.log('SHIFT-UP');
+            this.shift = false;
+            this.lock180 = false;
+            this.lock45 = false;
+            this.lock90 = false;
+            // TODO
+            // si on a pas encore commencer de ligne
+            this.pathData.push(this.mouse);
+            // on suprime l'ancien segment et on définit le nouveau
+            // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.drawLine(this.drawingService.previewCtx, this.pathData);
+            this.pathData.pop();
         }
     }
 
@@ -139,6 +179,16 @@ export class LineService extends Tool {
         this.pathData.pop();
     }
 
+    private afficherSegementPreviewAngle(event: MouseEvent, point: Vec2): void {
+        // si on a pas encore commencer de ligne
+        this.pathData.push(point);
+        // on suprime l'ancien segment et on définit le nouveau
+        // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.drawLine(this.drawingService.previewCtx, this.pathData);
+        this.pathData.pop();
+    }
+
     private clearPath(): void {
         this.pathData = [];
     }
@@ -148,5 +198,77 @@ export class LineService extends Tool {
         value = value === null ? 1 : value;
         this.toolProperties.thickness = value;
         this.drawingService.setThickness(value);
+    }
+
+    private ajustementAngle(event: MouseEvent): number {
+        let angle = 0;
+        if (this.pathData.length >= 1) {
+            // A position de la souris
+            const mousePosition = this.getPositionFromMouse(event);
+            const x1: number = mousePosition.x;
+            const y1: number = mousePosition.y;
+            // B  dernier point de la ligne
+            const x2: number = this.pathData[this.pathData.length - 1].x;
+            const y2: number = this.pathData[this.pathData.length - 1].y;
+            // C avant dernier point de la ligne
+
+            // verifie qu'une ligne existe bien
+            if (x1 !== x2 && y1 !== y2) {
+                const d1: number = Math.abs(x1 - x2);
+                const d2: number = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+                angle = Math.acos(d1 / d2);
+                // angle en degres
+                angle = angle * (180 / Math.PI);
+                // test
+                // console.log(angle);
+                if (angle >= 22.5 && angle <= 67.5) {
+                    this.lockAngle(event, 45);
+                }
+                if (angle < 90 && angle > 67.5) {
+                    this.lockAngle(event, 90);
+                }
+                if (angle < 22.5 && angle >= 0) {
+                    this.lockAngle(event, 180);
+                }
+            }
+        }
+        return angle;
+    }
+
+    private lockAngle(event: MouseEvent, angle: number): void {
+        // TODO
+        const mousePosition = this.getPositionFromMouse(event);
+        const point: Vec2 = mousePosition;
+        const dx = mousePosition.x - this.pathData[this.pathData.length - 1].x;
+        const dy = mousePosition.y - this.pathData[this.pathData.length - 1].y;
+        if (angle === 45) {
+            // todo
+            this.lock45 = true;
+            if ((dx > 0 && dy > 0) || (dx < 0 && dy < 0)) {
+                point.y = Math.tan(45) * (point.x - this.pathData[this.pathData.length - 1].x) + this.pathData[this.pathData.length - 1].y;
+                console.log(point.y);
+            }
+            if ((dx > 0 && dy < 0) || (dx < 0 && dy > 0)) {
+                // TODO
+                point.y = -Math.tan(45) * (point.x - this.pathData[this.pathData.length - 1].x) + this.pathData[this.pathData.length - 1].y;
+            }
+        } else if (angle === 90) {
+            // TODO
+            point.x = this.pathData[this.pathData.length - 1].x;
+            this.lock90 = true;
+        } else if (angle === 180) {
+            this.lock180 = true;
+            point.y = this.pathData[this.pathData.length - 1].y;
+        } else {
+            // TODO
+            point.y = this.pathData[this.pathData.length - 1].y;
+        }
+        this.afficherSegementPreviewAngle(event, point);
+    }
+
+    private clearlock(): void {
+        this.lock180 = false;
+        this.lock90 = false;
+        this.lock45 = false;
     }
 }
