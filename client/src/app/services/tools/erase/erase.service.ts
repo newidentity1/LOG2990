@@ -14,11 +14,12 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 export class EraseService extends TracingTool {
     constructor(drawingService: DrawingService) {
         super(drawingService);
-        this.name = 'Efface';
-        this.tooltip = 'Efface';
+        this.name = 'Erase';
+        this.tooltip = 'Erase';
         this.iconName = 'create';
         this.toolProperties = new BasicShapeProperties();
         this.clearPath();
+        this.drawingService.setThickness(20);
     }
 
     protected drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
@@ -27,7 +28,8 @@ export class EraseService extends TracingTool {
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
         for (const point of path) {
-            ctx.fillRect(point.x, point.y, 20, 20);
+            // ctx.fillRect(point.x - 10, point.y - 10, 20, 20);
+            ctx.lineTo(point.x, point.y);
             // ctx.rect(point.x, point.y, 20, 20);
         }
         ctx.stroke();
@@ -38,7 +40,12 @@ export class EraseService extends TracingTool {
         this.drawingService.clearCanvas(cursorCtx);
         this.drawingService.setColor('#FFFFFF');
         cursorCtx.beginPath();
-        cursorCtx.rect(position.x - 10, position.y - 10, 20, 20);
+        cursorCtx.rect(
+            position.x - this.toolProperties.thickness / 2,
+            position.y - this.toolProperties.thickness / 2,
+            this.toolProperties.thickness,
+            this.toolProperties.thickness,
+        );
         cursorCtx.fill();
     }
 }
