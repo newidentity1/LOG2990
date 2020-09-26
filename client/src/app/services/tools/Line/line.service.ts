@@ -272,7 +272,6 @@ export class LineService extends ShapeTool {
         const point: Vec2 = mousePosition;
         const dx = mousePosition.x - this.pathData[this.pathData.length - 1].x;
         const dy = mousePosition.y - this.pathData[this.pathData.length - 1].y;
-        // tslint:disable-next-line: prefer-switch
         if (angle === CONSTANTS.ANGLE_45) {
             // todo
             this.lock45 = true;
