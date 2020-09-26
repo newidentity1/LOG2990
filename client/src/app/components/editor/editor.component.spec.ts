@@ -14,11 +14,13 @@ import { PencilComponent } from '@app/components/tools-options/pencil/pencil.com
 import { RectangleComponent } from '@app/components/tools-options/rectangle/rectangle.component';
 import { ThicknessSliderComponent } from '@app/components/tools-options/thickness-slider/thickness-slider.component';
 import { RecentColorsComponent } from '@app/recent-colors/recent-colors.component';
+import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 import { EditorComponent } from './editor.component';
 
 describe('EditorComponent', () => {
     let component: EditorComponent;
     let fixture: ComponentFixture<EditorComponent>;
+    let toolbarService: ToolbarService;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
@@ -35,8 +37,9 @@ describe('EditorComponent', () => {
                 SVGFilterComponent,
             ],
             imports: [MatIconModule, MatTooltipModule, MatSidenavModule, BrowserAnimationsModule, MatSliderModule],
-            providers: [{ provide: MatDialog, useValue: {} }],
+            providers: [{ provide: MatDialog, useValue: {} }, ToolbarService],
         }).compileComponents();
+        toolbarService = TestBed.inject(ToolbarService);
     }));
 
     beforeEach(() => {
@@ -47,5 +50,29 @@ describe('EditorComponent', () => {
 
     it('should create', () => {
         expect(component).toBeTruthy();
+    });
+
+    it('should call the toolbar onKeyDown when receiving a keyboard event', () => {
+        const event = {} as KeyboardEvent;
+        const keyboardEventSpy = spyOn(toolbarService, 'onKeyDown').and.callThrough();
+        component.onKeyDown(event);
+        expect(keyboardEventSpy).toHaveBeenCalled();
+        expect(keyboardEventSpy).toHaveBeenCalledWith(event);
+    });
+
+    it('should call the toolbar onKeyPress when receiving a keyboard event', () => {
+        const event = {} as KeyboardEvent;
+        const keyboardEventSpy = spyOn(toolbarService.currentTool, 'onKeyPress').and.callThrough();
+        component.onKeyPress(event);
+        expect(keyboardEventSpy).toHaveBeenCalled();
+        expect(keyboardEventSpy).toHaveBeenCalledWith(event);
+    });
+
+    it('should call the toolbar onKeyUp when receiving a keyboard event', () => {
+        const event = {} as KeyboardEvent;
+        const keyboardEventSpy = spyOn(toolbarService.currentTool, 'onKeyUp').and.callThrough();
+        component.onKeyUp(event);
+        expect(keyboardEventSpy).toHaveBeenCalled();
+        expect(keyboardEventSpy).toHaveBeenCalledWith(event);
     });
 });
