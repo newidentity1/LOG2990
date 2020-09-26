@@ -31,6 +31,8 @@ export class LineService extends ShapeTool {
     private lock180: boolean = false;
     private lock90: boolean = false;
     private lock45: boolean = false;
+    private withPoint: boolean = false;
+    private pointSize: number = 10;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
@@ -47,7 +49,7 @@ export class LineService extends ShapeTool {
         this.index++;
         const mousePosition = this.getPositionFromMouse(event);
         const point: Vec2 = mousePosition;
-        if (this.index < 2) {
+        if (this.pathData.length <= 1) {
             this.pathData.push(mousePosition);
         } else {
             const dx = mousePosition.x - this.pathData[this.pathData.length - 1].x;
@@ -110,6 +112,7 @@ export class LineService extends ShapeTool {
 
     // double click donc fin de ligne
     onDoubleClick(event: MouseEvent): void {
+        this.index = 0;
         if (this.pathData.length >= 1) {
             const mousePosition = this.getPositionFromMouse(event);
             // calculer la distance entre la souris et le point de départ
@@ -161,13 +164,26 @@ export class LineService extends ShapeTool {
 
     // dessine la ligne
     private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        ctx.beginPath();
-        for (const point of path) {
-            ctx.lineTo(point.x, point.y);
+        if (!this.withPoint) {
+            ctx.beginPath();
+            for (const point of path) {
+                ctx.lineTo(point.x, point.y);
+            }
+            ctx.stroke();
+        } else {
+            ctx.beginPath();
+            for (const point of path) {
+                ctx.lineTo(point.x, point.y);
+                ctx.arc(point.x, point.y, this.pointSize, 20, 6.28, true);
+            }
+            ctx.stroke();
         }
-        ctx.stroke();
     }
 
+    setPointeSize(value: number | null) {
+        value = value === null ? 1 : value;
+        this.pointSize = value;
+    }
     private afficherSegementPreview(event: MouseEvent): void {
         const mousePosition = this.getPositionFromMouse(event);
         // si on a pas encore commencer de ligne
@@ -198,6 +214,16 @@ export class LineService extends ShapeTool {
         value = value === null ? 1 : value;
         this.toolProperties.thickness = value;
         this.drawingService.setThickness(value);
+    }
+
+    setTypeDrawing(value: string): void {
+        console.log(value);
+        if (value[0] === 'A') {
+            this.withPoint = true;
+        } else {
+            this.withPoint = false;
+        }
+        console.log(this.withPoint);
     }
 
     private ajustementAngle(event: MouseEvent): number {
