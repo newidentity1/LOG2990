@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ShapeTool } from '@app/classes/shape-tool';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 import { Vec2 } from '@app/classes/vec2';
+import * as CONSTANTS from '@app/constants/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
 const MINIMAL_DISTANCE = 50;
@@ -61,11 +62,15 @@ export class LineService extends ShapeTool {
             } else if (this.lock45) {
                 // TODO
                 if ((dx > 0 && dy > 0) || (dx < 0 && dy < 0)) {
-                    point.y = Math.tan(45) * (point.x - this.pathData[this.pathData.length - 1].x) + this.pathData[this.pathData.length - 1].y;
+                    point.y =
+                        Math.tan(CONSTANTS.ANGLE_45) * (point.x - this.pathData[this.pathData.length - 1].x) +
+                        this.pathData[this.pathData.length - 1].y;
                 }
                 if ((dx > 0 && dy < 0) || (dx < 0 && dy > 0)) {
                     // TODO
-                    point.y = -Math.tan(45) * (point.x - this.pathData[this.pathData.length - 1].x) + this.pathData[this.pathData.length - 1].y;
+                    point.y =
+                        -Math.tan(CONSTANTS.ANGLE_45) * (point.x - this.pathData[this.pathData.length - 1].x) +
+                        this.pathData[this.pathData.length - 1].y;
                 }
                 this.pathData.push(point);
             } else if (this.lock90) {
@@ -174,13 +179,13 @@ export class LineService extends ShapeTool {
             ctx.beginPath();
             for (const point of path) {
                 ctx.lineTo(point.x, point.y);
-                ctx.arc(point.x, point.y, this.pointSize, 20, 6.28, true);
+                ctx.arc(point.x, point.y, this.pointSize, CONSTANTS.DEFAULT_LINE_POINT_SIZE, Math.PI * 2, true);
             }
             ctx.stroke();
         }
     }
 
-    setPointeSize(value: number | null) {
+    setPointeSize(value: number | null): void {
         value = value === null ? 1 : value;
         this.pointSize = value;
     }
@@ -244,17 +249,17 @@ export class LineService extends ShapeTool {
                 const d2: number = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
                 angle = Math.acos(d1 / d2);
                 // angle en degres
-                angle = angle * (180 / Math.PI);
+                angle = angle * ((CONSTANTS.ANGLE_90 * 2) / Math.PI);
                 // test
                 // console.log(angle);
-                if (angle >= 22.5 && angle <= 67.5) {
-                    this.lockAngle(event, 45);
+                if (angle >= CONSTANTS.ANGLE_45 / 2 && angle <= CONSTANTS.ANGLE_45 + CONSTANTS.ANGLE_45 / 2) {
+                    this.lockAngle(event, CONSTANTS.ANGLE_45);
                 }
-                if (angle < 90 && angle > 67.5) {
-                    this.lockAngle(event, 90);
+                if (angle < CONSTANTS.ANGLE_90 && angle > CONSTANTS.ANGLE_45 + CONSTANTS.ANGLE_45 / 2) {
+                    this.lockAngle(event, CONSTANTS.ANGLE_90);
                 }
-                if (angle < 22.5 && angle >= 0) {
-                    this.lockAngle(event, 180);
+                if (angle < CONSTANTS.ANGLE_45 / 2 && angle >= 0) {
+                    this.lockAngle(event, CONSTANTS.ANGLE_180);
                 }
             }
         }
@@ -267,22 +272,25 @@ export class LineService extends ShapeTool {
         const point: Vec2 = mousePosition;
         const dx = mousePosition.x - this.pathData[this.pathData.length - 1].x;
         const dy = mousePosition.y - this.pathData[this.pathData.length - 1].y;
-        if (angle === 45) {
+        // tslint:disable-next-line: prefer-switch
+        if (angle === CONSTANTS.ANGLE_45) {
             // todo
             this.lock45 = true;
             if ((dx > 0 && dy > 0) || (dx < 0 && dy < 0)) {
-                point.y = Math.tan(45) * (point.x - this.pathData[this.pathData.length - 1].x) + this.pathData[this.pathData.length - 1].y;
+                point.y =
+                    Math.tan(CONSTANTS.ANGLE_45) * (point.x - this.pathData[this.pathData.length - 1].x) + this.pathData[this.pathData.length - 1].y;
                 console.log(point.y);
             }
             if ((dx > 0 && dy < 0) || (dx < 0 && dy > 0)) {
                 // TODO
-                point.y = -Math.tan(45) * (point.x - this.pathData[this.pathData.length - 1].x) + this.pathData[this.pathData.length - 1].y;
+                point.y =
+                    -Math.tan(CONSTANTS.ANGLE_45) * (point.x - this.pathData[this.pathData.length - 1].x) + this.pathData[this.pathData.length - 1].y;
             }
-        } else if (angle === 90) {
+        } else if (angle === CONSTANTS.ANGLE_90) {
             // TODO
             point.x = this.pathData[this.pathData.length - 1].x;
             this.lock90 = true;
-        } else if (angle === 180) {
+        } else if (angle === CONSTANTS.ANGLE_180) {
             this.lock180 = true;
             point.y = this.pathData[this.pathData.length - 1].y;
         } else {

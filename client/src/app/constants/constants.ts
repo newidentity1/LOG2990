@@ -30,3 +30,9 @@ export const CANVAS_MARGIN_LEFT = 15;
 export const CANVAS_MARGIN_TOP = 20;
 
 export const MAX_COLOR_VALUE = 255;
+
+export const ANGLE_90 = 90;
+export const ANGLE_45 = 45;
+export const ANGLE_180 = 180;
+
+export const DEFAULT_LINE_POINT_SIZE = 20;
