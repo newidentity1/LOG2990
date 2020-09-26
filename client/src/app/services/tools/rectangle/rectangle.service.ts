@@ -23,6 +23,7 @@ export class RectangleService extends ShapeTool {
     width: number;
     height: number;
     shiftDown: boolean = false;
+    currentMousePosition: Vec2;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
@@ -41,10 +42,9 @@ export class RectangleService extends ShapeTool {
         }
     }
 
-    onMouseUp(event: MouseEvent): void {
+    onMouseUp(): void {
         if (this.mouseDown) {
-            const mousePosition = this.getPositionFromMouse(event);
-            this.computeDimensions(mousePosition);
+            this.computeDimensions(this.currentMousePosition);
             if (this.shiftDown) {
                 const square = this.transformToSquare(this.width, this.height);
                 this.width = square.x;
@@ -58,8 +58,8 @@ export class RectangleService extends ShapeTool {
 
     onMouseMove(event: MouseEvent): void {
         if (this.mouseDown) {
-            const mousePosition = this.getPositionFromMouse(event);
-            this.computeDimensions(mousePosition);
+            this.currentMousePosition = this.getPositionFromMouse(event);
+            this.computeDimensions(this.currentMousePosition);
 
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             const previewCtx = this.drawingService.previewCtx;
@@ -82,7 +82,7 @@ export class RectangleService extends ShapeTool {
         }
     }
 
-    private draw(ctx: CanvasRenderingContext2D): void {
+    draw(ctx: CanvasRenderingContext2D): void {
         let width = this.width;
         let height = this.height;
         if (this.shiftDown) {
@@ -137,7 +137,6 @@ export class RectangleService extends ShapeTool {
     }
 
     setThickness(value: number | null): void {
-        // TODO possiblement ajouter de la validation ici aussi
         value = value === null ? 1 : value;
         this.toolProperties.thickness = value;
         this.drawingService.setThickness(value);
@@ -148,15 +147,15 @@ export class RectangleService extends ShapeTool {
         rectangleProperties.currentType = value;
     }
 
-    private drawFillRect(ctx: CanvasRenderingContext2D, width: number, height: number): void {
+    drawFillRect(ctx: CanvasRenderingContext2D, width: number, height: number): void {
         ctx.fillRect(this.startingX, this.startingY, width, height);
     }
 
-    private drawStrokeRect(ctx: CanvasRenderingContext2D, width: number, height: number): void {
+    drawStrokeRect(ctx: CanvasRenderingContext2D, width: number, height: number): void {
         ctx.strokeRect(this.startingX, this.startingY, width, height);
     }
 
-    private drawFillStrokeRect(ctx: CanvasRenderingContext2D, width: number, height: number): void {
+    drawFillStrokeRect(ctx: CanvasRenderingContext2D, width: number, height: number): void {
         this.drawFillRect(ctx, width, height);
         this.drawStrokeRect(ctx, width, height);
     }
