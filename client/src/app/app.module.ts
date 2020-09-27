@@ -30,6 +30,7 @@ import { PencilComponent } from './components/tools-options/pencil/pencil.compon
 import { RectangleComponent } from './components/tools-options/rectangle/rectangle.component';
 import { ThicknessSliderComponent } from './components/tools-options/thickness-slider/thickness-slider.component';
 import { RecentColorsComponent } from './recent-colors/recent-colors.component';
+import { EraseComponent } from './components/tools-options/erase/erase/erase.component';
 @NgModule({
     declarations: [
         AppComponent,
@@ -47,6 +48,7 @@ import { RecentColorsComponent } from './recent-colors/recent-colors.component';
         ThicknessSliderComponent,
         SVGFilterComponent,
         ColorPickerFormComponent,
+        EraseComponent,
     ],
     imports: [
         BrowserModule,
