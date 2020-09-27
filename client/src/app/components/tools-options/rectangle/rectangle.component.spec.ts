@@ -12,7 +12,7 @@ describe('RectangleComponent', () => {
     let component: RectangleComponent;
     let fixture: ComponentFixture<RectangleComponent>;
     let rectangleService: RectangleService;
-    // tslint:disable-next-line: no-any / reason: spy of functions
+    // tslint:disable: no-any / reason: spy of functions
     let thicknessSpy: jasmine.SpyObj<any>;
     let typeDrawingSpy: jasmine.SpyObj<any>;
     let matSliderEvent: MatSliderChange;
@@ -46,6 +46,7 @@ describe('RectangleComponent', () => {
         component.onThicknessChange(matSliderEvent);
         // tslint:disable-next-line: no-string-literal
         expect(thicknessSpy).toHaveBeenCalled();
+        expect(thicknessSpy).toHaveBeenCalledWith(MAXIMUM_THICKNESS / 2);
     });
 
     it('onThicknessChange should not call setThickness of rectangle service if value is outside scope', () => {
@@ -60,6 +61,7 @@ describe('RectangleComponent', () => {
         matRadioEvent = { source: matRadioSource, value: DrawingType.Fill };
         component.onTypeDrawingChange(matRadioEvent);
         expect(typeDrawingSpy).toHaveBeenCalled();
+        expect(typeDrawingSpy).toHaveBeenCalledWith(DrawingType.Fill);
     });
 
     it('onTypeDrawingChange should not call setTypeDrawing of rectangle service if value is not in Enum DrawingType', () => {
