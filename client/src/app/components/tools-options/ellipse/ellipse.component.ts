@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { MatRadioChange } from '@angular/material/radio';
 import { MatSliderChange } from '@angular/material/slider';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
+import { DrawingType } from '@app/enums/drawing-type.enum';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
 
 @Component({
@@ -10,8 +11,8 @@ import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
     styleUrls: ['./ellipse.component.scss'],
 })
 export class EllipseComponent {
-    typesDrawing: string[] = ['Contour', 'Plein', 'Plein avec contour'];
-    currentType: string = this.typesDrawing[0];
+    typesDrawing: typeof DrawingType = DrawingType;
+    currentType: string;
     currentThickness: number;
 
     constructor(public ellipseService: EllipseService) {
