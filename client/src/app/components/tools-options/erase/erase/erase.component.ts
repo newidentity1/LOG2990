@@ -12,6 +12,12 @@ export class EraseComponent {
         this.currentThickness = this.eraseService.toolProperties.thickness;
     }
     onThicknessChange(event: MatSliderChange): void {
-        this.eraseService.setThickness(event.value);
+        if (event.value != null) {
+            if (event.value >= 5) {
+                this.eraseService.setThickness(event.value);
+            } else {
+                this.eraseService.setThickness(5);
+            }
+        }
     }
 }
