@@ -263,16 +263,15 @@ describe('RectangleService', () => {
         expect(properties.currentType).toEqual(properties.typesDrawing[0]);
     });
 
-    it(' setTypeDrawing should set the currentType of rectangleProperties', () => {
-        const properties = service.toolProperties as BasicShapeProperties;
-        const value = properties.typesDrawing[0];
-        service.setTypeDrawing(value);
-        expect(properties.currentType).toEqual(properties.typesDrawing[0]);
-    });
-
     it('drawFill should call fillRect of context', () => {
         const spy = spyOn(baseCtxStub, 'fillRect');
         service.drawFillRect(baseCtxStub, 1, 1);
+        expect(spy).toHaveBeenCalled();
+    });
+
+    it('drawStroke should call strokeRect of context', () => {
+        const spy = spyOn(baseCtxStub, 'strokeRect');
+        service.drawStrokeRect(baseCtxStub, 1, 1);
         expect(spy).toHaveBeenCalled();
     });
 
