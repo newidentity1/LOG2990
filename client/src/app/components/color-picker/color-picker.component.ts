@@ -21,7 +21,7 @@ export class ColorPickerComponent implements AfterViewInit {
     constructor(
         private colorPickerService: ColorPickerService,
         public dialogRef: MatDialogRef<ColorPickerComponent>,
-        @Inject(MAT_DIALOG_DATA) private data: { isSecondaryColorPicker: boolean },
+        @Inject(MAT_DIALOG_DATA) public data: { isSecondaryColorPicker: boolean },
     ) {}
 
     ngAfterViewInit(): void {

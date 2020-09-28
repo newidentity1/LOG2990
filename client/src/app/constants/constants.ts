@@ -1,5 +1,5 @@
-export const BLACK = '#000000';
-export const WHITE = '#FFFFFF';
+export const BLACK = '000000';
+export const WHITE = 'FFFFFF';
 export const DEFAULT_COLOR_OPACITY = 1;
 export const MAX_RECENT_COLORS_SIZE = 10;
 export const HEX_BASE = 16;

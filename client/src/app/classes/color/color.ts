@@ -85,17 +85,16 @@ export class Color {
     }
 
     private computeRBGFromHex(): void {
-        const hexValue = this.hexString.replace('#', '');
-        const redBin = this.hexToBin(hexValue.substring(0, CONSTANTS.RED_POSITION_IN_HEX_STRING));
+        const redBin = this.hexToBin(this.hexString.substring(0, CONSTANTS.RED_POSITION_IN_HEX_STRING));
         this.redValue = redBin !== null ? redBin : this.redValue;
-        const greenBin = this.hexToBin(hexValue.substring(CONSTANTS.RED_POSITION_IN_HEX_STRING, CONSTANTS.GREEN_POSITION_IN_HEX_STRING));
+        const greenBin = this.hexToBin(this.hexString.substring(CONSTANTS.RED_POSITION_IN_HEX_STRING, CONSTANTS.GREEN_POSITION_IN_HEX_STRING));
         this.greenValue = greenBin !== null ? greenBin : this.greenValue;
-        const blueBin = this.hexToBin(hexValue.substring(CONSTANTS.GREEN_POSITION_IN_HEX_STRING, CONSTANTS.BLUE_POSITION_IN_HEX_STRING));
+        const blueBin = this.hexToBin(this.hexString.substring(CONSTANTS.GREEN_POSITION_IN_HEX_STRING, CONSTANTS.BLUE_POSITION_IN_HEX_STRING));
         this.blueValue = blueBin !== null ? blueBin : this.blueValue;
     }
 
     private computeHexFromRGB(): void {
-        this.hexString = '#' + this.binToHex(this.redValue) + this.binToHex(this.greenValue) + this.binToHex(this.blueValue);
+        this.hexString = this.binToHex(this.redValue) + this.binToHex(this.greenValue) + this.binToHex(this.blueValue);
     }
 
     private binToHex(bin: number): string {

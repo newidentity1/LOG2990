@@ -46,10 +46,6 @@ export class ColorPickerService extends Tool {
         this.mouseDown = false;
     }
 
-    onMouseLeave(event: MouseEvent): void {
-        this.mouseDown = false;
-    }
-
     setRedHex(hex: string): void {
         this.selectedColor.setRedHex(hex);
     }
@@ -104,7 +100,7 @@ export class ColorPickerService extends Tool {
     }
 
     private drawCursor(ctx: CanvasRenderingContext2D, position: Vec2): void {
-        ctx.strokeStyle = this.selectedColor.toStringRGBA();
+        ctx.strokeStyle = '#' + this.selectedColor.hex;
         ctx.beginPath();
         this.drawingService.clearCanvas(ctx);
         ctx.lineWidth = 2;
