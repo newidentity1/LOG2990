@@ -49,21 +49,21 @@ export class Color {
 
     setRedHex(hexValue: string): void {
         const bin = this.hexToBin(hexValue);
-        if (bin !== null && bin > 0 && bin <= CONSTANTS.MAX_COLOR_VALUE) {
+        if (bin !== null) {
             this.red = bin;
         }
     }
 
     setGreenHex(hexValue: string): void {
         const bin = this.hexToBin(hexValue);
-        if (bin !== null && bin > 0 && bin <= CONSTANTS.MAX_COLOR_VALUE) {
+        if (bin !== null) {
             this.green = bin;
         }
     }
 
     setBlueHex(hexValue: string): void {
         const bin = this.hexToBin(hexValue);
-        if (bin !== null && bin > 0 && bin <= CONSTANTS.MAX_COLOR_VALUE) {
+        if (bin !== null) {
             this.blue = bin;
         }
     }
