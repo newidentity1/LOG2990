@@ -1,9 +1,13 @@
-<div>
-    <button
-        class="recentColorButton"
-        *ngFor="let color of getRecentColors()"
-        [ngStyle]="{ backgroundColor: color.toStringRGBA() }"
-        (click)="selectAsPrimaryColor(color)"
-        (contextmenu)="selectAsSecondaryColor($event, color)"
-    ></button>
+<div id="container">
+    <span>Couleurs recentes</span>
+    <div id="grid-container">
+        <button
+            class="recent-color-button"
+            *ngFor="let color of getRecentColors()"
+            [ngStyle]="{ backgroundColor: color.toStringRGBA() }"
+            (click)="selectAsPrimaryColor(color)"
+            (contextmenu)="selectAsSecondaryColor($event, color)"
+            mat-mini-fab
+        ></button>
+    </div>
 </div>

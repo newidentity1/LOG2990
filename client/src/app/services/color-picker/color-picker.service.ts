@@ -27,6 +27,9 @@ export class ColorPickerService extends Tool {
         this.secondaryColor = new Color(CONSTANTS.WHITE);
         this.selectedColor = new Color(CONSTANTS.BLACK);
         this.recentColors = [];
+        for (let i = 0; i < CONSTANTS.MAX_RECENT_COLORS_SIZE; i++) {
+            this.recentColors.push(new Color(CONSTANTS.BLACK));
+        }
     }
 
     onMouseDown(event: MouseEvent): void {
