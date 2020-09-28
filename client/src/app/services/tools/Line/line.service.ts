@@ -32,9 +32,9 @@ export class LineService extends ShapeTool {
     // si shift appuye
     shift: boolean = false;
     // ancrage du segment de previsualisation selon un angle
-    private lock180: boolean = false;
-    private lock90: boolean = false;
-    private lock45: boolean = false;
+    lock180: boolean = false;
+    lock90: boolean = false;
+    lock45: boolean = false;
     // ligne avec ou sans point
     private withPoint: boolean = false;
     // taille des points de liaisons
@@ -113,7 +113,6 @@ export class LineService extends ShapeTool {
         event.preventDefault();
         if (event.key === 'Shift') {
             this.shift = true;
-            console.log(this.shift);
         }
         if (event.code === 'Backspace') {
             // efface le dernier segment

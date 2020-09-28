@@ -7,7 +7,7 @@ import { LineService } from './line.service';
 describe('LineServiceService', () => {
     let service: LineService;
     let mouseEventclick1: MouseEvent;
-    // let keyBordShift: KeyboardEvent;
+    let keyboardEventShift: KeyboardEvent;
     // let mouseEventclick2: MouseEvent;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
 
@@ -43,10 +43,7 @@ describe('LineServiceService', () => {
             button: 0,
         } as MouseEvent;
 
-        // keyBordShift = {
-        //     code: 'Shift',
-        //     key: 'Shift',
-        // } as KeyboardEvent;
+        keyboardEventShift = new KeyboardEvent('keyDown', { key: 'Shift' });
     });
 
     it('should be created', () => {
@@ -71,9 +68,36 @@ describe('LineServiceService', () => {
         expect(drawLineSpy).toHaveBeenCalled();
     });
 
-    // it('shift is press should set shift to true', () => {
-    //     service.onKeyDown(keyBordShift);
-    //     expect(service.shift).toEqual(false);
+    it('shift is press should set shift to true', () => {
+        service.onKeyDown(keyboardEventShift);
+        expect(service.shift).toEqual(true);
+    });
+
+    it('shift press and click should put lock45 at true', () => {
+        service.onKeyDown(keyboardEventShift);
+        service.mouseDownCoord = { x: 50, y: 50 };
+        service.pathData.push(service.mouseDownCoord);
+        service.onMouseMove(mouseEventclick1);
+        expect(service.shift).toEqual(true);
+        expect(service.lock45).toEqual(true);
+    });
+
+    it('shift press and click should put lock45 at true', () => {
+        service.onKeyDown(keyboardEventShift);
+        service.mouseDownCoord = { x: -50, y: -50 };
+        service.pathData.push(service.mouseDownCoord);
+        service.onMouseMove(mouseEventclick1);
+        expect(service.shift).toEqual(true);
+        expect(service.lock45).toEqual(true);
+    });
+
+    // it('shift press and click should put lock90 at true', () => {
+    //     service.onKeyDown(keyboardEventShift);
+    //     service.mouseDownCoord = { x: 25, y: 50 };
+    //     service.pathData.push(service.mouseDownCoord);
+    //     service.onMouseMove(mouseEventclick1);
+    //     expect(service.shift).toEqual(true);
+    //     expect(service.lock90).toEqual(true);
     // });
 
     it(' onDoubleClick should call drawLine and close loop', () => {
