@@ -11,7 +11,7 @@ import { RectangleComponent } from './rectangle.component';
 describe('RectangleComponent', () => {
     let component: RectangleComponent;
     let fixture: ComponentFixture<RectangleComponent>;
-    let rectangleService: RectangleService;
+    let rectangleService: jasmine.SpyObj<RectangleService>;
     // tslint:disable-next-line: no-any / reason: spy of functions
     let thicknessSpy: jasmine.SpyObj<any>;
     // tslint:disable-next-line: no-any / reason: spy of functions
@@ -25,12 +25,13 @@ describe('RectangleComponent', () => {
     let matRadioSource: _MatRadioButtonBase;
 
     beforeEach(async(() => {
+        rectangleService = jasmine.createSpyObj('RectangleService', ['setThickness', 'setTypeDrawing']);
         TestBed.configureTestingModule({
             declarations: [RectangleComponent, ThicknessSliderComponent],
             imports: [MatSliderModule, MatRadioModule, FormsModule],
             providers: [RectangleService],
         }).compileComponents();
-        rectangleService = TestBed.inject(RectangleService);
+        rectangleService = TestBed.inject(RectangleService) as jasmine.SpyObj<RectangleService>;
     }));
 
     beforeEach(() => {
