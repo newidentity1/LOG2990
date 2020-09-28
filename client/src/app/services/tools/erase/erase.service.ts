@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
-import { TracingTool } from '@app/classes/tracing-tool';
 import { Vec2 } from '@app/classes/vec2';
+import { BLACK, WHITE } from '@app/constants/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { PencilService } from '@app/services/tools/pencil/pencil-service';
 
 // Ceci est une implémentation de base de l'outil Crayon pour aider à débuter le projet
 // L'implémentation ici ne couvre pas tous les critères d'accepetation du projet
@@ -11,41 +12,51 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 @Injectable({
     providedIn: 'root',
 })
-export class EraseService extends TracingTool {
+export class EraseService extends PencilService {
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.name = 'Erase';
-        this.tooltip = 'Erase';
-        this.iconName = 'create';
+        this.tooltip = 'Erase(E)';
+        this.iconName = 'kitchen';
         this.toolProperties = new BasicShapeProperties();
         this.clearPath();
-        this.drawingService.setThickness(20);
     }
 
     protected drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        this.drawingService.setColor('#FFFFFF');
+        this.drawingService.setStrokeColor(WHITE);
+        // this.drawingService.setFillColor(BLACK);
+
         ctx.beginPath();
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
+        ctx.lineJoin = 'bevel';
+        ctx.lineCap = 'square';
         for (const point of path) {
-            // ctx.fillRect(point.x - 10, point.y - 10, 20, 20);
             ctx.lineTo(point.x, point.y);
-            // ctx.rect(point.x, point.y, 20, 20);
         }
         ctx.stroke();
     }
 
     protected drawCursor(position: Vec2): void {
         const cursorCtx = this.drawingService.previewCtx;
-        this.drawingService.clearCanvas(cursorCtx);
-        this.drawingService.setColor('#FFFFFF');
+        if (!this.mouseDown) {
+            this.drawingService.clearCanvas(cursorCtx);
+        }
+        this.drawingService.setFillColor(WHITE);
+        this.drawingService.setStrokeColor(BLACK);
         cursorCtx.beginPath();
-        cursorCtx.rect(
+        cursorCtx.fillRect(
             position.x - this.toolProperties.thickness / 2,
             position.y - this.toolProperties.thickness / 2,
             this.toolProperties.thickness,
             this.toolProperties.thickness,
         );
-        cursorCtx.fill();
+
+        cursorCtx.lineWidth = 1;
+        cursorCtx.strokeRect(
+            position.x - this.toolProperties.thickness / 2,
+            position.y - this.toolProperties.thickness / 2,
+            this.toolProperties.thickness,
+            this.toolProperties.thickness,
+        );
+        cursorCtx.lineWidth = this.toolProperties.thickness;
     }
 }

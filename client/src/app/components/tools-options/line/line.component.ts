@@ -12,7 +12,7 @@ export class LineComponent implements OnInit {
     typesDrawing: string[] = ['Sans point', 'Avec Point'];
     currentType: string = this.typesDrawing[0];
     currentThickness: number;
-    pointSize : number;
+    pointSize: number;
 
     constructor(public lineService: LineService) {
         const lineProperties = lineService.toolProperties as BasicShapeProperties;

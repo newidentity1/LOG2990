@@ -33,7 +33,9 @@ export class PencilService extends TracingTool {
 
     protected drawCursor(position: Vec2): void {
         const cursorCtx = this.drawingService.previewCtx;
-        this.drawingService.clearCanvas(cursorCtx);
+        if (!this.mouseDown) {
+            this.drawingService.clearCanvas(cursorCtx);
+        }
         cursorCtx.beginPath();
         cursorCtx.arc(position.x, position.y, this.toolProperties.thickness / 2, 0, Math.PI * 2);
         cursorCtx.fill();

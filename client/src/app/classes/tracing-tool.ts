@@ -42,9 +42,8 @@ export abstract class TracingTool extends Tool {
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawLine(this.drawingService.previewCtx, this.pathData);
-        } else {
-            this.drawCursor(mousePosition);
         }
+        this.drawCursor(mousePosition);
     }
 
     onMouseEnter(event: MouseEvent): void {
@@ -62,9 +61,8 @@ export abstract class TracingTool extends Tool {
         if (this.mouseDown) {
             this.drawLine(this.drawingService.baseCtx, this.pathData);
             this.clearPath();
-        } else {
-            this.drawCursor(mousePosition);
         }
+        this.drawCursor(mousePosition);
     }
 
     setColors(primaryColor: Color, secondaryColor: Color): void {

@@ -15,6 +15,7 @@ export enum toolsIndex {
     rectangle,
     ellipse,
     lines,
+    eraser,
 }
 
 @Injectable({
@@ -84,6 +85,11 @@ export class ToolbarService {
             case 'l':
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.currentTool = this.tools[toolsIndex.lines];
+                break;
+            // Eraser
+            case 'e':
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                this.currentTool = this.tools[toolsIndex.eraser];
                 break;
         }
     }
