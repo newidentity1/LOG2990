@@ -26,7 +26,6 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { SVGFilterComponent } from './components/svgfilter/svgfilter.component';
 import { BrushComponent } from './components/tools-options/brush/brush.component';
 import { EllipseComponent } from './components/tools-options/ellipse/ellipse.component';
-import { EraseComponent } from './components/tools-options/erase/erase/erase.component';
 import { LineComponent } from './components/tools-options/line/line.component';
 import { PencilComponent } from './components/tools-options/pencil/pencil.component';
 import { RectangleComponent } from './components/tools-options/rectangle/rectangle.component';
@@ -50,7 +49,6 @@ import { RecentColorsComponent } from './recent-colors/recent-colors.component';
         SVGFilterComponent,
         BrushComponent,
         ColorPickerFormComponent,
-        EraseComponent,
     ],
     imports: [
         BrowserModule,

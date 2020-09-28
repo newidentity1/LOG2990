@@ -113,6 +113,7 @@ export class LineService extends ShapeTool {
         event.preventDefault();
         if (event.key === 'Shift') {
             this.shift = true;
+            console.log(this.shift);
         }
         if (event.code === 'Backspace') {
             // efface le dernier segment
