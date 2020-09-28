@@ -1,5 +1,5 @@
 <span *ngIf="data.isSecondaryColorPicker; else primaryColorTitle" matDialogTitle>Couleur secondaire</span>
-<span #primaryColorTitle matDialogTitle>Couleur Primaire</span>
+<ng-template #primaryColorTitle><span matDialogTitle>Couleur Primaire</span></ng-template>
 
 <div id="grid-container">
     <div id="canvas-container" [attr.width]="width" [attr.height]="height">
