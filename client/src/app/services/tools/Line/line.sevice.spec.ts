@@ -70,7 +70,7 @@ describe('LineServiceService', () => {
         service.onClick(mouseEventclick1);
         expect(drawLineSpy).toHaveBeenCalled();
     });
-;
+
     it('shift is press should set shift to true', () => {
         service.onKeyDown(keyBordShift);
         expect(service.shift).toEqual(false);
