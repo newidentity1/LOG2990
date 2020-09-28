@@ -43,6 +43,8 @@ export class SidebarComponent {
     }
 
     openDialog(): void {
-        this.dialog.open(GuideComponent);
+        this.dialog.open(GuideComponent, {
+            height: '95%',
+        });
     }
 }

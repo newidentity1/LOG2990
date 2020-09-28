@@ -2,66 +2,88 @@
     <mat-icon class="close-icon" color="warn">close</mat-icon>
 </button>
 <mat-tab-group>
-    <mat-tab label="Divers">
-        <h1>Créer un dessin</h1>
-        Pour créer un dessin cliquer sur créer un dessin sur la page
-        principale. Le site vous mènera à la route "editor" et vous
-        pourrez utiliser tous les outils disponibles de
-        l'application. L'interface est présentée de façon à ce que les
-        fonctionalités soient présentés à gauche. Vous pouvez cliquer
-        sur l'outil que vous voulez et ses propriétés seront affichées
-        à droite.
-        <h1>Carrousel de dessins</h1>
-        <h1>Sauvegarde automatique et manuelle</h1>
-        <h1>Exportation</h1>
-    </mat-tab>
-    <mat-tab label="Dessiner">
-        <h1>Outils</h1>
-        Les outils sont présents sur la barre latérale gauche et il
-        est possible de les sélectionner en cliquant ou en utilisant les
-        raccourcis suivant:
-        <table>
-            <tr>
-                <th>Résultat</th>
-                <th>Touche</th>
-            </tr>
-            <tr>
-                <td>Crayon</td>
-                <td>C</td>
-            </tr>
-            <tr>
-                <td>Pinceau</td>
-                <td>W</td>
-            </tr>
-            <tr>
-                <td>Rectangle</td>
-                <td>1</td>
-            </tr>
-            <tr>
-                <td>Ellipse</td>
-                <td>2</td>
-            </tr>
-            <tr>
-                <td>Ligne</td>
-                <td>L</td>
-            </tr>
-        </table>
-        <h2>Crayon</h2>
-        <h2>Pinceau</h2>
-        <h2>Rectangle</h2>
-        <h2>Ellipse</h2>
-        Lorsque l'outil ellipse est choisi, il est possible de
-        dessiner des ellipses out des cercles. Pour ce faire
-        l'utilisateur doit faire un clique gauche à une position de départ
-        et relâche à la position finale. En tout temps, le périmètre est
-        dessiné en pointillés. L'ellipse a donc la largeur et la
-        hauteur du périmètre. La touche Escape permet d'annuler le
-        dessin courant.
-
-        <h2>Ligne</h2>
-        <h1>Manipulations de sélection</h1>
-        <h1>Palette de couleur</h1>
-        <h1>Annuler-refaire</h1>
-        <h1>Grille et magnétisme</h1>
-    </mat-tab>
+    <div class="content">
+        <mat-tab label="Divers">
+            <h1>Créer un dessin</h1>
+            <div>
+                Pour créer un dessin cliquer sur créer un dessin sur la page
+                principale. Le site vous mènera à la route "editor" et vous
+                pourrez utiliser tous les outils disponibles de
+                l'application. L'interface est présentée de façon à ce que les
+                fonctionalités soient présentés à gauche. Vous pouvez cliquer
+                sur l'outil que vous voulez et ses propriétés seront affichées
+                à droite.
+            </div>
+            <h1>Carrousel de dessins</h1>
+            <h1>Sauvegarde automatique et manuelle</h1>
+            <h1>Exportation</h1>
+        </mat-tab>
+        <mat-tab label="Dessiner">
+            <h1>Outils</h1>
+            <div>
+                Les outils sont présents sur la barre latérale gauche et il
+                est possible de les sélectionner en cliquant ou en utilisant les
+                raccourcis suivant:
+                <br/>
+                <br/>
+                <table>
+                    <tr>
+                        <th>Résultat</th>
+                        <th>Touche</th>
+                    </tr>
+                    <tr>
+                        <td>Crayon</td>
+                        <td>C</td>
+                    </tr>
+                    <tr>
+                        <td>Pinceau</td>
+                        <td>W</td>
+                    </tr>
+                    <tr>
+                        <td>Rectangle</td>
+                        <td>1</td>
+                    </tr>
+                    <tr>
+                        <td>Ellipse</td>
+                        <td>2</td>
+                    </tr>
+                    <tr>
+                        <td>Ligne</td>
+                        <td>L</td>
+                    </tr>
+                </table>
+                <br/>
+            </div>
+            <h2>Crayon</h2>
+            <h2>Pinceau</h2>
+            <h2>Rectangle</h2>
+            <div>
+                Lorsque l'outil rectangle est choisi, il est possible de
+                dessiner des rectangles ou des carrés. Pour ce faire,
+                l'utilisateur doit faire un clique gauche à une
+                position de départ et relâche à la position finale. La
+                touche Shift permet de dessiner un carré avec comme longueur le
+                plus petit des côtés du périmètre fait par la souris. La touche
+                Escape permet d'annuler le dessin courant.
+            </div>
+            <h2>Ellipse</h2>
+            <div>
+                Lorsque l'outil ellipse est choisi, il est possible de
+                dessiner des ellipses ou des cercles. Pour ce faire,
+                l'utilisateur doit faire un clique gauche à une position de départ
+                et relâche à la position finale. En tout temps, le périmètre est
+                dessiné en pointillés. L'ellipse a donc la largeur et la
+                hauteur du périmètre. La touche Shift permet de
+                dessiner un cercle avec comme diamètre le plus petit des côtés du
+                périmètre fait par la souris. La touche Escape permet d'annuler le
+                dessin courant. Voici un exemple d'une ellipse et d'un
+                cercle respectivement.
+            </div>
+            <h2>Ligne</h2>
+            <h1>Manipulations de sélection</h1>
+            <h1>Palette de couleur</h1>
+            <h1>Annuler-refaire</h1>
+            <h1>Grille et magnétisme</h1>
+        </mat-tab>
+    </div>
 </mat-tab-group>
