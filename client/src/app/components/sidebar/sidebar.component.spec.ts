@@ -6,37 +6,34 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ColorToolComponent } from '@app/components/color-tool/color-tool.component';
-import { EllipseComponent } from '@app/components/tools-options/ellipse/ellipse.component';
-import { PencilComponent } from '@app/components/tools-options/pencil/pencil.component';
-import { RectangleComponent } from '@app/components/tools-options/rectangle/rectangle.component';
-import { ThicknessSliderComponent } from '@app/components/tools-options/thickness-slider/thickness-slider.component';
-import { RecentColorsComponent } from '@app/recent-colors/recent-colors.component';
+import { Tool } from '@app/classes/tool';
+import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
+import { PencilService } from '@app/services/tools/pencil/pencil-service';
+import { RectangleService } from '@app/services/tools/rectangle/rectangle.service';
 import { SidebarComponent } from './sidebar.component';
 
 describe('SidebarComponent', () => {
     let component: SidebarComponent;
     let fixture: ComponentFixture<SidebarComponent>;
-    let toolbarService: ToolbarService;
+    let toolbarServiceMock: jasmine.SpyObj<ToolbarService>;
+    let tool: Tool;
 
     beforeEach(async(() => {
+        toolbarServiceMock = jasmine.createSpyObj('ToolbarService', ['getTools', 'applyCurrentToolColor']);
+        tool = new PencilService(new DrawingService());
+
         TestBed.configureTestingModule({
-            declarations: [
-                SidebarComponent,
-                EllipseComponent,
-                PencilComponent,
-                RectangleComponent,
-                ColorToolComponent,
-                RecentColorsComponent,
-                ThicknessSliderComponent,
-            ],
+            declarations: [SidebarComponent],
             imports: [MatIconModule, MatTooltipModule, MatSidenavModule, BrowserAnimationsModule, MatSliderModule],
-            providers: [{ provide: MatDialog, useValue: {} }, ToolbarService],
+            providers: [
+                { provide: MatDialog, useValue: {} },
+                { provide: ToolbarService, useValue: toolbarServiceMock },
+            ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
 
-        toolbarService = TestBed.inject(ToolbarService);
+        toolbarServiceMock = TestBed.inject(ToolbarService) as jasmine.SpyObj<ToolbarService>;
     }));
 
     beforeEach(() => {
@@ -49,53 +46,47 @@ describe('SidebarComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('tools should be the same as toolbarService tools', () => {
-        const expectedResult = toolbarService.getTools();
-        expect(component.tools).toEqual(expectedResult);
-    });
-
     it('isCurrentTool should return true if the parameter is the currentTool', () => {
-        toolbarService.currentTool = component.tools[0];
-        const tool = toolbarService.currentTool;
-        const result = component.isCurrentTool(tool);
+        toolbarServiceMock.currentTool = tool;
+        const currentTool = toolbarServiceMock.currentTool;
+        const result = component.isCurrentTool(currentTool);
         expect(result).toEqual(true);
     });
 
     it('isCurrentTool should return false if the parameter is not the currentTool', () => {
-        toolbarService.currentTool = component.tools[0];
-        const tool = component.tools[1];
-        const result = component.isCurrentTool(tool);
+        const anotherTool = new RectangleService(new DrawingService());
+        toolbarServiceMock.currentTool = tool;
+        const result = component.isCurrentTool(anotherTool);
         expect(result).toEqual(false);
     });
 
     it('onToolChanged should change the currentTool, call applyCurrentToolColor of toolbarService and open the MatSideNav if the parameter is not the currentTool', () => {
-        toolbarService.currentTool = component.tools[0];
-        const tool = component.tools[1];
-        const spyApplyCurrent = spyOn(toolbarService, 'applyCurrentToolColor');
+        const anotherTool = new RectangleService(new DrawingService());
+        toolbarServiceMock.currentTool = tool;
         const spySideNav = spyOn(component.sidenavProperties, 'open');
-        component.onToolChanged(tool);
-        expect(toolbarService.currentTool).toEqual(tool);
-        expect(spyApplyCurrent).toHaveBeenCalled();
+        component.onToolChanged(anotherTool);
+        expect(toolbarServiceMock.currentTool).toEqual(anotherTool);
+        expect(toolbarServiceMock.applyCurrentToolColor).toHaveBeenCalled();
         expect(spySideNav).toHaveBeenCalled();
     });
 
     it('onToolChanged should toggle the MatSideNav if the parameter is not the currentTool', () => {
-        toolbarService.currentTool = component.tools[0];
-        const tool = component.tools[0];
+        toolbarServiceMock.currentTool = tool;
+        const currentTool = tool;
         const spySideNav = spyOn(component.sidenavProperties, 'toggle');
-        component.onToolChanged(tool);
+        component.onToolChanged(currentTool);
         expect(spySideNav).toHaveBeenCalled();
     });
 
     it('get currentTool should return the current tool of toolbarService', () => {
-        toolbarService.currentTool = component.tools[0];
-        const currentTool = toolbarService.currentTool;
+        toolbarServiceMock.currentTool = tool;
+        const currentTool = toolbarServiceMock.currentTool;
         expect(component.currentTool).toEqual(currentTool);
     });
 
     it('set currentTool should set the current tool of toolbarService', () => {
-        const currentTool = component.tools[0];
+        const currentTool = tool;
         component.currentTool = currentTool;
-        expect(toolbarService.currentTool).toEqual(currentTool);
+        expect(toolbarServiceMock.currentTool).toEqual(currentTool);
     });
 });
