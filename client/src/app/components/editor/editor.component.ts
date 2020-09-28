@@ -26,12 +26,12 @@ export class EditorComponent implements OnInit {
 
     @HostListener('keypress', ['$event'])
     onKeyPress(event: KeyboardEvent): void {
-        this.toolbarService.currentTool.onKeyPress(event);
+        this.toolbarService.onKeyPress(event);
     }
 
     @HostListener('keyup', ['$event'])
     onKeyUp(event: KeyboardEvent): void {
-        this.toolbarService.currentTool.onKeyUp(event);
+        this.toolbarService.onKeyUp(event);
     }
 
     ComputeDimensionsDrawingContainer(): void {

@@ -51,7 +51,7 @@ export class ToolbarService {
         this.currentTool.setColors(this.primaryColor, this.secondaryColor);
     }
 
-    // TODO: Change also change icon when switches
+    // TODO: refactor
     onKeyDown(event: KeyboardEvent): void {
         this.currentTool.onKeyDown(event);
         switch (event.key) {
@@ -84,5 +84,13 @@ export class ToolbarService {
                 this.currentTool = this.tools[toolsIndex.lines];
                 break;
         }
+    }
+
+    onKeyPress(event: KeyboardEvent): void {
+        this.currentTool.onKeyPress(event);
+    }
+
+    onKeyUp(event: KeyboardEvent): void {
+        this.currentTool.onKeyUp(event);
     }
 }
