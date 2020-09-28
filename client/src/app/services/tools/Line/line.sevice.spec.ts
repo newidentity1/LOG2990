@@ -7,6 +7,7 @@ import { LineService } from './line.service';
 describe('LineServiceService', () => {
     let service: LineService;
     let mouseEventclick1: MouseEvent;
+    let keyBordShift: KeyboardEvent;
     // let mouseEventclick2: MouseEvent;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
 
@@ -42,11 +43,10 @@ describe('LineServiceService', () => {
             button: 0,
         } as MouseEvent;
 
-        // mouseEventclick2 = {
-        //     offsetX: 200,
-        //     offsetY: 200,
-        //     button: 0,
-        // } as MouseEvent;
+        keyBordShift = {
+            code: 'Shift',
+            key: 'Shift',
+        } as KeyboardEvent;
     });
 
     it('should be created', () => {
@@ -69,6 +69,11 @@ describe('LineServiceService', () => {
         service.pathData.push(service.mouseDownCoord);
         service.onClick(mouseEventclick1);
         expect(drawLineSpy).toHaveBeenCalled();
+    });
+;
+    it('shift is press should set shift to true', () => {
+        service.onKeyDown(keyBordShift);
+        expect(service.shift).toEqual(false);
     });
 
     it(' onDoubleClick should call drawLine and close loop', () => {
