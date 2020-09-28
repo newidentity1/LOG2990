@@ -26,6 +26,7 @@ import { GuideComponent } from './components/guide/guide.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { SVGFilterComponent } from './components/svgfilter/svgfilter.component';
+import { BrushComponent } from './components/tools-options/brush/brush.component';
 import { EllipseComponent } from './components/tools-options/ellipse/ellipse.component';
 import { LineComponent } from './components/tools-options/line/line.component';
 import { PencilComponent } from './components/tools-options/pencil/pencil.component';
@@ -49,6 +50,7 @@ import { RecentColorsComponent } from './recent-colors/recent-colors.component';
         LineComponent,
         ThicknessSliderComponent,
         SVGFilterComponent,
+        BrushComponent,
         ColorPickerFormComponent,
     ],
     imports: [
