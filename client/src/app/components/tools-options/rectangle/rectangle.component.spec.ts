@@ -12,13 +12,16 @@ describe('RectangleComponent', () => {
     let component: RectangleComponent;
     let fixture: ComponentFixture<RectangleComponent>;
     let rectangleService: RectangleService;
-    // tslint:disable: no-any / reason: spy of functions
+    // tslint:disable-next-line: no-any / reason: spy of functions
     let thicknessSpy: jasmine.SpyObj<any>;
+    // tslint:disable-next-line: no-any / reason: spy of functions
     let typeDrawingSpy: jasmine.SpyObj<any>;
+
     let matSliderEvent: MatSliderChange;
-    // tslint:disable:prefer-const / reason: needed for matSliderSource and matRadioSource as placeholders
+    // tslint:disable-next-line: prefer-const / reason: needed for matSliderSource and matRadioSource as placeholders
     let matSliderSource: MatSlider;
     let matRadioEvent: MatRadioChange;
+    // tslint:disable-next-line: prefer-const
     let matRadioSource: _MatRadioButtonBase;
 
     beforeEach(async(() => {
@@ -44,7 +47,6 @@ describe('RectangleComponent', () => {
         thicknessSpy = spyOn(rectangleService, 'setThickness').and.callThrough();
         matSliderEvent = { source: matSliderSource, value: MAXIMUM_THICKNESS / 2 };
         component.onThicknessChange(matSliderEvent);
-        // tslint:disable-next-line: no-string-literal
         expect(thicknessSpy).toHaveBeenCalled();
         expect(thicknessSpy).toHaveBeenCalledWith(MAXIMUM_THICKNESS / 2);
     });
