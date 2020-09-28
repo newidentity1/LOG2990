@@ -12,6 +12,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
     providedIn: 'root',
 })
 export class EraseService extends TracingTool {
+    DEFAULT_SIZE: number = 20;
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.name = 'Erase';
@@ -19,7 +20,7 @@ export class EraseService extends TracingTool {
         this.iconName = 'create';
         this.toolProperties = new BasicShapeProperties();
         this.clearPath();
-        this.drawingService.setThickness(20);
+        this.drawingService.setThickness(this.DEFAULT_SIZE);
     }
 
     protected drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
