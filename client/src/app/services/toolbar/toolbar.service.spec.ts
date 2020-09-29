@@ -19,7 +19,20 @@ describe('ToolbarService', () => {
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
 
     beforeEach(() => {
-        pencilServiceSpy = jasmine.createSpyObj('PencilService', ['onKeyDown', 'setColors', 'onKeyPress', 'onKeyUp']);
+        pencilServiceSpy = jasmine.createSpyObj('PencilService', [
+            'onKeyDown',
+            'setColors',
+            'onKeyPress',
+            'onKeyUp',
+            'onMouseMove',
+            'onMouseDown',
+            'onMouseUp',
+            'onMouseEnter',
+            'onMouseLeave',
+            'onDoubleClick',
+            'onClick',
+        ]);
+
         brushServiceSpy = jasmine.createSpyObj('BrushService', ['onKeyDown']);
         rectangleServiceSpy = jasmine.createSpyObj('RectangleService', ['onKeyDown']);
         ellipseServiceSpy = jasmine.createSpyObj('EllipseService', ['onKeyDown']);
@@ -121,5 +134,61 @@ describe('ToolbarService', () => {
         service.onKeyUp(keyboardEvent);
 
         expect(service.currentTool.onKeyUp).toHaveBeenCalledWith(keyboardEvent);
+    });
+
+    it('onMouseMove should call the onMouseMove of the currentTool', () => {
+        service.currentTool = pencilServiceSpy;
+        const mouseEvent = {} as MouseEvent;
+        service.onMouseMove(mouseEvent);
+
+        expect(service.currentTool.onMouseMove).toHaveBeenCalledWith(mouseEvent);
+    });
+
+    it('onMouseDown should call the onMouseDown of the currentTool', () => {
+        service.currentTool = pencilServiceSpy;
+        const mouseEvent = {} as MouseEvent;
+        service.onMouseDown(mouseEvent);
+
+        expect(service.currentTool.onMouseDown).toHaveBeenCalledWith(mouseEvent);
+    });
+
+    it('onMouseUp should call the onMouseUp of the currentTool', () => {
+        service.currentTool = pencilServiceSpy;
+        const mouseEvent = {} as MouseEvent;
+        service.onMouseUp(mouseEvent);
+
+        expect(service.currentTool.onMouseUp).toHaveBeenCalledWith(mouseEvent);
+    });
+
+    it('onMouseEnter should call the onMouseEnter of the currentTool', () => {
+        service.currentTool = pencilServiceSpy;
+        const mouseEvent = {} as MouseEvent;
+        service.onMouseEnter(mouseEvent);
+
+        expect(service.currentTool.onMouseEnter).toHaveBeenCalledWith(mouseEvent);
+    });
+
+    it('onMouseLeave should call the onMouseLeave of the currentTool', () => {
+        service.currentTool = pencilServiceSpy;
+        const mouseEvent = {} as MouseEvent;
+        service.onMouseLeave(mouseEvent);
+
+        expect(service.currentTool.onMouseLeave).toHaveBeenCalledWith(mouseEvent);
+    });
+
+    it('onDoubleClick should call the onDoubleClick of the currentTool', () => {
+        service.currentTool = pencilServiceSpy;
+        const mouseEvent = {} as MouseEvent;
+        service.onDoubleClick(mouseEvent);
+
+        expect(service.currentTool.onDoubleClick).toHaveBeenCalledWith(mouseEvent);
+    });
+
+    it('onClick should call the onClick of the currentTool', () => {
+        service.currentTool = pencilServiceSpy;
+        const mouseEvent = {} as MouseEvent;
+        service.onClick(mouseEvent);
+
+        expect(service.currentTool.onClick).toHaveBeenCalledWith(mouseEvent);
     });
 });
