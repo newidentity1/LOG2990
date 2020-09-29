@@ -1,6 +1,16 @@
 import { AfterViewInit, Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
+import { Color } from '@app/classes/color/color';
 import { Vec2 } from '@app/classes/vec2';
-import { CANVAS_MARGIN_LEFT, CANVAS_MARGIN_TOP, CANVAS_MIN_HEIGHT, CANVAS_MIN_WIDTH, DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants/constants';
+import {
+    BLACK,
+    CANVAS_MARGIN_LEFT,
+    CANVAS_MARGIN_TOP,
+    CANVAS_MIN_HEIGHT,
+    CANVAS_MIN_WIDTH,
+    DEFAULT_HEIGHT,
+    DEFAULT_WIDTH,
+    WHITE,
+} from '@app/constants/constants';
 import { MouseButton } from '@app/enums/mouse-button.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
@@ -33,6 +43,7 @@ export class DrawingComponent implements AfterViewInit {
         this.drawingService.baseCtx = this.baseCtx;
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
+        this.toolbarService.setColors(new Color(BLACK), new Color(WHITE));
     }
 
     onMouseMove(event: MouseEvent): void {
