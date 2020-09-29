@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Color } from '@app/classes/color/color';
 import { Tool } from '@app/classes/tool';
+import { KeyShortcut } from '@app/enums/key-shortcuts.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { BrushService } from '@app/services/tools/brush/brush.service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
@@ -24,6 +25,7 @@ export class ToolbarService {
     currentTool: Tool;
     primaryColor: Color;
     secondaryColor: Color;
+    keyShortcuts: Map<string, Tool> = new Map();
 
     constructor(
         protected pencilService: PencilService,
@@ -35,10 +37,24 @@ export class ToolbarService {
     ) {
         this.tools = [pencilService, brushService, rectangleService, ellipseService, lineService];
         this.currentTool = this.tools[0];
+        this.keyShortcuts
+            .set(KeyShortcut.Pencil, pencilService)
+            .set(KeyShortcut.Brush, brushService)
+            .set(KeyShortcut.Rectangle, rectangleService)
+            .set(KeyShortcut.Ellipse, ellipseService)
+            .set(KeyShortcut.Line, lineService);
     }
 
     getTools(): Tool[] {
         return this.tools;
+    }
+
+    getTool(keyShortcut: string): Tool | undefined {
+        let tool: Tool | undefined;
+        if (this.keyShortcuts.has(keyShortcut)) {
+            tool = this.keyShortcuts.get(keyShortcut);
+        }
+        return tool;
     }
 
     setColors(primaryColor: Color, secondaryColor: Color): void {
@@ -51,38 +67,46 @@ export class ToolbarService {
         this.currentTool.setColors(this.primaryColor, this.secondaryColor);
     }
 
-    // TODO: Change also change icon when switches
     onKeyDown(event: KeyboardEvent): void {
         this.currentTool.onKeyDown(event);
-        switch (event.key) {
-            case 'c':
-                this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.currentTool = this.tools[toolsIndex.pencil];
-                break;
+        const toolFound = this.getTool(event.key);
+        this.currentTool = toolFound ? toolFound : this.currentTool;
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+    }
 
-            // Pinceau
-            case 'w':
-                this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.currentTool = this.tools[toolsIndex.brush];
-                break;
+    onKeyPress(event: KeyboardEvent): void {
+        this.currentTool.onKeyPress(event);
+    }
 
-            // Rectangle
-            case '1':
-                this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.currentTool = this.tools[toolsIndex.rectangle];
-                break;
+    onKeyUp(event: KeyboardEvent): void {
+        this.currentTool.onKeyUp(event);
+    }
 
-            // Ellipse
-            case '2':
-                this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.currentTool = this.tools[toolsIndex.ellipse];
-                break;
+    onMouseMove(event: MouseEvent): void {
+        this.currentTool.onMouseMove(event);
+    }
 
-            // Lines
-            case 'l':
-                this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.currentTool = this.tools[toolsIndex.lines];
-                break;
-        }
+    onMouseDown(event: MouseEvent): void {
+        this.currentTool.onMouseDown(event);
+    }
+
+    onMouseUp(event: MouseEvent): void {
+        this.currentTool.onMouseUp(event);
+    }
+
+    onMouseEnter(event: MouseEvent): void {
+        this.currentTool.onMouseEnter(event);
+    }
+
+    onMouseLeave(event: MouseEvent): void {
+        this.currentTool.onMouseLeave(event);
+    }
+
+    onDoubleClick(event: MouseEvent): void {
+        this.currentTool.onDoubleClick(event);
+    }
+
+    onClick(event: MouseEvent): void {
+        this.currentTool.onClick(event);
     }
 }

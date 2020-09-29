@@ -1,7 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Tool } from '@app/classes/tool';
-import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 
 @Component({
@@ -13,7 +12,7 @@ export class SidebarComponent {
     tools: Tool[];
     @ViewChild('toolProperties') sidenavProperties: MatSidenav;
 
-    constructor(protected toolbarService: ToolbarService, protected drawingService: DrawingService) {
+    constructor(protected toolbarService: ToolbarService) {
         this.tools = toolbarService.getTools();
     }
 
@@ -23,7 +22,6 @@ export class SidebarComponent {
 
     onToolChanged(tool: Tool): void {
         if (tool !== this.currentTool) {
-            // TODO voir comment on peut faire un "historique de propriétés"
             this.currentTool = tool;
             this.toolbarService.applyCurrentToolColor();
             this.sidenavProperties.open();

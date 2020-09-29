@@ -1,5 +1,5 @@
-import { Color } from '@app/classes/color/color';
-import { Tool } from '@app/classes/tool';
+import { Color } from './color/color';
+import { Tool } from './tool';
 
 export class ShapeTool extends Tool {
     setColors(primaryColor: Color, secondaryColor: Color): void {
