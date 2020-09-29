@@ -2,7 +2,6 @@ import { AfterViewInit, Component, ElementRef, HostListener, Input, ViewChild } 
 import { Vec2 } from '@app/classes/vec2';
 import { CANVAS_MARGIN_LEFT, CANVAS_MARGIN_TOP, CANVAS_MIN_HEIGHT, CANVAS_MIN_WIDTH, DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants/constants';
 import { MouseButton } from '@app/enums/mouse-button.enum';
-import { ColorPickerService } from '@app/services/color-picker/color-picker.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 
@@ -26,7 +25,7 @@ export class DrawingComponent implements AfterViewInit {
     isResizingWidth: boolean = false;
     isResizingHeight: boolean = false;
 
-    constructor(private drawingService: DrawingService, private toolbarService: ToolbarService, private colorService: ColorPickerService) {}
+    constructor(private drawingService: DrawingService, private toolbarService: ToolbarService) {}
 
     ngAfterViewInit(): void {
         this.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
@@ -34,18 +33,17 @@ export class DrawingComponent implements AfterViewInit {
         this.drawingService.baseCtx = this.baseCtx;
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
-        this.colorService.updateDrawingColor();
     }
 
     onMouseMove(event: MouseEvent): void {
         if (!this.isResizingWidth && !this.isResizingHeight) {
-            this.toolbarService.currentTool.onMouseMove(event);
+            this.toolbarService.onMouseMove(event);
         }
     }
 
     onMouseDown(event: MouseEvent): void {
         if (!this.isResizingWidth && !this.isResizingHeight) {
-            this.toolbarService.currentTool.onMouseDown(event);
+            this.toolbarService.onMouseDown(event);
         }
     }
 
@@ -65,24 +63,24 @@ export class DrawingComponent implements AfterViewInit {
             this.isResizingWidth = false;
             this.isResizingHeight = false;
         } else {
-            this.toolbarService.currentTool.onMouseUp(event);
+            this.toolbarService.onMouseUp(event);
         }
     }
 
     onMouseEnter(event: MouseEvent): void {
-        this.toolbarService.currentTool.onMouseEnter(event);
+        this.toolbarService.onMouseEnter(event);
     }
 
     onMouseLeave(event: MouseEvent): void {
-        this.toolbarService.currentTool.onMouseLeave(event);
+        this.toolbarService.onMouseLeave(event);
     }
 
     onDoubleClick(event: MouseEvent): void {
-        this.toolbarService.currentTool.onDoubleClick(event);
+        this.toolbarService.onDoubleClick(event);
     }
 
     onClick(event: MouseEvent): void {
-        this.toolbarService.currentTool.onClick(event);
+        this.toolbarService.onClick(event);
     }
 
     @HostListener('window:mousemove', ['$event'])

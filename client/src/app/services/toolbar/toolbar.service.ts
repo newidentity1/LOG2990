@@ -81,4 +81,32 @@ export class ToolbarService {
     onKeyUp(event: KeyboardEvent): void {
         this.currentTool.onKeyUp(event);
     }
+
+    onMouseMove(event: MouseEvent): void {
+        this.currentTool.onMouseMove(event);
+    }
+
+    onMouseDown(event: MouseEvent): void {
+        this.currentTool.onMouseDown(event);
+    }
+
+    onMouseUp(event: MouseEvent): void {
+        this.currentTool.onMouseUp(event);
+    }
+
+    onMouseEnter(event: MouseEvent): void {
+        this.currentTool.onMouseEnter(event);
+    }
+
+    onMouseLeave(event: MouseEvent): void {
+        this.currentTool.onMouseLeave(event);
+    }
+
+    onDoubleClick(event: MouseEvent): void {
+        this.currentTool.onDoubleClick(event);
+    }
+
+    onClick(event: MouseEvent): void {
+        this.currentTool.onClick(event);
+    }
 }
