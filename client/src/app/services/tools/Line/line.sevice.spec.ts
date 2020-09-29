@@ -22,6 +22,7 @@ describe('LineServiceService', () => {
     let clearLockSpy: jasmine.Spy<any>;
     let ajustementAngleSpy: jasmine.Spy<any>;
     let afficherSegementPreviewSpy: jasmine.Spy<any>;
+    let lockAngleSpy: jasmine.Spy<any>;
     let arcSpy: jasmine.Spy<any>;
 
     beforeEach(() => {
@@ -37,6 +38,7 @@ describe('LineServiceService', () => {
         clearLockSpy = spyOn<any>(service, 'clearlock').and.callThrough();
         ajustementAngleSpy = spyOn<any>(service, 'ajustementAngle').and.callThrough();
         afficherSegementPreviewSpy = spyOn<any>(service, 'afficherSegementPreview').and.callThrough();
+        lockAngleSpy = spyOn<any>(service, 'lockAngle').and.callThrough();
         arcSpy = spyOn<any>(previewCtxStub, 'arc').and.callThrough();
 
         // Configuration du spy du service
@@ -159,6 +161,8 @@ describe('LineServiceService', () => {
 
     it(' onClick should call drawLine if the number of click > 1', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
+        service.pathData.push(service.mouseDownCoord);
+        service.mouseDownCoord = { x: 50, y: 50 };
         service.pathData.push(service.mouseDownCoord);
         service.onClick(mouseEventclick1);
         expect(drawLineSpy).toHaveBeenCalled();
@@ -285,5 +289,10 @@ describe('LineServiceService', () => {
         expect(afficherSegementPreviewSpy).toHaveBeenCalled();
         expect(clearLockSpy).not.toHaveBeenCalled();
         expect(ajustementAngleSpy).not.toHaveBeenCalled();
+    });
+
+    it('should not use lock angle if pathdata is empty', () => {
+        service.onMouseMove(mouseEventclick1);
+        expect(lockAngleSpy).not.toHaveBeenCalled();
     });
 });

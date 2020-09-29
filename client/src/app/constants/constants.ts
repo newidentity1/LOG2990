@@ -38,4 +38,6 @@ export const ANGLE_90 = 90;
 export const ANGLE_45 = 45;
 export const ANGLE_180 = 180;
 
+export const MINIMAL_DISTANCE = 20;
+
 export const DEFAULT_LINE_POINT_SIZE = 20;

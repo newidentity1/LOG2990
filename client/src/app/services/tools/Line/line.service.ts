@@ -4,18 +4,8 @@ import { ShapeTool } from '@app/classes/shape-tool';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 import { Vec2 } from '@app/classes/vec2';
 import * as CONSTANTS from '@app/constants/constants';
+import { MouseButton } from '@app/enums/mouse-button.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-
-const MINIMAL_DISTANCE = 20;
-
-// TODO : Déplacer ça dans un fichier séparé accessible par tous
-export enum MouseButton {
-    Left = 0,
-    Middle = 1,
-    Right = 2,
-    Back = 3,
-    Forward = 4,
-}
 
 // Ceci est une implémentation de base de l'outil Crayon pour aider à débuter le projet
 // L'implémentation ici ne couvre pas tous les critères d'accepetation du projet
@@ -29,7 +19,7 @@ export class LineService extends ShapeTool {
     pathData: Vec2[];
     // position de la souris
     private mouse: Vec2;
-    // si shift appuye
+
     shift: boolean = false;
     backSpace: boolean = false;
     escape: boolean = false;
@@ -42,9 +32,6 @@ export class LineService extends ShapeTool {
     // taille des points de liaisons
     pointSize: number = 10;
 
-    // test :
-    endLoop: boolean = false;
-
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.name = 'Line';
@@ -56,45 +43,37 @@ export class LineService extends ShapeTool {
 
     // Permet d'ajouter un point dans la ligne a chaque click
     onClick(event: MouseEvent): void {
-        console.log('CLICK');
         this.mouseDown = event.button === MouseButton.Left;
         const mousePosition = this.getPositionFromMouse(event);
-        const point: Vec2 = mousePosition;
         // si il n'y a qu'un seul point on ne trace pas de ligne
-        if (this.pathData.length < 1) {
-            this.pathData.push(mousePosition);
-        } else {
+        if (this.pathData.length > 1) {
             // sinon on trace une ligne
             // si shift est appuye les points doivent s'alligner sur un angle de 0 ou multiple de 45 degres
             if (this.shift) {
-                const dx = mousePosition.x - this.pathData[this.pathData.length - 1].x; // utile pour les angle de 45 degres
-                const dy = mousePosition.y - this.pathData[this.pathData.length - 1].y; // utile pour les angle de 45 degres
                 if (this.lock180) {
                     // point s'aligne avec axe x
-                    point.y = this.pathData[this.pathData.length - 1].y;
+                    mousePosition.y = this.pathData[this.pathData.length - 1].y;
                 } else if (this.lock45) {
+                    const dx = mousePosition.x - this.pathData[this.pathData.length - 1].x;
+                    const dy = mousePosition.y - this.pathData[this.pathData.length - 1].y;
                     // point s'aligne avec droite y = x ou y = -x
                     if ((dx > 0 && dy > 0) || (dx < 0 && dy < 0)) {
-                        point.y =
-                            Math.tan(CONSTANTS.ANGLE_45) * (point.x - this.pathData[this.pathData.length - 1].x) +
+                        mousePosition.y =
+                            Math.tan(CONSTANTS.ANGLE_45) * (mousePosition.x - this.pathData[this.pathData.length - 1].x) +
                             this.pathData[this.pathData.length - 1].y;
-                    }
-                    if ((dx > 0 && dy < 0) || (dx < 0 && dy > 0)) {
-                        point.y =
-                            -Math.tan(CONSTANTS.ANGLE_45) * (point.x - this.pathData[this.pathData.length - 1].x) +
+                    } else if ((dx > 0 && dy < 0) || (dx < 0 && dy > 0)) {
+                        mousePosition.y =
+                            -Math.tan(CONSTANTS.ANGLE_45) * (mousePosition.x - this.pathData[this.pathData.length - 1].x) +
                             this.pathData[this.pathData.length - 1].y;
                     }
                 } else if (this.lock90) {
                     // point s'aligne avec axe y
-                    point.x = this.pathData[this.pathData.length - 1].x;
+                    mousePosition.x = this.pathData[this.pathData.length - 1].x;
                 }
-                this.pathData.push(point);
-            } else {
-                // sinon le point s'alligne avec la position de la souris
-                this.pathData.push(mousePosition);
             }
             this.drawLine(this.drawingService.previewCtx, this.pathData);
         }
+        this.pathData.push(mousePosition);
     }
 
     // Met a jour le segment de previsualisation
@@ -106,7 +85,7 @@ export class LineService extends ShapeTool {
             // trouve l'angle
             this.ajustementAngle(event);
         } else {
-            this.afficherSegementPreview(event);
+            this.afficherSegementPreview(this.mouse);
         }
     }
 
@@ -143,10 +122,8 @@ export class LineService extends ShapeTool {
             const x2: number = this.pathData[0].x;
             const y2: number = this.pathData[0].y;
             const distance: number = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-            console.log(distance);
             // si la souris est a 20 pixels du point de depart de la ligne, la boucle se ferme sur son point de depart
-            if (distance <= MINIMAL_DISTANCE) {
-                this.endLoop = true; // pour les test
+            if (distance <= CONSTANTS.MINIMAL_DISTANCE) {
                 this.pathData.pop();
                 this.pathData.pop();
 
@@ -155,7 +132,6 @@ export class LineService extends ShapeTool {
                 this.drawLine(this.drawingService.baseCtx, this.pathData);
                 this.clearPath();
             } else {
-                console.log('DOUBLE-CLICK');
                 this.drawLine(this.drawingService.baseCtx, this.pathData);
                 this.clearPath();
             }
@@ -196,30 +172,23 @@ export class LineService extends ShapeTool {
 
     // permet de choisir le type de liaison
     setTypeDrawing(value: string): void {
-        console.log(value);
         if (value[0] === 'A') {
             this.withPoint = true;
         } else {
             this.withPoint = false;
         }
-        console.log(this.withPoint);
     }
+
     // dessine la ligne
     private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        if (!this.withPoint) {
+        ctx.beginPath();
+        for (const point of path) {
+            ctx.lineTo(point.x, point.y);
+        }
+        ctx.stroke();
+        if (this.withPoint) {
             ctx.beginPath();
             for (const point of path) {
-                ctx.lineTo(point.x, point.y);
-            }
-            ctx.stroke();
-        } else {
-            const pathTemp: Vec2[] = path;
-            ctx.beginPath();
-            for (const point of path) {
-                ctx.lineTo(point.x, point.y);
-            }
-            ctx.stroke();
-            for (const point of pathTemp) {
                 ctx.beginPath();
                 ctx.arc(point.x, point.y, this.pointSize, 0, Math.PI * 2, false);
                 ctx.fill();
@@ -227,20 +196,8 @@ export class LineService extends ShapeTool {
         }
     }
 
-    // affiche le segment de previsualisation selon la position de la souris
-    private afficherSegementPreview(event: MouseEvent): void {
-        const mousePosition = this.getPositionFromMouse(event);
-        // si on a pas encore commencer de ligne
-        this.pathData.push(mousePosition);
-        // on suprime l'ancien segment et on définit le nouveau
-        // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        this.drawLine(this.drawingService.previewCtx, this.pathData);
-        this.pathData.pop();
-    }
-
     //// affiche le segment de previsualisation selon la position de la souris et un angle
-    private afficherSegementPreviewAngle(event: MouseEvent, point: Vec2): void {
+    private afficherSegementPreview(point: Vec2): void {
         // si on a pas encore commencer de ligne
         this.pathData.push(point);
         // on suprime l'ancien segment et on définit le nouveau
@@ -256,7 +213,7 @@ export class LineService extends ShapeTool {
     }
 
     // Permet de trouver l'angle entre la souris et l'axe x
-    private ajustementAngle(event: MouseEvent): number {
+    private ajustementAngle(event: MouseEvent): void {
         let angle = 0;
         const mousePosition = this.getPositionFromMouse(event);
         if (mousePosition !== this.pathData[this.pathData.length - 1] && this.pathData.length >= 1) {
@@ -281,23 +238,21 @@ export class LineService extends ShapeTool {
                 this.lockAngle(event, CONSTANTS.ANGLE_180);
             }
         }
-        return angle;
     }
 
     // Permet de trouver le point a ajouter a la ligne selon l'angle
     private lockAngle(event: MouseEvent, angle: number): void {
         const mousePosition = this.getPositionFromMouse(event);
         const point: Vec2 = mousePosition;
-        const dx = mousePosition.x - this.pathData[this.pathData.length - 1].x;
-        const dy = mousePosition.y - this.pathData[this.pathData.length - 1].y;
         switch (angle) {
             case CONSTANTS.ANGLE_45:
+                const dx = mousePosition.x - this.pathData[this.pathData.length - 1].x;
+                const dy = mousePosition.y - this.pathData[this.pathData.length - 1].y;
                 this.lock45 = true;
                 if ((dx > 0 && dy > 0) || (dx < 0 && dy < 0)) {
                     point.y =
                         Math.tan(CONSTANTS.ANGLE_45) * (point.x - this.pathData[this.pathData.length - 1].x) +
                         this.pathData[this.pathData.length - 1].y;
-                    console.log(point.y);
                 }
                 if ((dx > 0 && dy < 0) || (dx < 0 && dy > 0)) {
                     point.y =
@@ -314,7 +269,7 @@ export class LineService extends ShapeTool {
                 point.y = this.pathData[this.pathData.length - 1].y;
                 break;
         }
-        this.afficherSegementPreviewAngle(event, point);
+        this.afficherSegementPreview(point);
     }
 
     // permet d'effacer les ancrage
