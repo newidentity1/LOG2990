@@ -134,7 +134,7 @@ describe('LineServiceService', () => {
         expect(service.lock90).toEqual(true);
     });
 
-    it(' updateDrawingColor should call setColors of pencilService', () => {
+    it(' setColors should call setColors of drawing Service', () => {
         service.setColors(new Color());
         expect(drawServiceSpy.setColor).toHaveBeenCalled();
     });
@@ -203,12 +203,12 @@ describe('LineServiceService', () => {
         expect(service.pathData.length).toEqual(0);
     });
 
-    it('ajustement Angle should do nothing if there is no line', () => {
+    it('ajustementAngle should do nothing if there is no line', () => {
         service.ajustementAngle(mouseEventclick1);
         expect(service.pathData.length).toEqual(0);
     });
 
-    it('Ecape is press should set escape to true', () => {
+    it('Ecape is press should delete the line', () => {
         service.onKeyDown(keyboardEventEscape);
         expect(service.pathData.length).toEqual(0);
     });
@@ -249,7 +249,7 @@ describe('LineServiceService', () => {
         expect(service.lock180).toEqual(true);
     });
 
-    it('if line withpoint, should put point', () => {
+    it('Withpoint propriety should put point', () => {
         service.withPoint = true;
         service.mouseDownCoord = { x: 20, y: 20 };
         service.pathData.push(service.mouseDownCoord);
@@ -294,13 +294,13 @@ describe('LineServiceService', () => {
         expect(service.pathData.length).toEqual(0);
     });
 
-    it(' Size of point should be equal 1 if no size', () => {
+    it(' SetPontSie should set size of point should be equal 1 if no size', () => {
         service.setPointeSize(null);
         expect(service.pointSize).toEqual(1);
     });
 
     // TODO
-    it(' thickness be equal 1 if no size', () => {
+    it(' setThickness should set thickness equal 1 if no size', () => {
         service.setThickness(null);
         expect(drawServiceSpy.setThickness).toHaveBeenCalled();
     });
@@ -317,7 +317,7 @@ describe('LineServiceService', () => {
         expect(ajustementAngleSpy).not.toHaveBeenCalled();
     });
 
-    it('should not use lock angle if pathdata is empty', () => {
+    it('onMouseMove should not use lock angle if pathdata is empty', () => {
         service.onMouseMove(mouseEventclick1);
         expect(lockAngleSpy).not.toHaveBeenCalled();
     });
