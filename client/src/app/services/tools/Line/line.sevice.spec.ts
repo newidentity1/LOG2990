@@ -13,7 +13,6 @@ describe('LineServiceService', () => {
     let keyboardEventShiftUP: KeyboardEvent;
     let keyboardEventBackSpace: KeyboardEvent;
     let keyboardEventEscape: KeyboardEvent;
-    // let mouseEventclick2: MouseEvent;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
 
     let baseCtxStub: CanvasRenderingContext2D;
