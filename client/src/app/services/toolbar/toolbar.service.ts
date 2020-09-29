@@ -67,11 +67,10 @@ export class ToolbarService {
         this.currentTool.setColors(this.primaryColor, this.secondaryColor);
     }
 
-    // TODO: refactor
     onKeyDown(event: KeyboardEvent): void {
+        this.currentTool.onKeyDown(event);
         const toolFound = this.getTool(event.key);
         this.currentTool = toolFound ? toolFound : this.currentTool;
-        this.currentTool.onKeyDown(event);
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
     }
 

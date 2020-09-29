@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
-import { Tool } from '@app/classes/tool';
+import { Color } from '@app/classes/color/color';
+import { KeyShortcut } from '@app/enums/key-shortcuts.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { BrushService } from '@app/services/tools/brush/brush.service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
@@ -10,24 +11,38 @@ import { ToolbarService } from './toolbar.service';
 
 describe('ToolbarService', () => {
     let service: ToolbarService;
-    let pencilService: PencilService;
-    let brushService: BrushService;
-    let rectangleService: RectangleService;
-    let ellipseService: EllipseService;
-    let lineService: LineService;
-    let drawingService: DrawingService;
+    let pencilServiceSpy: jasmine.SpyObj<PencilService>;
+    let brushServiceSpy: jasmine.SpyObj<BrushService>;
+    let rectangleServiceSpy: jasmine.SpyObj<RectangleService>;
+    let ellipseServiceSpy: jasmine.SpyObj<EllipseService>;
+    let lineServiceSpy: jasmine.SpyObj<LineService>;
+    let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
 
     beforeEach(() => {
+        pencilServiceSpy = jasmine.createSpyObj('PencilService', ['onKeyDown', 'setColors', 'onKeyPress', 'onKeyUp']);
+        brushServiceSpy = jasmine.createSpyObj('BrushService', ['onKeyDown']);
+        rectangleServiceSpy = jasmine.createSpyObj('RectangleService', ['onKeyDown']);
+        ellipseServiceSpy = jasmine.createSpyObj('EllipseService', ['onKeyDown']);
+        lineServiceSpy = jasmine.createSpyObj('LineService', ['onKeyDown']);
+        drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
+
         TestBed.configureTestingModule({
-            providers: [DrawingService, PencilService, BrushService, RectangleService, EllipseService, LineService],
+            providers: [
+                { provide: PencilService, useValue: pencilServiceSpy },
+                { provide: BrushService, useValue: brushServiceSpy },
+                { provide: RectangleService, useValue: rectangleServiceSpy },
+                { provide: EllipseService, useValue: ellipseServiceSpy },
+                { provide: LineService, useValue: lineServiceSpy },
+                { provide: DrawingService, useValue: drawingServiceSpy },
+            ],
         });
         service = TestBed.inject(ToolbarService);
-        pencilService = TestBed.inject(PencilService);
-        brushService = TestBed.inject(BrushService);
-        rectangleService = TestBed.inject(RectangleService);
-        ellipseService = TestBed.inject(EllipseService);
-        lineService = TestBed.inject(LineService);
-        drawingService = TestBed.inject(DrawingService);
+        pencilServiceSpy = TestBed.inject(PencilService) as jasmine.SpyObj<PencilService>;
+        brushServiceSpy = TestBed.inject(BrushService) as jasmine.SpyObj<BrushService>;
+        rectangleServiceSpy = TestBed.inject(RectangleService) as jasmine.SpyObj<RectangleService>;
+        ellipseServiceSpy = TestBed.inject(EllipseService) as jasmine.SpyObj<EllipseService>;
+        lineServiceSpy = TestBed.inject(LineService) as jasmine.SpyObj<LineService>;
+        drawingServiceSpy = TestBed.inject(DrawingService) as jasmine.SpyObj<DrawingService>;
     });
 
     it('should be created', () => {
@@ -36,81 +51,75 @@ describe('ToolbarService', () => {
 
     it('getTools should return an array of tool services ', () => {
         const tools = service.getTools();
-        expect(tools).toEqual([pencilService, brushService, rectangleService, ellipseService, lineService]);
+        expect(tools).toEqual([pencilServiceSpy, brushServiceSpy, rectangleServiceSpy, ellipseServiceSpy, lineServiceSpy]);
     });
 
-    it('onKeyDown should call onKeyDown of the currentTool and not change the currenTool if key is not a shortcut', () => {
+    it('getTool should return a Tool if the key exists ', () => {
+        const tool = service.getTool(KeyShortcut.Pencil);
+        expect(tool).toEqual(pencilServiceSpy);
+    });
+
+    it('getTool should return a undefined if the key dont exist ', () => {
+        const tool = service.getTool('Shift');
+        expect(tool).toEqual(undefined);
+    });
+
+    it('setColors should set the colors and call applyCurrentToolColor', () => {
+        const color = new Color();
+        const applyColorSpy = spyOn(service, 'applyCurrentToolColor').and.callFake(() => {
+            return;
+        });
+        service.setColors(color, color);
+        expect(service.primaryColor).toEqual(color);
+        expect(service.secondaryColor).toEqual(color);
+        expect(applyColorSpy).toHaveBeenCalled();
+    });
+
+    it('applyCurrentToolColor should call setColors of the currentTool', () => {
+        service.currentTool = pencilServiceSpy;
+        const color = new Color();
+        service.primaryColor = color;
+        service.secondaryColor = color;
+        service.applyCurrentToolColor();
+        expect(service.currentTool.setColors).toHaveBeenCalled();
+    });
+
+    it('onKeyDown should call the onKeyDown of the currentTool, getTool, not change the currentTool and call clearCanvas when key wrong', () => {
+        service.currentTool = pencilServiceSpy;
         const keyboardEvent = { key: '' } as KeyboardEvent;
-        const spycurrentTool = spyOn(service.currentTool, 'onKeyDown');
+        const spyGetTool = spyOn(service, 'getTool').and.callThrough();
         service.onKeyDown(keyboardEvent);
-        expect(spycurrentTool).toHaveBeenCalled();
-        expect(spycurrentTool).toHaveBeenCalledWith(keyboardEvent);
+        expect(service.currentTool).toEqual(pencilServiceSpy);
+        expect(service.currentTool.onKeyDown).toHaveBeenCalledWith(keyboardEvent);
+        expect(spyGetTool).toHaveBeenCalledWith(keyboardEvent.key);
+        expect(drawingServiceSpy.clearCanvas).toHaveBeenCalledWith(drawingServiceSpy.previewCtx);
     });
 
-    it("onKeyDown should call onKeyDown of the currentTool and change the currenTool to pencil if key is 'c'", () => {
-        const keyboardEvent = { key: 'c' } as KeyboardEvent;
-        // Pencil doesn't override onKeyDown method, so he calls the Tool(parent) one
-        const spycurrentTool = spyOn(Tool.prototype, 'onKeyDown');
-        const spyDrawingClear = spyOn(drawingService, 'clearCanvas');
-        service.currentTool = brushService;
+    it('onKeyDown should call the onKeyDown of the currentTool, getTool, change the currentTool and call clearCanvas when key exist', () => {
+        service.currentTool = brushServiceSpy;
+        const keyboardEvent = { key: KeyShortcut.Pencil } as KeyboardEvent;
+        const spyGetTool = spyOn(service, 'getTool').and.callThrough();
         service.onKeyDown(keyboardEvent);
 
-        expect(spycurrentTool).toHaveBeenCalled();
-        expect(spycurrentTool).toHaveBeenCalledWith(keyboardEvent);
-        expect(spyDrawingClear).toHaveBeenCalled();
-        expect(spyDrawingClear).toHaveBeenCalledWith(drawingService.previewCtx);
-        expect(service.currentTool).toEqual(pencilService);
+        expect(brushServiceSpy.onKeyDown).toHaveBeenCalledWith(keyboardEvent);
+        expect(spyGetTool).toHaveBeenCalledWith(keyboardEvent.key);
+        expect(service.currentTool).toEqual(pencilServiceSpy);
+        expect(drawingServiceSpy.clearCanvas).toHaveBeenCalledWith(drawingServiceSpy.previewCtx);
     });
 
-    it("onKeyDown should call onKeyDown of the currentTool and change the currenTool to brush if key is 'w'", () => {
-        const keyboardEvent = { key: 'w' } as KeyboardEvent;
-        const spycurrentTool = spyOn(service.currentTool, 'onKeyDown');
-        const spyDrawingClear = spyOn(drawingService, 'clearCanvas');
-        service.onKeyDown(keyboardEvent);
+    it('onKeyPress should call the onKeyPress of the currentTool', () => {
+        service.currentTool = pencilServiceSpy;
+        const keyboardEvent = { key: KeyShortcut.Pencil } as KeyboardEvent;
+        service.onKeyPress(keyboardEvent);
 
-        expect(spycurrentTool).toHaveBeenCalled();
-        expect(spycurrentTool).toHaveBeenCalledWith(keyboardEvent);
-        expect(spyDrawingClear).toHaveBeenCalled();
-        expect(spyDrawingClear).toHaveBeenCalledWith(drawingService.previewCtx);
-        expect(service.currentTool).toEqual(brushService);
+        expect(service.currentTool.onKeyPress).toHaveBeenCalledWith(keyboardEvent);
     });
 
-    it("onKeyDown should call onKeyDown of the currentTool and change the currenTool to rectangle if key is '1'", () => {
-        const keyboardEvent = { key: '1' } as KeyboardEvent;
-        const spycurrentTool = spyOn(service.currentTool, 'onKeyDown');
-        const spyDrawingClear = spyOn(drawingService, 'clearCanvas');
-        service.onKeyDown(keyboardEvent);
+    it('onKeyUp should call the onKeyPress of the currentTool', () => {
+        service.currentTool = pencilServiceSpy;
+        const keyboardEvent = { key: KeyShortcut.Pencil } as KeyboardEvent;
+        service.onKeyUp(keyboardEvent);
 
-        expect(spycurrentTool).toHaveBeenCalled();
-        expect(spycurrentTool).toHaveBeenCalledWith(keyboardEvent);
-        expect(spyDrawingClear).toHaveBeenCalled();
-        expect(spyDrawingClear).toHaveBeenCalledWith(drawingService.previewCtx);
-        expect(service.currentTool).toEqual(rectangleService);
-    });
-
-    it("onKeyDown should call onKeyDown of the currentTool and change the currenTool to ellipse if key is '2'", () => {
-        const keyboardEvent = { key: '2' } as KeyboardEvent;
-        const spycurrentTool = spyOn(service.currentTool, 'onKeyDown');
-        const spyDrawingClear = spyOn(drawingService, 'clearCanvas');
-        service.onKeyDown(keyboardEvent);
-
-        expect(spycurrentTool).toHaveBeenCalled();
-        expect(spycurrentTool).toHaveBeenCalledWith(keyboardEvent);
-        expect(spyDrawingClear).toHaveBeenCalled();
-        expect(spyDrawingClear).toHaveBeenCalledWith(drawingService.previewCtx);
-        expect(service.currentTool).toEqual(ellipseService);
-    });
-
-    it("onKeyDown should call onKeyDown of the currentTool and change the currenTool to line if key is 'l'", () => {
-        const keyboardEvent = { key: 'l' } as KeyboardEvent;
-        const spycurrentTool = spyOn(service.currentTool, 'onKeyDown');
-        const spyDrawingClear = spyOn(drawingService, 'clearCanvas');
-        service.onKeyDown(keyboardEvent);
-
-        expect(spycurrentTool).toHaveBeenCalled();
-        expect(spycurrentTool).toHaveBeenCalledWith(keyboardEvent);
-        expect(spyDrawingClear).toHaveBeenCalled();
-        expect(spyDrawingClear).toHaveBeenCalledWith(drawingService.previewCtx);
-        expect(service.currentTool).toEqual(lineService);
+        expect(service.currentTool.onKeyUp).toHaveBeenCalledWith(keyboardEvent);
     });
 });
