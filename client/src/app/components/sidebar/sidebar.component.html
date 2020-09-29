@@ -1,7 +1,7 @@
 <mat-sidenav-container>
     <mat-sidenav #toolProperties mode="side" position="end">
         <!-- TODO implementer le contenu du sidenav dans un autre component -->
-        <div [ngSwitch]="currentTool.name">
+        <div *ngIf="currentTool" [ngSwitch]="currentTool.name">
             <app-pencil-options *ngSwitchCase="'Crayon'"></app-pencil-options>
             <app-brush-options *ngSwitchCase="'Brush'"></app-brush-options>
             <app-rectangle-options *ngSwitchCase="'Rectangle'"></app-rectangle-options>
