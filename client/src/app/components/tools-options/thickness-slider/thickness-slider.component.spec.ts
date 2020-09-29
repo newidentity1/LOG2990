@@ -61,13 +61,13 @@ describe('ThicknessSliderComponent', () => {
         component.onThicknessChange(sliderChange);
         expect(emitSpy).not.toHaveBeenCalled();
     });
-    it('minimumThickness should return the minimum thickness contant value', () => {
+    it('minimumThickness should return the minimum thickness constant value', () => {
         const value = component.minimumThickness;
         const expectedResult = MINIMUM_THICKNESS;
         expect(value).toEqual(expectedResult);
     });
 
-    it('maximumThickness should return the maximum thickness contant value', () => {
+    it('maximumThickness should return the maximum thickness constant value', () => {
         const value = component.maximumThickness;
         const expectedResult = MAXIMUM_THICKNESS;
         expect(value).toEqual(expectedResult);

@@ -51,7 +51,7 @@ describe('RectangleService', () => {
         expect(service).toBeTruthy();
     });
 
-    it(' onMouseDown should set startingX and startedY to correct position if mouseDown is true', () => {
+    it(' onMouseDown should set startingX and startedY to correct position on mouse left click', () => {
         service.startingX = 0;
         service.startingY = 0;
         const expectedResult: Vec2 = { x: 100, y: 100 };
@@ -60,7 +60,7 @@ describe('RectangleService', () => {
         expect(service.startingY).toEqual(expectedResult.y);
     });
 
-    it(' onMouseDown should not set startingX and startedY if mouseDown if false ', () => {
+    it(' onMouseDown should not set startingX and startedY on mouse right click ', () => {
         service.startingX = 0;
         service.startingY = 0;
         const expectedResult: Vec2 = { x: 0, y: 0 };

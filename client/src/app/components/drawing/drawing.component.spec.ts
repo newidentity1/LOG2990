@@ -66,7 +66,8 @@ describe('DrawingComponent', () => {
     it(' should not call the toolbarService onMouse when receiving a mouseMove and a mouseDown event if isResizingWidth or isResizingHeight', () => {
         const event = {} as MouseEvent;
         component.isResizingHeight = true;
-        component.onMouseUp(event);
+        component.onMouseDown(event);
+        component.onMouseMove(event);
         expect(toolbarServiceSpy.onMouseDown).not.toHaveBeenCalled();
         expect(toolbarServiceSpy.onMouseMove).not.toHaveBeenCalled();
     });
