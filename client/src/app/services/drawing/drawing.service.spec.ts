@@ -23,4 +23,45 @@ describe('DrawingService', () => {
         const hasColoredPixels = pixelBuffer.some((color) => color !== 0);
         expect(hasColoredPixels).toEqual(false);
     });
+
+    it('should set the lineWidth when setThickness is called', () => {
+        const thickness = 1;
+        service.setThickness(thickness);
+        expect(service.previewCtx.lineWidth).toEqual(thickness);
+        expect(service.baseCtx.lineWidth).toEqual(thickness);
+        // reset lineWidth propertie to  defaults
+        service.previewCtx.lineWidth = 1;
+        service.baseCtx.lineWidth = 1;
+    });
+
+    it('should set the fillStyle when setFillColor is called', () => {
+        const color = '#123456';
+        service.setFillColor(color);
+        expect(service.previewCtx.fillStyle).toEqual(color);
+        expect(service.baseCtx.fillStyle).toEqual(color);
+        // reset fillStyle propertie to  defaults
+        service.previewCtx.fillStyle = '#000';
+        service.baseCtx.fillStyle = '#000';
+    });
+
+    it('should set the fillStroke when setStrokeColor is called', () => {
+        const color = '#123456';
+        service.setStrokeColor(color);
+        expect(service.previewCtx.strokeStyle).toEqual(color);
+        expect(service.baseCtx.strokeStyle).toEqual(color);
+        // reset strokeStyle propertie to  defaults
+        service.previewCtx.strokeStyle = '#000';
+        service.baseCtx.strokeStyle = '#000';
+    });
+
+    it('should call setFillColor and setStrokeColor when setColor is called', () => {
+        const color = '#123456';
+        const spyFill = spyOn(service, 'setFillColor');
+        const spyStroke = spyOn(service, 'setStrokeColor');
+        service.setColor(color);
+        expect(spyFill).toHaveBeenCalled();
+        expect(spyFill).toHaveBeenCalledWith(color);
+        expect(spyStroke).toHaveBeenCalled();
+        expect(spyStroke).toHaveBeenCalledWith(color);
+    });
 });
