@@ -15,11 +15,11 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
     providedIn: 'root',
 })
 export class EllipseService extends ShapeTool {
-    private pathStart: Vec2;
-    private width: number;
-    private height: number;
-    private shiftDown: boolean = false;
-    private escapeDown: boolean = false;
+    pathStart: Vec2;
+    width: number;
+    height: number;
+    shiftDown: boolean = false;
+    escapeDown: boolean = false;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
@@ -38,7 +38,7 @@ export class EllipseService extends ShapeTool {
         }
     }
 
-    onMouseUp(event: MouseEvent): void {
+    onMouseUp(): void {
         if (this.mouseDown) {
             this.computeDimensions();
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
