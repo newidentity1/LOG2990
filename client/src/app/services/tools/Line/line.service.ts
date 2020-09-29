@@ -17,8 +17,6 @@ export class LineService extends Tool {
     private mouse: Vec2;
 
     shift: boolean = false;
-    backSpace: boolean = false;
-    escape: boolean = false;
     // ancrage du segment de previsualisation selon un angle
     lock180: boolean = false;
     lock90: boolean = false;
@@ -92,7 +90,6 @@ export class LineService extends Tool {
             this.shift = true;
         }
         if (event.key === 'Backspace') {
-            this.backSpace = true;
             // efface le dernier segment
             if (this.pathData.length >= 2) {
                 this.pathData.pop();
@@ -101,7 +98,6 @@ export class LineService extends Tool {
             }
         }
         if (event.code === 'Escape') {
-            this.escape = true;
             // efface la derniere ligne
             this.clearPath();
             this.drawingService.clearCanvas(this.drawingService.previewCtx);

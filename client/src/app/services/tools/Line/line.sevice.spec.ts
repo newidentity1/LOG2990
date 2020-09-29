@@ -186,9 +186,16 @@ describe('LineServiceService', () => {
         expect(service.pathData[service.pathData.length - 1]).toEqual(service.mouseDownCoord);
     });
 
-    it('backSpace is press should set backSpace to true', () => {
+    it('backSpace is press should delete last point', () => {
+        service.mouseDownCoord = { x: 20, y: 20 };
+        service.pathData.push(service.mouseDownCoord);
+        service.mouseDownCoord = { x: 50, y: 50 };
+        service.pathData.push(service.mouseDownCoord);
+        service.mouseDownCoord = { x: 100, y: 100 };
+        service.pathData.push(service.mouseDownCoord);
         service.onKeyDown(keyboardEventBackSpace);
-        expect(service.backSpace).toEqual(true);
+        const expectedResult: Vec2 = { x: 50, y: 50 };
+        expect(service.pathData[service.pathData.length - 1]).toEqual(expectedResult);
     });
 
     it('backSpace delete last segment', () => {
@@ -199,13 +206,12 @@ describe('LineServiceService', () => {
         service.mouseDownCoord = { x: 100, y: 100 };
         service.pathData.push(service.mouseDownCoord);
         service.onKeyDown(keyboardEventBackSpace);
-        expect(service.backSpace).toEqual(true);
         expect(drawLineSpy).toHaveBeenCalled();
     });
 
     it('Ecape is press should set escape to true', () => {
         service.onKeyDown(keyboardEventEscape);
-        expect(service.escape).toEqual(true);
+        expect(service.pathData.length).toEqual(0);
     });
 
     it('shift press and click should put lock45 at true', () => {
