@@ -1,3 +1,4 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { MatRadioChange, MatRadioModule, _MatRadioButtonBase } from '@angular/material/radio';
@@ -29,7 +30,8 @@ describe('RectangleComponent', () => {
         TestBed.configureTestingModule({
             declarations: [RectangleComponent, ThicknessSliderComponent],
             imports: [MatSliderModule, MatRadioModule, FormsModule],
-            providers: [RectangleService],
+            providers: [{ provide: RectangleService, useValue: rectangleService }],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
         rectangleService = TestBed.inject(RectangleService) as jasmine.SpyObj<RectangleService>;
     }));
