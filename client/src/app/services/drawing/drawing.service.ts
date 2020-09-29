@@ -18,8 +18,6 @@ export class DrawingService {
         return !pixelBuffer.some((color) => color !== 0);
     }
 
-    resetCanvasSize(): void {}
-
     setThickness(thickness: number): void {
         if (this.baseCtx) this.baseCtx.lineWidth = thickness;
 
