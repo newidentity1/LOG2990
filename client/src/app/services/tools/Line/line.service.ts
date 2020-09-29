@@ -135,31 +135,29 @@ export class LineService extends ShapeTool {
 
     // double click donc fin de ligne
     onDoubleClick(event: MouseEvent): void {
-        if (this.pathData.length >= 1) {
-            const mousePosition = this.getPositionFromMouse(event);
+        const mousePosition = this.getPositionFromMouse(event);
+        if (mousePosition !== this.pathData[0] && this.pathData.length >= 1) {
             // calculer la distance entre la souris et le point de départ
             const x1: number = mousePosition.x;
             const y1: number = mousePosition.y;
             const x2: number = this.pathData[0].x;
             const y2: number = this.pathData[0].y;
-            if (x1 !== x2 && y1 !== y2) {
-                const distance: number = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-                console.log(distance);
-                // si la souris est a 20 pixels du point de depart de la ligne, la boucle se ferme sur son point de depart
-                if (distance <= MINIMAL_DISTANCE) {
-                    this.endLoop = true; // pour les test
-                    this.pathData.pop();
-                    this.pathData.pop();
+            const distance: number = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+            console.log(distance);
+            // si la souris est a 20 pixels du point de depart de la ligne, la boucle se ferme sur son point de depart
+            if (distance <= MINIMAL_DISTANCE) {
+                this.endLoop = true; // pour les test
+                this.pathData.pop();
+                this.pathData.pop();
 
-                    this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                    this.pathData.push(this.pathData[0]);
-                    this.drawLine(this.drawingService.baseCtx, this.pathData);
-                    this.clearPath();
-                } else {
-                    console.log('DOUBLE-CLICK');
-                    this.drawLine(this.drawingService.baseCtx, this.pathData);
-                    this.clearPath();
-                }
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                this.pathData.push(this.pathData[0]);
+                this.drawLine(this.drawingService.baseCtx, this.pathData);
+                this.clearPath();
+            } else {
+                console.log('DOUBLE-CLICK');
+                this.drawLine(this.drawingService.baseCtx, this.pathData);
+                this.clearPath();
             }
         }
     }
@@ -260,32 +258,27 @@ export class LineService extends ShapeTool {
     // Permet de trouver l'angle entre la souris et l'axe x
     private ajustementAngle(event: MouseEvent): number {
         let angle = 0;
-        if (this.pathData.length >= 1) {
-            // A position de la souris
-            const mousePosition = this.getPositionFromMouse(event);
+        const mousePosition = this.getPositionFromMouse(event);
+        if (mousePosition !== this.pathData[this.pathData.length - 1] && this.pathData.length >= 1) {
             const x1: number = mousePosition.x;
             const y1: number = mousePosition.y;
             // B  dernier point de la ligne
             const x2: number = this.pathData[this.pathData.length - 1].x;
             const y2: number = this.pathData[this.pathData.length - 1].y;
+            const d1: number = Math.abs(x1 - x2);
+            const d2: number = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+            angle = Math.acos(d1 / d2);
+            // angle en degres
+            angle = angle * ((CONSTANTS.ANGLE_90 * 2) / Math.PI);
 
-            // verifie qu'une ligne existe bien
-            if (x1 !== x2 && y1 !== y2) {
-                const d1: number = Math.abs(x1 - x2);
-                const d2: number = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-                angle = Math.acos(d1 / d2);
-                // angle en degres
-                angle = angle * ((CONSTANTS.ANGLE_90 * 2) / Math.PI);
-
-                if (angle >= CONSTANTS.ANGLE_45 / 2 && angle <= CONSTANTS.ANGLE_45 + CONSTANTS.ANGLE_45 / 2) {
-                    this.lockAngle(event, CONSTANTS.ANGLE_45);
-                }
-                if (angle < CONSTANTS.ANGLE_90 && angle > CONSTANTS.ANGLE_45 + CONSTANTS.ANGLE_45 / 2) {
-                    this.lockAngle(event, CONSTANTS.ANGLE_90);
-                }
-                if (angle < CONSTANTS.ANGLE_45 / 2 && angle >= 0) {
-                    this.lockAngle(event, CONSTANTS.ANGLE_180);
-                }
+            if (angle >= CONSTANTS.ANGLE_45 / 2 && angle <= CONSTANTS.ANGLE_45 + CONSTANTS.ANGLE_45 / 2) {
+                this.lockAngle(event, CONSTANTS.ANGLE_45);
+            }
+            if (angle < CONSTANTS.ANGLE_90 && angle > CONSTANTS.ANGLE_45 + CONSTANTS.ANGLE_45 / 2) {
+                this.lockAngle(event, CONSTANTS.ANGLE_90);
+            }
+            if (angle < CONSTANTS.ANGLE_45 / 2 && angle >= 0) {
+                this.lockAngle(event, CONSTANTS.ANGLE_180);
             }
         }
         return angle;
