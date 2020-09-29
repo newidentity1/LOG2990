@@ -6,7 +6,6 @@ import { DrawingType } from '@app/enums/drawing-type.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { RectangleService } from './rectangle.service';
 
-// tslint:disable:no-any
 describe('RectangleService', () => {
     let service: RectangleService;
     let mouseEventLeftClick: MouseEvent;
@@ -16,8 +15,6 @@ describe('RectangleService', () => {
 
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
-    let drawSpy: jasmine.Spy<any>;
-    let transformToSquareSpy: jasmine.Spy<any>;
 
     beforeEach(() => {
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
@@ -28,8 +25,6 @@ describe('RectangleService', () => {
             providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
         });
         service = TestBed.inject(RectangleService);
-        drawSpy = spyOn<any>(service, 'draw').and.callThrough();
-        transformToSquareSpy = spyOn<any>(service, 'transformToSquare').and.callThrough();
 
         // Configuration du spy du service
         // tslint:disable:no-string-literal
@@ -75,6 +70,7 @@ describe('RectangleService', () => {
     });
 
     it(' onMouseUp should call draw if mouse was already down', () => {
+        const drawSpy = spyOn(service, 'draw').and.callThrough();
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = true;
         service.currentMousePosition = { x: mouseEventLeftClick.x, y: mouseEventLeftClick.y };
@@ -83,6 +79,7 @@ describe('RectangleService', () => {
     });
 
     it(' onMouseUp should not call draw if mouse was not already down', () => {
+        const drawSpy = spyOn(service, 'draw').and.callThrough();
         service.mouseDown = false;
         service.mouseDownCoord = { x: 0, y: 0 };
 
@@ -91,6 +88,7 @@ describe('RectangleService', () => {
     });
 
     it(' onMouseUp should call transformToSquare if shift and mouse is down', () => {
+        const transformToSquareSpy = spyOn(service, 'transformToSquare').and.callThrough();
         service.mouseDown = true;
         service.shiftDown = true;
         service.startingX = 0;
@@ -103,6 +101,7 @@ describe('RectangleService', () => {
     });
 
     it(' onMouseUp should not call transformToSquare if shift is not down and mouse is down', () => {
+        const transformToSquareSpy = spyOn(service, 'transformToSquare').and.callThrough();
         service.mouseDown = true;
         service.shiftDown = false;
         service.mouseDownCoord = { x: 0, y: 0 };
@@ -114,6 +113,7 @@ describe('RectangleService', () => {
     });
 
     it(' onMouseMove should call draw if mouse was already down', () => {
+        const drawSpy = spyOn(service, 'draw').and.callThrough();
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = true;
 
@@ -122,6 +122,7 @@ describe('RectangleService', () => {
     });
 
     it(' onMouseMove should not call draw if mouse was not already down', () => {
+        const drawSpy = spyOn(service, 'draw').and.callThrough();
         service.mouseDown = false;
         service.mouseDownCoord = { x: 0, y: 0 };
 
