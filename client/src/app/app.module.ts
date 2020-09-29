@@ -19,6 +19,7 @@ import { ColorPickerFormComponent } from './color-picker-form/color-picker-form.
 import { AppComponent } from './components/app/app.component';
 import { ColorPickerComponent } from './components/color-picker/color-picker.component';
 import { ColorToolComponent } from './components/color-tool/color-tool.component';
+import { CreateNewDrawingComponent } from './components/create-new-drawing/create-new-drawing.component';
 import { DrawingComponent } from './components/drawing/drawing.component';
 import { EditorComponent } from './components/editor/editor.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
@@ -31,6 +32,7 @@ import { PencilComponent } from './components/tools-options/pencil/pencil.compon
 import { RectangleComponent } from './components/tools-options/rectangle/rectangle.component';
 import { ThicknessSliderComponent } from './components/tools-options/thickness-slider/thickness-slider.component';
 import { RecentColorsComponent } from './recent-colors/recent-colors.component';
+import { NewDrawingDialogComponent } from './components/create-new-drawing/new-drawing-dialog/new-drawing-dialog.component';
 @NgModule({
     declarations: [
         AppComponent,
@@ -49,6 +51,8 @@ import { RecentColorsComponent } from './recent-colors/recent-colors.component';
         SVGFilterComponent,
         BrushComponent,
         ColorPickerFormComponent,
+        CreateNewDrawingComponent,
+        NewDrawingDialogComponent,
     ],
     imports: [
         BrowserModule,
