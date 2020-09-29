@@ -13,7 +13,7 @@
 	<!-- Brushed -->
         <filter id="Brushed" x="-20%" y="-20%" width="300%" height="300%" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="linearRGB">
             <feGaussianBlur stdDeviation="3 10" x="0%" y="0%" width="100%" height="100%" in="SourceGraphic" edgeMode="none" result="blur"/>
-            <feTurbulence type="turbulence" baseFrequency="0.3 0.3" numOctaves="10" seed="10" stitchTiles="stitch" x="0%" y="0%" width="100%" height="100%" result="turbulence1"/>
+            <feTurbulence type="turbulence" baseFrequency="0.3 0.3" numOctaves="1" seed="10" stitchTiles="stitch" x="0%" y="0%" width="100%" height="100%" result="turbulence1"/>
             <feDisplacementMap in="SourceGraphic" in2="turbulence1" scale="5" xChannelSelector="R" yChannelSelector="B" x="0%" y="0%" width="100%" height="100%" result="displacementMap2"/>
 	</filter>
 
