@@ -250,10 +250,17 @@ describe('RectangleService', () => {
         expect(service.isWidthSmallest()).toEqual(false);
     });
 
-    it(' setThickness should set the thickness of rectangleProperties and call setThickness of drawing service', () => {
+    it(' setThickness should set the thickness of rectangleProperties to 1 when parameter is null and call setThickness of drawing service', () => {
         const value = null;
         service.setThickness(value);
         expect(service.toolProperties.thickness).toEqual(1);
+        expect(drawServiceSpy.setThickness).toHaveBeenCalled();
+    });
+
+    it(' setThickness should set the thickness of rectangleProperties to parameter if its a number and call setThickness of drawing service', () => {
+        const value = 50;
+        service.setThickness(value);
+        expect(service.toolProperties.thickness).toEqual(value);
         expect(drawServiceSpy.setThickness).toHaveBeenCalled();
     });
 
