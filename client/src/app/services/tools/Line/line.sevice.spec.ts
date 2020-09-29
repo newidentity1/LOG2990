@@ -28,7 +28,7 @@ describe('LineServiceService', () => {
     beforeEach(() => {
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
-        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setColor']);
+        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setColor', 'setThickness']);
 
         TestBed.configureTestingModule({
             providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
@@ -198,15 +198,14 @@ describe('LineServiceService', () => {
         expect(service.pathData[service.pathData.length - 1]).toEqual(expectedResult);
     });
 
-    it('backSpace delete last segment', () => {
-        service.mouseDownCoord = { x: 20, y: 20 };
-        service.pathData.push(service.mouseDownCoord);
-        service.mouseDownCoord = { x: 50, y: 50 };
-        service.pathData.push(service.mouseDownCoord);
-        service.mouseDownCoord = { x: 100, y: 100 };
-        service.pathData.push(service.mouseDownCoord);
+    it('backSpace should do nothing if there is no line', () => {
         service.onKeyDown(keyboardEventBackSpace);
-        expect(drawLineSpy).toHaveBeenCalled();
+        expect(service.pathData.length).toEqual(0);
+    });
+
+    it('ajustement Angle should do nothing if there is no line', () => {
+        service.ajustementAngle(mouseEventclick1);
+        expect(service.pathData.length).toEqual(0);
     });
 
     it('Ecape is press should set escape to true', () => {
@@ -283,6 +282,27 @@ describe('LineServiceService', () => {
         service.pathData.push(service.mouseDownCoord);
         service.onDoubleClick(mouseEventclick1);
         expect(drawLineSpy).toHaveBeenCalled();
+    });
+
+    it(' onDoubleClick should do nothing if there is no point', () => {
+        service.onDoubleClick(mouseEventclick1);
+        expect(service.pathData.length).toEqual(0);
+    });
+
+    it(' onKeyUp should do nothing if shift wasnt press', () => {
+        service.onKeyUp(keyboardEventBackSpace);
+        expect(service.pathData.length).toEqual(0);
+    });
+
+    it(' Size of point should be equal 1 if no size', () => {
+        service.setPointeSize(null);
+        expect(service.pointSize).toEqual(1);
+    });
+
+    // TODO
+    it(' thickness be equal 1 if no size', () => {
+        service.setThickness(null);
+        expect(drawServiceSpy.setThickness).toHaveBeenCalled();
     });
 
     it(' onMouseMove should drawLine if mouse was not already down', () => {
