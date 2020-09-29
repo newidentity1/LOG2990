@@ -1,20 +1,16 @@
 import { Injectable } from '@angular/core';
 import { Color } from '@app/classes/color/color';
-import { ShapeTool } from '@app/classes/shape-tool';
+import { Tool } from '@app/classes/tool';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 import { Vec2 } from '@app/classes/vec2';
 import * as CONSTANTS from '@app/constants/constants';
 import { MouseButton } from '@app/enums/mouse-button.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
-// Ceci est une implémentation de base de l'outil Crayon pour aider à débuter le projet
-// L'implémentation ici ne couvre pas tous les critères d'accepetation du projet
-// Vous êtes encouragés de modifier et compléter le code.
-// N'oubliez pas de regarder les tests dans le fichier spec.ts aussi!
 @Injectable({
     providedIn: 'root',
 })
-export class LineService extends ShapeTool {
+export class LineService extends Tool {
     // ligne principale
     pathData: Vec2[];
     // position de la souris
