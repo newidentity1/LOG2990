@@ -26,11 +26,9 @@ export class RectangleComponent {
     onThicknessChange(event: MatSliderChange): void {
         if (event.value !== null && event.value >= MINIMUM_THICKNESS && event.value <= MAXIMUM_THICKNESS)
             this.rectangleService.setThickness(event.value);
-        // TODO voir comment deal avec le cas ou une entree est invalide
     }
 
     onTypeDrawingChange(event: MatRadioChange): void {
         if (Object.values(DrawingType).includes(event.value)) this.rectangleService.setTypeDrawing(event.value);
-        // TODO voir comment deal avec le cas ou une entree est invalide
     }
 }

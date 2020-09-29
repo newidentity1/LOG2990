@@ -21,4 +21,23 @@ export const MINIMUM_THICKNESS = 1;
 export const MAXIMUM_THICKNESS = 100;
 export const DASHED_SEGMENTS = 6;
 
+// Brush: Goo filter only works with 15+ thickness
+export const MINIMUM_BRUSH_THICKNESS = 15;
+export const MAXIMUM_BRUSH_THICKNESS = 100;
+export const DEFAULT_WIDTH = 1000;
+export const DEFAULT_HEIGHT = 800;
+
+export const CANVAS_MIN_WIDTH = 250;
+export const CANVAS_MIN_HEIGHT = 250;
+export const CANVAS_MARGIN_LEFT = 15;
+export const CANVAS_MARGIN_TOP = 20;
+
 export const MAX_COLOR_VALUE = 255;
+
+export const ANGLE_90 = 90;
+export const ANGLE_45 = 45;
+export const ANGLE_180 = 180;
+
+export const MINIMAL_DISTANCE = 20;
+
+export const DEFAULT_LINE_POINT_SIZE = 20;
