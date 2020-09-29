@@ -31,14 +31,16 @@ export class LineService extends ShapeTool {
     private mouse: Vec2;
     // si shift appuye
     shift: boolean = false;
+    backSpace: boolean = false;
+    escape: boolean = false;
     // ancrage du segment de previsualisation selon un angle
     lock180: boolean = false;
     lock90: boolean = false;
     lock45: boolean = false;
     // ligne avec ou sans point
-    private withPoint: boolean = false;
+    withPoint: boolean = false;
     // taille des points de liaisons
-    private pointSize: number = 10;
+    pointSize: number = 10;
 
     // test :
     endLoop: boolean = false;
@@ -114,7 +116,8 @@ export class LineService extends ShapeTool {
         if (event.key === 'Shift') {
             this.shift = true;
         }
-        if (event.code === 'Backspace') {
+        if (event.key === 'Backspace') {
+            this.backSpace = true;
             // efface le dernier segment
             if (this.pathData.length >= 2) {
                 this.pathData.pop();
@@ -123,6 +126,7 @@ export class LineService extends ShapeTool {
             }
         }
         if (event.code === 'Escape') {
+            this.escape = true;
             // efface la derniere ligne
             this.clearPath();
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
@@ -164,9 +168,7 @@ export class LineService extends ShapeTool {
     onKeyUp(event: KeyboardEvent): void {
         if (event.key === 'Shift') {
             this.shift = false;
-            this.lock180 = false;
-            this.lock45 = false;
-            this.lock90 = false;
+            this.clearlock();
             this.pathData.push(this.mouse);
             // on suprime l'ancien segment et on définit le nouveau
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
@@ -177,7 +179,7 @@ export class LineService extends ShapeTool {
     }
 
     // permet de choisir la couleur de la ligne
-    setColors(primaryColor: Color, secondaryColor: Color): void {
+    setColors(primaryColor: Color): void {
         this.drawingService.setColor(primaryColor.toStringRGBA());
     }
 
@@ -315,10 +317,6 @@ export class LineService extends ShapeTool {
                 this.lock90 = true;
                 break;
             case CONSTANTS.ANGLE_180:
-                this.lock180 = true;
-                point.y = this.pathData[this.pathData.length - 1].y;
-                break;
-            default:
                 this.lock180 = true;
                 point.y = this.pathData[this.pathData.length - 1].y;
                 break;
