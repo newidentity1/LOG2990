@@ -70,8 +70,9 @@ export class ToolbarService {
     onKeyDown(event: KeyboardEvent): void {
         this.currentTool.onKeyDown(event);
         const toolFound = this.getTool(event.key);
+        const isNewTool = toolFound && toolFound !== this.currentTool;
         this.currentTool = toolFound ? toolFound : this.currentTool;
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        if (isNewTool) this.drawingService.clearCanvas(this.drawingService.previewCtx);
     }
 
     onKeyPress(event: KeyboardEvent): void {

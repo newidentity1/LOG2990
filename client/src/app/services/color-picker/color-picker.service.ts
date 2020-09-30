@@ -98,8 +98,6 @@ export class ColorPickerService extends Tool {
     }
 
     private drawCursor(ctx: CanvasRenderingContext2D, position: Vec2): void {
-        console.log('sdf');
-
         ctx.strokeStyle = '#' + this.selectedColor.hex;
         ctx.beginPath();
         this.drawingService.clearCanvas(ctx);
