@@ -8,7 +8,7 @@ import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
 @Component({
     selector: 'app-ellipse-options',
     templateUrl: './ellipse.component.html',
-    styleUrls: ['./ellipse.component.scss'],
+    styleUrls: ['../../sidebar/sidebar.component.scss'],
 })
 export class EllipseComponent {
     typesDrawing: typeof DrawingType = DrawingType;

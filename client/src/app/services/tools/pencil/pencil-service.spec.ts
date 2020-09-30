@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
+import { Color } from '@app/classes/color/color';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PencilService } from './pencil-service';
@@ -13,17 +14,19 @@ describe('PencilService', () => {
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
     let drawLineSpy: jasmine.Spy<any>;
+    let drawCursorSpy: jasmine.Spy<any>;
 
     beforeEach(() => {
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
-        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
+        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setColor']);
 
         TestBed.configureTestingModule({
             providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
         });
         service = TestBed.inject(PencilService);
         drawLineSpy = spyOn<any>(service, 'drawLine').and.callThrough();
+        drawCursorSpy = spyOn<any>(service, 'drawCursor').and.callThrough();
 
         // Configuration du spy du service
         // tslint:disable:no-string-literal
@@ -78,20 +81,61 @@ describe('PencilService', () => {
         expect(drawLineSpy).not.toHaveBeenCalled();
     });
 
-    it(' onMouseMove should call drawLine if mouse was already down', () => {
+    it(' onMouseMove should call drawLine and should not call drawCursor if mouse was already down', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = true;
 
         service.onMouseMove(mouseEvent);
+        expect(drawCursorSpy).not.toHaveBeenCalled();
         expect(drawLineSpy).toHaveBeenCalled();
     });
 
-    it(' onMouseMove should not call drawLine if mouse was not already down', () => {
+    it(' onMouseMove should call drawCursor and should not call drawLine if mouse was not already down', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = false;
 
         service.onMouseMove(mouseEvent);
+        expect(drawCursorSpy).toHaveBeenCalled();
         expect(drawLineSpy).not.toHaveBeenCalled();
+    });
+
+    it(' onMouseEnterShould should call drawLine if mouse was already down', () => {
+        service.mouseDownCoord = { x: 0, y: 0 };
+        service.mouseDown = true;
+
+        service.onMouseEnter(mouseEvent);
+        expect(drawLineSpy).toHaveBeenCalled();
+    });
+
+    it(' onMouseEnterShould should not call drawLine if mouse was not already down', () => {
+        service.mouseDownCoord = { x: 0, y: 0 };
+        service.mouseDown = false;
+
+        service.onMouseEnter(mouseEvent);
+        expect(drawLineSpy).not.toHaveBeenCalled();
+    });
+
+    it(' onMouseLeave should call drawLine and should not call drawCursor if mouse was already down', () => {
+        service.mouseDownCoord = { x: 0, y: 0 };
+        service.mouseDown = true;
+
+        service.onMouseLeave(mouseEvent);
+        expect(drawCursorSpy).not.toHaveBeenCalled();
+        expect(drawLineSpy).toHaveBeenCalled();
+    });
+
+    it(' onMouseLeave should call drawCursor and should not call drawLine if mouse was not already down', () => {
+        service.mouseDownCoord = { x: 0, y: 0 };
+        service.mouseDown = false;
+
+        service.onMouseLeave(mouseEvent);
+        expect(drawCursorSpy).toHaveBeenCalled();
+        expect(drawLineSpy).not.toHaveBeenCalled();
+    });
+
+    it(' updateDrawingColor should call setColors of pencilService', () => {
+        service.setColors(new Color(), new Color());
+        expect(drawServiceSpy.setColor).toHaveBeenCalled();
     });
 
     // Exemple de test d'intégration qui est quand même utile

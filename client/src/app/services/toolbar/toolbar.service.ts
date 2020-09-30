@@ -5,6 +5,7 @@ import { KeyShortcut } from '@app/enums/key-shortcuts.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { BrushService } from '@app/services/tools/brush/brush.service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
+import { EraseService } from '@app/services/tools/erase/erase.service';
 import { LineService } from '@app/services/tools/Line/line.service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle.service';
@@ -15,6 +16,7 @@ export enum toolsIndex {
     rectangle,
     ellipse,
     lines,
+    eraser,
 }
 
 @Injectable({
@@ -33,16 +35,18 @@ export class ToolbarService {
         protected rectangleService: RectangleService,
         protected ellipseService: EllipseService,
         protected lineService: LineService,
+        protected eraseService: EraseService,
         protected drawingService: DrawingService,
     ) {
-        this.tools = [pencilService, brushService, rectangleService, ellipseService, lineService];
+        this.tools = [pencilService, brushService, rectangleService, ellipseService, lineService, eraseService];
         this.currentTool = this.tools[0];
         this.keyShortcuts
             .set(KeyShortcut.Pencil, pencilService)
             .set(KeyShortcut.Brush, brushService)
             .set(KeyShortcut.Rectangle, rectangleService)
             .set(KeyShortcut.Ellipse, ellipseService)
-            .set(KeyShortcut.Line, lineService);
+            .set(KeyShortcut.Line, lineService)
+            .set(KeyShortcut.Eraser, eraseService);
     }
 
     getTools(): Tool[] {
@@ -70,8 +74,9 @@ export class ToolbarService {
     onKeyDown(event: KeyboardEvent): void {
         this.currentTool.onKeyDown(event);
         const toolFound = this.getTool(event.key);
+        const isNewTool = toolFound && toolFound !== this.currentTool;
         this.currentTool = toolFound ? toolFound : this.currentTool;
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        if (isNewTool) this.drawingService.clearCanvas(this.drawingService.previewCtx);
     }
 
     onKeyPress(event: KeyboardEvent): void {
