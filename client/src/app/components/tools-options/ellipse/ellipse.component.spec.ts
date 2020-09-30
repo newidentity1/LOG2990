@@ -1,4 +1,8 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatSliderModule } from '@angular/material/slider';
 import { EllipseComponent } from './ellipse.component';
 
 describe('EllipseComponent', () => {
@@ -8,6 +12,8 @@ describe('EllipseComponent', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [EllipseComponent],
+            imports: [MatRadioModule, MatSliderModule, FormsModule],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
     }));
 

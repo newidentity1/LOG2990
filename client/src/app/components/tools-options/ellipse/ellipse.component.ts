@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatRadioChange } from '@angular/material/radio';
 import { MatSliderChange } from '@angular/material/slider';
+import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
+import { DrawingType } from '@app/enums/drawing-type.enum';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
 
 @Component({
@@ -8,23 +10,23 @@ import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
     templateUrl: './ellipse.component.html',
     styleUrls: ['./ellipse.component.scss'],
 })
-export class EllipseComponent implements OnInit {
-    typesDrawing: string[] = ['Contour', 'Plein', 'Plein avec contour'];
-    currentType: string = this.typesDrawing[0];
+export class EllipseComponent {
+    typesDrawing: typeof DrawingType = DrawingType;
+    currentType: string;
+    currentThickness: number;
 
-    constructor(public ellipseservice: EllipseService) {
-        // TODO à  implementer
-    }
-
-    ngOnInit(): void {
-        // TODO à implementer
+    constructor(public ellipseService: EllipseService) {
+        const ellipseProperties = ellipseService.toolProperties as BasicShapeProperties;
+        this.currentType = ellipseProperties.currentType;
+        this.currentThickness = ellipseProperties.thickness;
+        this.ellipseService.setThickness(ellipseProperties.thickness);
     }
 
     onThicknessChange(event: MatSliderChange): void {
-        this.ellipseservice.setThickness(event.value);
+        this.ellipseService.setThickness(event.value);
     }
 
     onTypeDrawingChange(event: MatRadioChange): void {
-        this.ellipseservice.setTypeDrawing(event.value);
+        this.ellipseService.setTypeDrawing(event.value);
     }
 }

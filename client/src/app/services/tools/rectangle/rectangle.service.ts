@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Tool } from '@app/classes/tool';
+import { ShapeTool } from '@app/classes/shape-tool';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingType } from '@app/enums/drawing-type.enum';
@@ -17,12 +17,13 @@ export enum MouseButton {
 @Injectable({
     providedIn: 'root',
 })
-export class RectangleService extends Tool {
+export class RectangleService extends ShapeTool {
     startingX: number;
     startingY: number;
     width: number;
     height: number;
     shiftDown: boolean = false;
+    currentMousePosition: Vec2;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
@@ -41,10 +42,9 @@ export class RectangleService extends Tool {
         }
     }
 
-    onMouseUp(event: MouseEvent): void {
+    onMouseUp(): void {
         if (this.mouseDown) {
-            const mousePosition = this.getPositionFromMouse(event);
-            this.computeDimensions(mousePosition);
+            this.computeDimensions(this.currentMousePosition);
             if (this.shiftDown) {
                 const square = this.transformToSquare(this.width, this.height);
                 this.width = square.x;
@@ -58,8 +58,8 @@ export class RectangleService extends Tool {
 
     onMouseMove(event: MouseEvent): void {
         if (this.mouseDown) {
-            const mousePosition = this.getPositionFromMouse(event);
-            this.computeDimensions(mousePosition);
+            this.currentMousePosition = this.getPositionFromMouse(event);
+            this.computeDimensions(this.currentMousePosition);
 
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             const previewCtx = this.drawingService.previewCtx;
@@ -82,7 +82,7 @@ export class RectangleService extends Tool {
         }
     }
 
-    private draw(ctx: CanvasRenderingContext2D): void {
+    draw(ctx: CanvasRenderingContext2D): void {
         let width = this.width;
         let height = this.height;
         if (this.shiftDown) {
@@ -137,11 +137,9 @@ export class RectangleService extends Tool {
     }
 
     setThickness(value: number | null): void {
-        // TODO possiblement ajouter de la validation ici aussi
         value = value === null ? 1 : value;
         this.toolProperties.thickness = value;
-        this.drawingService.previewCtx.lineWidth = value;
-        this.drawingService.baseCtx.lineWidth = value;
+        this.drawingService.setThickness(value);
     }
 
     setTypeDrawing(value: string): void {
@@ -149,15 +147,15 @@ export class RectangleService extends Tool {
         rectangleProperties.currentType = value;
     }
 
-    private drawFillRect(ctx: CanvasRenderingContext2D, width: number, height: number): void {
+    drawFillRect(ctx: CanvasRenderingContext2D, width: number, height: number): void {
         ctx.fillRect(this.startingX, this.startingY, width, height);
     }
 
-    private drawStrokeRect(ctx: CanvasRenderingContext2D, width: number, height: number): void {
+    drawStrokeRect(ctx: CanvasRenderingContext2D, width: number, height: number): void {
         ctx.strokeRect(this.startingX, this.startingY, width, height);
     }
 
-    private drawFillStrokeRect(ctx: CanvasRenderingContext2D, width: number, height: number): void {
+    drawFillStrokeRect(ctx: CanvasRenderingContext2D, width: number, height: number): void {
         this.drawFillRect(ctx, width, height);
         this.drawStrokeRect(ctx, width, height);
     }

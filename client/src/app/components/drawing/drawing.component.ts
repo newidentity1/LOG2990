@@ -1,11 +1,19 @@
-import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
+import { Color } from '@app/classes/color/color';
 import { Vec2 } from '@app/classes/vec2';
+import {
+    BLACK,
+    CANVAS_MARGIN_LEFT,
+    CANVAS_MARGIN_TOP,
+    CANVAS_MIN_HEIGHT,
+    CANVAS_MIN_WIDTH,
+    DEFAULT_HEIGHT,
+    DEFAULT_WIDTH,
+    WHITE,
+} from '@app/constants/constants';
+import { MouseButton } from '@app/enums/mouse-button.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
-
-// TODO : Avoir un fichier séparé pour les constantes ?
-export const DEFAULT_WIDTH = 1000;
-export const DEFAULT_HEIGHT = 800;
 
 @Component({
     selector: 'app-drawing',
@@ -17,9 +25,15 @@ export class DrawingComponent implements AfterViewInit {
     // On utilise ce canvas pour dessiner sans affecter le dessin final
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
 
+    @Input() drawingContainerWidth: number;
+    @Input() drawingContainerHeight: number;
+
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
     private canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
+
+    isResizingWidth: boolean = false;
+    isResizingHeight: boolean = false;
 
     constructor(private drawingService: DrawingService, private toolbarService: ToolbarService) {}
 
@@ -29,65 +43,108 @@ export class DrawingComponent implements AfterViewInit {
         this.drawingService.baseCtx = this.baseCtx;
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
+        this.toolbarService.setColors(new Color(BLACK), new Color(WHITE));
     }
 
-    @HostListener('mousemove', ['$event'])
     onMouseMove(event: MouseEvent): void {
-        this.toolbarService.currentTool.onMouseMove(event);
+        if (!this.isResizingWidth && !this.isResizingHeight) {
+            this.toolbarService.onMouseMove(event);
+        }
     }
 
-    @HostListener('mousedown', ['$event'])
     onMouseDown(event: MouseEvent): void {
-        this.toolbarService.currentTool.onMouseDown(event);
+        if (!this.isResizingWidth && !this.isResizingHeight) {
+            this.toolbarService.onMouseDown(event);
+        }
     }
 
     @HostListener('window:mouseup', ['$event'])
     onMouseUp(event: MouseEvent): void {
-        this.toolbarService.currentTool.onMouseUp(event);
+        if (this.isResizingWidth || this.isResizingHeight) {
+            const newWidth = this.isResizingWidth ? this.previewCanvas.nativeElement.width : this.width;
+            const newHeight = this.isResizingHeight ? this.previewCanvas.nativeElement.height : this.height;
+
+            const imgData = this.baseCtx.getImageData(0, 0, newWidth, newHeight);
+            this.width = newWidth;
+            this.height = newHeight;
+            setTimeout(() => {
+                this.baseCtx.putImageData(imgData, 0, 0);
+            }, 0); // Whyyyy does this work?
+
+            this.isResizingWidth = false;
+            this.isResizingHeight = false;
+        } else {
+            this.toolbarService.onMouseUp(event);
+        }
     }
 
-    @HostListener('mouseenter', ['$event'])
     onMouseEnter(event: MouseEvent): void {
-        this.toolbarService.currentTool.onMouseEnter(event);
+        this.toolbarService.onMouseEnter(event);
     }
 
-    @HostListener('mouseleave', ['$event'])
     onMouseLeave(event: MouseEvent): void {
-        this.toolbarService.currentTool.onMouseLeave(event);
+        this.toolbarService.onMouseLeave(event);
     }
 
-    @HostListener('keydown', ['$event'])
-    onKeyDown(event: KeyboardEvent): void {
-        this.toolbarService.currentTool.onKeyDown(event);
-        // Send the event to toolbar
-        this.toolbarService.onKeyDown(event);
-    }
-
-    @HostListener('keypress', ['$event'])
-    onKeyPress(event: KeyboardEvent): void {
-        this.toolbarService.currentTool.onKeyPress(event);
-    }
-
-    @HostListener('keyup', ['$event'])
-    onKeyUp(event: KeyboardEvent): void {
-        this.toolbarService.currentTool.onKeyUp(event);
-    }
-
-    @HostListener('dblclick', ['$event'])
     onDoubleClick(event: MouseEvent): void {
-        this.toolbarService.currentTool.onDoubleClick(event);
+        this.toolbarService.onDoubleClick(event);
     }
 
-    @HostListener('click', ['$event'])
     onClick(event: MouseEvent): void {
-        this.toolbarService.currentTool.onClick(event);
+        this.toolbarService.onClick(event);
+    }
+
+    @HostListener('window:mousemove', ['$event'])
+    onResize(event: MouseEvent): void {
+        if (this.isResizingWidth) {
+            event.preventDefault();
+            const newWidth = event.clientX - this.baseCanvas.nativeElement.getBoundingClientRect().x;
+            if (newWidth >= CANVAS_MIN_WIDTH) {
+                this.previewCanvas.nativeElement.width =
+                    newWidth >= this.drawingContainerWidth - CANVAS_MARGIN_LEFT ? this.drawingContainerWidth - CANVAS_MARGIN_LEFT : newWidth;
+            }
+        }
+
+        if (this.isResizingHeight) {
+            event.preventDefault();
+            const newHeight = event.clientY - this.baseCanvas.nativeElement.getBoundingClientRect().y;
+            if (newHeight >= CANVAS_MIN_HEIGHT) {
+                this.previewCanvas.nativeElement.height =
+                    newHeight >= this.drawingContainerHeight - CANVAS_MARGIN_TOP ? this.drawingContainerHeight - CANVAS_MARGIN_TOP : newHeight;
+            }
+        }
+    }
+
+    onResizeBothStart(event: MouseEvent): void {
+        this.onResizeWidthStart(event);
+        this.onResizeHeightStart(event);
+    }
+
+    onResizeWidthStart(event: MouseEvent): void {
+        if (event.button === MouseButton.Left) {
+            this.isResizingWidth = true;
+        }
+    }
+
+    onResizeHeightStart(event: MouseEvent): void {
+        if (event.button === MouseButton.Left) {
+            this.isResizingHeight = true;
+        }
     }
 
     get width(): number {
         return this.canvasSize.x;
     }
 
+    set width(newWidth: number) {
+        this.canvasSize.x = newWidth;
+    }
+
     get height(): number {
         return this.canvasSize.y;
+    }
+
+    set height(newHeight: number) {
+        this.canvasSize.y = newHeight;
     }
 }

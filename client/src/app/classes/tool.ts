@@ -1,4 +1,5 @@
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { Color } from './color/color';
 import { BasicToolProperties } from './tools-properties/basic-tool-properties';
 import { Vec2 } from './vec2';
 
@@ -44,4 +45,6 @@ export abstract class Tool {
         this.toolProperties.thickness = value;
         this.drawingService.setThickness(value);
     }
+
+    setColors(primaryColor: Color, secondaryColor: Color): void {}
 }

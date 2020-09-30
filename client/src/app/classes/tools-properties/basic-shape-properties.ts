@@ -3,12 +3,6 @@ import { BasicToolProperties } from './basic-tool-properties';
 
 export class BasicShapeProperties extends BasicToolProperties {
     thickness: number = 1;
-
     typesDrawing: string[] = [DrawingType.Stroke, DrawingType.Fill, DrawingType.FillAndStroke];
     currentType: string = DrawingType.Stroke;
-
-    resetProperties(): void {
-        this.thickness = 1;
-        this.currentType = DrawingType.Stroke;
-    }
 }
