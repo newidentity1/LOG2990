@@ -230,4 +230,25 @@ describe('EllipseService', () => {
         expect(service.width).toEqual(expectedResult.x);
         expect(service.height).toEqual(expectedResult.y);
     });
+
+    it('setThickness should set the thickness of rectangleProperties to 1 when parameter is null and call setThickness of drawing service', () => {
+        const value = null;
+        service.setThickness(value);
+        expect(service.toolProperties.thickness).toEqual(1);
+        expect(drawServiceSpy.setThickness).toHaveBeenCalled();
+    });
+
+    it('setThickness should set the thickness of rectangleProperties to parameter if its a number and call setThickness of drawing service', () => {
+        const value = 50;
+        service.setThickness(value);
+        expect(service.toolProperties.thickness).toEqual(value);
+        expect(drawServiceSpy.setThickness).toHaveBeenCalled();
+    });
+
+    it('setTypeDrawing should set the currentType of rectangleProperties', () => {
+        const properties = service.toolProperties as BasicShapeProperties;
+        const value = properties.typesDrawing[0];
+        service.setTypeDrawing(value);
+        expect(properties.currentType).toEqual(properties.typesDrawing[0]);
+    });
 });

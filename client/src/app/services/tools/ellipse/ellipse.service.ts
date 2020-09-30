@@ -84,6 +84,7 @@ export class EllipseService extends ShapeTool {
 
     setThickness(value: number | null): void {
         value = value === null ? 1 : value;
+        this.drawingService.setThickness(value);
         this.toolProperties.thickness = value;
     }
 
