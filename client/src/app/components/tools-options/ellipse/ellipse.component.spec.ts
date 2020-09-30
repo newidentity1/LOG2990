@@ -4,10 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { MatRadioChange, MatRadioModule, _MatRadioButtonBase } from '@angular/material/radio';
 import { MatSlider, MatSliderChange, MatSliderModule } from '@angular/material/slider';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
+import { ThicknessSliderComponent } from '@app/components/tools-options/thickness-slider/thickness-slider.component';
 import { MAXIMUM_THICKNESS, MINIMUM_THICKNESS } from '@app/constants/constants';
 import { DrawingType } from '@app/enums/drawing-type.enum';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
-import { ThicknessSliderComponent } from '../thickness-slider/thickness-slider.component';
 import { EllipseComponent } from './ellipse.component';
 
 describe('EllipseComponent', () => {
