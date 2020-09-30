@@ -120,4 +120,9 @@ export class BrushService extends Tool {
     private clearPath(): void {
         this.pathData = [];
     }
+
+    resetContext(): void {
+        this.mouseDown = false;
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+    }
 }

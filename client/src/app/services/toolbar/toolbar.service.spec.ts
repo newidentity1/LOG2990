@@ -35,7 +35,7 @@ describe('ToolbarService', () => {
             'onClick',
         ]);
 
-        brushServiceSpy = jasmine.createSpyObj('BrushService', ['onKeyDown']);
+        brushServiceSpy = jasmine.createSpyObj('BrushService', ['onKeyDown', 'resetContext']);
         rectangleServiceSpy = jasmine.createSpyObj('RectangleService', ['onKeyDown']);
         ellipseServiceSpy = jasmine.createSpyObj('EllipseService', ['onKeyDown']);
         lineServiceSpy = jasmine.createSpyObj('LineService', ['onKeyDown']);
@@ -113,16 +113,16 @@ describe('ToolbarService', () => {
         expect(drawingServiceSpy.clearCanvas).not.toHaveBeenCalledWith(drawingServiceSpy.previewCtx);
     });
 
-    it('onKeyDown should call the onKeyDown of the currentTool, getTool, change the currentTool and call clearCanvas when key exist', () => {
+    it('onKeyDown should call the onKeyDown and clearContext of the currentTool, getTool and change the currentTool when key exist', () => {
         service.currentTool = brushServiceSpy;
         const keyboardEvent = { key: KeyShortcut.Pencil } as KeyboardEvent;
         const spyGetTool = spyOn(service, 'getTool').and.callThrough();
         service.onKeyDown(keyboardEvent);
 
         expect(brushServiceSpy.onKeyDown).toHaveBeenCalledWith(keyboardEvent);
+        expect(brushServiceSpy.resetContext).toHaveBeenCalled();
         expect(spyGetTool).toHaveBeenCalledWith(keyboardEvent.key);
         expect(service.currentTool).toEqual(pencilServiceSpy);
-        expect(drawingServiceSpy.clearCanvas).toHaveBeenCalledWith(drawingServiceSpy.previewCtx);
     });
 
     it('onKeyPress should call the onKeyPress of the currentTool', () => {
