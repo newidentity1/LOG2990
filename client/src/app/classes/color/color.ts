@@ -37,8 +37,10 @@ export class Color {
     }
 
     set hex(value: string) {
-        this.hexString = value.toUpperCase();
-        this.computeRBGFromHex();
+        if (value.match(/[0-9A-F]{6}$/i)) {
+            this.hexString = value.toUpperCase();
+            this.computeRBGFromHex();
+        }
     }
 
     get opacity(): number {
