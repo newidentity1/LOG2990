@@ -8,15 +8,15 @@ export class DrawingService {
     baseCtx: CanvasRenderingContext2D;
     previewCtx: CanvasRenderingContext2D;
     canvas: HTMLCanvasElement;
-    childEvent: BehaviorSubject<string> = new BehaviorSubject<string>('Canvas Size has been set');
+    createNewDrawingSubject: BehaviorSubject<string> = new BehaviorSubject<string>('Canvas Size has been set');
 
     // Send events between components
-    emitChildEvent(msg: string): void {
-        this.childEvent.next(msg);
+    emitCreateNewDrawingEvent(msg: string): void {
+        this.createNewDrawingSubject.next(msg);
     }
 
-    childEventListener(): Observable<string> {
-        return this.childEvent.asObservable();
+    createNewDrawingEventListener(): Observable<string> {
+        return this.createNewDrawingSubject.asObservable();
     }
 
     clearCanvas(context: CanvasRenderingContext2D): void {

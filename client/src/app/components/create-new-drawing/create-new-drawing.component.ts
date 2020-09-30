@@ -17,7 +17,7 @@ export class CreateNewDrawingComponent {
         if (this.currentDrawingService.CanvasEmpty(this.currentDrawingService.baseCtx, this.currentDrawingService.canvas)) {
             this.currentDrawingService.clearCanvas(this.currentDrawingService.baseCtx);
             console.log('Cleared Canvas Without Warning');
-            this.currentDrawingService.emitChildEvent('Button <new drawing> resized the canvas');
+            this.currentDrawingService.emitCreateNewDrawingEvent('Button <new drawing> resized the canvas');
         } else {
             this.warningClearCanvas();
             console.log('Cleared Canvas With Warning');

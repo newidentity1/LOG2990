@@ -45,7 +45,7 @@ export class DrawingComponent implements AfterViewInit {
         this.drawingService.canvas = this.baseCanvas.nativeElement;
         this.toolbarService.setColors(new Color(BLACK), new Color(WHITE));
         // Set size of initial canvas and new canvas
-        this.drawingService.childEventListener().subscribe((resetMessage) => {
+        this.drawingService.createNewDrawingEventListener().subscribe((resetMessage) => {
             this.newCanvasSetSize();
             console.log(resetMessage);
         });
