@@ -76,12 +76,6 @@ describe('ColorPickerComponent', () => {
         expect(colorPickerServiceSpy.onMouseUp).toHaveBeenCalledWith(mouseEvent);
     });
 
-    it(' getRecentColors should return recentColors from colorPickerService', () => {
-        const returnedRecentColors = component.getRecentColors();
-        expect(returnedRecentColors).toBeTruthy();
-        expect(returnedRecentColors).toEqual(colorPickerServiceSpy.recentColors);
-    });
-
     it(' getCurrentColor should return selectedColor from colorPickerService', () => {
         const returnedSelectedColors = component.getCurrentColor();
         expect(returnedSelectedColors).toBeTruthy();

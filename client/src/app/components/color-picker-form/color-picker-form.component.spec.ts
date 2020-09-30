@@ -76,7 +76,7 @@ describe('ColorPickerFormComponent', () => {
     it(' changeOpacity should not change opacity of color if value is invalid', () => {
         const expectedOpacity = 1.0;
         component.color = new Color(BLACK, expectedOpacity);
-        component.changeOpacity(-1);
+        component.changeOpacity(2);
         expect(component.color.opacity).toEqual(expectedOpacity);
     });
 
