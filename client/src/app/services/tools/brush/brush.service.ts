@@ -3,7 +3,7 @@ import { BrushProperties } from '@app/classes/tools-properties/brush-properties'
 import { Vec2 } from '@app/classes/vec2';
 import { BrushType } from '@app/enums/brush-filters.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { PencilService } from '../pencil/pencil-service';
+import { PencilService } from '@app/services/tools/pencil/pencil-service';
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
 export enum MouseButton {
@@ -37,9 +37,8 @@ export class BrushService extends PencilService {
         ctx.beginPath();
 
         ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
 
-        // set filter
-        // ctx.filter = 'url(#Brushed)';
         const brushProperties = this.toolProperties as BrushProperties;
         switch (brushProperties.currentFilter) {
             case BrushType.Blurred:

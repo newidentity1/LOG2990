@@ -173,6 +173,9 @@ export class LineService extends Tool {
 
     // dessine la ligne
     private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.miterLimit = 1;
         ctx.beginPath();
         for (const point of path) {
             ctx.lineTo(point.x, point.y);
