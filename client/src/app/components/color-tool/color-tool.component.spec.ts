@@ -1,18 +1,42 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
+import { Color } from '@app/classes/color/color';
+import { ColorPickerService } from '@app/services/color-picker/color-picker.service';
 import { ColorToolComponent } from './color-tool.component';
+
+export class MatDialogMock {
+    // When the component calls this.dialog.open(...) we'll return an object
+    // with an afterClosed method that allows to subscribe to the dialog result observable.
+    open(): {} {
+        return {};
+    }
+}
 
 describe('ColorToolComponent', () => {
     let component: ColorToolComponent;
     let fixture: ComponentFixture<ColorToolComponent>;
 
+    let colorPickerServiceSpy: jasmine.SpyObj<ColorPickerService>;
+    // tslint:disable:no-any / reason: jasmine spy
+    let dialogOpenSpy: jasmine.Spy<any>;
+
     beforeEach(async(() => {
+        colorPickerServiceSpy = jasmine.createSpyObj('ColorPickerService', ['swapColors', 'resetSelectedColor']);
+
         TestBed.configureTestingModule({
             declarations: [ColorToolComponent],
-            providers: [{ provide: MatDialog, useValue: {} }],
+            providers: [
+                { provide: ColorPickerService, useValue: colorPickerServiceSpy },
+                { provide: MatDialog, useClass: MatDialogMock },
+            ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
+
+        colorPickerServiceSpy = TestBed.inject(ColorPickerService) as jasmine.SpyObj<ColorPickerService>;
+        colorPickerServiceSpy.primaryColor = new Color();
+        colorPickerServiceSpy.secondaryColor = new Color();
+        dialogOpenSpy = spyOn<any>(TestBed.inject(MatDialog), 'open').and.callThrough();
     }));
 
     beforeEach(() => {
@@ -23,5 +47,42 @@ describe('ColorToolComponent', () => {
 
     it('should create', () => {
         expect(component).toBeTruthy();
+    });
+
+    it(' openPrimaryColorPicker should open dialog', () => {
+        component.openPrimaryColorPicker();
+        expect(dialogOpenSpy).toHaveBeenCalled();
+    });
+
+    it(' openSecondaryColorPicker should open dialog', () => {
+        component.openSecondaryColorPicker();
+        expect(dialogOpenSpy).toHaveBeenCalled();
+    });
+
+    it(' getPrimaryColor should return primary color from colorPickerService', () => {
+        const returnedColor = component.getPrimaryColor();
+        expect(returnedColor).toEqual(colorPickerServiceSpy.primaryColor.toStringRGBA());
+    });
+
+    it(' getSecondaryColor should return secondary color from colorPickerService', () => {
+        const returnedColor = component.getSecondaryColor();
+        expect(returnedColor).toEqual(colorPickerServiceSpy.secondaryColor.toStringRGBA());
+    });
+
+    it(' onSwapColors should call swapColors of colorPickerService', () => {
+        component.onSwapColors();
+        expect(colorPickerServiceSpy.swapColors).toHaveBeenCalled();
+    });
+
+    it(' openDialog should call resetSelectedColor with false if primary color dialog is opened', () => {
+        // tslint:disable-next-line:no-string-literal / reason: accessing private property
+        component['openDialog'](false);
+        expect(colorPickerServiceSpy.resetSelectedColor).toHaveBeenCalledWith(false);
+    });
+
+    it(' openDialog should call resetSelectedColor with false if primary color dialog is opened', () => {
+        // tslint:disable-next-line:no-string-literal / reason: accessing private property
+        component['openDialog'](true);
+        expect(colorPickerServiceSpy.resetSelectedColor).toHaveBeenCalledWith(true);
     });
 });
