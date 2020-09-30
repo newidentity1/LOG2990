@@ -49,10 +49,23 @@ mat-sidenav {
     flex-direction: column;
     margin: 15px 0;
 }
-.tool-options {
-    margin: 5px;
-}
 
-.type-drawing-label {
+.property {
     margin: 5px;
+    .type-drawing-label {
+        width: 100%;
+    }
+
+    .sliderWrapper {
+        display: flex;
+        margin: 5px;
+    }
+
+    .title-property {
+        text-align: center;
+    }
+
+    .type-drawing-group  > mat-radio-button {
+        padding-top: 5px;
+    }
 }

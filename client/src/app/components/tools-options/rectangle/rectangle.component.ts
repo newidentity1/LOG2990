@@ -9,7 +9,7 @@ import { RectangleService } from '@app/services/tools/rectangle/rectangle.servic
 @Component({
     selector: 'app-rectangle-options',
     templateUrl: './rectangle.component.html',
-    styleUrls: ['./rectangle.component.scss'],
+    styleUrls: ['../../sidebar/sidebar.component.scss'],
 })
 export class RectangleComponent {
     typesDrawing: typeof DrawingType = DrawingType;
