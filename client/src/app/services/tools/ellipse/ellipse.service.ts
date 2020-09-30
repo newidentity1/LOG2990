@@ -15,7 +15,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
     providedIn: 'root',
 })
 export class EllipseService extends ShapeTool {
-    pathStart: Vec2;
+    pathStart: Vec2 = { x: 0, y: 0 };
     width: number;
     height: number;
     shiftDown: boolean = false;
@@ -67,14 +67,18 @@ export class EllipseService extends ShapeTool {
         if (this.mouseDown) this.drawPreview();
     }
 
+    transformToCircle(): void {
+        const min = Math.min(Math.abs(this.width), Math.abs(this.height));
+        this.width = this.width < 0 ? -min : min;
+        this.height = this.height < 0 ? -min : min;
+    }
+
     computeDimensions(): void {
         this.width = this.mouseDownCoord.x - this.pathStart.x;
         this.height = this.mouseDownCoord.y - this.pathStart.y;
 
         if (this.shiftDown) {
-            const min = Math.min(Math.abs(this.width), Math.abs(this.height));
-            this.width = this.width < 0 ? -min : min;
-            this.height = this.height < 0 ? -min : min;
+            this.transformToCircle();
         }
     }
 
@@ -112,7 +116,7 @@ export class EllipseService extends ShapeTool {
      * inside the perimeter, the ctx.lineWidth is assigned to the half of the
      * smallest of its sides.
      */
-    private drawEllipse(ctx: CanvasRenderingContext2D): void {
+    public drawEllipse(ctx: CanvasRenderingContext2D): void {
         if (this.escapeDown) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             return;
