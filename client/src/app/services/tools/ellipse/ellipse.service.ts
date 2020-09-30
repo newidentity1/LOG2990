@@ -15,7 +15,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
     providedIn: 'root',
 })
 export class EllipseService extends ShapeTool {
-    pathStart: Vec2 = { x: 0, y: 0 };
+    pathStart: Vec2;
     width: number;
     height: number;
     shiftDown: boolean = false;
@@ -26,6 +26,8 @@ export class EllipseService extends ShapeTool {
         this.name = 'Ellipse';
         this.tooltip = 'Ellipse';
         this.iconName = 'panorama_fish_eye';
+        this.pathStart = { x: 0, y: 0 };
+        this.mouseDownCoord = { x: 0, y: 0 };
         this.toolProperties = new BasicShapeProperties();
     }
 
@@ -67,10 +69,14 @@ export class EllipseService extends ShapeTool {
         if (this.mouseDown) this.drawPreview();
     }
 
+    signOf(num: number): number {
+        return Math.abs(num) / num;
+    }
+
     transformToCircle(): void {
         const min = Math.min(Math.abs(this.width), Math.abs(this.height));
-        this.width = this.width < 0 ? -min : min;
-        this.height = this.height < 0 ? -min : min;
+        this.width = min * this.signOf(this.width);
+        this.height = min * this.signOf(this.height);
     }
 
     computeDimensions(): void {
@@ -110,6 +116,14 @@ export class EllipseService extends ShapeTool {
         }
     }
 
+    adjustThickness(ellipseProperties: BasicShapeProperties, radius: Vec2): number {
+        return ellipseProperties.currentType === DrawingType.Fill
+            ? MINIMUM_THICKNESS
+            : this.toolProperties.thickness < Math.min(Math.abs(radius.x), Math.abs(radius.y))
+            ? this.toolProperties.thickness
+            : Math.min(Math.abs(radius.x), Math.abs(radius.y));
+    }
+
     /**
      * @description Draws the ellipse with the correct thickness and prioritizes
      * the dimensions of the guide perimeter (boxGuide) which follow the mouse
@@ -117,7 +131,7 @@ export class EllipseService extends ShapeTool {
      * inside the perimeter, the ctx.lineWidth is assigned to the half of the
      * smallest of its sides.
      */
-    public drawEllipse(ctx: CanvasRenderingContext2D): void {
+    drawEllipse(ctx: CanvasRenderingContext2D): void {
         if (this.escapeDown) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             return;
@@ -125,14 +139,9 @@ export class EllipseService extends ShapeTool {
 
         const radius: Vec2 = { x: this.width / 2, y: this.height / 2 };
         const ellipseProperties = this.toolProperties as BasicShapeProperties;
-        const thickness =
-            ellipseProperties.currentType === DrawingType.Fill
-                ? MINIMUM_THICKNESS
-                : this.toolProperties.thickness < Math.min(Math.abs(radius.x), Math.abs(radius.y))
-                ? this.toolProperties.thickness
-                : Math.min(Math.abs(radius.x), Math.abs(radius.y));
-        const dx = this.width < 0 ? -thickness / 2 : thickness / 2;
-        const dy = this.height < 0 ? -thickness / 2 : thickness / 2;
+        const thickness = this.adjustThickness(ellipseProperties, radius);
+        const dx = (thickness / 2) * this.signOf(this.width);
+        const dy = (thickness / 2) * this.signOf(this.height);
 
         this.drawingService.setThickness(thickness);
         ctx.beginPath();
