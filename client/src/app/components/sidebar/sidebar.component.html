@@ -1,13 +1,12 @@
 <mat-sidenav-container>
     <mat-sidenav #toolProperties mode="side" position="end">
         <!-- TODO implementer le contenu du sidenav dans un autre component -->
-        <div [ngSwitch]="currentTool.name">
+        <div *ngIf="currentTool" [ngSwitch]="currentTool.name">
             <app-pencil-options *ngSwitchCase="'Crayon'"></app-pencil-options>
             <app-brush-options *ngSwitchCase="'Brush'"></app-brush-options>
             <app-rectangle-options *ngSwitchCase="'Rectangle'"></app-rectangle-options>
             <app-ellipse-options *ngSwitchCase="'Ellipse'"></app-ellipse-options>
             <app-line-option *ngSwitchCase="'Line'"></app-line-option>
-            <app-erase-option *ngSwitchCase="'Erase'"></app-erase-option>
         </div>
     </mat-sidenav>
     <mat-sidenav-content>
@@ -19,8 +18,11 @@
                     </button>
                 </li>
             </ul>
-            <app-recent-colors></app-recent-colors>
-            <app-color-tool></app-color-tool>
+            <div id="colors-container">
+                <app-recent-colors></app-recent-colors>
+                <app-color-tool></app-color-tool>
+            </div>
+            <app-create-new-drawing></app-create-new-drawing>
         </div>
     </mat-sidenav-content>
 </mat-sidenav-container>

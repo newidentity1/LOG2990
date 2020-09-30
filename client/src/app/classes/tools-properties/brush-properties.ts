@@ -1,10 +1,11 @@
 // Paintbrush specific properties
+import { BrushType } from '@app/enums/brush-filters.enum';
 import { BasicToolProperties } from './basic-tool-properties';
 
 export class BrushProperties extends BasicToolProperties {
     // Default thickness
-    thickness: number = 15;
+    thickness: number = 1;
 
-    filterType: string[] = ['Blurred', 'Brushed', 'Graffiti', 'Goo', 'Water'];
-    currentFilter: string = 'Blurred';
+    filterType: string[] = [BrushType.Blurred, BrushType.Brushed, BrushType.Spray, BrushType.Splash, BrushType.Cloud];
+    currentFilter: string = BrushType.Blurred;
 }
