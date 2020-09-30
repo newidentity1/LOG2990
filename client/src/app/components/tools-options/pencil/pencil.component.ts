@@ -6,7 +6,7 @@ import { PencilService } from '@app/services/tools/pencil/pencil-service';
 @Component({
     selector: 'app-pencil-options',
     templateUrl: './pencil.component.html',
-    styleUrls: ['./pencil.component.scss'],
+    styleUrls: ['../../sidebar/sidebar.component.scss'],
 })
 export class PencilComponent {
     currentThickness: number;
