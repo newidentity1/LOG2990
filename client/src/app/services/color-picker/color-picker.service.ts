@@ -11,10 +11,9 @@ import { ToolbarService } from '@app/services/toolbar/toolbar.service';
     providedIn: 'root',
 })
 export class ColorPickerService extends Tool {
-    // TODO: do not extend from Tool?
-
     colorCanvasCtx: CanvasRenderingContext2D;
     cursorCanvasCtx: CanvasRenderingContext2D;
+    canvas: HTMLCanvasElement;
 
     primaryColor: Color;
     secondaryColor: Color;
@@ -63,24 +62,20 @@ export class ColorPickerService extends Tool {
 
     confirmSelectedColor(isSecondaryColorPicker: boolean): void {
         if (isSecondaryColorPicker) {
-            if (this.selectedColor.hex !== this.secondaryColor.hex) {
-                this.addToRecentColors(new Color(this.selectedColor.hex));
-            }
-            this.secondaryColor = new Color(this.selectedColor.hex, this.selectedColor.opacity);
+            this.secondaryColor = this.selectedColor.clone();
         } else {
-            if (this.selectedColor.hex !== this.primaryColor.hex) {
-                this.addToRecentColors(new Color(this.selectedColor.hex));
-            }
-            this.primaryColor = new Color(this.selectedColor.hex, this.selectedColor.opacity);
+            this.primaryColor = this.selectedColor.clone();
         }
+        this.addToRecentColors(new Color(this.selectedColor.hex));
+
         this.updateDrawingColor();
     }
 
     resetSelectedColor(isSecondaryColorPicker: boolean): void {
         if (isSecondaryColorPicker) {
-            this.selectedColor = new Color(this.secondaryColor.hex, this.secondaryColor.opacity);
+            this.selectedColor = this.secondaryColor.clone();
         } else {
-            this.selectedColor = new Color(this.primaryColor.hex, this.primaryColor.opacity);
+            this.selectedColor = this.primaryColor.clone();
         }
     }
 
@@ -94,8 +89,8 @@ export class ColorPickerService extends Tool {
             this.secondaryColor.hex = color.hex;
         } else {
             this.primaryColor.hex = color.hex;
-            this.updateDrawingColor();
         }
+        this.updateDrawingColor();
     }
 
     updateDrawingColor(): void {
@@ -103,6 +98,8 @@ export class ColorPickerService extends Tool {
     }
 
     private drawCursor(ctx: CanvasRenderingContext2D, position: Vec2): void {
+        console.log('sdf');
+
         ctx.strokeStyle = '#' + this.selectedColor.hex;
         ctx.beginPath();
         this.drawingService.clearCanvas(ctx);
@@ -130,9 +127,11 @@ export class ColorPickerService extends Tool {
     }
 
     private addToRecentColors(color: Color): void {
-        if (this.recentColors.length === CONSTANTS.MAX_RECENT_COLORS_SIZE) {
-            this.recentColors.shift();
+        if (!this.recentColors.some((recentColor) => recentColor.hex === color.hex)) {
+            if (this.recentColors.length === CONSTANTS.MAX_RECENT_COLORS_SIZE) {
+                this.recentColors.pop();
+            }
+            this.recentColors.unshift(color);
         }
-        this.recentColors.push(color);
     }
 }

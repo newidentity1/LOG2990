@@ -8,9 +8,13 @@ export class Color {
     private alpha: number;
 
     constructor(hex?: string, alpha?: number) {
-        this.hexString = hex ? hex : CONSTANTS.BLACK;
+        this.hexString = hex ? hex.toUpperCase() : CONSTANTS.BLACK;
         this.alpha = alpha ? alpha : CONSTANTS.DEFAULT_COLOR_OPACITY;
         this.computeRBGFromHex();
+    }
+
+    clone(): Color {
+        return new Color(this.hexString, this.alpha);
     }
 
     set red(value: number) {
@@ -33,7 +37,7 @@ export class Color {
     }
 
     set hex(value: string) {
-        this.hexString = value;
+        this.hexString = value.toUpperCase();
         this.computeRBGFromHex();
     }
 
@@ -69,15 +73,15 @@ export class Color {
     }
 
     getRedHex(): string {
-        return this.binToHex(this.redValue);
+        return this.binToHex(this.redValue).toUpperCase();
     }
 
     getGreenHex(): string {
-        return this.binToHex(this.greenValue);
+        return this.binToHex(this.greenValue).toUpperCase();
     }
 
     getBlueHex(): string {
-        return this.binToHex(this.blueValue);
+        return this.binToHex(this.blueValue).toUpperCase();
     }
 
     toStringRGBA(): string {
@@ -95,6 +99,7 @@ export class Color {
 
     private computeHexFromRGB(): void {
         this.hexString = this.binToHex(this.redValue) + this.binToHex(this.greenValue) + this.binToHex(this.blueValue);
+        this.hexString = this.hexString.toUpperCase();
     }
 
     private binToHex(bin: number): string {
