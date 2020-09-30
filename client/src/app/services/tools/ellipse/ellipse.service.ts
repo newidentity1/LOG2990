@@ -24,7 +24,7 @@ export class EllipseService extends ShapeTool {
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.name = 'Ellipse';
-        this.tooltip = 'Ellipse';
+        this.tooltip = 'Ellipse(2)';
         this.iconName = 'panorama_fish_eye';
         this.pathStart = { x: 0, y: 0 };
         this.mouseDownCoord = { x: 0, y: 0 };
