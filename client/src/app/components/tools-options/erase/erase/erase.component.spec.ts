@@ -1,4 +1,6 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ThicknessSliderComponent } from '@app/components/tools-options/thickness-slider/thickness-slider.component';
 import { EraseComponent } from './erase.component';
 
 describe('EraseComponent', () => {
@@ -7,7 +9,8 @@ describe('EraseComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [EraseComponent],
+            declarations: [EraseComponent, ThicknessSliderComponent],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
     }));
 
