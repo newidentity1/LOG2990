@@ -304,6 +304,11 @@ describe('LineServiceService', () => {
         expect(drawServiceSpy.setThickness).toHaveBeenCalled();
     });
 
+    it(' setThickness should set thickness', () => {
+        service.setThickness(CONSTANTS.MAXIMUM_THICKNESS);
+        expect(drawServiceSpy.setThickness).toHaveBeenCalled();
+    });
+
     it(' onMouseMove should drawLine if mouse was not already down', () => {
         service.mouseDownCoord = { x: 200, y: 200 };
         service.pathData.push(service.mouseDownCoord);
