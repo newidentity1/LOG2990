@@ -1,5 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { NewDrawingDialogComponent } from './new-drawing-dialog.component';
 
 describe('NewDrawingDialogComponent', () => {
@@ -9,6 +9,10 @@ describe('NewDrawingDialogComponent', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [NewDrawingDialogComponent],
+            providers: [
+                { provide: MatDialogRef, useValue: {} },
+                { provide: MAT_DIALOG_DATA, useValue: [] },
+            ],
         }).compileComponents();
     }));
 
