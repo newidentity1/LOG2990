@@ -55,7 +55,7 @@ export class LineService extends Tool {
                         mousePosition.y =
                             Math.tan(CONSTANTS.ANGLE_45) * (mousePosition.x - this.pathData[this.pathData.length - 1].x) +
                             this.pathData[this.pathData.length - 1].y;
-                    } else if ((dx > 0 && dy < 0) || (dx < 0 && dy > 0)) {
+                    } else {
                         mousePosition.y =
                             -Math.tan(CONSTANTS.ANGLE_45) * (mousePosition.x - this.pathData[this.pathData.length - 1].x) +
                             this.pathData[this.pathData.length - 1].y;
@@ -205,7 +205,7 @@ export class LineService extends Tool {
     }
 
     // Permet de trouver l'angle entre la souris et l'axe x
-    private ajustementAngle(event: MouseEvent): void {
+    ajustementAngle(event: MouseEvent): void {
         let angle = 0;
         const mousePosition = this.getPositionFromMouse(event);
         if (mousePosition !== this.pathData[this.pathData.length - 1] && this.pathData.length >= 1) {
