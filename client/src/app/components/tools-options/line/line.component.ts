@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatRadioChange } from '@angular/material/radio';
 import { MatSliderChange } from '@angular/material/slider';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
-import { LinePointType } from '@app/enums/line_point-type.enum';
+import { LinePointType } from '@app/enums/linepoint-type.enum';
 import { LineService } from '@app/services/tools/Line/line.service';
 @Component({
     selector: 'app-line-option',

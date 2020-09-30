@@ -9,7 +9,7 @@ import { EraseComponent } from './erase.component';
 describe('EraseComponent', () => {
     let component: EraseComponent;
     let fixture: ComponentFixture<EraseComponent>;
-    let EraseServiceMock: jasmine.SpyObj<EraseService>;
+    let eraseServiceMock: jasmine.SpyObj<EraseService>;
     // tslint:disable-next-line: no-any / reason: spy of functions
     let thicknessSpy: jasmine.SpyObj<any>;
 
@@ -19,8 +19,8 @@ describe('EraseComponent', () => {
             imports: [MatSliderModule],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
-        EraseServiceMock = TestBed.inject(EraseService) as jasmine.SpyObj<EraseService>;
-        thicknessSpy = spyOn(EraseServiceMock, 'setThickness').and.callThrough();
+        eraseServiceMock = TestBed.inject(EraseService) as jasmine.SpyObj<EraseService>;
+        thicknessSpy = spyOn(eraseServiceMock, 'setThickness').and.callThrough();
     }));
 
     beforeEach(() => {
