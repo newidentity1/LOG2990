@@ -1,35 +1,28 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { Tool } from '@app/classes/tool';
 import { SVGFilterComponent } from '@app/components/svgfilter/svgfilter.component';
+import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { PencilService } from '@app/services/tools/pencil/pencil-service';
-import { RectangleService } from '@app/services/tools/rectangle/rectangle.service';
+import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 import { DrawingComponent } from './drawing.component';
-
-class ToolStub extends Tool {}
-
-// TODO : Déplacer dans un fichier accessible à tous
-const DEFAULT_WIDTH = 1000;
-const DEFAULT_HEIGHT = 800;
 
 describe('DrawingComponent', () => {
     let component: DrawingComponent;
     let fixture: ComponentFixture<DrawingComponent>;
-    let toolStub: ToolStub;
-    let drawingStub: DrawingService;
+    let drawingServiceStub: DrawingService;
+    let toolbarServiceSpy: jasmine.SpyObj<ToolbarService>;
 
     beforeEach(async(() => {
-        toolStub = new ToolStub({} as DrawingService);
-        drawingStub = new DrawingService();
+        drawingServiceStub = new DrawingService();
+        toolbarServiceSpy = jasmine.createSpyObj('ToolbarService', ['onMouseMove', 'onMouseDown', 'onMouseUp', 'setColors']);
 
         TestBed.configureTestingModule({
             declarations: [DrawingComponent, SVGFilterComponent],
             providers: [
-                { provide: PencilService, useValue: toolStub },
-                { provide: RectangleService, useValue: toolStub },
-                { provide: DrawingService, useValue: drawingStub },
+                { provide: DrawingService, useValue: drawingServiceStub },
+                { provide: ToolbarService, useValue: toolbarServiceSpy },
             ],
         }).compileComponents();
+        toolbarServiceSpy = TestBed.inject(ToolbarService) as jasmine.SpyObj<ToolbarService>;
     }));
 
     beforeEach(() => {
@@ -49,27 +42,33 @@ describe('DrawingComponent', () => {
         expect(width).toEqual(DEFAULT_WIDTH);
     });
 
-    it(" should call the tool's mouse move when receiving a mouse move event", () => {
+    it(' onMouseMove should call toolbarService onMouseMove when receiving a mouse event', () => {
         const event = {} as MouseEvent;
-        const mouseEventSpy = spyOn(toolStub, 'onMouseMove').and.callThrough();
         component.onMouseMove(event);
-        expect(mouseEventSpy).toHaveBeenCalled();
-        expect(mouseEventSpy).toHaveBeenCalledWith(event);
+        expect(toolbarServiceSpy.onMouseMove).toHaveBeenCalled();
+        expect(toolbarServiceSpy.onMouseMove).toHaveBeenCalledWith(event);
     });
 
-    it(" should call the tool's mouse down when receiving a mouse down event", () => {
+    it('  onMouseDown should call toolbarService onMouseDown when receiving a mouse event', () => {
         const event = {} as MouseEvent;
-        const mouseEventSpy = spyOn(toolStub, 'onMouseDown').and.callThrough();
         component.onMouseDown(event);
-        expect(mouseEventSpy).toHaveBeenCalled();
-        expect(mouseEventSpy).toHaveBeenCalledWith(event);
+        expect(toolbarServiceSpy.onMouseDown).toHaveBeenCalled();
+        expect(toolbarServiceSpy.onMouseDown).toHaveBeenCalledWith(event);
     });
 
-    it(" should call the tool's mouse up when receiving a mouse up event", () => {
+    it('  onMouseUp should call toolbarService onMouseUp when receiving a mouse event', () => {
         const event = {} as MouseEvent;
-        const mouseEventSpy = spyOn(toolStub, 'onMouseUp').and.callThrough();
         component.onMouseUp(event);
-        expect(mouseEventSpy).toHaveBeenCalled();
-        expect(mouseEventSpy).toHaveBeenCalledWith(event);
+        expect(toolbarServiceSpy.onMouseUp).toHaveBeenCalled();
+        expect(toolbarServiceSpy.onMouseUp).toHaveBeenCalledWith(event);
+    });
+
+    it(' should not call the toolbarService onMouse when receiving a mouseMove and a mouseDown event if isResizingWidth or isResizingHeight', () => {
+        const event = {} as MouseEvent;
+        component.isResizingHeight = true;
+        component.onMouseDown(event);
+        component.onMouseMove(event);
+        expect(toolbarServiceSpy.onMouseDown).not.toHaveBeenCalled();
+        expect(toolbarServiceSpy.onMouseMove).not.toHaveBeenCalled();
     });
 });
