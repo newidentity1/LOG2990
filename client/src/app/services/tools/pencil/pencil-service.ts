@@ -84,7 +84,7 @@ export class PencilService extends Tool {
         ctx.stroke();
     }
 
-    private drawCursor(position: Vec2): void {
+    protected drawCursor(position: Vec2): void {
         const cursorCtx = this.drawingService.previewCtx;
         this.drawingService.clearCanvas(cursorCtx);
         cursorCtx.beginPath();

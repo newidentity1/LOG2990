@@ -2,15 +2,16 @@
     <mat-sidenav #toolProperties mode="side" position="end">
         <!-- TODO implementer le contenu du sidenav dans un autre component -->
         <div *ngIf="currentTool" [ngSwitch]="currentTool.name">
-            <app-pencil-options *ngSwitchCase="'Crayon'"></app-pencil-options>
-            <app-brush-options *ngSwitchCase="'Brush'"></app-brush-options>
-            <app-rectangle-options *ngSwitchCase="'Rectangle'"></app-rectangle-options>
-            <app-ellipse-options *ngSwitchCase="'Ellipse'"></app-ellipse-options>
-            <app-line-option *ngSwitchCase="'Line'"></app-line-option>
+            <app-pencil-options class="tool-options" *ngSwitchCase="'Crayon'"></app-pencil-options>
+            <app-brush-options class="tool-options" *ngSwitchCase="'Brush'"></app-brush-options>
+            <app-rectangle-options class="tool-options" *ngSwitchCase="'Rectangle'"></app-rectangle-options>
+            <app-ellipse-options class="tool-options" *ngSwitchCase="'Ellipse'"></app-ellipse-options>
+            <app-line-option class="tool-options" *ngSwitchCase="'Line'"></app-line-option>
+            <app-erase-option class="tool-options" *ngSwitchCase="'Eraser'"></app-erase-option>
         </div>
     </mat-sidenav>
     <mat-sidenav-content>
-        <div class="container">
+        <div id="tool-container">
             <ul id="tools">
                 <li *ngFor="let tool of tools" matTooltip="{{ tool.tooltip }}" [matTooltipPosition]="'right'">
                     <button mat-button [ngClass]="{ currentTool: isCurrentTool(tool) }" (click)="onToolChanged(tool)">
@@ -22,7 +23,10 @@
                 <app-recent-colors></app-recent-colors>
                 <app-color-tool></app-color-tool>
             </div>
-            <app-create-new-drawing></app-create-new-drawing>
+            <hr />
+            <div id="other-functionality-container">
+                <app-create-new-drawing></app-create-new-drawing>
+            </div>
         </div>
     </mat-sidenav-content>
 </mat-sidenav-container>

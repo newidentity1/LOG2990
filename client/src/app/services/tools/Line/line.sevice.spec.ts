@@ -13,7 +13,6 @@ describe('LineServiceService', () => {
     let keyboardEventShiftUP: KeyboardEvent;
     let keyboardEventBackSpace: KeyboardEvent;
     let keyboardEventEscape: KeyboardEvent;
-    // let mouseEventclick2: MouseEvent;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
 
     let baseCtxStub: CanvasRenderingContext2D;
@@ -28,7 +27,7 @@ describe('LineServiceService', () => {
     beforeEach(() => {
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
-        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setColor']);
+        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setColor', 'setThickness']);
 
         TestBed.configureTestingModule({
             providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
@@ -134,7 +133,7 @@ describe('LineServiceService', () => {
         expect(service.lock90).toEqual(true);
     });
 
-    it(' updateDrawingColor should call setColors of pencilService', () => {
+    it(' setColors should call setColors of drawing Service', () => {
         service.setColors(new Color());
         expect(drawServiceSpy.setColor).toHaveBeenCalled();
     });
@@ -198,18 +197,17 @@ describe('LineServiceService', () => {
         expect(service.pathData[service.pathData.length - 1]).toEqual(expectedResult);
     });
 
-    it('backSpace delete last segment', () => {
-        service.mouseDownCoord = { x: 20, y: 20 };
-        service.pathData.push(service.mouseDownCoord);
-        service.mouseDownCoord = { x: 50, y: 50 };
-        service.pathData.push(service.mouseDownCoord);
-        service.mouseDownCoord = { x: 100, y: 100 };
-        service.pathData.push(service.mouseDownCoord);
+    it('backSpace should do nothing if there is no line', () => {
         service.onKeyDown(keyboardEventBackSpace);
-        expect(drawLineSpy).toHaveBeenCalled();
+        expect(service.pathData.length).toEqual(0);
     });
 
-    it('Ecape is press should set escape to true', () => {
+    it('ajustementAngle should do nothing if there is no line', () => {
+        service.ajustementAngle(mouseEventclick1);
+        expect(service.pathData.length).toEqual(0);
+    });
+
+    it('Ecape is press should delete the line', () => {
         service.onKeyDown(keyboardEventEscape);
         expect(service.pathData.length).toEqual(0);
     });
@@ -250,7 +248,7 @@ describe('LineServiceService', () => {
         expect(service.lock180).toEqual(true);
     });
 
-    it('if line withpoint, should put point', () => {
+    it('Withpoint propriety should put point', () => {
         service.withPoint = true;
         service.mouseDownCoord = { x: 20, y: 20 };
         service.pathData.push(service.mouseDownCoord);
@@ -285,6 +283,32 @@ describe('LineServiceService', () => {
         expect(drawLineSpy).toHaveBeenCalled();
     });
 
+    it(' onDoubleClick should do nothing if there is no point', () => {
+        service.onDoubleClick(mouseEventclick1);
+        expect(service.pathData.length).toEqual(0);
+    });
+
+    it(' onKeyUp should do nothing if shift wasnt press', () => {
+        service.onKeyUp(keyboardEventBackSpace);
+        expect(service.pathData.length).toEqual(0);
+    });
+
+    it(' SetPontSie should set size of point should be equal 1 if no size', () => {
+        service.setPointeSize(null);
+        expect(service.pointSize).toEqual(1);
+    });
+
+    // TODO
+    it(' setThickness should set thickness equal 1 if no size', () => {
+        service.setThickness(null);
+        expect(drawServiceSpy.setThickness).toHaveBeenCalled();
+    });
+
+    it(' setThickness should set thickness', () => {
+        service.setThickness(CONSTANTS.MAXIMUM_THICKNESS);
+        expect(drawServiceSpy.setThickness).toHaveBeenCalled();
+    });
+
     it(' onMouseMove should drawLine if mouse was not already down', () => {
         service.mouseDownCoord = { x: 200, y: 200 };
         service.pathData.push(service.mouseDownCoord);
@@ -297,7 +321,7 @@ describe('LineServiceService', () => {
         expect(ajustementAngleSpy).not.toHaveBeenCalled();
     });
 
-    it('should not use lock angle if pathdata is empty', () => {
+    it('onMouseMove should not use lock angle if pathdata is empty', () => {
         service.onMouseMove(mouseEventclick1);
         expect(lockAngleSpy).not.toHaveBeenCalled();
     });

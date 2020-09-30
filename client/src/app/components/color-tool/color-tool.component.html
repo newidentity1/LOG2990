@@ -12,8 +12,8 @@
             (click)="openSecondaryColorPicker()"
             [ngStyle]="{ backgroundColor: getSecondaryColor() }"
         ></button>
+        <button id="swap-color-button" (click)="onSwapColors()" mat-mini-fab>
+            <mat-icon>swap_horiz</mat-icon>
+        </button>
     </div>
-    <button id="swap-color-button" (click)="onSwapColors()" mat-mini-fab>
-        <mat-icon>swap_horiz</mat-icon>
-    </button>
 </div>
