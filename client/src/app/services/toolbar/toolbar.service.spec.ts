@@ -4,6 +4,7 @@ import { KeyShortcut } from '@app/enums/key-shortcuts.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { BrushService } from '@app/services/tools/brush/brush.service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
+import { EraseService } from '@app/services/tools/erase/erase.service';
 import { LineService } from '@app/services/tools/Line/line.service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle.service';
@@ -16,6 +17,7 @@ describe('ToolbarService', () => {
     let rectangleServiceSpy: jasmine.SpyObj<RectangleService>;
     let ellipseServiceSpy: jasmine.SpyObj<EllipseService>;
     let lineServiceSpy: jasmine.SpyObj<LineService>;
+    let eraseServiceSpy: jasmine.SpyObj<EraseService>;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
 
     beforeEach(() => {
@@ -37,6 +39,7 @@ describe('ToolbarService', () => {
         rectangleServiceSpy = jasmine.createSpyObj('RectangleService', ['onKeyDown']);
         ellipseServiceSpy = jasmine.createSpyObj('EllipseService', ['onKeyDown']);
         lineServiceSpy = jasmine.createSpyObj('LineService', ['onKeyDown']);
+        eraseServiceSpy = jasmine.createSpyObj('LineService', ['onKeyDown']);
         drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
 
         TestBed.configureTestingModule({
@@ -46,6 +49,7 @@ describe('ToolbarService', () => {
                 { provide: RectangleService, useValue: rectangleServiceSpy },
                 { provide: EllipseService, useValue: ellipseServiceSpy },
                 { provide: LineService, useValue: lineServiceSpy },
+                { provide: EraseService, useValue: eraseServiceSpy },
                 { provide: DrawingService, useValue: drawingServiceSpy },
             ],
         });
@@ -55,6 +59,7 @@ describe('ToolbarService', () => {
         rectangleServiceSpy = TestBed.inject(RectangleService) as jasmine.SpyObj<RectangleService>;
         ellipseServiceSpy = TestBed.inject(EllipseService) as jasmine.SpyObj<EllipseService>;
         lineServiceSpy = TestBed.inject(LineService) as jasmine.SpyObj<LineService>;
+        eraseServiceSpy = TestBed.inject(EraseService) as jasmine.SpyObj<EraseService>;
         drawingServiceSpy = TestBed.inject(DrawingService) as jasmine.SpyObj<DrawingService>;
     });
 
@@ -64,7 +69,7 @@ describe('ToolbarService', () => {
 
     it('getTools should return an array of tool services ', () => {
         const tools = service.getTools();
-        expect(tools).toEqual([pencilServiceSpy, brushServiceSpy, rectangleServiceSpy, ellipseServiceSpy, lineServiceSpy]);
+        expect(tools).toEqual([pencilServiceSpy, brushServiceSpy, rectangleServiceSpy, ellipseServiceSpy, lineServiceSpy, eraseServiceSpy]);
     });
 
     it('getTool should return a Tool if the key exists ', () => {
@@ -105,7 +110,7 @@ describe('ToolbarService', () => {
         expect(service.currentTool).toEqual(pencilServiceSpy);
         expect(service.currentTool.onKeyDown).toHaveBeenCalledWith(keyboardEvent);
         expect(spyGetTool).toHaveBeenCalledWith(keyboardEvent.key);
-        expect(drawingServiceSpy.clearCanvas).toHaveBeenCalledWith(drawingServiceSpy.previewCtx);
+        expect(drawingServiceSpy.clearCanvas).not.toHaveBeenCalledWith(drawingServiceSpy.previewCtx);
     });
 
     it('onKeyDown should call the onKeyDown of the currentTool, getTool, change the currentTool and call clearCanvas when key exist', () => {

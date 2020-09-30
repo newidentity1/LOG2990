@@ -137,10 +137,12 @@ export class DrawingComponent implements AfterViewInit {
         }
     }
 
-    // TODO : ComputeDimensionsDrawingComponent everytime
+    // TODO : ComputeDimensionsDrawingComponent to calculate canvas size
     newCanvasSetSize(): void {
-        this.canvasSize.x = this.drawingContainerWidth / 2;
-        this.canvasSize.y = this.drawingContainerHeight / 2;
+        // this.canvasSize.x = this.drawingContainerWidth / 2;
+        // Uncomment to see : this.canvasSize.x = window.innerWidth / 2;
+        // this.canvasSize.y = this.drawingContainerHeight / 2;
+        // Uncomment to see : this.canvasSize.y = window.innerHeight / 2;
     }
 
     get width(): number {

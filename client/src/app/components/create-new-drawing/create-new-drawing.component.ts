@@ -13,18 +13,18 @@ export class CreateNewDrawingComponent {
     constructor(public currentDrawingService: DrawingService, public dialog: MatDialog) {}
 
     // Empty: Automatically clears canvas, Not Empty: Pop Up Warning
-    CreateNewDrawing(): void {
+    createNewDrawing(): void {
         if (this.currentDrawingService.CanvasEmpty(this.currentDrawingService.baseCtx, this.currentDrawingService.canvas)) {
             this.currentDrawingService.clearCanvas(this.currentDrawingService.baseCtx);
-            console.log('Cleared Canvas');
+            console.log('Cleared Canvas Without Warning');
+            this.currentDrawingService.emitChildEvent('Button <new drawing> resized the canvas');
         } else {
-            this.WarningClearCanvas();
+            this.warningClearCanvas();
             console.log('Cleared Canvas With Warning');
         }
-        this.currentDrawingService.emitChildEvent('Button <new drawing> resized the canvas');
     }
 
-    WarningClearCanvas(): void {
+    warningClearCanvas(): void {
         this.dialog.open(NewDrawingDialogComponent);
     }
 

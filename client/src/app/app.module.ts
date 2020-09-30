@@ -15,8 +15,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
-import { ColorPickerFormComponent } from './color-picker-form/color-picker-form.component';
 import { AppComponent } from './components/app/app.component';
+import { ColorPickerFormComponent } from './components/color-picker-form/color-picker-form.component';
 import { ColorPickerComponent } from './components/color-picker/color-picker.component';
 import { ColorToolComponent } from './components/color-tool/color-tool.component';
 import { CreateNewDrawingComponent } from './components/create-new-drawing/create-new-drawing.component';
@@ -24,15 +24,16 @@ import { NewDrawingDialogComponent } from './components/create-new-drawing/new-d
 import { DrawingComponent } from './components/drawing/drawing.component';
 import { EditorComponent } from './components/editor/editor.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
+import { RecentColorsComponent } from './components/recent-colors/recent-colors.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { SVGFilterComponent } from './components/svgfilter/svgfilter.component';
 import { BrushComponent } from './components/tools-options/brush/brush.component';
 import { EllipseComponent } from './components/tools-options/ellipse/ellipse.component';
+import { EraseComponent } from './components/tools-options/erase/erase/erase.component';
 import { LineComponent } from './components/tools-options/line/line.component';
 import { PencilComponent } from './components/tools-options/pencil/pencil.component';
 import { RectangleComponent } from './components/tools-options/rectangle/rectangle.component';
 import { ThicknessSliderComponent } from './components/tools-options/thickness-slider/thickness-slider.component';
-import { RecentColorsComponent } from './recent-colors/recent-colors.component';
 @NgModule({
     declarations: [
         AppComponent,
@@ -51,6 +52,7 @@ import { RecentColorsComponent } from './recent-colors/recent-colors.component';
         SVGFilterComponent,
         BrushComponent,
         ColorPickerFormComponent,
+        EraseComponent,
         CreateNewDrawingComponent,
         NewDrawingDialogComponent,
     ],

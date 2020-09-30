@@ -13,12 +13,13 @@ export class NewDrawingDialogComponent {
         // TODO: Empty
     }
 
-    DeleteCanvas(): void {
+    deleteCanvas(): void {
         this.newDrawingService.clearCanvas(this.newDrawingService.baseCtx);
         this.dialogRef.close();
+        this.newDrawingService.emitChildEvent('Button <new drawing> resized the canvas');
     }
 
-    Cancel(): void {
+    cancel(): void {
         this.dialogRef.close();
     }
 }
