@@ -1,9 +1,9 @@
 @import '../../style/color.scss';
 
-.container {
+#tool-container {
     height: auto;
+    width: 80px;
     min-height: 100vh;
-    padding: 0 5px 0 5px;
     background-color: $primaryColor;
     overflow: hidden;
 }
@@ -15,10 +15,10 @@
 
 #tools {
     list-style-type: none;
-    padding: 0px;
+    padding: 0px 0px 0px 5px;
 
     li {
-        padding: 4px 0px;
+        padding: 2px 0px;
 
         button {
             padding: 0;
@@ -68,9 +68,4 @@ mat-sidenav {
     .type-drawing-group  > mat-radio-button {
         padding-top: 5px;
     }
-}
-
-#colors-container {
-    position: absolute;
-    bottom: 0;
 }

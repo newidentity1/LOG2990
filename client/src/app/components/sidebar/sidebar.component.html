@@ -10,7 +10,7 @@
         </div>
     </mat-sidenav>
     <mat-sidenav-content>
-        <div class="container">
+        <div id="tool-container">
             <ul id="tools">
                 <li *ngFor="let tool of tools" matTooltip="{{ tool.tooltip }}" [matTooltipPosition]="'right'">
                     <button mat-button [ngClass]="{ currentTool: isCurrentTool(tool) }" (click)="onToolChanged(tool)">
@@ -22,6 +22,7 @@
                 <app-recent-colors></app-recent-colors>
                 <app-color-tool></app-color-tool>
             </div>
+            <hr />
             <app-create-new-drawing></app-create-new-drawing>
         </div>
     </mat-sidenav-content>
