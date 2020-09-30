@@ -194,7 +194,40 @@ describe('EllipseService', () => {
         service.mouseDownCoord = { x: mouseEventLeftClick.x, y: mouseEventLeftClick.y };
 
         service.onMouseUp();
-
         expect(transformToCirleSpy).not.toHaveBeenCalled();
+    });
+
+    it('onMouseMove should call draw if mouse was already down', () => {
+        service.mouseDownCoord = { x: 0, y: 0 };
+        service.mouseDown = true;
+
+        service.onMouseMove(mouseEventLeftClick);
+        expect(drawSpy).toHaveBeenCalled();
+    });
+
+    it('onMouseMove should not call draw if mouse was not already down', () => {
+        service.mouseDown = false;
+        service.mouseDownCoord = { x: 0, y: 0 };
+
+        service.onMouseMove(mouseEventLeftClick);
+        expect(drawSpy).not.toHaveBeenCalled();
+    });
+
+    it('transformToSquare should return the same input if they are equal', () => {
+        const fakeRectangle: Vec2 = { x: 150, y: 150 };
+        service.width = fakeRectangle.x;
+        service.height = fakeRectangle.y;
+        const expectedResult: Vec2 = { x: 150, y: 150 };
+        service.transformToCircle();
+        expect({ x: service.width, y: service.height }).toEqual(expectedResult);
+    });
+
+    it('computeDimensions should set the value of width and height correctly', () => {
+        service.pathStart = { x: mouseEventLeftClick.offsetX, y: mouseEventLeftClick.offsetY };
+        service.mouseDownCoord = { x: 200, y: 200 };
+        const expectedResult: Vec2 = { x: 100, y: 100 };
+        service.computeDimensions();
+        expect(service.width).toEqual(expectedResult.x);
+        expect(service.height).toEqual(expectedResult.y);
     });
 });
