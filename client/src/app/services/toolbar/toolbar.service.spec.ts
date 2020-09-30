@@ -105,7 +105,7 @@ describe('ToolbarService', () => {
         expect(service.currentTool).toEqual(pencilServiceSpy);
         expect(service.currentTool.onKeyDown).toHaveBeenCalledWith(keyboardEvent);
         expect(spyGetTool).toHaveBeenCalledWith(keyboardEvent.key);
-        expect(drawingServiceSpy.clearCanvas).toHaveBeenCalledWith(drawingServiceSpy.previewCtx);
+        expect(drawingServiceSpy.clearCanvas).not.toHaveBeenCalledWith(drawingServiceSpy.previewCtx);
     });
 
     it('onKeyDown should call the onKeyDown of the currentTool, getTool, change the currentTool and call clearCanvas when key exist', () => {
