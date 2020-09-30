@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -7,6 +8,16 @@ export class DrawingService {
     baseCtx: CanvasRenderingContext2D;
     previewCtx: CanvasRenderingContext2D;
     canvas: HTMLCanvasElement;
+    childEvent: BehaviorSubject<string> = new BehaviorSubject<string>('Canvas Size has been set');
+
+    // Send events between components
+    emitChildEvent(msg: string): void {
+        this.childEvent.next(msg);
+    }
+
+    childEventListener(): Observable<string> {
+        return this.childEvent.asObservable();
+    }
 
     clearCanvas(context: CanvasRenderingContext2D): void {
         context.clearRect(0, 0, this.canvas.width, this.canvas.height);

@@ -17,6 +17,7 @@ export class NewDrawingDialogComponent {
         this.newDrawingService.clearCanvas(this.newDrawingService.baseCtx);
         this.dialogRef.close();
     }
+
     Cancel(): void {
         this.dialogRef.close();
     }

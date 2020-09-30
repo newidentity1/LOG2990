@@ -21,6 +21,7 @@ export class CreateNewDrawingComponent {
             this.WarningClearCanvas();
             console.log('Cleared Canvas With Warning');
         }
+        this.currentDrawingService.emitChildEvent('Button <new drawing> resized the canvas');
     }
 
     WarningClearCanvas(): void {
