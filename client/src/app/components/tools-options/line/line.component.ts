@@ -6,7 +6,7 @@ import { LineService } from '@app/services/tools/Line/line.service';
 @Component({
     selector: 'app-line-option',
     templateUrl: './line.component.html',
-    styleUrls: ['./line.component.scss'],
+    styleUrls: ['../../sidebar/sidebar.component.scss'],
 })
 export class LineComponent implements OnInit {
     typesDrawing: string[] = ['Sans point', 'Avec Point'];
