@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
-import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
-import { DrawingType } from '@app/enums/drawing-type.enum';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
+import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 import { Vec2 } from '@app/classes/vec2';
+import { DrawingType } from '@app/enums/drawing-type.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { EllipseService } from './ellipse.service';
 
@@ -14,7 +14,7 @@ describe('EllipseService', () => {
     let keyboardEvent: KeyboardEvent;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     let drawSpy: jasmine.Spy<any>;
-    // let transformToCirleSpy: jasmine.Spy<any>;
+    let transformToCirleSpy: jasmine.Spy<any>;
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
 
@@ -28,7 +28,7 @@ describe('EllipseService', () => {
         });
         service = TestBed.inject(EllipseService);
         drawSpy = spyOn<any>(service, 'drawEllipse').and.callThrough();
-        // transformToCirleSpy = spyOn<any>(service, 'transformToSquare').and.callThrough();
+        transformToCirleSpy = spyOn<any>(service, 'transformToCircle').and.callThrough();
 
         // Configuration du spy du service
         // tslint:disable:no-string-literal
@@ -175,5 +175,26 @@ describe('EllipseService', () => {
         const expectedResult: Vec2 = { x: 150, y: -150 };
         service.transformToCircle();
         expect({ x: service.width, y: service.height }).toEqual(expectedResult);
+    });
+
+    it('onMouseUp should call transformToCircle if shift and mouse is down', () => {
+        service.mouseDown = true;
+        service.shiftDown = true;
+        service.mouseDownCoord = { x: 0, y: 0 };
+        service.mouseDownCoord = { x: mouseEventLeftClick.x, y: mouseEventLeftClick.y };
+
+        service.onMouseUp();
+        expect(transformToCirleSpy).toHaveBeenCalled();
+    });
+
+    it('onMouseUp should not call transformToCircle if shift is not down and mouse is down', () => {
+        service.mouseDown = true;
+        service.shiftDown = false;
+        service.mouseDownCoord = { x: 0, y: 0 };
+        service.mouseDownCoord = { x: mouseEventLeftClick.x, y: mouseEventLeftClick.y };
+
+        service.onMouseUp();
+
+        expect(transformToCirleSpy).not.toHaveBeenCalled();
     });
 });
