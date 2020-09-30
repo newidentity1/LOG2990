@@ -8,11 +8,6 @@
     overflow: hidden;
 }
 
-.sidebar-container {
-    display: flex;
-    flex-direction: column;
-}
-
 #tools {
     list-style-type: none;
     padding: 0px 0px 0px 5px;
@@ -42,6 +37,11 @@ mat-sidenav {
     margin-left: 80px;
     width: 250px;
     background-color: #1a174f;
+}
+
+#colors-container,
+#other-functionality-container {
+    padding-left: 5px;
 }
 
 .type-drawing-group {
