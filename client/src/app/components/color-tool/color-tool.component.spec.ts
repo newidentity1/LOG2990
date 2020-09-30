@@ -2,12 +2,12 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { Color } from '@app/classes/color/color';
+import { BLACK, WHITE } from '@app/constants/constants';
 import { ColorPickerService } from '@app/services/color-picker/color-picker.service';
 import { ColorToolComponent } from './color-tool.component';
 
-export class MatDialogMock {
-    // When the component calls this.dialog.open(...) we'll return an object
-    // with an afterClosed method that allows to subscribe to the dialog result observable.
+class MatDialogMock {
+    // When the component calls this.dialog.open(...) we'll return an empty object
     open(): {} {
         return {};
     }
@@ -34,8 +34,8 @@ describe('ColorToolComponent', () => {
         }).compileComponents();
 
         colorPickerServiceSpy = TestBed.inject(ColorPickerService) as jasmine.SpyObj<ColorPickerService>;
-        colorPickerServiceSpy.primaryColor = new Color();
-        colorPickerServiceSpy.secondaryColor = new Color();
+        colorPickerServiceSpy.primaryColor = new Color(BLACK);
+        colorPickerServiceSpy.secondaryColor = new Color(WHITE);
         dialogOpenSpy = spyOn<any>(TestBed.inject(MatDialog), 'open').and.callThrough();
     }));
 
@@ -61,11 +61,13 @@ describe('ColorToolComponent', () => {
 
     it(' getPrimaryColor should return primary color from colorPickerService', () => {
         const returnedColor = component.getPrimaryColor();
+        expect(returnedColor).toBeTruthy();
         expect(returnedColor).toEqual(colorPickerServiceSpy.primaryColor.toStringRGBA());
     });
 
     it(' getSecondaryColor should return secondary color from colorPickerService', () => {
         const returnedColor = component.getSecondaryColor();
+        expect(returnedColor).toBeTruthy();
         expect(returnedColor).toEqual(colorPickerServiceSpy.secondaryColor.toStringRGBA());
     });
 
