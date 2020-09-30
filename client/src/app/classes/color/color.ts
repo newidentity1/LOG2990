@@ -8,9 +8,13 @@ export class Color {
     private alpha: number;
 
     constructor(hex?: string, alpha?: number) {
-        this.hexString = hex ? hex : CONSTANTS.BLACK;
+        this.hexString = hex ? hex.toUpperCase() : CONSTANTS.BLACK;
         this.alpha = alpha ? alpha : CONSTANTS.DEFAULT_COLOR_OPACITY;
         this.computeRBGFromHex();
+    }
+
+    clone(): Color {
+        return new Color(this.hexString, this.alpha);
     }
 
     set red(value: number) {
@@ -33,7 +37,7 @@ export class Color {
     }
 
     set hex(value: string) {
-        this.hexString = value;
+        this.hexString = value.toUpperCase();
         this.computeRBGFromHex();
     }
 
@@ -49,35 +53,35 @@ export class Color {
 
     setRedHex(hexValue: string): void {
         const bin = this.hexToBin(hexValue);
-        if (bin !== null && bin > 0 && bin <= CONSTANTS.MAX_COLOR_VALUE) {
+        if (bin !== null) {
             this.red = bin;
         }
     }
 
     setGreenHex(hexValue: string): void {
         const bin = this.hexToBin(hexValue);
-        if (bin !== null && bin > 0 && bin <= CONSTANTS.MAX_COLOR_VALUE) {
+        if (bin !== null) {
             this.green = bin;
         }
     }
 
     setBlueHex(hexValue: string): void {
         const bin = this.hexToBin(hexValue);
-        if (bin !== null && bin > 0 && bin <= CONSTANTS.MAX_COLOR_VALUE) {
+        if (bin !== null) {
             this.blue = bin;
         }
     }
 
     getRedHex(): string {
-        return this.binToHex(this.redValue);
+        return this.binToHex(this.redValue).toUpperCase();
     }
 
     getGreenHex(): string {
-        return this.binToHex(this.greenValue);
+        return this.binToHex(this.greenValue).toUpperCase();
     }
 
     getBlueHex(): string {
-        return this.binToHex(this.blueValue);
+        return this.binToHex(this.blueValue).toUpperCase();
     }
 
     toStringRGBA(): string {
@@ -85,17 +89,17 @@ export class Color {
     }
 
     private computeRBGFromHex(): void {
-        const hexValue = this.hexString.replace('#', '');
-        const redBin = this.hexToBin(hexValue.substring(0, CONSTANTS.RED_POSITION_IN_HEX_STRING));
+        const redBin = this.hexToBin(this.hexString.substring(0, CONSTANTS.RED_POSITION_IN_HEX_STRING));
         this.redValue = redBin !== null ? redBin : this.redValue;
-        const greenBin = this.hexToBin(hexValue.substring(CONSTANTS.RED_POSITION_IN_HEX_STRING, CONSTANTS.GREEN_POSITION_IN_HEX_STRING));
+        const greenBin = this.hexToBin(this.hexString.substring(CONSTANTS.RED_POSITION_IN_HEX_STRING, CONSTANTS.GREEN_POSITION_IN_HEX_STRING));
         this.greenValue = greenBin !== null ? greenBin : this.greenValue;
-        const blueBin = this.hexToBin(hexValue.substring(CONSTANTS.GREEN_POSITION_IN_HEX_STRING, CONSTANTS.BLUE_POSITION_IN_HEX_STRING));
+        const blueBin = this.hexToBin(this.hexString.substring(CONSTANTS.GREEN_POSITION_IN_HEX_STRING, CONSTANTS.BLUE_POSITION_IN_HEX_STRING));
         this.blueValue = blueBin !== null ? blueBin : this.blueValue;
     }
 
     private computeHexFromRGB(): void {
-        this.hexString = '#' + this.binToHex(this.redValue) + this.binToHex(this.greenValue) + this.binToHex(this.blueValue);
+        this.hexString = this.binToHex(this.redValue) + this.binToHex(this.greenValue) + this.binToHex(this.blueValue);
+        this.hexString = this.hexString.toUpperCase();
     }
 
     private binToHex(bin: number): string {

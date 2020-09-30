@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { MatSliderChange } from '@angular/material/slider';
+import { MAXIMUM_THICKNESS, MINIMUM_THICKNESS } from '@app/constants/constants';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
 
 @Component({
@@ -15,6 +16,7 @@ export class PencilComponent {
     }
 
     onThicknessChange(event: MatSliderChange): void {
-        this.pencilService.setThickness(event.value);
+        if (event.value !== null && event.value >= MINIMUM_THICKNESS && event.value <= MAXIMUM_THICKNESS)
+            this.pencilService.setThickness(event.value);
     }
 }

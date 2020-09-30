@@ -21,7 +21,7 @@ export class ColorPickerComponent implements AfterViewInit {
     constructor(
         private colorPickerService: ColorPickerService,
         public dialogRef: MatDialogRef<ColorPickerComponent>,
-        @Inject(MAT_DIALOG_DATA) private data: { isSecondaryColorPicker: boolean },
+        @Inject(MAT_DIALOG_DATA) public data: { isSecondaryColorPicker: boolean },
     ) {}
 
     ngAfterViewInit(): void {
@@ -29,6 +29,7 @@ export class ColorPickerComponent implements AfterViewInit {
         this.cursorCanvasCtx = this.cursorCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.colorPickerService.colorCanvasCtx = this.colorCanvasCtx;
         this.colorPickerService.cursorCanvasCtx = this.cursorCanvasCtx;
+        this.colorPickerService.canvas = this.colorCanvas.nativeElement;
         this.initColorPicker();
     }
 
