@@ -1,12 +1,11 @@
-<h3> Propriétés du pinceau </h3>
-<label id="filter-drawing-label">Choisissez le filtre du pinceau que vous souhaitez afficher:</label>
-<mat-radio-group aria-labelledby="filter-drawing-label" id="filter-drawing-group" [(ngModel)]="currentFilter" ngDefaultControl>
+<h3>Propriétés du pinceau</h3>
+<label class="filter-drawing-label">Choisissez le filtre du pinceau que vous souhaitez afficher:</label>
+<mat-radio-group aria-labelledby="filter-drawing-label" class="filter-drawing-group" [(ngModel)]="currentFilter" ngDefaultControl>
     <mat-radio-button class="type-filter" *ngFor="let filter of filterType | keyvalue" [value]="filter.value" (change)="onFilterChange($event)">
         {{ filter.value }}
     </mat-radio-button>
 </mat-radio-group>
 
-<label id="type-drawing-label">Choisissez la valeur de l'épaisseur:</label>
+<label class="type-drawing-label">Choisissez la valeur de l'épaisseur:</label>
 
 <app-thickness-slider (thicknessChange)="onThicknessChange($event)" [startingValue]="this.currentThickness"></app-thickness-slider>
-

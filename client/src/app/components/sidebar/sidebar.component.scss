@@ -43,3 +43,16 @@ mat-sidenav {
     width: 250px;
     background-color: #1a174f;
 }
+
+.type-drawing-group {
+    display: flex;
+    flex-direction: column;
+    margin: 15px 0;
+}
+.tool-options {
+    margin: 5px;
+}
+
+.type-drawing-label {
+    margin: 5px;
+}
