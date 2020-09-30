@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Color } from '@app/classes/color/color';
-import { Tool } from '@app/classes/tool';
 import { BrushProperties } from '@app/classes/tools-properties/brush-properties';
 import { Vec2 } from '@app/classes/vec2';
 import { BrushType } from '@app/enums/brush-filters.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { PencilService } from '../pencil/pencil-service';
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
 export enum MouseButton {
@@ -22,8 +21,8 @@ export enum MouseButton {
 @Injectable({
     providedIn: 'root',
 })
-export class BrushService extends Tool {
-    private pathData: Vec2[];
+export class BrushService extends PencilService {
+    protected pathData: Vec2[];
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
@@ -34,39 +33,7 @@ export class BrushService extends Tool {
         this.clearPath();
     }
 
-    onMouseDown(event: MouseEvent): void {
-        this.mouseDown = event.button === MouseButton.Left;
-        if (this.mouseDown) {
-            this.clearPath();
-
-            this.mouseDownCoord = this.getPositionFromMouse(event);
-            this.pathData.push(this.mouseDownCoord);
-        }
-    }
-
-    onMouseUp(event: MouseEvent): void {
-        if (this.mouseDown) {
-            const mousePosition = this.getPositionFromMouse(event);
-            this.pathData.push(mousePosition);
-            this.paintLine(this.drawingService.baseCtx, this.pathData);
-        }
-        this.mouseDown = false;
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        this.clearPath();
-    }
-
-    onMouseMove(event: MouseEvent): void {
-        if (this.mouseDown) {
-            const mousePosition = this.getPositionFromMouse(event);
-            this.pathData.push(mousePosition);
-
-            // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.paintLine(this.drawingService.previewCtx, this.pathData);
-        }
-    }
-
-    private paintLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+    protected drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
 
         ctx.lineCap = 'round';
@@ -100,24 +67,8 @@ export class BrushService extends Tool {
         ctx.filter = 'none';
     }
 
-    setColors(primaryColor: Color, secondaryColor: Color): void {
-        this.drawingService.setColor(primaryColor.toStringRGBA());
-    }
-
     setFilter(value: string): void {
         const brushProperties = this.toolProperties as BrushProperties;
         brushProperties.currentFilter = value;
-    }
-
-    // TODO: duplicate code from rectangle (clean)
-    setThickness(value: number | null): void {
-        // TODO possiblement ajouter de la validation ici aussi
-        value = value === null ? 1 : value;
-        this.toolProperties.thickness = value;
-        this.drawingService.setThickness(value);
-    }
-
-    private clearPath(): void {
-        this.pathData = [];
     }
 }
