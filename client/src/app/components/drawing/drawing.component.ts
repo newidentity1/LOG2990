@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
+import { AfterContentInit, AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild } from '@angular/core';
 import { Color } from '@app/classes/color/color';
 import { Vec2 } from '@app/classes/vec2';
 import {
@@ -14,19 +14,23 @@ import {
 import { MouseButton } from '@app/enums/mouse-button.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
+import { Observable } from 'rxjs';
 
 @Component({
     selector: 'app-drawing',
     templateUrl: './drawing.component.html',
     styleUrls: ['./drawing.component.scss'],
 })
-export class DrawingComponent implements AfterViewInit {
+export class DrawingComponent implements AfterViewInit, AfterContentInit {
     @ViewChild('baseCanvas', { static: false }) baseCanvas: ElementRef<HTMLCanvasElement>;
     // On utilise ce canvas pour dessiner sans affecter le dessin final
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
 
     @Input() drawingContainerWidth: number;
     @Input() drawingContainerHeight: number;
+    @Input() dimensionsUpdatedEvent: Observable<number[]>;
+
+    @Output() requestDrawingContainerDimensions: EventEmitter<void> = new EventEmitter();
 
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
@@ -37,6 +41,10 @@ export class DrawingComponent implements AfterViewInit {
 
     constructor(private drawingService: DrawingService, private toolbarService: ToolbarService) {}
 
+    ngAfterContentInit(): void {
+        this.newCanvasSetSize();
+    }
+
     ngAfterViewInit(): void {
         this.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.previewCtx = this.previewCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
@@ -44,6 +52,15 @@ export class DrawingComponent implements AfterViewInit {
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
         this.toolbarService.setColors(new Color(BLACK), new Color(WHITE));
+
+        this.drawingService.createNewDrawingEventListener().subscribe(() => {
+            this.requestDrawingContainerDimensions.emit();
+        });
+        this.dimensionsUpdatedEvent.subscribe((dimensions) => {
+            this.drawingContainerWidth = dimensions[0];
+            this.drawingContainerHeight = dimensions[1];
+            this.newCanvasSetSize();
+        });
     }
 
     onMouseMove(event: MouseEvent): void {
@@ -131,6 +148,14 @@ export class DrawingComponent implements AfterViewInit {
     onResizeBothStart(event: MouseEvent): void {
         this.onResizeWidthStart(event);
         this.onResizeHeightStart(event);
+    }
+
+    newCanvasSetSize(): void {
+        const newWidth = this.drawingContainerWidth / 2;
+        const newHeight = this.drawingContainerHeight / 2;
+
+        this.canvasSize.x = newWidth >= CANVAS_MIN_WIDTH ? newWidth : CANVAS_MIN_WIDTH;
+        this.canvasSize.y = newHeight >= CANVAS_MIN_HEIGHT ? newHeight : CANVAS_MIN_HEIGHT;
     }
 
     get width(): number {

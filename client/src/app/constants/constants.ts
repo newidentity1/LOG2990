@@ -1,5 +1,5 @@
-export const BLACK = '#000000';
-export const WHITE = '#FFFFFF';
+export const BLACK = '000000';
+export const WHITE = 'FFFFFF';
 export const DEFAULT_COLOR_OPACITY = 1;
 export const MAX_RECENT_COLORS_SIZE = 10;
 export const HEX_BASE = 16;
@@ -21,9 +21,6 @@ export const MINIMUM_THICKNESS = 1;
 export const MAXIMUM_THICKNESS = 100;
 export const DASHED_SEGMENTS = 6;
 
-// Brush: Goo filter only works with 15+ thickness
-export const MINIMUM_BRUSH_THICKNESS = 15;
-export const MAXIMUM_BRUSH_THICKNESS = 100;
 export const DEFAULT_WIDTH = 1000;
 export const DEFAULT_HEIGHT = 800;
 

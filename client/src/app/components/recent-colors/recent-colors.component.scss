@@ -1,0 +1,21 @@
+#container {
+    text-align: center;
+}
+
+#title {
+    margin-bottom: 10px;
+    padding-right: 10px;
+}
+
+#grid-container {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 10px;
+    padding-bottom: 20px;
+}
+
+.recent-color-button {
+    width: 20px;
+    height: 20px;
+    border: 1px ridge white;
+}

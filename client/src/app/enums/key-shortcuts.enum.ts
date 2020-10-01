@@ -4,4 +4,5 @@ export enum KeyShortcut {
     Rectangle = '1',
     Ellipse = '2',
     Line = 'l',
+    Eraser = 'e',
 }

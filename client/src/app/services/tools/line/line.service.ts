@@ -29,7 +29,7 @@ export class LineService extends Tool {
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.name = 'Line';
-        this.tooltip = 'Line';
+        this.tooltip = 'Ligne(l)';
         this.iconName = 'show_chart';
         this.toolProperties = new BasicShapeProperties();
         this.clearPath();
@@ -55,7 +55,7 @@ export class LineService extends Tool {
                         mousePosition.y =
                             Math.tan(CONSTANTS.ANGLE_45) * (mousePosition.x - this.pathData[this.pathData.length - 1].x) +
                             this.pathData[this.pathData.length - 1].y;
-                    } else if ((dx > 0 && dy < 0) || (dx < 0 && dy > 0)) {
+                    } else {
                         mousePosition.y =
                             -Math.tan(CONSTANTS.ANGLE_45) * (mousePosition.x - this.pathData[this.pathData.length - 1].x) +
                             this.pathData[this.pathData.length - 1].y;
@@ -205,7 +205,7 @@ export class LineService extends Tool {
     }
 
     // Permet de trouver l'angle entre la souris et l'axe x
-    private ajustementAngle(event: MouseEvent): void {
+    ajustementAngle(event: MouseEvent): void {
         let angle = 0;
         const mousePosition = this.getPositionFromMouse(event);
         if (mousePosition !== this.pathData[this.pathData.length - 1] && this.pathData.length >= 1) {
@@ -269,5 +269,17 @@ export class LineService extends Tool {
         this.lock180 = false;
         this.lock90 = false;
         this.lock45 = false;
+    }
+
+    resetContext(): void {
+        const previewCtx = this.drawingService.previewCtx;
+        const baseCtx = this.drawingService.baseCtx;
+        previewCtx.lineCap = baseCtx.lineCap = 'butt';
+        previewCtx.lineJoin = baseCtx.lineJoin = 'miter';
+        this.mouseDown = false;
+        this.shift = false;
+        this.clearlock();
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.clearPath();
     }
 }

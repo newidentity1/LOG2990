@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
+import { Color } from '@app/classes/color/color';
 import { Tool } from '@app/classes/tool';
 import { BrushProperties } from '@app/classes/tools-properties/brush-properties';
 import { Vec2 } from '@app/classes/vec2';
+import { BrushType } from '@app/enums/brush-filters.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
@@ -26,7 +28,7 @@ export class BrushService extends Tool {
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.name = 'Brush';
-        this.tooltip = 'Brush(w)';
+        this.tooltip = 'Pinceau(w)';
         this.iconName = 'brush';
         this.toolProperties = new BrushProperties();
         this.clearPath();
@@ -73,20 +75,20 @@ export class BrushService extends Tool {
         // ctx.filter = 'url(#Brushed)';
         const brushProperties = this.toolProperties as BrushProperties;
         switch (brushProperties.currentFilter) {
-            case 'Blurred':
+            case BrushType.Blurred:
                 ctx.filter = 'url(#Blurred)';
                 break;
-            case 'Brushed':
+            case BrushType.Brushed:
                 ctx.filter = 'url(#Brushed)';
                 break;
-            case 'Graffiti':
-                ctx.filter = 'url(#Graffiti)';
+            case BrushType.Spray:
+                ctx.filter = 'url(#Spray)';
                 break;
-            case 'Goo':
-                ctx.filter = 'url(#Goo)';
+            case BrushType.Splash:
+                ctx.filter = 'url(#Splash)';
                 break;
-            case 'Water':
-                ctx.filter = 'url(#Water)';
+            case BrushType.Cloud:
+                ctx.filter = 'url(#Cloud)';
                 break;
         }
 
@@ -96,6 +98,10 @@ export class BrushService extends Tool {
         ctx.stroke();
         // reset filter
         ctx.filter = 'none';
+    }
+
+    setColors(primaryColor: Color, secondaryColor: Color): void {
+        this.drawingService.setColor(primaryColor.toStringRGBA());
     }
 
     setFilter(value: string): void {
@@ -113,5 +119,10 @@ export class BrushService extends Tool {
 
     private clearPath(): void {
         this.pathData = [];
+    }
+
+    resetContext(): void {
+        this.mouseDown = false;
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
     }
 }

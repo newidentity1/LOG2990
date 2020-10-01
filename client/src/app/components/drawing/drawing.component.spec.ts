@@ -1,8 +1,9 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { SVGFilterComponent } from '@app/components/svgfilter/svgfilter.component';
-import { CANVAS_MARGIN_LEFT, CANVAS_MARGIN_TOP, CANVAS_MIN_HEIGHT, CANVAS_MIN_WIDTH, DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants/constants';
+import { CANVAS_MARGIN_LEFT, CANVAS_MARGIN_TOP, CANVAS_MIN_HEIGHT, CANVAS_MIN_WIDTH } from '@app/constants/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
+import { of } from 'rxjs';
 import { DrawingComponent } from './drawing.component';
 
 describe('DrawingComponent', () => {
@@ -22,6 +23,8 @@ describe('DrawingComponent', () => {
             'onDoubleClick',
             'onClick',
             'setColors',
+            'setColors',
+            'createNewDrawingEventListener',
         ]);
 
         TestBed.configureTestingModule({
@@ -37,6 +40,7 @@ describe('DrawingComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(DrawingComponent);
         component = fixture.componentInstance;
+        component.dimensionsUpdatedEvent = of();
         fixture.detectChanges();
     });
 
@@ -44,11 +48,18 @@ describe('DrawingComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('should have a default WIDTH and HEIGHT', () => {
+    it('should have the value of half the drawingContainer', () => {
+        const fakeDrawingContainerHeight = 2 * CANVAS_MIN_HEIGHT + 2;
+        const fakeDrawingContainerWidth = 2 * CANVAS_MIN_WIDTH + 2;
+        component.drawingContainerHeight = fakeDrawingContainerHeight;
+        component.drawingContainerWidth = fakeDrawingContainerWidth;
+        const expectWidth = fakeDrawingContainerWidth / 2;
+        const expectHeight = fakeDrawingContainerHeight / 2;
+        component.ngAfterContentInit();
         const height = component.height;
         const width = component.width;
-        expect(height).toEqual(DEFAULT_HEIGHT);
-        expect(width).toEqual(DEFAULT_WIDTH);
+        expect(height).toEqual(expectHeight);
+        expect(width).toEqual(expectWidth);
     });
 
     it(' onMouseMove should call toolbarService onMouseMove when receiving a mouse event', () => {
