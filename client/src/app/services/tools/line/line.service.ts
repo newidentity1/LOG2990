@@ -107,7 +107,7 @@ export class LineService extends Tool {
     // double click donc fin de ligne
     onDoubleClick(event: MouseEvent): void {
         const mousePosition = this.getPositionFromMouse(event);
-        if (mousePosition !== this.pathData[0] && this.pathData.length >= 1) {
+        if (mousePosition !== this.pathData[0] && this.pathData.length >= 1 && this.pathData.length > 2) {
             // calculer la distance entre la souris et le point de départ
             const x1: number = mousePosition.x;
             const y1: number = mousePosition.y;
