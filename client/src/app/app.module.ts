@@ -34,8 +34,6 @@ import { LineComponent } from './components/tools-options/line/line.component';
 import { PencilComponent } from './components/tools-options/pencil/pencil.component';
 import { RectangleComponent } from './components/tools-options/rectangle/rectangle.component';
 import { ThicknessSliderComponent } from './components/tools-options/thickness-slider/thickness-slider.component';
-import { RectangleComponent } from './components/tools-options/rectangle/rectangle.component';
-import { ThicknessSliderComponent } from './components/tools-options/thickness-slider/thickness-slider.component';
 @NgModule({
     declarations: [
         AppComponent,
