@@ -18,6 +18,7 @@ export class LineComponent implements OnInit {
     constructor(public lineService: LineService) {
         const lineProperties = lineService.toolProperties as BasicShapeProperties;
         this.currentThickness = lineProperties.thickness;
+        this.pointSize = lineService.pointSize;
         this.lineService.setThickness(lineProperties.thickness);
     }
 

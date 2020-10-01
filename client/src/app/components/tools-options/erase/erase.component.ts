@@ -9,6 +9,7 @@ import { EraseService } from '@app/services/tools/erase/erase.service';
 export class EraseComponent {
     currentThickness: number;
     constructor(private eraseService: EraseService) {
+        this.currentThickness = this.eraseService.toolProperties.thickness;
         this.eraseService.setThickness(this.eraseService.toolProperties.thickness);
     }
 

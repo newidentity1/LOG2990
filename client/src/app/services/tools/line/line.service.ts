@@ -24,7 +24,7 @@ export class LineService extends Tool {
     // ligne avec ou sans point
     withPoint: boolean = false;
     // taille des points de liaisons
-    pointSize: number = 10;
+    pointSize: number = 1;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
@@ -284,5 +284,6 @@ export class LineService extends Tool {
         this.clearlock();
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.clearPath();
+        this.setThickness(this.toolProperties.thickness);
     }
 }
