@@ -62,7 +62,9 @@ export class BrushService extends PencilService {
 
     setFilter(value: string): void {
         const brushProperties = this.toolProperties as BrushProperties;
-        brushProperties.currentFilter = value;
+        if (brushProperties.filterType.includes(value)) {
+            brushProperties.currentFilter = value;
+        }
     }
 
     switchFilter(ctx: CanvasRenderingContext2D): void {

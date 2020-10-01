@@ -46,7 +46,7 @@ describe('BrushService', () => {
         expect(service).toBeTruthy();
     });
 
-    it('mouseDown should not call drawCursor', () => {
+    it('mouseMove should not call drawCursor if mouseDown is true', () => {
         service.mouseDown = true;
         service.mouseDownCoord = { x: 0, y: 0 };
 
@@ -54,7 +54,7 @@ describe('BrushService', () => {
         expect(drawCursorSpy).not.toHaveBeenCalled();
     });
 
-    it('mouseMove should call drawCursor', () => {
+    it('mouseMove should call drawCursor if mouseDown is false', () => {
         service.mouseDown = false;
         service.mouseDownCoord = { x: 0, y: 0 };
 
@@ -102,9 +102,15 @@ describe('BrushService', () => {
         expect(brushProperties.currentFilter).toEqual('Nuage');
     });
 
-    it('setFilter should set correct filter', () => {
+    it('setFilter should set the correct filter if filter is valid', () => {
         service.setFilter('Brouillé');
         const brushProperties = service.toolProperties as BrushProperties;
         expect(brushProperties.currentFilter).toEqual('Brouillé');
+    });
+
+    it('setFilter should assign a filter that does not exist', () => {
+        service.setFilter('');
+        const brushProperties = service.toolProperties as BrushProperties;
+        expect(brushProperties.currentFilter).not.toEqual('');
     });
 });
