@@ -1,6 +1,6 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
-
 import { OpenGuideComponent } from './open-guide.component';
 
 class MatDialogMock {
@@ -20,6 +20,7 @@ describe('OpenGuideComponent', () => {
         TestBed.configureTestingModule({
             declarations: [OpenGuideComponent],
             providers: [{ provide: MatDialog, useClass: MatDialogMock }],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
         dialogOpenSpy = spyOn<any>(TestBed.inject(MatDialog), 'open').and.callThrough();
     }));
