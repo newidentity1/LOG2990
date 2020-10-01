@@ -11,7 +11,7 @@ export class EraseService extends PencilService {
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.name = 'Eraser';
-        this.tooltip = 'Eraser(e)';
+        this.tooltip = 'Efface(e)';
         this.iconName = 'kitchen';
         this.toolProperties = new BasicShapeProperties();
         this.clearPath();
@@ -62,5 +62,14 @@ export class EraseService extends PencilService {
             this.toolProperties.thickness,
         );
         cursorCtx.lineWidth = this.toolProperties.thickness;
+    }
+
+    resetContext(): void {
+        const previewCtx = this.drawingService.previewCtx;
+        const baseCtx = this.drawingService.baseCtx;
+        previewCtx.lineCap = baseCtx.lineCap = 'butt';
+        previewCtx.lineJoin = baseCtx.lineJoin = 'miter';
+        this.mouseDown = false;
+        this.drawingService.clearCanvas(previewCtx);
     }
 }

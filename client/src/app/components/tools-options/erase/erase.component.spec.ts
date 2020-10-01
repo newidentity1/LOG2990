@@ -3,30 +3,28 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatSliderChange, MatSliderModule } from '@angular/material/slider';
 import { ThicknessSliderComponent } from '@app/components/tools-options/thickness-slider/thickness-slider.component';
 import { MAXIMUM_THICKNESS, MINIMUM_THICKNESS } from '@app/constants/constants';
-import { PencilService } from '@app/services/tools/pencil/pencil-service';
-import { PencilComponent } from './pencil.component';
+import { EraseService } from '@app/services/tools/erase/erase.service';
+import { EraseComponent } from './erase.component';
 
-describe('PencilComponent', () => {
-    let component: PencilComponent;
-    let fixture: ComponentFixture<PencilComponent>;
-    let pencilServiceSpy: jasmine.SpyObj<PencilService>;
-
+describe('EraseComponent', () => {
+    let component: EraseComponent;
+    let fixture: ComponentFixture<EraseComponent>;
+    let eraseServiceMock: jasmine.SpyObj<EraseService>;
     // tslint:disable-next-line: no-any / reason: spy of functions
     let thicknessSpy: jasmine.SpyObj<any>;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [PencilComponent, ThicknessSliderComponent],
+            declarations: [EraseComponent, ThicknessSliderComponent],
             imports: [MatSliderModule],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
-
-        pencilServiceSpy = TestBed.inject(PencilService) as jasmine.SpyObj<PencilService>;
-        thicknessSpy = spyOn(pencilServiceSpy, 'setThickness').and.callThrough();
+        eraseServiceMock = TestBed.inject(EraseService) as jasmine.SpyObj<EraseService>;
+        thicknessSpy = spyOn(eraseServiceMock, 'setThickness').and.callThrough();
     }));
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(PencilComponent);
+        fixture = TestBed.createComponent(EraseComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });
@@ -44,6 +42,6 @@ describe('PencilComponent', () => {
     it('onThicknessChange should not call setThickness of pencilService if value is outside scope', () => {
         const matSliderEvent = { value: MINIMUM_THICKNESS - 1 } as MatSliderChange;
         component.onThicknessChange(matSliderEvent);
-        expect(thicknessSpy).not.toHaveBeenCalledWith(matSliderEvent.value);
+        expect(thicknessSpy).toHaveBeenCalledWith(matSliderEvent.value);
     });
 });

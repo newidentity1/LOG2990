@@ -28,7 +28,7 @@ export class BrushService extends Tool {
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.name = 'Brush';
-        this.tooltip = 'Brush(w)';
+        this.tooltip = 'Pinceau(w)';
         this.iconName = 'brush';
         this.toolProperties = new BrushProperties();
         this.clearPath();
@@ -119,5 +119,10 @@ export class BrushService extends Tool {
 
     private clearPath(): void {
         this.pathData = [];
+    }
+
+    resetContext(): void {
+        this.mouseDown = false;
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
     }
 }

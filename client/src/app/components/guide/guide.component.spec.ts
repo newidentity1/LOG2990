@@ -1,18 +1,19 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { EraseComponent } from './erase.component';
 
-describe('EraseComponent', () => {
-    let component: EraseComponent;
-    let fixture: ComponentFixture<EraseComponent>;
+import { GuideComponent } from './guide.component';
+
+describe('GuideComponent', () => {
+    let component: GuideComponent;
+    let fixture: ComponentFixture<GuideComponent>;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [EraseComponent],
+            declarations: [GuideComponent],
         }).compileComponents();
     }));
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(EraseComponent);
+        fixture = TestBed.createComponent(GuideComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });
