@@ -7,7 +7,7 @@ import * as CONSTANTS from '@app/constants/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { LineService } from './line.service';
 // tslint:disable:no-any : reason spying on functions
-describe('LineServiceService', () => {
+describe('LineService', () => {
     let service: LineService;
     let mouseEventclick1: MouseEvent;
     let keyboardEventShift: KeyboardEvent;
@@ -336,14 +336,10 @@ describe('LineServiceService', () => {
         service.mouseDown = true;
         service.shift = false;
         baseCtxStub.lineCap = previewCtxStub.lineCap = 'round';
-        baseCtxStub.lineJoin = previewCtxStub.lineJoin = 'bevel';
+        baseCtxStub.lineJoin = previewCtxStub.lineJoin = 'miter';
         service.resetContext();
         expect(service.mouseDown).toEqual(false);
         expect(service.shift).toEqual(false);
-        expect(baseCtxStub.lineCap).toEqual('butt');
-        expect(previewCtxStub.lineCap).toEqual('butt');
-        expect(baseCtxStub.lineJoin).toEqual('miter');
-        expect(previewCtxStub.lineJoin).toEqual('miter');
         expect(clearLockSpy).toHaveBeenCalled();
         expect(clearPathSpy).toHaveBeenCalled();
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalledWith(previewCtxStub);
