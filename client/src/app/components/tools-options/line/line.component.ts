@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatRadioChange } from '@angular/material/radio';
 import { MatSliderChange } from '@angular/material/slider';
-import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
+import { LineProperties } from '@app/classes/tools-properties/line-properties';
 import { LinePointType } from '@app/enums/linepoint-type.enum';
 import { LineService } from '@app/services/tools/line/line.service';
 @Component({
@@ -16,9 +16,9 @@ export class LineComponent implements OnInit {
     pointSize: number;
 
     constructor(public lineService: LineService) {
-        const lineProperties = lineService.toolProperties as BasicShapeProperties;
+        const lineProperties = lineService.toolProperties as LineProperties;
         this.currentThickness = lineProperties.thickness;
-        this.pointSize = lineService.pointSize;
+        this.pointSize = lineProperties.pointSize;
         this.lineService.setThickness(lineProperties.thickness);
     }
 
