@@ -299,4 +299,14 @@ describe('RectangleService', () => {
         expect(service.shiftDown).toEqual(false);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalledWith(drawServiceSpy.previewCtx);
     });
+    it('draw should not draw if escape is down', () => {
+        const spyFillStroke = spyOn(service, 'drawFillStrokeRect');
+        const spyFill = spyOn(service, 'drawFillRect');
+        const spyStroke = spyOn(service, 'drawStrokeRect');
+        service.escapeDown = true;
+        service.draw(baseCtxStub);
+        expect(spyFillStroke).not.toHaveBeenCalled();
+        expect(spyFill).not.toHaveBeenCalled();
+        expect(spyStroke).not.toHaveBeenCalled();
+    });
 });
