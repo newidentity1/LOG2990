@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { GuideComponent } from '@app/components/guide/guide.component';
 import { IndexService } from '@app/services/index/index.service';
 import { Message } from '@common/communication/message';
 import { BehaviorSubject } from 'rxjs';
