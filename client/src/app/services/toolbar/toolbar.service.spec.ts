@@ -86,6 +86,7 @@ describe('ToolbarService', () => {
 
     it('setColors should set the colors and call applyCurrentToolColor', () => {
         const color = new Color();
+        // tslint:disable-next-line: no-any
         const applyColorSpy = spyOn<any>(service, 'applyCurrentToolColor').and.callFake(() => {
             return;
         });
