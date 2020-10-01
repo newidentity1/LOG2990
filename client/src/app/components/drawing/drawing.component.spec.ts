@@ -261,4 +261,11 @@ describe('DrawingComponent', () => {
         expect(spyResizeWidth).toHaveBeenCalledWith(mouseEvent);
         expect(spyResizeHeight).toHaveBeenCalledWith(mouseEvent);
     });
+
+    it('should emit requestDrawingContainerDimensions on emitted emitCreateNewDrawingEvent', () => {
+        spyOn(component.requestDrawingContainerDimensions, 'emit');
+        component.ngAfterViewInit();
+        drawingServiceStub.emitCreateNewDrawingEvent();
+        expect(component.requestDrawingContainerDimensions.emit).toHaveBeenCalled();
+    });
 });
