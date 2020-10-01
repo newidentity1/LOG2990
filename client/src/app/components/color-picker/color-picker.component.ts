@@ -75,10 +75,6 @@ export class ColorPickerComponent implements AfterViewInit {
         this.colorPickerService.onMouseUp(event);
     }
 
-    getRecentColors(): Color[] {
-        return this.colorPickerService.recentColors;
-    }
-
     getCurrentColor(): Color {
         return this.colorPickerService.selectedColor;
     }

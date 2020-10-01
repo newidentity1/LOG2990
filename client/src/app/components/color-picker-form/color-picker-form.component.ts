@@ -27,7 +27,6 @@ export class ColorPickerFormComponent implements OnInit {
     onRedChange(value: string): void {
         this.color.setRedHex(value);
         this.redForm.setValue(this.color.getRedHex());
-        this.redForm.updateValueAndValidity();
     }
 
     onGreenChange(value: string): void {
