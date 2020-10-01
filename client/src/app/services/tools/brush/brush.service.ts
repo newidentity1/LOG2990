@@ -40,6 +40,8 @@ export class BrushService extends PencilService {
         this.switchFilter(cursorCtx);
         cursorCtx.arc(position.x, position.y, this.toolProperties.thickness / 2, 0, Math.PI * 2);
         cursorCtx.fill();
+        // reset filter
+        cursorCtx.filter = 'none';
     }
 
     protected drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
