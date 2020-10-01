@@ -263,6 +263,17 @@ describe('EllipseService', () => {
         expect(service.adjustThickness(properties, radius)).toEqual(radius.x);
     });
 
+    it('adjustThickness should keep the thickness when its not in fill mode and is smaller than the width or the height', () => {
+        const properties = service.toolProperties as BasicShapeProperties;
+        properties.currentType = DrawingType.Stroke;
+        const value = 10;
+        const radius: Vec2 = { x: 25, y: 25 };
+        service.setThickness(value);
+        service.drawEllipse(baseCtxStub);
+
+        expect(service.adjustThickness(properties, radius)).toEqual(value);
+    });
+
     it('adjustThickness should set the thickness to 1 when its in fill mode', () => {
         const properties = service.toolProperties as BasicShapeProperties;
         properties.currentType = DrawingType.Fill;
