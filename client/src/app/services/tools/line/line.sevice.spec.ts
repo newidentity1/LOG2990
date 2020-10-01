@@ -5,7 +5,7 @@ import { Vec2 } from '@app/classes/vec2';
 import * as CONSTANTS from '@app/constants/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { LineService } from './line.service';
-// tslint:disable:no-any
+// tslint:disable:no-any : reason spying on functions
 describe('LineServiceService', () => {
     let service: LineService;
     let mouseEventclick1: MouseEvent;
@@ -324,5 +324,23 @@ describe('LineServiceService', () => {
     it('onMouseMove should not use lock angle if pathdata is empty', () => {
         service.onMouseMove(mouseEventclick1);
         expect(lockAngleSpy).not.toHaveBeenCalled();
+    });
+
+    it('resetContext should reset all the current changes that the tool made', () => {
+        const clearPathSpy = spyOn<any>(service, 'clearPath').and.callThrough();
+        service.mouseDown = true;
+        service.shift = false;
+        baseCtxStub.lineCap = previewCtxStub.lineCap = 'round';
+        baseCtxStub.lineJoin = previewCtxStub.lineJoin = 'bevel';
+        service.resetContext();
+        expect(service.mouseDown).toEqual(false);
+        expect(service.shift).toEqual(false);
+        expect(baseCtxStub.lineCap).toEqual('butt');
+        expect(previewCtxStub.lineCap).toEqual('butt');
+        expect(baseCtxStub.lineJoin).toEqual('miter');
+        expect(previewCtxStub.lineJoin).toEqual('miter');
+        expect(clearLockSpy).toHaveBeenCalled();
+        expect(clearPathSpy).toHaveBeenCalled();
+        expect(drawServiceSpy.clearCanvas).toHaveBeenCalledWith(previewCtxStub);
     });
 });

@@ -40,6 +40,65 @@ describe('EditorComponent', () => {
         expect(component).toBeTruthy();
     });
 
+    it('should call the toolbar onKeyDown when receiving a keyboard event and should not call createNewDrawing event if not ctrl', () => {
+        const eventSpy = jasmine.createSpyObj('KeyboardEvent', ['preventDefault']);
+        eventSpy.key = '1';
+        const spyToolbar = jasmine.createSpyObj('SidebarComponent', ['createNewDrawing']);
+        component.toolbarRef = spyToolbar;
+
+        component.onKeyDown(eventSpy);
+        expect(eventSpy.preventDefault).toHaveBeenCalled();
+        expect(spyToolbar.createNewDrawing).not.toHaveBeenCalled();
+        expect(toolbarServiceMock.onKeyDown).toHaveBeenCalled();
+        expect(toolbarServiceMock.onKeyDown).toHaveBeenCalledWith(eventSpy);
+        expect(component.isCtrlDown).toEqual(false);
+    });
+
+    it('should call the toolbar onKeyDown when receiving a keyboard event and should set isCtrlDown to true if event is ctrl', () => {
+        const eventSpy = jasmine.createSpyObj('KeyboardEvent', ['preventDefault']);
+        eventSpy.key = 'Control';
+        const spyToolbar = jasmine.createSpyObj('SidebarComponent', ['createNewDrawing']);
+        component.toolbarRef = spyToolbar;
+
+        component.onKeyDown(eventSpy);
+        expect(eventSpy.preventDefault).toHaveBeenCalled();
+        expect(spyToolbar.createNewDrawing).not.toHaveBeenCalled();
+        expect(toolbarServiceMock.onKeyDown).toHaveBeenCalled();
+        expect(toolbarServiceMock.onKeyDown).toHaveBeenCalledWith(eventSpy);
+        expect(component.isCtrlDown).toEqual(true);
+    });
+
+    it('should call the toolbar onKeyDown when receiving a keyboard event and should set call createNewDrawing of child if ctrl+o happened', () => {
+        const eventSpy = jasmine.createSpyObj('KeyboardEvent', ['preventDefault']);
+        const spyToolbar = jasmine.createSpyObj('SidebarComponent', ['createNewDrawing']);
+        component.toolbarRef = spyToolbar;
+
+        eventSpy.key = 'Control';
+        component.onKeyDown(eventSpy);
+        expect(eventSpy.preventDefault).toHaveBeenCalled();
+        expect(spyToolbar.createNewDrawing).not.toHaveBeenCalled();
+        expect(toolbarServiceMock.onKeyDown).toHaveBeenCalled();
+        expect(toolbarServiceMock.onKeyDown).toHaveBeenCalledWith(eventSpy);
+        expect(component.isCtrlDown).toEqual(true);
+
+        eventSpy.key = 'o';
+        component.onKeyDown(eventSpy);
+        expect(eventSpy.preventDefault).toHaveBeenCalled();
+        expect(spyToolbar.createNewDrawing).toHaveBeenCalled();
+        expect(toolbarServiceMock.onKeyDown).toHaveBeenCalled();
+        expect(toolbarServiceMock.onKeyDown).toHaveBeenCalledWith(eventSpy);
+        expect(component.isCtrlDown).toEqual(false);
+    });
+
+    it('should call the toolbar onKeyDown when receiving a keyboard event and event is not ctrl', () => {
+        const eventSpy = jasmine.createSpyObj('KeyboardEvent', ['preventDefault']);
+        eventSpy.key = '1';
+        component.onKeyDown(eventSpy);
+        expect(eventSpy.preventDefault).toHaveBeenCalled();
+        expect(toolbarServiceMock.onKeyDown).toHaveBeenCalled();
+        expect(toolbarServiceMock.onKeyDown).toHaveBeenCalledWith(eventSpy);
+        expect(component.isCtrlDown).toEqual(false);
+    });
     it('should call the toolbar onKeyDown when receiving a keyboard event', () => {
         const eventSpy = jasmine.createSpyObj('KeyboardEvent', ['preventDefault']);
         component.onKeyDown(eventSpy);

@@ -87,9 +87,4 @@ export class BrushService extends PencilService {
                 break;
         }
     }
-
-    resetContext(): void {
-        this.mouseDown = false;
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
-    }
 }

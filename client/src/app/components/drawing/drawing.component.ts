@@ -116,25 +116,21 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit {
         if (this.isResizingWidth) {
             event.preventDefault();
             const newWidth = event.clientX - this.baseCanvas.nativeElement.getBoundingClientRect().x;
-            if (newWidth >= CANVAS_MIN_WIDTH) {
-                this.previewCanvas.nativeElement.width =
-                    newWidth >= this.drawingContainerWidth - CANVAS_MARGIN_LEFT ? this.drawingContainerWidth - CANVAS_MARGIN_LEFT : newWidth;
+
+            const widthLimit = this.drawingContainerWidth - CANVAS_MARGIN_LEFT;
+            if (newWidth >= CANVAS_MIN_WIDTH && newWidth <= widthLimit) {
+                this.previewCanvas.nativeElement.width = newWidth;
             }
         }
 
         if (this.isResizingHeight) {
             event.preventDefault();
             const newHeight = event.clientY - this.baseCanvas.nativeElement.getBoundingClientRect().y;
-            if (newHeight >= CANVAS_MIN_HEIGHT) {
-                this.previewCanvas.nativeElement.height =
-                    newHeight >= this.drawingContainerHeight - CANVAS_MARGIN_TOP ? this.drawingContainerHeight - CANVAS_MARGIN_TOP : newHeight;
+            const heightLimit = this.drawingContainerHeight - CANVAS_MARGIN_TOP;
+            if (newHeight >= CANVAS_MIN_HEIGHT && newHeight <= heightLimit) {
+                this.previewCanvas.nativeElement.height = newHeight;
             }
         }
-    }
-
-    onResizeBothStart(event: MouseEvent): void {
-        this.onResizeWidthStart(event);
-        this.onResizeHeightStart(event);
     }
 
     onResizeWidthStart(event: MouseEvent): void {
@@ -147,6 +143,11 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit {
         if (event.button === MouseButton.Left) {
             this.isResizingHeight = true;
         }
+    }
+
+    onResizeBothStart(event: MouseEvent): void {
+        this.onResizeWidthStart(event);
+        this.onResizeHeightStart(event);
     }
 
     newCanvasSetSize(): void {
