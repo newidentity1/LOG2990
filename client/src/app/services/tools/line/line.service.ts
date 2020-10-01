@@ -270,4 +270,16 @@ export class LineService extends Tool {
         this.lock90 = false;
         this.lock45 = false;
     }
+
+    resetContext(): void {
+        const previewCtx = this.drawingService.previewCtx;
+        const baseCtx = this.drawingService.baseCtx;
+        previewCtx.lineCap = baseCtx.lineCap = 'butt';
+        previewCtx.lineJoin = baseCtx.lineJoin = 'miter';
+        this.mouseDown = false;
+        this.shift = false;
+        this.clearlock();
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.clearPath();
+    }
 }

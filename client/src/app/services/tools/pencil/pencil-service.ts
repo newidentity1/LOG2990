@@ -99,4 +99,13 @@ export class PencilService extends Tool {
     protected clearPath(): void {
         this.pathData = [];
     }
+
+    resetContext(): void {
+        const previewCtx = this.drawingService.previewCtx;
+        const baseCtx = this.drawingService.baseCtx;
+        previewCtx.lineCap = baseCtx.lineCap = 'butt';
+        previewCtx.lineJoin = baseCtx.lineJoin = 'miter';
+        this.mouseDown = false;
+        this.drawingService.clearCanvas(previewCtx);
+    }
 }

@@ -22,6 +22,7 @@ export class SidebarComponent {
 
     onToolChanged(tool: Tool): void {
         if (tool !== this.currentTool) {
+            this.currentTool.resetContext();
             this.currentTool = tool;
             this.toolbarService.applyCurrentToolColor();
             this.sidenavProperties.open();
