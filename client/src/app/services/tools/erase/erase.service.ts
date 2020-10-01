@@ -63,4 +63,13 @@ export class EraseService extends PencilService {
         );
         cursorCtx.lineWidth = this.toolProperties.thickness;
     }
+
+    resetContext(): void {
+        const previewCtx = this.drawingService.previewCtx;
+        const baseCtx = this.drawingService.baseCtx;
+        previewCtx.lineCap = baseCtx.lineCap = 'butt';
+        previewCtx.lineJoin = baseCtx.lineJoin = 'miter';
+        this.mouseDown = false;
+        this.drawingService.clearCanvas(previewCtx);
+    }
 }

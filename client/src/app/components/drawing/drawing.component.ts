@@ -44,6 +44,11 @@ export class DrawingComponent implements AfterViewInit {
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
         this.toolbarService.setColors(new Color(BLACK), new Color(WHITE));
+        // Set size of initial canvas and new canvas
+        this.drawingService.createNewDrawingEventListener().subscribe((resetMessage) => {
+            this.newCanvasSetSize();
+            console.log(resetMessage);
+        });
     }
 
     onMouseMove(event: MouseEvent): void {
@@ -130,6 +135,15 @@ export class DrawingComponent implements AfterViewInit {
         if (event.button === MouseButton.Left) {
             this.isResizingHeight = true;
         }
+    }
+
+    // TODO : ComputeDimensionsDrawingComponent to calculate canvas size
+    // TODO : 6 failed tests
+    newCanvasSetSize(): void {
+        // this.canvasSize.x = this.drawingContainerWidth / 2;
+        // this.canvasSize.y = this.drawingContainerHeight / 2;
+        // this.canvasSize.x = window.innerWidth / 2 >= CANVAS_MIN_WIDTH ? window.innerWidth / 2 : CANVAS_MIN_WIDTH;
+        // this.canvasSize.y = window.innerHeight / 2 >= CANVAS_MIN_HEIGHT ? window.innerHeight / 2 : CANVAS_MIN_HEIGHT;
     }
 
     get width(): number {
