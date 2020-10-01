@@ -1,4 +1,5 @@
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants/constants';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 import { BehaviorSubject } from 'rxjs';
@@ -11,8 +12,11 @@ import { BehaviorSubject } from 'rxjs';
 export class EditorComponent implements OnInit {
     @ViewChild('drawingContainer', { static: true }) drawingContainer: ElementRef;
 
+    @ViewChild(SidebarComponent) toolbarRef: SidebarComponent;
+
     height: number = DEFAULT_HEIGHT;
     width: number = DEFAULT_WIDTH;
+    isCtrlDown: boolean = false;
 
     dimensionsUpdatedSubject: BehaviorSubject<number[]> = new BehaviorSubject([this.width, this.height]);
 
@@ -24,17 +28,27 @@ export class EditorComponent implements OnInit {
 
     @HostListener('keydown', ['$event'])
     onKeyDown(event: KeyboardEvent): void {
+        event.preventDefault();
+        if (this.isCtrlDown && event.key === 'o') {
+            this.toolbarRef.createNewDrawing();
+        }
+        if (event.key === 'Control') {
+            this.isCtrlDown = true;
+        }
         // Send the event to toolbar
         this.toolbarService.onKeyDown(event);
+        this.isCtrlDown = event.key === 'Control';
     }
 
     @HostListener('keypress', ['$event'])
     onKeyPress(event: KeyboardEvent): void {
+        event.preventDefault();
         this.toolbarService.onKeyPress(event);
     }
 
     @HostListener('keyup', ['$event'])
     onKeyUp(event: KeyboardEvent): void {
+        event.preventDefault();
         this.toolbarService.onKeyUp(event);
     }
 

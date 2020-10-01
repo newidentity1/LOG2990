@@ -14,7 +14,7 @@ export class CreateNewDrawingComponent {
 
     // Empty: Automatically clears canvas, Not Empty: Pop Up Warning
     createNewDrawing(): void {
-        if (this.drawingService.CanvasEmpty(this.drawingService.baseCtx, this.drawingService.canvas)) {
+        if (this.drawingService.canvasEmpty(this.drawingService.baseCtx, this.drawingService.canvas)) {
             this.drawingService.clearCanvas(this.drawingService.baseCtx);
             this.drawingService.emitCreateNewDrawingEvent();
         } else {

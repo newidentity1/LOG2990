@@ -23,7 +23,7 @@ export class DrawingService {
     }
 
     // https://stackoverflow.com/questions/17386707/how-to-check-if-a-canvas-is-blank
-    CanvasEmpty(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement): boolean {
+    canvasEmpty(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement): boolean {
         const pixelBuffer = new Uint32Array(context.getImageData(0, 0, canvas.width, canvas.height).data.buffer);
         return !pixelBuffer.some((color) => color !== 0);
     }
