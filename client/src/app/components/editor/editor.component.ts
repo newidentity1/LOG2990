@@ -1,5 +1,7 @@
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants/constants';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
     selector: 'app-editor',
@@ -9,13 +11,15 @@ import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 export class EditorComponent implements OnInit {
     @ViewChild('drawingContainer', { static: true }) drawingContainer: ElementRef;
 
-    height: number;
-    width: number;
+    height: number = DEFAULT_HEIGHT;
+    width: number = DEFAULT_WIDTH;
+
+    dimensionsUpdatedSubject: BehaviorSubject<number[]> = new BehaviorSubject([this.width, this.height]);
 
     constructor(private toolbarService: ToolbarService) {}
 
     ngOnInit(): void {
-        this.ComputeDimensionsDrawingContainer();
+        this.computeDimensionsDrawingContainer();
     }
 
     @HostListener('keydown', ['$event'])
@@ -34,11 +38,12 @@ export class EditorComponent implements OnInit {
         this.toolbarService.onKeyUp(event);
     }
 
-    ComputeDimensionsDrawingContainer(): void {
+    computeDimensionsDrawingContainer(): void {
         const heightString = getComputedStyle(this.drawingContainer.nativeElement).height;
         this.height = +heightString.substring(0, heightString.length - 2);
 
         const widthString = getComputedStyle(this.drawingContainer.nativeElement).width;
         this.width = +widthString.substring(0, widthString.length - 2);
+        this.dimensionsUpdatedSubject.next([this.width, this.height]);
     }
 }
