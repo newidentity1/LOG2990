@@ -29,7 +29,7 @@ export class LineService extends Tool {
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.name = 'Line';
-        this.tooltip = 'Line(l)';
+        this.tooltip = 'Ligne(l)';
         this.iconName = 'show_chart';
         this.toolProperties = new BasicShapeProperties();
         this.clearPath();
