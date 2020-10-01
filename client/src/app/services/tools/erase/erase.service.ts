@@ -31,8 +31,6 @@ export class EraseService extends PencilService {
     protected drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         this.drawingService.setStrokeColor('white');
         ctx.beginPath();
-        ctx.lineJoin = 'bevel';
-        ctx.lineCap = 'square';
         for (const point of path) {
             ctx.lineTo(point.x, point.y);
         }
@@ -62,15 +60,5 @@ export class EraseService extends PencilService {
             this.toolProperties.thickness,
         );
         cursorCtx.lineWidth = this.toolProperties.thickness;
-    }
-
-    resetContext(): void {
-        const previewCtx = this.drawingService.previewCtx;
-        const baseCtx = this.drawingService.baseCtx;
-        previewCtx.lineCap = baseCtx.lineCap = 'butt';
-        previewCtx.lineJoin = baseCtx.lineJoin = 'miter';
-        this.mouseDown = false;
-        this.setThickness(this.toolProperties.thickness);
-        this.drawingService.clearCanvas(previewCtx);
     }
 }
