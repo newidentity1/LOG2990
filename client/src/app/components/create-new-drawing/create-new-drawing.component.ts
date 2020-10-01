@@ -16,7 +16,7 @@ export class CreateNewDrawingComponent {
     createNewDrawing(): void {
         if (this.drawingService.CanvasEmpty(this.drawingService.baseCtx, this.drawingService.canvas)) {
             this.drawingService.clearCanvas(this.drawingService.baseCtx);
-            this.drawingService.emitCreateNewDrawingEvent('Button <new drawing> resized the canvas');
+            this.drawingService.emitCreateNewDrawingEvent();
         } else {
             this.warningClearCanvas();
         }

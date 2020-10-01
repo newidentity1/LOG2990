@@ -146,7 +146,6 @@ describe('EllipseService', () => {
         service.height = fakeRectangle.y;
         const expectedResult: Vec2 = { x: 150, y: 150 };
         service.transformToCircle();
-        console.log(service.height);
         expect({ x: service.width, y: service.height }).toEqual(expectedResult);
     });
 
