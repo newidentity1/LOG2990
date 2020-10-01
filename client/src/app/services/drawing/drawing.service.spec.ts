@@ -36,6 +36,7 @@ describe('DrawingService', () => {
     });
 
     it('canvasEmpty should return true when the canvas is empty', () => {
+        service.clearCanvas(service.baseCtx);
         const isEmpty = service.canvasEmpty(service.baseCtx, service.canvas);
         expect(isEmpty).toEqual(true);
     });
@@ -43,7 +44,6 @@ describe('DrawingService', () => {
     it('canvasEmpty should return false when the canvas is not empty', () => {
         service.baseCtx.fillRect(0, 0, 1, 1);
         const isEmpty = service.canvasEmpty(service.baseCtx, service.canvas);
-        service.clearCanvas(service.baseCtx);
         expect(isEmpty).toEqual(false);
     });
 
