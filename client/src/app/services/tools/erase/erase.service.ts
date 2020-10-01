@@ -11,7 +11,7 @@ export class EraseService extends PencilService {
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.name = 'Eraser';
-        this.tooltip = 'Eraser(e)';
+        this.tooltip = 'Efface(e)';
         this.iconName = 'kitchen';
         this.toolProperties = new BasicShapeProperties();
         this.clearPath();
