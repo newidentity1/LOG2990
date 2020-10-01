@@ -12,7 +12,7 @@ export class PencilComponent {
     currentThickness: number;
 
     constructor(private pencilService: PencilService) {
-        this.currentThickness = this.pencilService.toolProperties.thickness;
+        this.pencilService.setThickness(this.pencilService.toolProperties.thickness);
     }
 
     onThicknessChange(event: MatSliderChange): void {

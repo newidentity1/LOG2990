@@ -290,4 +290,13 @@ describe('RectangleService', () => {
         expect(spyFill).toHaveBeenCalled();
         expect(spyStroke).toHaveBeenCalled();
     });
+
+    it('resetContext should reset all used properties', () => {
+        service.mouseDown = true;
+        service.shiftDown = true;
+        service.resetContext();
+        expect(service.mouseDown).toEqual(false);
+        expect(service.shiftDown).toEqual(false);
+        expect(drawServiceSpy.clearCanvas).toHaveBeenCalledWith(drawServiceSpy.previewCtx);
+    });
 });

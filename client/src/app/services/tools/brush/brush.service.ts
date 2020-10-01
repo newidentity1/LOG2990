@@ -27,7 +27,7 @@ export class BrushService extends PencilService {
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.name = 'Brush';
-        this.tooltip = 'Brush(w)';
+        this.tooltip = 'Pinceau(w)';
         this.iconName = 'brush';
         this.toolProperties = new BrushProperties();
         this.clearPath();
@@ -84,5 +84,10 @@ export class BrushService extends PencilService {
                 ctx.filter = 'url(#Cloud)';
                 break;
         }
+    }
+
+    resetContext(): void {
+        this.mouseDown = false;
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
     }
 }

@@ -9,7 +9,7 @@ import { PencilComponent } from './pencil.component';
 describe('PencilComponent', () => {
     let component: PencilComponent;
     let fixture: ComponentFixture<PencilComponent>;
-    let pencilServiceMock: jasmine.SpyObj<PencilService>;
+    let pencilServiceSpy: jasmine.SpyObj<PencilService>;
 
     // tslint:disable-next-line: no-any / reason: spy of functions
     let thicknessSpy: jasmine.SpyObj<any>;
@@ -21,8 +21,8 @@ describe('PencilComponent', () => {
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
 
-        pencilServiceMock = TestBed.inject(PencilService) as jasmine.SpyObj<PencilService>;
-        thicknessSpy = spyOn(pencilServiceMock, 'setThickness').and.callThrough();
+        pencilServiceSpy = TestBed.inject(PencilService) as jasmine.SpyObj<PencilService>;
+        thicknessSpy = spyOn(pencilServiceSpy, 'setThickness').and.callThrough();
     }));
 
     beforeEach(() => {

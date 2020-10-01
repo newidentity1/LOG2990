@@ -159,4 +159,10 @@ export class RectangleService extends ShapeTool {
         this.drawFillRect(ctx, width, height);
         this.drawStrokeRect(ctx, width, height);
     }
+
+    resetContext(): void {
+        this.mouseDown = false;
+        this.shiftDown = false;
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+    }
 }
