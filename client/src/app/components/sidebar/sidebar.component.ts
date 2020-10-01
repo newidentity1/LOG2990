@@ -1,9 +1,9 @@
 import { Component, ViewChild } from '@angular/core';
-import { GuideComponent } from '@app/components/guide/guide.component';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Tool } from '@app/classes/tool';
+import { GuideComponent } from '@app/components/guide/guide.component';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
-import { MatDialog } from '@angular/material/dialog';
 
 @Component({
     selector: 'app-sidebar',
