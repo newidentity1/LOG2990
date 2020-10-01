@@ -316,8 +316,6 @@ describe('EllipseService', () => {
         service.onKeyUp(keyboardEvent);
         expect(drawSpy).not.toHaveBeenCalled();
     });
-<<<<<<< HEAD
-=======
 
     it('resetContext should reset all the current changes that the tool made', () => {
         service.mouseDown = true;
@@ -329,5 +327,4 @@ describe('EllipseService', () => {
         expect(service.escapeDown).toEqual(false);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalledWith(drawServiceSpy.previewCtx);
     });
->>>>>>> dev
 });

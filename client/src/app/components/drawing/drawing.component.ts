@@ -145,18 +145,6 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit {
         }
     }
 
-<<<<<<< HEAD
-    newCanvasSetSize(): void {
-        const newWidth = this.drawingContainerWidth / 2;
-        const newHeight = this.drawingContainerHeight / 2;
-
-        this.canvasSize.x = newWidth >= CANVAS_MIN_WIDTH ? newWidth : CANVAS_MIN_WIDTH;
-        this.canvasSize.y = newHeight >= CANVAS_MIN_HEIGHT ? newHeight : CANVAS_MIN_HEIGHT;
-    }
-
-    get width(): number {
-        return this.canvasSize.x;
-=======
     onResizeBothStart(event: MouseEvent): void {
         this.onResizeWidthStart(event);
         this.onResizeHeightStart(event);
@@ -168,17 +156,13 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit {
 
         this.canvasSize.x = newWidth >= CANVAS_MIN_WIDTH ? newWidth : CANVAS_MIN_WIDTH;
         this.canvasSize.y = newHeight >= CANVAS_MIN_HEIGHT ? newHeight : CANVAS_MIN_HEIGHT;
->>>>>>> dev
     }
 
     get width(): number {
         return this.canvasSize.x;
     }
-<<<<<<< HEAD
-=======
 
     get height(): number {
         return this.canvasSize.y;
     }
->>>>>>> dev
 }

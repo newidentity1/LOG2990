@@ -1,10 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { SVGFilterComponent } from '@app/components/svgfilter/svgfilter.component';
-<<<<<<< HEAD
-import { CANVAS_MIN_HEIGHT, CANVAS_MIN_WIDTH } from '@app/constants/constants';
-=======
 import { CANVAS_MARGIN_LEFT, CANVAS_MARGIN_TOP, CANVAS_MIN_HEIGHT, CANVAS_MIN_WIDTH } from '@app/constants/constants';
->>>>>>> dev
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 import { of } from 'rxjs';
@@ -22,14 +18,11 @@ describe('DrawingComponent', () => {
             'onMouseMove',
             'onMouseDown',
             'onMouseUp',
-<<<<<<< HEAD
-=======
             'onMouseEnter',
             'onMouseLeave',
             'onDoubleClick',
             'onClick',
             'setColors',
->>>>>>> dev
             'setColors',
             'createNewDrawingEventListener',
         ]);
