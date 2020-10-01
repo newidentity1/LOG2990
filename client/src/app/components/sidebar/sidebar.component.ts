@@ -1,6 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Tool } from '@app/classes/tool';
+import { CreateNewDrawingComponent } from '@app/components/create-new-drawing/create-new-drawing.component';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 
 @Component({
@@ -11,6 +12,7 @@ import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 export class SidebarComponent {
     tools: Tool[];
     @ViewChild('toolProperties') sidenavProperties: MatSidenav;
+    @ViewChild(CreateNewDrawingComponent) newDrawingRef: CreateNewDrawingComponent;
 
     constructor(protected toolbarService: ToolbarService) {
         this.tools = toolbarService.getTools();
@@ -28,6 +30,10 @@ export class SidebarComponent {
         } else {
             this.sidenavProperties.toggle();
         }
+    }
+
+    createNewDrawing(): void {
+        this.newDrawingRef.createNewDrawing();
     }
 
     get currentTool(): Tool {
