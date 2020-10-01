@@ -25,6 +25,9 @@
             </div>
             <hr />
             <div id="other-functionality-container">
+                <button matTooltip="Accueil" matTooltipPosition="right" mat-button id="returnMainPage" routerLink="/">
+                    <mat-icon>home</mat-icon>
+                </button>
                 <app-create-new-drawing></app-create-new-drawing>
                 <app-open-guide [inMenu]="false"></app-open-guide>
             </div>

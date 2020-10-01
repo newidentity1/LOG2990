@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -8,14 +8,13 @@ export class DrawingService {
     baseCtx: CanvasRenderingContext2D;
     previewCtx: CanvasRenderingContext2D;
     canvas: HTMLCanvasElement;
-    createNewDrawingSubject: BehaviorSubject<string> = new BehaviorSubject<string>('Canvas Size has been set');
+    createNewDrawingSubject: Subject<void> = new Subject<void>();
 
-    // Send events between components
-    emitCreateNewDrawingEvent(msg: string): void {
-        this.createNewDrawingSubject.next(msg);
+    emitCreateNewDrawingEvent(): void {
+        this.createNewDrawingSubject.next();
     }
 
-    createNewDrawingEventListener(): Observable<string> {
+    createNewDrawingEventListener(): Observable<void> {
         return this.createNewDrawingSubject.asObservable();
     }
 
@@ -24,7 +23,7 @@ export class DrawingService {
     }
 
     // https://stackoverflow.com/questions/17386707/how-to-check-if-a-canvas-is-blank
-    CanvasEmpty(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement): boolean {
+    canvasEmpty(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement): boolean {
         const pixelBuffer = new Uint32Array(context.getImageData(0, 0, canvas.width, canvas.height).data.buffer);
         return !pixelBuffer.some((color) => color !== 0);
     }
