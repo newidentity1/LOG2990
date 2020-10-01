@@ -46,12 +46,21 @@ export class BrushService extends PencilService {
 
     protected drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
+<<<<<<< HEAD
 
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
 
         this.switchFilter(ctx);
 
+=======
+
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+
+        this.switchFilter(ctx);
+
+>>>>>>> dev
         for (const point of path) {
             ctx.lineTo(point.x, point.y);
         }
@@ -86,10 +95,13 @@ export class BrushService extends PencilService {
                 ctx.filter = 'url(#Cloud)';
                 break;
         }
+<<<<<<< HEAD
     }
 
     resetContext(): void {
         this.mouseDown = false;
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
+=======
+>>>>>>> dev
     }
 }

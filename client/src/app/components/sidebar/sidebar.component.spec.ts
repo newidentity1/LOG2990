@@ -80,6 +80,13 @@ describe('SidebarComponent', () => {
         expect(spySideNav).toHaveBeenCalled();
     });
 
+    it('createNewDrawing should call the createNewDrawing of the CreateNewDrawingComponent child', () => {
+        const spyNewDrawingChild = jasmine.createSpyObj('CreateNewDrawingComponent', ['createNewDrawing']);
+        component.newDrawingRef = spyNewDrawingChild;
+        component.createNewDrawing();
+        expect(spyNewDrawingChild.createNewDrawing).toHaveBeenCalled();
+    });
+
     it('get currentTool should return the current tool of toolbarService', () => {
         toolbarServiceMock.currentTool = pencilToolMock;
         const currentTool = toolbarServiceMock.currentTool;
