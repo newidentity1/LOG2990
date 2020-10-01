@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { GuideComponent } from '@app/components/guide/guide.component';
 import { IndexService } from '@app/services/index/index.service';
 import { Message } from '@common/communication/message';
@@ -15,7 +14,7 @@ export class MainPageComponent {
     readonly title: string = 'LOG2990';
     message: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
-    constructor(private basicService: IndexService, private dialog: MatDialog) {}
+    constructor(private basicService: IndexService) {}
 
     sendTimeToServer(): void {
         const newTimeMessage: Message = {
@@ -36,11 +35,5 @@ export class MainPageComponent {
                 }),
             )
             .subscribe(this.message);
-    }
-
-    openDialog(): void {
-        this.dialog.open(GuideComponent, {
-            height: '95%',
-        });
     }
 }

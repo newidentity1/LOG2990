@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { GuideComponent } from '@app/components/guide/guide.component';
 
@@ -7,7 +7,10 @@ import { GuideComponent } from '@app/components/guide/guide.component';
     templateUrl: './open-guide.component.html',
     styleUrls: ['./open-guide.component.scss'],
 })
-export class OpenGuideComponent implements OnInit {
+export class OpenGuideComponent {
+    @Input()
+    inMenu: boolean = false;
+
     constructor(private dialog: MatDialog) {}
 
     openDialog(): void {
