@@ -64,17 +64,4 @@ describe('EraseService', () => {
         expect(drawLineSpy).not.toHaveBeenCalled();
         expect(drawCursorSpy).toHaveBeenCalled();
     });
-
-    it('resetContext should reset all the current changes that the tool made', () => {
-        service.mouseDown = true;
-        baseCtxStub.lineCap = previewCtxStub.lineCap = 'round';
-        baseCtxStub.lineJoin = previewCtxStub.lineJoin = 'bevel';
-        service.resetContext();
-        expect(service.mouseDown).toEqual(false);
-        expect(baseCtxStub.lineCap).toEqual('butt');
-        expect(previewCtxStub.lineCap).toEqual('butt');
-        expect(baseCtxStub.lineJoin).toEqual('miter');
-        expect(previewCtxStub.lineJoin).toEqual('miter');
-        expect(drawServiceSpy.clearCanvas).toHaveBeenCalledWith(previewCtxStub);
-    });
 });
