@@ -11,6 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSliderModule } from '@angular/material/slider';
+import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -29,11 +30,12 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { SVGFilterComponent } from './components/svgfilter/svgfilter.component';
 import { BrushComponent } from './components/tools-options/brush/brush.component';
 import { EllipseComponent } from './components/tools-options/ellipse/ellipse.component';
-import { EraseComponent } from './components/tools-options/erase/erase/erase.component';
+import { EraseComponent } from './components/tools-options/erase/erase.component';
 import { LineComponent } from './components/tools-options/line/line.component';
 import { PencilComponent } from './components/tools-options/pencil/pencil.component';
 import { RectangleComponent } from './components/tools-options/rectangle/rectangle.component';
 import { ThicknessSliderComponent } from './components/tools-options/thickness-slider/thickness-slider.component';
+import { GuideComponent } from './components/guide/guide.component';
 @NgModule({
     declarations: [
         AppComponent,
