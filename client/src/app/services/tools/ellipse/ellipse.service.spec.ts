@@ -327,4 +327,15 @@ describe('EllipseService', () => {
         service.onKeyUp(keyboardEvent);
         expect(drawSpy).not.toHaveBeenCalled();
     });
+
+    it('resetContext should reset all the current changes that the tool made', () => {
+        service.mouseDown = true;
+        service.shiftDown = true;
+        service.escapeDown = true;
+        service.resetContext();
+        expect(service.mouseDown).toEqual(false);
+        expect(service.shiftDown).toEqual(false);
+        expect(service.escapeDown).toEqual(false);
+        expect(drawServiceSpy.clearCanvas).toHaveBeenCalledWith(drawServiceSpy.previewCtx);
+    });
 });

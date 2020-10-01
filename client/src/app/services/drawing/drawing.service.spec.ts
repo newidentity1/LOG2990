@@ -17,11 +17,33 @@ describe('DrawingService', () => {
         expect(service).toBeTruthy();
     });
 
+    it('emitCreateNewDrawingEvent should emite de createNewDrawingSubject', () => {
+        // tslint:disable-next-line: no-any / reason: testing a function
+        const createNewDrawingSubjectSpy = spyOn<any>(service.createNewDrawingSubject, 'next').and.callThrough();
+        service.emitCreateNewDrawingEvent();
+        expect(createNewDrawingSubjectSpy).toHaveBeenCalled();
+    });
+
+    it('createNewDrawingEventListener should return createNewDrawingSubject as an observable', () => {
+        expect(service.createNewDrawingEventListener()).toEqual(service.createNewDrawingSubject.asObservable());
+    });
+
     it('should clear the whole canvas', () => {
         service.clearCanvas(service.baseCtx);
         const pixelBuffer = new Uint32Array(service.baseCtx.getImageData(0, 0, service.canvas.width, service.canvas.height).data.buffer);
         const hasColoredPixels = pixelBuffer.some((color) => color !== 0);
         expect(hasColoredPixels).toEqual(false);
+    });
+
+    it('canvasEmpty should return true when the canvas is empty', () => {
+        const isEmpty = service.canvasEmpty(service.baseCtx, service.canvas);
+        expect(isEmpty).toEqual(true);
+    });
+
+    it('canvasEmpty should return false when the canvas is not empty', () => {
+        service.baseCtx.fillRect(0, 0, 1, 1);
+        const isEmpty = service.canvasEmpty(service.baseCtx, service.canvas);
+        expect(isEmpty).toEqual(false);
     });
 
     it('should set the lineWidth when setThickness is called', () => {

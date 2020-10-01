@@ -24,7 +24,7 @@ export class LineService extends Tool {
     // ligne avec ou sans point
     withPoint: boolean = false;
     // taille des points de liaisons
-    pointSize: number = 10;
+    pointSize: number = 1;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
@@ -173,6 +173,9 @@ export class LineService extends Tool {
 
     // dessine la ligne
     private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.miterLimit = 1;
         ctx.beginPath();
         for (const point of path) {
             ctx.lineTo(point.x, point.y);
@@ -281,5 +284,6 @@ export class LineService extends Tool {
         this.clearlock();
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.clearPath();
+        this.setThickness(this.toolProperties.thickness);
     }
 }

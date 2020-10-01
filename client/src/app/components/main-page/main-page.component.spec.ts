@@ -1,4 +1,5 @@
 import { HttpClientModule } from '@angular/common/http';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
@@ -24,6 +25,7 @@ describe('MainPageComponent', () => {
             imports: [RouterTestingModule, HttpClientModule, MatDividerModule, MatDialogModule, MatTabsModule],
             declarations: [MainPageComponent],
             providers: [{ provide: IndexService, useValue: indexServiceSpy }],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
     }));
 

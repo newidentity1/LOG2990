@@ -19,7 +19,7 @@ describe('PencilService', () => {
     beforeEach(() => {
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
-        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setColor']);
+        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setColor', 'setThickness']);
 
         TestBed.configureTestingModule({
             providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
@@ -152,5 +152,18 @@ describe('PencilService', () => {
         expect(imageData.data[2]).toEqual(0); // B
         // tslint:disable-next-line:no-magic-numbers
         expect(imageData.data[3]).not.toEqual(0); // A
+    });
+
+    it('resetContext should reset all the current changes that the tool made', () => {
+        service.mouseDown = true;
+        baseCtxStub.lineCap = previewCtxStub.lineCap = 'round';
+        baseCtxStub.lineJoin = previewCtxStub.lineJoin = 'bevel';
+        service.resetContext();
+        expect(service.mouseDown).toEqual(false);
+        expect(baseCtxStub.lineCap).toEqual('butt');
+        expect(previewCtxStub.lineCap).toEqual('butt');
+        expect(baseCtxStub.lineJoin).toEqual('miter');
+        expect(previewCtxStub.lineJoin).toEqual('miter');
+        expect(drawServiceSpy.clearCanvas).toHaveBeenCalledWith(previewCtxStub);
     });
 });

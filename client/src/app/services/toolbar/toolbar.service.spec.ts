@@ -33,6 +33,8 @@ describe('ToolbarService', () => {
             'onMouseLeave',
             'onDoubleClick',
             'onClick',
+            'setColors',
+            'resetContext',
         ]);
 
         brushServiceSpy = jasmine.createSpyObj('BrushService', ['onKeyDown', 'resetContext']);
@@ -84,7 +86,8 @@ describe('ToolbarService', () => {
 
     it('setColors should set the colors and call applyCurrentToolColor', () => {
         const color = new Color();
-        const applyColorSpy = spyOn(service, 'applyCurrentToolColor').and.callFake(() => {
+        // tslint:disable-next-line: no-any
+        const applyColorSpy = spyOn<any>(service, 'applyCurrentToolColor').and.callFake(() => {
             return;
         });
         service.setColors(color, color);
@@ -98,7 +101,8 @@ describe('ToolbarService', () => {
         const color = new Color();
         service.primaryColor = color;
         service.secondaryColor = color;
-        service.applyCurrentToolColor();
+        // tslint:disable-next-line:no-string-literal / reason : accessing private member
+        service['applyCurrentToolColor']();
         expect(service.currentTool.setColors).toHaveBeenCalled();
     });
 
@@ -117,10 +121,11 @@ describe('ToolbarService', () => {
         service.currentTool = brushServiceSpy;
         const keyboardEvent = { key: KeyShortcut.Pencil } as KeyboardEvent;
         const spyGetTool = spyOn(service, 'getTool').and.callThrough();
+        const spyApplyCurrentTool = spyOn(service, 'applyCurrentTool').and.callThrough();
         service.onKeyDown(keyboardEvent);
 
         expect(brushServiceSpy.onKeyDown).toHaveBeenCalledWith(keyboardEvent);
-        expect(brushServiceSpy.resetContext).toHaveBeenCalled();
+        expect(spyApplyCurrentTool).toHaveBeenCalled();
         expect(spyGetTool).toHaveBeenCalledWith(keyboardEvent.key);
         expect(service.currentTool).toEqual(pencilServiceSpy);
     });
