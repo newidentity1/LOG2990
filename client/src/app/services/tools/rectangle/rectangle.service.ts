@@ -24,6 +24,7 @@ export class RectangleService extends ShapeTool {
     height: number;
     shiftDown: boolean = false;
     currentMousePosition: Vec2;
+    escapeDown: boolean = false;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
@@ -36,6 +37,7 @@ export class RectangleService extends ShapeTool {
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
         if (this.mouseDown) {
+            this.escapeDown = false;
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.startingX = this.mouseDownCoord.x;
             this.startingY = this.mouseDownCoord.y;
@@ -69,6 +71,7 @@ export class RectangleService extends ShapeTool {
     }
 
     onKeyDown(event: KeyboardEvent): void {
+        this.escapeDown = event.key === 'Escape';
         if (event.key === 'Shift') {
             this.shiftDown = true;
             this.draw(this.drawingService.previewCtx);
@@ -83,6 +86,11 @@ export class RectangleService extends ShapeTool {
     }
 
     draw(ctx: CanvasRenderingContext2D): void {
+        if (this.escapeDown) {
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            return;
+        }
+
         let width = this.width;
         let height = this.height;
         if (this.shiftDown) {
