@@ -90,6 +90,7 @@ export class BrushService extends PencilService {
 
     resetContext(): void {
         this.mouseDown = false;
+        this.setThickness(this.toolProperties.thickness);
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
     }
 }

@@ -86,8 +86,8 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit {
             this.canvasSize.y = newHeight;
             setTimeout(() => {
                 this.baseCtx.putImageData(imgData, 0, 0);
+                this.toolbarService.applyCurrentTool();
             }, 0);
-
             this.isResizingWidth = false;
             this.isResizingHeight = false;
         } else {
