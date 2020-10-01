@@ -295,7 +295,7 @@ describe('ColorPickerService', () => {
     });
 
     it('resetContext should throw an error', () => {
-        expect(function () {
+        expect((): void => {
             service.resetContext();
         }).toThrow(new Error('Method not implemented.'));
     });
