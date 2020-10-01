@@ -293,4 +293,10 @@ describe('ColorPickerService', () => {
         service['addToRecentColors'](new Color(BLACK));
         expect(service.recentColors.length).toEqual(1);
     });
+
+    it('resetContext should throw an error', () => {
+        expect(function () {
+            service.resetContext();
+        }).toThrow(new Error('Method not implemented.'));
+    });
 });

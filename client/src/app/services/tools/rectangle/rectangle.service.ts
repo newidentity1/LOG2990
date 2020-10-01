@@ -171,6 +171,7 @@ export class RectangleService extends ShapeTool {
     resetContext(): void {
         this.mouseDown = false;
         this.shiftDown = false;
+        this.escapeDown = false;
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
     }
 }

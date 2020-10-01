@@ -291,14 +291,6 @@ describe('RectangleService', () => {
         expect(spyStroke).toHaveBeenCalled();
     });
 
-    it('resetContext should reset all used properties', () => {
-        service.mouseDown = true;
-        service.shiftDown = true;
-        service.resetContext();
-        expect(service.mouseDown).toEqual(false);
-        expect(service.shiftDown).toEqual(false);
-        expect(drawServiceSpy.clearCanvas).toHaveBeenCalledWith(drawServiceSpy.previewCtx);
-    });
     it('draw should not draw if escape is down', () => {
         const spyFillStroke = spyOn(service, 'drawFillStrokeRect');
         const spyFill = spyOn(service, 'drawFillRect');
@@ -308,5 +300,16 @@ describe('RectangleService', () => {
         expect(spyFillStroke).not.toHaveBeenCalled();
         expect(spyFill).not.toHaveBeenCalled();
         expect(spyStroke).not.toHaveBeenCalled();
+    });
+
+    it('resetContext should reset all the current changes that the tool made', () => {
+        service.mouseDown = true;
+        service.shiftDown = true;
+        service.escapeDown = true;
+        service.resetContext();
+        expect(service.mouseDown).toEqual(false);
+        expect(service.shiftDown).toEqual(false);
+        expect(service.escapeDown).toEqual(false);
+        expect(drawServiceSpy.clearCanvas).toHaveBeenCalledWith(drawServiceSpy.previewCtx);
     });
 });
