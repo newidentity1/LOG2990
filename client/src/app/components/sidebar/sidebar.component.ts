@@ -1,8 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Tool } from '@app/classes/tool';
-import { GuideComponent } from '@app/components/guide/guide.component';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 
 @Component({
@@ -14,7 +12,7 @@ export class SidebarComponent {
     tools: Tool[];
     @ViewChild('toolProperties') sidenavProperties: MatSidenav;
 
-    constructor(protected toolbarService: ToolbarService, private dialog: MatDialog) {
+    constructor(protected toolbarService: ToolbarService) {
         this.tools = toolbarService.getTools();
     }
 
@@ -39,11 +37,5 @@ export class SidebarComponent {
 
     set currentTool(tool: Tool) {
         this.toolbarService.currentTool = tool;
-    }
-
-    openDialog(): void {
-        this.dialog.open(GuideComponent, {
-            height: '95%',
-        });
     }
 }
