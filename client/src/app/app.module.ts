@@ -24,6 +24,7 @@ import { CreateNewDrawingComponent } from './components/create-new-drawing/creat
 import { NewDrawingDialogComponent } from './components/create-new-drawing/new-drawing-dialog/new-drawing-dialog.component';
 import { DrawingComponent } from './components/drawing/drawing.component';
 import { EditorComponent } from './components/editor/editor.component';
+import { GuideComponent } from './components/guide/guide.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
 import { RecentColorsComponent } from './components/recent-colors/recent-colors.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
@@ -35,7 +36,6 @@ import { LineComponent } from './components/tools-options/line/line.component';
 import { PencilComponent } from './components/tools-options/pencil/pencil.component';
 import { RectangleComponent } from './components/tools-options/rectangle/rectangle.component';
 import { ThicknessSliderComponent } from './components/tools-options/thickness-slider/thickness-slider.component';
-import { GuideComponent } from './components/guide/guide.component';
 @NgModule({
     declarations: [
         AppComponent,
