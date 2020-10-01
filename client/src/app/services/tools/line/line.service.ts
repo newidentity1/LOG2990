@@ -29,7 +29,7 @@ export class LineService extends Tool {
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.name = 'Line';
-        this.tooltip = 'Line(l)';
+        this.tooltip = 'Ligne(l)';
         this.iconName = 'show_chart';
         this.toolProperties = new BasicShapeProperties();
         this.clearPath();
@@ -173,6 +173,9 @@ export class LineService extends Tool {
 
     // dessine la ligne
     private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.miterLimit = 1;
         ctx.beginPath();
         for (const point of path) {
             ctx.lineTo(point.x, point.y);
@@ -269,5 +272,17 @@ export class LineService extends Tool {
         this.lock180 = false;
         this.lock90 = false;
         this.lock45 = false;
+    }
+
+    resetContext(): void {
+        const previewCtx = this.drawingService.previewCtx;
+        const baseCtx = this.drawingService.baseCtx;
+        previewCtx.lineCap = baseCtx.lineCap = 'butt';
+        previewCtx.lineJoin = baseCtx.lineJoin = 'miter';
+        this.mouseDown = false;
+        this.shift = false;
+        this.clearlock();
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.clearPath();
     }
 }

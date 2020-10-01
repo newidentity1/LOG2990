@@ -11,6 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSliderModule } from '@angular/material/slider';
+import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -23,13 +24,15 @@ import { CreateNewDrawingComponent } from './components/create-new-drawing/creat
 import { NewDrawingDialogComponent } from './components/create-new-drawing/new-drawing-dialog/new-drawing-dialog.component';
 import { DrawingComponent } from './components/drawing/drawing.component';
 import { EditorComponent } from './components/editor/editor.component';
+import { GuideComponent } from './components/guide/guide.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
+import { OpenGuideComponent } from './components/open-guide/open-guide.component';
 import { RecentColorsComponent } from './components/recent-colors/recent-colors.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { SVGFilterComponent } from './components/svgfilter/svgfilter.component';
 import { BrushComponent } from './components/tools-options/brush/brush.component';
 import { EllipseComponent } from './components/tools-options/ellipse/ellipse.component';
-import { EraseComponent } from './components/tools-options/erase/erase/erase.component';
+import { EraseComponent } from './components/tools-options/erase/erase.component';
 import { LineComponent } from './components/tools-options/line/line.component';
 import { PencilComponent } from './components/tools-options/pencil/pencil.component';
 import { RectangleComponent } from './components/tools-options/rectangle/rectangle.component';
@@ -47,6 +50,7 @@ import { ThicknessSliderComponent } from './components/tools-options/thickness-s
         PencilComponent,
         RectangleComponent,
         EllipseComponent,
+        GuideComponent,
         LineComponent,
         ThicknessSliderComponent,
         SVGFilterComponent,
@@ -55,6 +59,7 @@ import { ThicknessSliderComponent } from './components/tools-options/thickness-s
         EraseComponent,
         CreateNewDrawingComponent,
         NewDrawingDialogComponent,
+        OpenGuideComponent,
     ],
     imports: [
         BrowserModule,
@@ -66,7 +71,9 @@ import { ThicknessSliderComponent } from './components/tools-options/thickness-s
         MatDialogModule,
         MatSliderModule,
         MatButtonModule,
+        MatTabsModule,
         MatDividerModule,
+        MatDialogModule,
         BrowserAnimationsModule,
         MatSidenavModule,
         MatRadioModule,

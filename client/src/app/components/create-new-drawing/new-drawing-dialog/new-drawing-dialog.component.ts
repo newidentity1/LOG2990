@@ -9,14 +9,14 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
     styleUrls: ['./new-drawing-dialog.component.scss'],
 })
 export class NewDrawingDialogComponent {
-    constructor(public newDrawingService: DrawingService, public dialogRef: MatDialogRef<NewDrawingDialogComponent>) {
-        // TODO: Empty
-    }
+    constructor(public drawingService: DrawingService, public dialogRef: MatDialogRef<NewDrawingDialogComponent>) {}
 
     deleteCanvas(): void {
-        this.newDrawingService.clearCanvas(this.newDrawingService.baseCtx);
+        this.drawingService.clearCanvas(this.drawingService.baseCtx);
         this.dialogRef.close();
+        this.drawingService.emitCreateNewDrawingEvent();
     }
+
     cancel(): void {
         this.dialogRef.close();
     }

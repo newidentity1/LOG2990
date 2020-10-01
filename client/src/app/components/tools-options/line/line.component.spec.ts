@@ -6,7 +6,7 @@ import { MatSlider, MatSliderChange, MatSliderModule } from '@angular/material/s
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 import { ThicknessSliderComponent } from '@app/components/tools-options/thickness-slider/thickness-slider.component';
 import { MAXIMUM_THICKNESS } from '@app/constants/constants';
-import { LineService } from '@app/services/tools/Line/line.service';
+import { LineService } from '@app/services/tools/line/line.service';
 import { LineComponent } from './line.component';
 
 describe('LineComponent', () => {

@@ -10,12 +10,13 @@ import { NewDrawingDialogComponent } from './new-drawing-dialog/new-drawing-dial
     styleUrls: ['./create-new-drawing.component.scss'],
 })
 export class CreateNewDrawingComponent {
-    constructor(public currentDrawingService: DrawingService, public dialog: MatDialog) {}
+    constructor(public drawingService: DrawingService, public dialog: MatDialog) {}
 
     // Empty: Automatically clears canvas, Not Empty: Pop Up Warning
     createNewDrawing(): void {
-        if (this.currentDrawingService.CanvasEmpty(this.currentDrawingService.baseCtx, this.currentDrawingService.canvas)) {
-            this.currentDrawingService.clearCanvas(this.currentDrawingService.baseCtx);
+        if (this.drawingService.canvasEmpty(this.drawingService.baseCtx, this.drawingService.canvas)) {
+            this.drawingService.clearCanvas(this.drawingService.baseCtx);
+            this.drawingService.emitCreateNewDrawingEvent();
         } else {
             this.warningClearCanvas();
         }

@@ -41,23 +41,26 @@ describe('EditorComponent', () => {
     });
 
     it('should call the toolbar onKeyDown when receiving a keyboard event', () => {
-        const event = {} as KeyboardEvent;
-        component.onKeyDown(event);
+        const eventSpy = jasmine.createSpyObj('KeyboardEvent', ['preventDefault']);
+        component.onKeyDown(eventSpy);
+        expect(eventSpy.preventDefault).toHaveBeenCalled();
         expect(toolbarServiceMock.onKeyDown).toHaveBeenCalled();
-        expect(toolbarServiceMock.onKeyDown).toHaveBeenCalledWith(event);
+        expect(toolbarServiceMock.onKeyDown).toHaveBeenCalledWith(eventSpy);
     });
 
     it('should call the toolbar onKeyPress when receiving a keyboard event', () => {
-        const event = {} as KeyboardEvent;
-        component.onKeyPress(event);
+        const eventSpy = jasmine.createSpyObj('KeyboardEvent', ['preventDefault']);
+        component.onKeyPress(eventSpy);
+        expect(eventSpy.preventDefault).toHaveBeenCalled();
         expect(toolbarServiceMock.onKeyPress).toHaveBeenCalled();
-        expect(toolbarServiceMock.onKeyPress).toHaveBeenCalledWith(event);
+        expect(toolbarServiceMock.onKeyPress).toHaveBeenCalledWith(eventSpy);
     });
 
     it('should call the toolbar onKeyUp when receiving a keyboard event', () => {
-        const event = {} as KeyboardEvent;
-        component.onKeyUp(event);
+        const eventSpy = jasmine.createSpyObj('KeyboardEvent', ['preventDefault']);
+        component.onKeyUp(eventSpy);
+        expect(eventSpy.preventDefault).toHaveBeenCalled();
         expect(toolbarServiceMock.onKeyUp).toHaveBeenCalled();
-        expect(toolbarServiceMock.onKeyUp).toHaveBeenCalledWith(event);
+        expect(toolbarServiceMock.onKeyUp).toHaveBeenCalledWith(eventSpy);
     });
 });
