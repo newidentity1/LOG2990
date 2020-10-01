@@ -4,17 +4,19 @@ import { BrushProperties } from '@app/classes/tools-properties/brush-properties'
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { BrushService } from './brush.service';
+
 // tslint:disable:no-any
 describe('BrushService', () => {
     let service: BrushService;
-
-    let drawServiceSpy: jasmine.SpyObj<DrawingService>;
+    let mouseEvent: MouseEvent;
     const path: Vec2[] = [];
     const point1: Vec2 = { x: 10, y: 10 } as Vec2;
     const point2: Vec2 = { x: 20, y: 20 } as Vec2;
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
+    let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     let drawLineSpy: jasmine.Spy<any>;
+    let drawCursorSpy: jasmine.Spy<any>;
     beforeEach(() => {
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
@@ -24,6 +26,7 @@ describe('BrushService', () => {
         });
         service = TestBed.inject(BrushService);
         drawLineSpy = spyOn<any>(service, 'drawLine').and.callThrough();
+        drawCursorSpy = spyOn<any>(service, 'drawCursor').and.callThrough();
 
         // Configuration du spy du service
         // tslint:disable:no-string-literal
@@ -31,13 +34,35 @@ describe('BrushService', () => {
         service['drawingService'].previewCtx = previewCtxStub;
         path.push(point1);
         path.push(point2);
+
+        mouseEvent = {
+            offsetX: 25,
+            offsetY: 25,
+            button: 0,
+        } as MouseEvent;
     });
 
     it('should be created', () => {
         expect(service).toBeTruthy();
     });
 
-    it('drawLine should use correct filter', () => {
+    it('mouseDown should not call drawCursor', () => {
+        service.mouseDown = true;
+        service.mouseDownCoord = { x: 0, y: 0 };
+
+        service.onMouseMove(mouseEvent);
+        expect(drawCursorSpy).not.toHaveBeenCalled();
+    });
+
+    it('mouseMove should call drawCursor', () => {
+        service.mouseDown = false;
+        service.mouseDownCoord = { x: 0, y: 0 };
+
+        service.onMouseMove(mouseEvent);
+        expect(drawCursorSpy).toHaveBeenCalled();
+    });
+
+    it('switchFilter should change to correct filter(Brouille)', () => {
         service.setFilter('Brouillé');
         service['drawLine'](previewCtxStub, path);
         expect(drawLineSpy).toHaveBeenCalled();
@@ -45,7 +70,7 @@ describe('BrushService', () => {
         expect(brushProperties.currentFilter).toEqual('Brouillé');
     });
 
-    it('drawLine should use correct filter', () => {
+    it('switchFilter should change to correct filter(Brosse)', () => {
         service.setFilter('Brosse');
         service['drawLine'](previewCtxStub, path);
         expect(drawLineSpy).toHaveBeenCalled();
@@ -53,7 +78,7 @@ describe('BrushService', () => {
         expect(brushProperties.currentFilter).toEqual('Brosse');
     });
 
-    it('drawLine should use correct filter', () => {
+    it('switchFilter should change to correct filter(Graffiti)', () => {
         service.setFilter('Graffiti');
         service['drawLine'](previewCtxStub, path);
         expect(drawLineSpy).toHaveBeenCalled();
@@ -61,7 +86,7 @@ describe('BrushService', () => {
         expect(brushProperties.currentFilter).toEqual('Graffiti');
     });
 
-    it('drawLine should use correct filter', () => {
+    it('switchFilter should change to correct filter(Eclaboussure)', () => {
         service.setFilter('Éclaboussure');
         service['drawLine'](previewCtxStub, path);
         expect(drawLineSpy).toHaveBeenCalled();
@@ -69,7 +94,7 @@ describe('BrushService', () => {
         expect(brushProperties.currentFilter).toEqual('Éclaboussure');
     });
 
-    it('drawLine should use correct filter', () => {
+    it('switchFilter should change to correct filter(Nuage)', () => {
         service.setFilter('Nuage');
         service['drawLine'](previewCtxStub, path);
         expect(drawLineSpy).toHaveBeenCalled();
