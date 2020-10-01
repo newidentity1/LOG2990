@@ -256,6 +256,7 @@ describe('ColorPickerService', () => {
         service.colorCanvasCtx.fillRect(0, 0, service.canvas.width, service.canvas.height);
 
         const returnedColor = service['getColorFromPosition']({ x: 25, y: 25 } as Vec2);
+        expect(returnedColor).toBeTruthy();
         expect(returnedColor).toEqual(expectedColor);
     });
 
@@ -266,6 +267,7 @@ describe('ColorPickerService', () => {
         service.colorCanvasCtx.fillRect(0, 0, service.canvas.width, service.canvas.height);
 
         const returnedColor = service['getColorFromPosition']({ x: 25, y: 25 } as Vec2);
+        expect(returnedColor).toBeTruthy();
         expect(returnedColor.opacity).toEqual(expectedOpacity);
     });
 
