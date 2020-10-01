@@ -1,6 +1,8 @@
 import { HttpClientModule } from '@angular/common/http';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatTabsModule } from '@angular/material/tabs';
 import { RouterTestingModule } from '@angular/router/testing';
 import { IndexService } from '@app/services/index/index.service';
 import { of } from 'rxjs';
@@ -19,7 +21,7 @@ describe('MainPageComponent', () => {
         indexServiceSpy.basicPost.and.returnValue(of());
 
         TestBed.configureTestingModule({
-            imports: [RouterTestingModule, HttpClientModule, MatDividerModule],
+            imports: [RouterTestingModule, HttpClientModule, MatDividerModule, MatDialogModule, MatTabsModule],
             declarations: [MainPageComponent],
             providers: [{ provide: IndexService, useValue: indexServiceSpy }],
         }).compileComponents();
