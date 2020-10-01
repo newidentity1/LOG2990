@@ -19,7 +19,7 @@ describe('SidebarComponent', () => {
     let pencilToolMock: jasmine.SpyObj<PencilService>;
 
     beforeEach(async(() => {
-        toolbarServiceMock = jasmine.createSpyObj('ToolbarService', ['getTools', 'applyCurrentToolColor']);
+        toolbarServiceMock = jasmine.createSpyObj('ToolbarService', ['getTools', 'applyCurrentTool']);
         pencilToolMock = jasmine.createSpyObj('PencilService', ['resetContext']);
 
         TestBed.configureTestingModule({
@@ -61,14 +61,13 @@ describe('SidebarComponent', () => {
         expect(result).toEqual(false);
     });
 
-    it('onToolChanged should call resetContext of currentTool change the currentTool, call applyCurrentToolColor of toolbarService and open the MatSideNav if the parameter is not the currentTool', () => {
+    it('onToolChanged should call resetContext of currentTool change the currentTool, call applyCurrentTool of toolbarService and open the MatSideNav if the parameter is not the currentTool', () => {
         const anotherTool = new RectangleService(new DrawingService());
         toolbarServiceMock.currentTool = pencilToolMock;
         const spySideNav = spyOn(component.sidenavProperties, 'open');
         component.onToolChanged(anotherTool);
-        expect(pencilToolMock.resetContext).toHaveBeenCalled();
+        expect(toolbarServiceMock.applyCurrentTool).toHaveBeenCalled();
         expect(toolbarServiceMock.currentTool).toEqual(anotherTool);
-        expect(toolbarServiceMock.applyCurrentToolColor).toHaveBeenCalled();
         expect(spySideNav).toHaveBeenCalled();
     });
 

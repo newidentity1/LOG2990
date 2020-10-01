@@ -291,5 +291,6 @@ export class LineService extends Tool {
         this.clearlock();
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.clearPath();
+        this.setThickness(this.toolProperties.thickness);
     }
 }

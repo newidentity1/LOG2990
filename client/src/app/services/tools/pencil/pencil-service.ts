@@ -106,6 +106,7 @@ export class PencilService extends Tool {
         previewCtx.lineCap = baseCtx.lineCap = 'butt';
         previewCtx.lineJoin = baseCtx.lineJoin = 'miter';
         this.mouseDown = false;
+        this.setThickness(this.toolProperties.thickness);
         this.drawingService.clearCanvas(previewCtx);
     }
 }

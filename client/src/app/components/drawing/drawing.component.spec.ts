@@ -25,6 +25,7 @@ describe('DrawingComponent', () => {
             'setColors',
             'setColors',
             'createNewDrawingEventListener',
+            'applyCurrentTool',
         ]);
 
         TestBed.configureTestingModule({
