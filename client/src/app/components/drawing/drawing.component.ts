@@ -74,8 +74,8 @@ export class DrawingComponent implements AfterViewInit {
             this.height = newHeight;
             setTimeout(() => {
                 this.baseCtx.putImageData(imgData, 0, 0);
+                this.toolbarService.applyCurrentTool();
             }, 0); // Whyyyy does this work?
-
             this.isResizingWidth = false;
             this.isResizingHeight = false;
         } else {

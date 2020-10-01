@@ -67,18 +67,19 @@ export class ToolbarService {
         this.applyCurrentToolColor();
     }
 
-    applyCurrentToolColor(): void {
-        this.currentTool.setColors(this.primaryColor, this.secondaryColor);
+    applyCurrentTool(): void {
+        this.currentTool.resetContext();
+        this.applyCurrentToolColor();
     }
 
     onKeyDown(event: KeyboardEvent): void {
         this.currentTool.onKeyDown(event);
         const toolFound = this.getTool(event.key);
         const isNewTool = toolFound && toolFound !== this.currentTool;
-        if (isNewTool) {
-            this.currentTool.resetContext();
-        }
         this.currentTool = toolFound ? toolFound : this.currentTool;
+        if (isNewTool) {
+            this.applyCurrentTool();
+        }
     }
 
     onKeyPress(event: KeyboardEvent): void {
@@ -115,5 +116,9 @@ export class ToolbarService {
 
     onClick(event: MouseEvent): void {
         this.currentTool.onClick(event);
+    }
+
+    private applyCurrentToolColor(): void {
+        this.currentTool.setColors(this.primaryColor, this.secondaryColor);
     }
 }
