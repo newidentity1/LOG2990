@@ -1,5 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 import { CreateNewDrawingComponent } from './create-new-drawing.component';
 
 describe('CreateNewDrawingComponent', () => {
@@ -9,6 +10,7 @@ describe('CreateNewDrawingComponent', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [CreateNewDrawingComponent],
+            imports: [MatIconModule],
             providers: [{ provide: MatDialog, useValue: {} }],
         }).compileComponents();
     }));
