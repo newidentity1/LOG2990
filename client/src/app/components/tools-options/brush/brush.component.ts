@@ -9,7 +9,7 @@ import { BrushService } from '@app/services/tools/brush/brush.service';
 @Component({
     selector: 'app-brush-options',
     templateUrl: './brush.component.html',
-    styleUrls: ['./brush.component.scss'],
+    styleUrls: ['../../sidebar/sidebar.component.scss'],
 })
 export class BrushComponent {
     filterType: typeof BrushType = BrushType;

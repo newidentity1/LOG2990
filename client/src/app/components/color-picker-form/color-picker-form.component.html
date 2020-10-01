@@ -1,0 +1,89 @@
+<div id="grid-container">
+    <div>
+        <mat-form-field appearance="standard">
+            <mat-label>Hex</mat-label>
+            <span matPrefix>#</span>
+            <mat-error>SVP saisir une valeur hexadécimal valide</mat-error>
+            <input #hexInput type="text" [value]="color.hex" (blur)="changeHex(hexInput.value)" [formControl]="hexForm" maxlength="6" matInput />
+        </mat-form-field>
+    </div>
+
+    <div>
+        <mat-form-field appearance="standard">
+            <mat-label>Rouge</mat-label>
+            <span matPrefix>#</span>
+            <mat-error>Couleur non valide</mat-error>
+            <input
+                #redInput
+                [value]="color.getRedHex()"
+                type="text"
+                (blur)="onRedChange(redInput.value)"
+                maxlength="2"
+                [formControl]="redForm"
+                matInput
+            />
+        </mat-form-field>
+    </div>
+
+    <div>
+        <mat-form-field appearance="standard">
+            <mat-label>Vert</mat-label>
+            <span matPrefix>#</span>
+            <mat-error>Couleur non valide</mat-error>
+            <input
+                #greenInput
+                [value]="color.getGreenHex()"
+                type="text"
+                (blur)="onGreenChange(greenInput.value)"
+                maxlength="2"
+                [formControl]="greenForm"
+                matInput
+            />
+        </mat-form-field>
+    </div>
+
+    <div>
+        <mat-form-field appearance="standard">
+            <mat-label>Bleu</mat-label>
+            <span matPrefix>#</span>
+            <mat-error>Couleur non valide</mat-error>
+            <input
+                #blueInput
+                [value]="color.getBlueHex()"
+                type="text"
+                (blur)="onBlueChange(blueInput.value)"
+                maxlength="2"
+                [formControl]="blueForm"
+                matInput
+            />
+        </mat-form-field>
+    </div>
+
+    <div>
+        <mat-form-field appearance="standard">
+            <mat-label>Opacité</mat-label>
+            <mat-error>SVP saisir une valeur entre 0 et 1</mat-error>
+            <mat-slider [value]="color.opacity" (input)="changeOpacity($event.value)" min="0" max="1" step="0.01" color="primary"></mat-slider>
+
+            <input
+                #alphaInput
+                id="alpha-input"
+                type="text"
+                [value]="color.opacity"
+                (input)="changeOpacity(alphaInput.value)"
+                min="0"
+                max="1"
+                step="0.01"
+                maxlength="4"
+                [formControl]="alphaForm"
+                matInput
+                matSuffix
+            />
+        </mat-form-field>
+    </div>
+</div>
+
+<div>
+    <button class="buttons" mat-raised-button mat-dialog-close>Annuler</button>
+    <button class="buttons" mat-raised-button (click)="closeDialog()" [disabled]="isColorInvalid()" color="primary">OK</button>
+</div>

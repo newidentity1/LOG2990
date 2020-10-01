@@ -2,12 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { MatRadioChange } from '@angular/material/radio';
 import { MatSliderChange } from '@angular/material/slider';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
-import { LinePointType } from '@app/enums/line_point-type.enum';
-import { LineService } from '@app/services/tools/Line/line.service';
+import { LinePointType } from '@app/enums/linepoint-type.enum';
+import { LineService } from '@app/services/tools/line/line.service';
 @Component({
     selector: 'app-line-option',
     templateUrl: './line.component.html',
-    styleUrls: ['./line.component.scss'],
+    styleUrls: ['../../sidebar/sidebar.component.scss'],
 })
 export class LineComponent implements OnInit {
     typesDrawing: typeof LinePointType = LinePointType;
