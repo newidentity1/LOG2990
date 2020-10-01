@@ -3,23 +3,22 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { OpenGuideComponent } from './open-guide.component';
 
 describe('OpenGuideComponent', () => {
-  let component: OpenGuideComponent;
-  let fixture: ComponentFixture<OpenGuideComponent>;
+    let component: OpenGuideComponent;
+    let fixture: ComponentFixture<OpenGuideComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ OpenGuideComponent ]
-    })
-    .compileComponents();
-  }));
+    beforeEach(async(() => {
+        TestBed.configureTestingModule({
+            declarations: [OpenGuideComponent],
+        }).compileComponents();
+    }));
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(OpenGuideComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+    beforeEach(() => {
+        fixture = TestBed.createComponent(OpenGuideComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 });

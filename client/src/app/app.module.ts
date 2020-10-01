@@ -26,6 +26,7 @@ import { DrawingComponent } from './components/drawing/drawing.component';
 import { EditorComponent } from './components/editor/editor.component';
 import { GuideComponent } from './components/guide/guide.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
+import { OpenGuideComponent } from './components/open-guide/open-guide.component';
 import { RecentColorsComponent } from './components/recent-colors/recent-colors.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { SVGFilterComponent } from './components/svgfilter/svgfilter.component';
@@ -36,7 +37,6 @@ import { LineComponent } from './components/tools-options/line/line.component';
 import { PencilComponent } from './components/tools-options/pencil/pencil.component';
 import { RectangleComponent } from './components/tools-options/rectangle/rectangle.component';
 import { ThicknessSliderComponent } from './components/tools-options/thickness-slider/thickness-slider.component';
-import { OpenGuideComponent } from './components/open-guide/open-guide.component';
 @NgModule({
     declarations: [
         AppComponent,

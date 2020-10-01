@@ -1,5 +1,5 @@
-import { MatDialog } from '@angular/material/dialog';
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { GuideComponent } from '@app/components/guide/guide.component';
 
 @Component({
@@ -9,8 +9,6 @@ import { GuideComponent } from '@app/components/guide/guide.component';
 })
 export class OpenGuideComponent implements OnInit {
     constructor(private dialog: MatDialog) {}
-
-    ngOnInit(): void {}
 
     openDialog(): void {
         this.dialog.open(GuideComponent, {
