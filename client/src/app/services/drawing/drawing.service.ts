@@ -10,7 +10,6 @@ export class DrawingService {
     canvas: HTMLCanvasElement;
     createNewDrawingSubject: BehaviorSubject<string> = new BehaviorSubject<string>('Canvas Size has been set');
 
-    // Send events between components
     emitCreateNewDrawingEvent(msg: string): void {
         this.createNewDrawingSubject.next(msg);
     }

@@ -47,7 +47,6 @@ export class DrawingComponent implements AfterViewInit {
         // Set size of initial canvas and new canvas
         this.drawingService.createNewDrawingEventListener().subscribe((resetMessage) => {
             this.newCanvasSetSize();
-            console.log(resetMessage);
         });
     }
 
