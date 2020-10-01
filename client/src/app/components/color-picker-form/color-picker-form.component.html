@@ -4,7 +4,7 @@
             <mat-label>Hex</mat-label>
             <span matPrefix>#</span>
             <mat-error>SVP saisir une valeur hexadécimal valide</mat-error>
-            <input #hexInput type="text" [value]="color.hex" (input)="changeHex(hexInput.value)" [formControl]="hexForm" maxlength="6" matInput />
+            <input #hexInput type="text" [value]="color.hex" (blur)="changeHex(hexInput.value)" [formControl]="hexForm" maxlength="6" matInput />
         </mat-form-field>
     </div>
 
