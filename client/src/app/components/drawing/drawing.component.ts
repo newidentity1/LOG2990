@@ -60,6 +60,9 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit {
             this.drawingContainerWidth = dimensions[0];
             this.drawingContainerHeight = dimensions[1];
             this.newCanvasSetSize();
+            setTimeout(() => {
+                this.toolbarService.applyCurrentTool();
+            }, 0);
         });
     }
 
@@ -70,6 +73,7 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit {
     }
 
     onMouseDown(event: MouseEvent): void {
+        event.preventDefault();
         if (!this.isResizingWidth && !this.isResizingHeight) {
             this.toolbarService.onMouseDown(event);
         }

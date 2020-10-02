@@ -23,6 +23,7 @@ describe('ColorPickerFormComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(ColorPickerFormComponent);
         component = fixture.componentInstance;
+        component.color = new Color();
         fixture.detectChanges();
     });
 
