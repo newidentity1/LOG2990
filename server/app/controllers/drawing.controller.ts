@@ -1,5 +1,6 @@
 import { DrawingService } from '@app/services/drawing.service';
-import { HTTP_STATUS_BAD_REQUEST, HTTP_STATUS_CREATED, HTTP_STATUS_OK } from 'app/contants';
+import { Drawing } from '@common/communication/drawing';
+import { HTTP_STATUS_BAD_REQUEST, HTTP_STATUS_CREATED, HTTP_STATUS_NOT_FOUND } from 'app/contants';
 import { NextFunction, Request, Response, Router } from 'express';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../types';
@@ -15,41 +16,48 @@ export class DrawingController {
     private configureRouter(): void {
         this.router = Router();
 
-        this.router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
-            const drawing = await this.drawingService.getDrawing(req.params.id);
-            res.json(drawing);
+        this.router.get('/:drawingId', async (req: Request, res: Response, next: NextFunction) => {
+            this.drawingService
+                .getDrawing(req.params.drawingId)
+                .then((drawing: Drawing) => {
+                    res.json(drawing);
+                })
+                .catch((error: Error) => {
+                    res.status(HTTP_STATUS_NOT_FOUND).send(error.message);
+                });
         });
 
         this.router.get('/', async (req: Request, res: Response, next: NextFunction) => {
-            const drawing = await this.drawingService.getDrawings();
-            res.json(drawing);
+            this.drawingService
+                .getDrawings()
+                .then((drawing: Drawing[]) => {
+                    res.json(drawing);
+                })
+                .catch((error: Error) => {
+                    res.status(HTTP_STATUS_NOT_FOUND).send(error.message);
+                });
         });
 
         this.router.post('/', async (req: Request, res: Response, next: NextFunction) => {
-            const drawing = await this.drawingService
+            this.drawingService
                 .addDrawing(req.body)
                 .then(() => {
-                    res.sendStatus(HTTP_STATUS_CREATED);
+                    res.sendStatus(HTTP_STATUS_CREATED).send();
                 })
                 .catch((error) => {
-                    res.sendStatus(HTTP_STATUS_BAD_REQUEST).send(error);
+                    res.sendStatus(HTTP_STATUS_BAD_REQUEST).send(error.message);
                 });
-
-            res.json(drawing);
         });
 
-        this.router.delete('/:id', async (req: Request, res: Response, next: NextFunction) => {
-            console.log(req.params.id);
-            const drawing = await this.drawingService
-                .removeDrawing(req.params.id)
+        this.router.delete('/:drawingId', async (req: Request, res: Response, next: NextFunction) => {
+            this.drawingService
+                .removeDrawing(req.params.drawingId)
                 .then(() => {
-                    res.sendStatus(HTTP_STATUS_OK);
+                    res.sendStatus(HTTP_STATUS_NOT_FOUND).send();
                 })
                 .catch((error) => {
-                    res.send(error);
+                    res.status(HTTP_STATUS_NOT_FOUND).send(error.message);
                 });
-
-            res.json(drawing);
         });
     }
 }

@@ -1,5 +1,5 @@
+import { DATABASE_COLLECTION, DATABASE_NAME, DATABASE_URL } from '@app/contants';
 import { Drawing } from '@common/communication/drawing.ts';
-import * as CONSTANTS from 'app/contants';
 import { injectable } from 'inversify';
 import { Collection, MongoClient, ObjectId } from 'mongodb';
 import 'reflect-metadata';
@@ -9,11 +9,9 @@ export class DrawingService {
     collection: Collection<Drawing>;
 
     constructor() {
-        console.log(CONSTANTS.DATABASE_URL);
-        MongoClient.connect(CONSTANTS.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true })
+        MongoClient.connect(DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true })
             .then((client: MongoClient) => {
-                // TODO
-                this.collection = client.db(CONSTANTS.DATABASE_NAME).collection(CONSTANTS.DATABASE_COLLECTION);
+                this.collection = client.db(DATABASE_NAME).collection(DATABASE_COLLECTION);
             })
             .catch((error) => {
                 console.log(error);
@@ -26,17 +24,15 @@ export class DrawingService {
         return this.collection
             .findOne({ _id: new ObjectId(id) })
             .then((drawing: Drawing) => {
-                console.log(drawing);
+                if (drawing === null) throw new Error('Dessin non trouve!');
                 return drawing;
             })
             .catch((error) => {
-                // TODO voir comment gérer les erreurs
-                console.log('erreur de getDrawing' + error);
-                return error;
+                throw error;
             });
     }
 
-    async getDrawings(): Promise<Drawing> {
+    async getDrawings(): Promise<Drawing[]> {
         return this.collection
             .find({})
             .toArray()
@@ -44,31 +40,21 @@ export class DrawingService {
                 return drawings;
             })
             .catch((error) => {
-                // TODO voir comment gérer les erreurs
-                console.log('erreur de getDrawings' + error);
-                return error;
+                throw error;
             });
     }
 
     async addDrawing(drawing: Drawing): Promise<void> {
+        // TODO ajouter de la validation
         this.collection.insertOne(drawing).catch((error) => {
-            // TODO voir comment gérer les erreurs
-            console.log('erreur de addDrawing' + error);
-            return error;
+            throw error;
         });
     }
 
     async removeDrawing(id: string): Promise<void> {
         console.log(new ObjectId(id));
-        this.collection
-            .findOneAndDelete({ _id: new ObjectId(id) })
-            .then(() => {
-                // do nothing
-            })
-            .catch((error) => {
-                // TODO voir comment gérer les erreurs
-                console.log('erreur de removeDrawing' + error);
-                return error;
-            });
+        this.collection.findOneAndDelete({ _id: new ObjectId(id) }).catch((error) => {
+            throw new Error("Le dessin n'a pas pu être supprime!");
+        });
     }
 }
