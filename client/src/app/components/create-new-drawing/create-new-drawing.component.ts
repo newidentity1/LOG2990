@@ -14,7 +14,8 @@ export class CreateNewDrawingComponent {
 
     // Empty: Automatically clears canvas, Not Empty: Pop Up Warning
     createNewDrawing(): void {
-        if (this.drawingService.canvasEmpty(this.drawingService.baseCtx, this.drawingService.canvas)) {
+        const isCanvasEmpty = this.drawingService.canvasEmpty(this.drawingService.baseCtx, this.drawingService.canvas);
+        if (isCanvasEmpty) {
             this.drawingService.clearCanvas(this.drawingService.baseCtx);
             this.drawingService.emitCreateNewDrawingEvent();
         } else {
@@ -25,6 +26,4 @@ export class CreateNewDrawingComponent {
     warningClearCanvas(): void {
         this.dialog.open(NewDrawingDialogComponent);
     }
-
-    // TODO : Implement keypress for CTRL+0
 }
