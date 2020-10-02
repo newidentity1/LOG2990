@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { Color } from '@app/classes/color/color';
-import { ShapeTool } from '@app/classes/shape-tool.ts';
+import { ShapeTool } from '@app/classes/tool/shape-tool';
 import { BLACK, WHITE } from '@app/constants/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 

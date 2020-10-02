@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Color } from '@app/classes/color/color';
-import { Tool } from '@app/classes/tool';
+import { Tool } from '@app/classes/tool/tool';
 import { LineProperties } from '@app/classes/tools-properties/line-properties';
 import { Vec2 } from '@app/classes/vec2';
 import * as CONSTANTS from '@app/constants/constants';
@@ -11,13 +11,10 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
     providedIn: 'root',
 })
 export class LineService extends Tool {
-    // ligne principale
     pathData: Vec2[];
-    // position de la souris
     private mouse: Vec2;
 
     shift: boolean = false;
-    // ancrage du segment de previsualisation selon un angle
     lock180: boolean = false;
     lock90: boolean = false;
     lock45: boolean = false;
@@ -79,7 +76,6 @@ export class LineService extends Tool {
         }
     }
 
-    // SHIFT appuyé
     onKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
         if (event.key === 'Shift') {
@@ -100,7 +96,6 @@ export class LineService extends Tool {
         }
     }
 
-    // double click donc fin de ligne
     onDoubleClick(event: MouseEvent): void {
         const mousePosition = this.getPositionFromMouse(event);
         if (mousePosition !== this.pathData[0] && this.pathData.length >= 1 && this.pathData.length > 2) {
@@ -126,7 +121,6 @@ export class LineService extends Tool {
         }
     }
 
-    // SHIFT relaché
     onKeyUp(event: KeyboardEvent): void {
         if (event.key === 'Shift') {
             this.shift = false;
@@ -140,14 +134,12 @@ export class LineService extends Tool {
         }
     }
 
-    // permet de choisir la couleur de la ligne
     setColors(primaryColor: Color): void {
         this.drawingService.setColor(primaryColor.toStringRGBA());
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.drawLine(this.drawingService.previewCtx, this.pathData);
     }
 
-    // permet de choisir la taille des points
     setPointeSize(value: number | null): void {
         const lineProperties = this.toolProperties as LineProperties;
         value = value === null ? 1 : value;
@@ -156,7 +148,6 @@ export class LineService extends Tool {
         this.drawLine(this.drawingService.previewCtx, this.pathData);
     }
 
-    // permet de choisir l'epaisseur de la ligne
     setThickness(value: number | null): void {
         value = value === null ? 1 : value;
         this.toolProperties.thickness = value;
@@ -165,7 +156,6 @@ export class LineService extends Tool {
         this.drawLine(this.drawingService.previewCtx, this.pathData);
     }
 
-    // permet de choisir le type de liaison
     setTypeDrawing(value: string): void {
         const lineProperties = this.toolProperties as LineProperties;
         if (value[0] === 'A') {
@@ -177,7 +167,6 @@ export class LineService extends Tool {
         this.drawLine(this.drawingService.previewCtx, this.pathData);
     }
 
-    // dessine la ligne
     private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         const lineProperties = this.toolProperties as LineProperties;
         ctx.lineCap = 'round';
@@ -209,7 +198,6 @@ export class LineService extends Tool {
         this.pathData.pop();
     }
 
-    // suprime la ligne en cours de creation
     private clearPath(): void {
         this.pathData = [];
     }
@@ -274,7 +262,6 @@ export class LineService extends Tool {
         this.afficherSegementPreview(point);
     }
 
-    // permet d'effacer les ancrage
     private clearlock(): void {
         this.lock180 = false;
         this.lock90 = false;

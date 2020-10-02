@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ColorPickerComponent } from '@app/components/color-picker/color-picker.component';
+import { ColorPickerComponent } from '@app/components/color/color-picker/color-picker.component';
 import { ColorPickerService } from '@app/services/color-picker/color-picker.service';
 
 @Component({

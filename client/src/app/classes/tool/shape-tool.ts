@@ -1,4 +1,4 @@
-import { Color } from './color/color';
+import { Color } from '@app/classes/color/color';
 import { Tool } from './tool';
 
 export abstract class ShapeTool extends Tool {

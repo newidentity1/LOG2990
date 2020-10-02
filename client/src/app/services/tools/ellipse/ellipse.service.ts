@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ShapeTool } from '@app/classes/shape-tool';
+import { ShapeTool } from '@app/classes/tool/shape-tool';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 import { Vec2 } from '@app/classes/vec2';
 import { DASHED_SEGMENTS, MINIMUM_THICKNESS } from '@app/constants/constants';
