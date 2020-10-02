@@ -37,6 +37,11 @@ export class IndexService {
             });
     }
 
+    storeMessage(message: Message): void {
+        console.log(message);
+        this.clientMessages.push(message);
+    }
+
     getAllMessages(): Message[] {
         return this.clientMessages;
     }
