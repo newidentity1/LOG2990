@@ -72,7 +72,8 @@ describe('DrawingComponent', () => {
     });
 
     it('  onMouseDown should call toolbarService onMouseDown when receiving a mouse event', () => {
-        const event = {} as MouseEvent;
+        // tslint:disable-next-line:no-empty / reason: mock preventDefault of MouseEvent
+        const event = { preventDefault: () => {} } as MouseEvent;
         component.onMouseDown(event);
         expect(toolbarServiceSpy.onMouseDown).toHaveBeenCalled();
         expect(toolbarServiceSpy.onMouseDown).toHaveBeenCalledWith(event);
@@ -98,7 +99,8 @@ describe('DrawingComponent', () => {
     });
 
     it(' should not call the toolbarService onMouse when receiving a mouseDown if isResizingWidth or isResizingHeight', () => {
-        const event = {} as MouseEvent;
+        // tslint:disable-next-line:no-empty / reason: mock preventDefault of MouseEvent
+        const event = { preventDefault: () => {} } as MouseEvent;
         component.isResizingHeight = true;
         component.onMouseDown(event);
         expect(toolbarServiceSpy.onMouseDown).not.toHaveBeenCalled();
