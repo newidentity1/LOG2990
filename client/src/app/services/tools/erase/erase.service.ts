@@ -30,6 +30,7 @@ export class EraseService extends PencilService {
 
     protected drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         this.drawingService.setStrokeColor('white');
+        ctx.miterLimit = 1;
         ctx.beginPath();
         for (const point of path) {
             ctx.lineTo(point.x, point.y);
