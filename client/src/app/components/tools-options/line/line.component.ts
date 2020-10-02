@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatRadioChange } from '@angular/material/radio';
 import { MatSliderChange } from '@angular/material/slider';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
@@ -9,7 +9,7 @@ import { LineService } from '@app/services/tools/line/line.service';
     templateUrl: './line.component.html',
     styleUrls: ['../../sidebar/sidebar.component.scss'],
 })
-export class LineComponent implements OnInit {
+export class LineComponent {
     typesDrawing: typeof LinePointType = LinePointType;
     currentType: string = this.typesDrawing.sansPoint;
     currentThickness: number;
@@ -32,8 +32,5 @@ export class LineComponent implements OnInit {
 
     onSizeChange(event: MatSliderChange): void {
         this.lineService.setPointeSize(event.value);
-    }
-    ngOnInit(): void {
-        // TODO
     }
 }
