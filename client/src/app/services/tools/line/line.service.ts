@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Color } from '@app/classes/color/color';
 import { Tool } from '@app/classes/tool';
-import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
+import { LineProperties } from '@app/classes/tools-properties/line-properties';
 import { Vec2 } from '@app/classes/vec2';
 import * as CONSTANTS from '@app/constants/constants';
 import { MouseButton } from '@app/enums/mouse-button.enum';
@@ -21,17 +21,13 @@ export class LineService extends Tool {
     lock180: boolean = false;
     lock90: boolean = false;
     lock45: boolean = false;
-    // ligne avec ou sans point
-    withPoint: boolean = false;
-    // taille des points de liaisons
-    pointSize: number = 1;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.name = 'Line';
         this.tooltip = 'Ligne(l)';
         this.iconName = 'show_chart';
-        this.toolProperties = new BasicShapeProperties();
+        this.toolProperties = new LineProperties();
         this.clearPath();
     }
 
@@ -107,7 +103,7 @@ export class LineService extends Tool {
     // double click donc fin de ligne
     onDoubleClick(event: MouseEvent): void {
         const mousePosition = this.getPositionFromMouse(event);
-        if (mousePosition !== this.pathData[0] && this.pathData.length >= 1) {
+        if (mousePosition !== this.pathData[0] && this.pathData.length >= 1 && this.pathData.length > 2) {
             // calculer la distance entre la souris et le point de départ
             const x1: number = mousePosition.x;
             const y1: number = mousePosition.y;
@@ -147,12 +143,17 @@ export class LineService extends Tool {
     // permet de choisir la couleur de la ligne
     setColors(primaryColor: Color): void {
         this.drawingService.setColor(primaryColor.toStringRGBA());
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.drawLine(this.drawingService.previewCtx, this.pathData);
     }
 
     // permet de choisir la taille des points
     setPointeSize(value: number | null): void {
+        const lineProperties = this.toolProperties as LineProperties;
         value = value === null ? 1 : value;
-        this.pointSize = value;
+        lineProperties.pointSize = value;
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.drawLine(this.drawingService.previewCtx, this.pathData);
     }
 
     // permet de choisir l'epaisseur de la ligne
@@ -160,19 +161,25 @@ export class LineService extends Tool {
         value = value === null ? 1 : value;
         this.toolProperties.thickness = value;
         this.drawingService.setThickness(value);
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.drawLine(this.drawingService.previewCtx, this.pathData);
     }
 
     // permet de choisir le type de liaison
     setTypeDrawing(value: string): void {
+        const lineProperties = this.toolProperties as LineProperties;
         if (value[0] === 'A') {
-            this.withPoint = true;
+            lineProperties.withPoint = true;
         } else {
-            this.withPoint = false;
+            lineProperties.withPoint = false;
         }
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.drawLine(this.drawingService.previewCtx, this.pathData);
     }
 
     // dessine la ligne
     private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+        const lineProperties = this.toolProperties as LineProperties;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
         ctx.miterLimit = 1;
@@ -181,11 +188,11 @@ export class LineService extends Tool {
             ctx.lineTo(point.x, point.y);
         }
         ctx.stroke();
-        if (this.withPoint) {
+        if (lineProperties.withPoint) {
             ctx.beginPath();
             for (const point of path) {
                 ctx.beginPath();
-                ctx.arc(point.x, point.y, this.pointSize, 0, Math.PI * 2, false);
+                ctx.arc(point.x, point.y, lineProperties.pointSize, 0, Math.PI * 2, false);
                 ctx.fill();
             }
         }

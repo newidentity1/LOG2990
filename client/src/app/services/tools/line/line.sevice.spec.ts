@@ -1,12 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Color } from '@app/classes/color/color';
+import { LineProperties } from '@app/classes/tools-properties/line-properties';
 import { Vec2 } from '@app/classes/vec2';
 import * as CONSTANTS from '@app/constants/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { LineService } from './line.service';
 // tslint:disable:no-any : reason spying on functions
-describe('LineServiceService', () => {
+describe('LineService', () => {
     let service: LineService;
     let mouseEventclick1: MouseEvent;
     let keyboardEventShift: KeyboardEvent;
@@ -140,17 +141,20 @@ describe('LineServiceService', () => {
 
     it(' should set type connection with point', () => {
         service.setTypeDrawing('Avec point');
-        expect(service.withPoint).toEqual(true);
+        const lineProperties = service.toolProperties as LineProperties;
+        expect(lineProperties.withPoint).toEqual(true);
     });
 
     it(' should type connection set without point', () => {
         service.setTypeDrawing('Sans point');
-        expect(service.withPoint).toEqual(false);
+        const lineProperties = service.toolProperties as LineProperties;
+        expect(lineProperties.withPoint).toEqual(false);
     });
 
     it(' should set point size', () => {
         service.setPointeSize(CONSTANTS.DEFAULT_LINE_POINT_SIZE * 2);
-        expect(service.pointSize).toEqual(CONSTANTS.DEFAULT_LINE_POINT_SIZE * 2);
+        const lineProperties = service.toolProperties as LineProperties;
+        expect(lineProperties.pointSize).toEqual(CONSTANTS.DEFAULT_LINE_POINT_SIZE * 2);
     });
 
     it(' onClick should not call drawLine  if the number of click < 2', () => {
@@ -249,7 +253,8 @@ describe('LineServiceService', () => {
     });
 
     it('Withpoint propriety should put point', () => {
-        service.withPoint = true;
+        const lineProperties = service.toolProperties as LineProperties;
+        lineProperties.withPoint = true;
         service.mouseDownCoord = { x: 20, y: 20 };
         service.pathData.push(service.mouseDownCoord);
         service.mouseDownCoord = { x: 50, y: 50 };
@@ -295,10 +300,10 @@ describe('LineServiceService', () => {
 
     it(' SetPontSie should set size of point should be equal 1 if no size', () => {
         service.setPointeSize(null);
-        expect(service.pointSize).toEqual(1);
+        const lineProperties = service.toolProperties as LineProperties;
+        expect(lineProperties.pointSize).toEqual(1);
     });
 
-    // TODO
     it(' setThickness should set thickness equal 1 if no size', () => {
         service.setThickness(null);
         expect(drawServiceSpy.setThickness).toHaveBeenCalled();
@@ -331,16 +336,13 @@ describe('LineServiceService', () => {
         service.mouseDown = true;
         service.shift = false;
         baseCtxStub.lineCap = previewCtxStub.lineCap = 'round';
-        baseCtxStub.lineJoin = previewCtxStub.lineJoin = 'bevel';
+        baseCtxStub.lineJoin = previewCtxStub.lineJoin = 'miter';
         service.resetContext();
         expect(service.mouseDown).toEqual(false);
         expect(service.shift).toEqual(false);
-        expect(baseCtxStub.lineCap).toEqual('butt');
-        expect(previewCtxStub.lineCap).toEqual('butt');
-        expect(baseCtxStub.lineJoin).toEqual('miter');
-        expect(previewCtxStub.lineJoin).toEqual('miter');
         expect(clearLockSpy).toHaveBeenCalled();
         expect(clearPathSpy).toHaveBeenCalled();
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalledWith(previewCtxStub);
     });
+    // tslint:disable-next-line: max-file-line-count
 });
