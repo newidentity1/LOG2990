@@ -1,0 +1,56 @@
+<svg
+    [attr.width] = "0"
+    [attr.height] = "0">
+    <defs>
+
+	<!-- Filter creation website : https://yoksel.github.io/svg-filters/#/ -->
+
+	<!-- Blurred -->
+        <filter id="Blurred" color-interpolation-filters="linearRGB">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="5"/>
+	</filter>
+
+	<!-- Brushed -->
+        <filter id="Brushed" x="-20%" y="-20%" width="300%" height="300%" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="linearRGB">
+            <feGaussianBlur stdDeviation="3 10" x="0%" y="0%" width="100%" height="100%" in="SourceGraphic" edgeMode="none" result="blur"/>
+            <feTurbulence type="turbulence" baseFrequency="0.3 0.3" numOctaves="1" seed="10" stitchTiles="stitch" x="0%" y="0%" width="100%" height="100%" result="turbulence1"/>
+            <feDisplacementMap in="SourceGraphic" in2="turbulence1" scale="5" xChannelSelector="R" yChannelSelector="B" x="0%" y="0%" width="100%" height="100%" result="displacementMap2"/>
+	</filter>
+
+
+	<!-- Spray filter -->
+        <filter id="Spray" x="-20%" y="-20%" width="140%" height="140%" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="linearRGB">
+                <feGaussianBlur stdDeviation="3 10" x="0%" y="0%" width="100%" height="100%" in="SourceGraphic" edgeMode="none" result="blur"/>
+                <feTurbulence type="turbulence" baseFrequency="0.2 0.2" numOctaves="1" seed="3" stitchTiles="stitch" x="0%" y="0%" width="100%" height="100%" result="turbulence1"/>
+                <feDisplacementMap in="SourceGraphic" in2="turbulence1" scale="20" xChannelSelector="R" yChannelSelector="B" x="0%" y="0%" width="100%" height="100%" result="displacementMap1"/>
+									</filter>
+
+	<!-- Splash Filter -->
+
+	<filter id="Splash" x="-20%" y="-20%" width="140%" height="140%" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="linearRGB">
+	    <feGaussianBlur stdDeviation="3 10" x="0%" y="0%" width="100%" height="100%" in="SourceGraphic" edgeMode="none" result="blur2"/>
+	    <feTurbulence type="fractalNoise" baseFrequency="0.1 0.1" numOctaves="2" seed="2" stitchTiles="stitch" x="0%" y="0%" width="100%" height="100%" result="turbulence1"/>
+	    <feDisplacementMap in="SourceGraphic" in2="turbulence1" scale="20" xChannelSelector="R" yChannelSelector="B" x="0%" y="0%" width="100%" height="100%" result="displacementMap3"/>
+	    <feMorphology operator="erode" radius="1 1" x="0%" y="0%" width="100%" height="100%" in="displacementMap3" result="morphology3"/>
+	</filter>
+
+
+	<!-- Cloud Filter -->
+
+	<filter id="Cloud" x="-20%" y="-20%" width="140%" height="140%" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="linearRGB">
+	    <feOffset dx="2" dy="-2" x="0%" y="0%" width="100%" height="100%" in="SourceGraphic" result="offset1"/>
+	    <feOffset dx="-2" dy="2" x="0%" y="0%" width="100%" height="100%" in="SourceGraphic" result="offset2"/>
+	    <feOffset dx="2" dy="2" x="0%" y="0%" width="100%" height="100%" in="SourceGraphic" result="offset3"/>
+	    <feOffset dx="-2" dy="-2" x="0%" y="0%" width="100%" height="100%" in="SourceGraphic" result="offset4"/>
+	    <feMerge x="0%" y="0%" width="100%" height="100%" result="merge1">
+    		<feMergeNode in="offset1"/>
+		<feMergeNode in="offset2"/>
+		<feMergeNode in="offset3"/>
+		<feMergeNode in="offset4"/>
+  	    </feMerge>
+	    <feGaussianBlur stdDeviation="4 4" x="0%" y="0%" width="100%" height="100%" in="merge1" edgeMode="none" result="blur3"/>
+	    <feTurbulence type="turbulence" baseFrequency="0.015 0.015" numOctaves="2" seed="2" stitchTiles="stitch" x="0%" y="0%" width="100%" height="100%" result="turbulence3"/>
+	    <feDisplacementMap in="blur3" in2="turbulence3" scale="20" xChannelSelector="R" yChannelSelector="B" x="0%" y="0%" width="100%" height="100%" result="displacementMap4"/>
+	</filter>
+    </defs>
+</svg>

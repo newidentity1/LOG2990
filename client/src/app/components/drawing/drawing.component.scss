@@ -1,19 +1,62 @@
+@import '../../style/color.scss';
+
+$margin-canvas: 5px 0px 0px 5px;
+
 canvas {
     cursor: crosshair;
-    border: 2px solid #000000;
     position: absolute;
     left: 0;
     top: 0;
 }
 
-#canvas{
-    z-index: 0;
-}
-
-#drawCanvas{
+#canvas {
     z-index: 1;
+    background-color: white;
 }
 
-#canvas-container{
+#canvas-container {
     position: relative;
+    margin: $margin-canvas;
+}
+
+#previewLayer {
+    z-index: 2;
+}
+
+.showOutline {
+    outline: 1px dashed black;
+}
+
+#filters {
+    display: none;
+}
+
+.resizable {
+    position: absolute;
+    margin: $margin-canvas;
+    box-sizing: border-box;
+    border: 1px solid $primaryColor;
+}
+
+.resizable .resizer {
+    width: 5px;
+    height: 5px;
+    background: $primaryColor;
+    border: 2px solid $primaryColor;
+    position: absolute;
+    z-index: 2;
+}
+
+.resizable .resizer.right-center {
+    right: -7px;
+    cursor: e-resize;
+}
+.resizable .resizer.bottom-center {
+    bottom: -7px;
+    cursor: s-resize;
+}
+.resizable .resizer.bottom-right {
+    right: -7px;
+    bottom: -7px;
+    cursor: nwse-resize;
 }

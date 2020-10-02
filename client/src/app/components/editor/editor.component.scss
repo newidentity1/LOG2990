@@ -1,11 +1,16 @@
+@import '../../style/color.scss';
+
 .container {
     height: 100%;
     display: flex;
 }
 
 .drawing-container {
-    overflow: auto;
+    overflow: hidden;
     flex: 1 1 auto;
+    min-width: 300px;
+    min-height: 300px;
+    background-color: gray;
 }
 
 .drawing {
@@ -13,4 +18,3 @@
     width: min-content;
     outline: none;
 }
-  

@@ -1,0 +1,24 @@
+<span *ngIf="data.isSecondaryColorPicker; else primaryColorTitle" matDialogTitle>Couleur secondaire</span>
+<ng-template #primaryColorTitle><span matDialogTitle>Couleur Primaire</span></ng-template>
+
+<div id="grid-container">
+    <div id="canvas-container" [attr.width]="width" [attr.height]="height">
+        <canvas #colorPickerCanvas id="color-picker-canvas" class="color-canvas" [attr.width]="width" [attr.height]="height"></canvas>
+        <canvas
+            #cursorCanvas
+            id="cursor-canvas"
+            [attr.width]="width"
+            [attr.height]="height"
+            (mousedown)="onMouseDown($event)"
+            (mousemove)="onMouseMove($event)"
+        >
+        </canvas>
+    </div>
+    <div id="color-preview-container">
+        <span>Nouvelle couleur</span>
+        <div class="color-preview" [ngStyle]="{ backgroundColor: getCurrentColor().toStringRGBA() }"></div>
+        <div class="color-preview" [ngStyle]="{ backgroundColor: getPreviousColor().toStringRGBA() }"></div>
+        <span>Ancienne couleur</span>
+    </div>
+    <app-color-picker-form id="form-container" [color]="getCurrentColor()" (confirm)="onDialogClose()"></app-color-picker-form>
+</div>

@@ -1,12 +1,71 @@
-.container {
+@import '../../style/color.scss';
+
+#tool-container {
     height: auto;
-    min-height: 98vh;
-    border: 1px solid black;
-    padding: 0 5px 0 5px;
-    margin-right: 5px;
+    width: 80px;
+    min-height: 100vh;
+    background-color: $primaryColor;
+    overflow: hidden;
 }
 
-.sidebar-container {
+#tools {
+    list-style-type: none;
+    padding: 0px 0px 0px 5px;
+
+    li {
+        padding: 2px 0px;
+
+        button {
+            padding: 0;
+            margin: 0;
+            background-color: transparent;
+            border-radius: 10px;
+            color: $textColor;
+            margin-bottom: 5px;
+            border: 1px solid white;
+        }
+    }
+}
+
+.currentTool {
+    background-color: white !important;
+    color: black !important;
+    border: 1px solid black !important;
+}
+
+mat-sidenav {
+    margin-left: 80px;
+    width: 250px;
+    background-color: #1a174f;
+}
+
+#colors-container,
+#other-functionality-container {
+    padding-left: 5px;
+}
+
+.type-drawing-group {
     display: flex;
     flex-direction: column;
+    margin: 15px 0;
+}
+
+.property {
+    margin: 5px;
+    .type-drawing-label {
+        width: 100%;
+    }
+
+    .sliderWrapper {
+        display: flex;
+        margin: 5px;
+    }
+
+    .title-property {
+        text-align: center;
+    }
+
+    .type-drawing-group  > mat-radio-button {
+        padding-top: 5px;
+    }
 }

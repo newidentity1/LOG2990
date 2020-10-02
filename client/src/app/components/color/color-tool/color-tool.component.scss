@@ -1,0 +1,28 @@
+.color-picker-button {
+    height: 40px;
+    width: 40px;
+    border: 2px white ridge;
+}
+
+#colors-container {
+    display: grid;
+}
+
+#primary-color-picker-button {
+    z-index: 1;
+    grid-column-start: 1;
+    grid-row-start: 1;
+}
+
+#secondary-color-picker-button {
+    z-index: 0;
+    grid-column-start: 1;
+    grid-row-start: 1;
+    margin-left: 20px;
+    margin-top: 20px;
+}
+
+#swap-color-button {
+    margin: 10px;
+    background-color: white;
+}

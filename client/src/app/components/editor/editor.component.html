@@ -1,6 +1,13 @@
 <div class="container">
-    <app-sidebar></app-sidebar>
-    <div class="drawing-container">
-        <app-drawing class="drawing" tabindex="0"></app-drawing>
+    <app-sidebar #toolbar></app-sidebar>
+    <div #drawingContainer class="drawing-container">
+        <app-drawing
+            (requestDrawingContainerDimensions)="computeDimensionsDrawingContainer()"
+            [dimensionsUpdatedEvent]="dimensionsUpdatedSubject.asObservable()"
+            [drawingContainerWidth]="width"
+            [drawingContainerHeight]="height"
+            class="drawing"
+            tabindex="0"
+        ></app-drawing>
     </div>
 </div>

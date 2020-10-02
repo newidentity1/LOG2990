@@ -1,0 +1,47 @@
+#grid-container {
+    display: grid;
+    grid-template-columns: 400px 85px;
+    column-gap: 10px;
+}
+
+#canvas-container {
+    display: grid;
+    grid-column-start: 1;
+    grid-row-start: 1;
+    width: auto;
+}
+
+#canvas-container > * {
+    grid-column-start: 1;
+    grid-row-start: 1;
+    margin: auto;
+}
+
+#color-picker-canvas {
+    outline: solid black 2px;
+}
+
+#cursor-canvas {
+    filter: invert(1);
+}
+
+.color-preview {
+    width: 75px;
+    height: 50px;
+    border: 1px solid black;
+    margin: auto;
+}
+
+#color-preview-container {
+    grid-column-start: 2;
+    grid-row-start: 1;
+    text-align: center;
+    align-items: center;
+    margin: auto;
+}
+
+#form-container {
+    grid-column-start: 3;
+    grid-row-start: 1;
+    width: 100%;
+}
