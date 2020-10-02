@@ -10,7 +10,7 @@ export class Color {
     constructor(hex?: string, alpha?: number) {
         // validation
         this.hexString = hex ? hex.toUpperCase() : CONSTANTS.BLACK;
-        this.alpha = alpha ? alpha : CONSTANTS.DEFAULT_COLOR_OPACITY;
+        this.alpha = alpha !== undefined ? alpha : CONSTANTS.DEFAULT_COLOR_OPACITY;
         this.computeRBGFromHex();
     }
 

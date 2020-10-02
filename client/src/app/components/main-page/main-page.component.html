@@ -1,11 +1,6 @@
 <div class="container">
     <h1 class="header-item">PolyDessin</h1>
     <mat-divider id="divider"></mat-divider>
-    <div id="server-message">
-        <!-- <p>Petit message du serveur : {{ message | async }}</p> -->
-        <button class="button" (click)="getMessagesFromServer()">Récuper un message du serveur</button>
-        <button class="button" (click)="sendTimeToServer()">Envoyer un message au serveur</button>
-    </div>
 
     <button class="button" mat-button routerLink="/editor">Créer un nouveau dessin</button>
     <button class="button" mat-button routerLink="/" disabled>Ouvrir le carrousel de dessins</button>

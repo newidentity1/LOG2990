@@ -3,13 +3,16 @@ import { SVGFilterComponent } from '@app/components/svgfilter/svgfilter.componen
 import { CANVAS_MARGIN_LEFT, CANVAS_MARGIN_TOP, CANVAS_MIN_HEIGHT, CANVAS_MIN_WIDTH } from '@app/constants/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
-import { of } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { DrawingComponent } from './drawing.component';
 
 describe('DrawingComponent', () => {
     let component: DrawingComponent;
     let fixture: ComponentFixture<DrawingComponent>;
     let drawingServiceStub: DrawingService;
+    const width: number = CANVAS_MIN_WIDTH;
+    const height: number = CANVAS_MIN_HEIGHT;
+    const dimensionsUpdatedSubjectStub: BehaviorSubject<number[]> = new BehaviorSubject([width, height]);
     let toolbarServiceSpy: jasmine.SpyObj<ToolbarService>;
 
     beforeEach(async(() => {
@@ -41,7 +44,7 @@ describe('DrawingComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(DrawingComponent);
         component = fixture.componentInstance;
-        component.dimensionsUpdatedEvent = of();
+        component.dimensionsUpdatedEvent = dimensionsUpdatedSubjectStub.asObservable();
         fixture.detectChanges();
     });
 
@@ -57,10 +60,8 @@ describe('DrawingComponent', () => {
         const expectWidth = fakeDrawingContainerWidth / 2;
         const expectHeight = fakeDrawingContainerHeight / 2;
         component.ngAfterContentInit();
-        const height = component.height;
-        const width = component.width;
-        expect(height).toEqual(expectHeight);
-        expect(width).toEqual(expectWidth);
+        expect(component.height).toEqual(expectHeight);
+        expect(component.width).toEqual(expectWidth);
     });
 
     it(' onMouseMove should call toolbarService onMouseMove when receiving a mouse event', () => {
@@ -71,7 +72,8 @@ describe('DrawingComponent', () => {
     });
 
     it('  onMouseDown should call toolbarService onMouseDown when receiving a mouse event', () => {
-        const event = {} as MouseEvent;
+        // tslint:disable-next-line:no-empty / reason: mock preventDefault of MouseEvent
+        const event = { preventDefault: () => {} } as MouseEvent;
         component.onMouseDown(event);
         expect(toolbarServiceSpy.onMouseDown).toHaveBeenCalled();
         expect(toolbarServiceSpy.onMouseDown).toHaveBeenCalledWith(event);
@@ -97,7 +99,8 @@ describe('DrawingComponent', () => {
     });
 
     it(' should not call the toolbarService onMouse when receiving a mouseDown if isResizingWidth or isResizingHeight', () => {
-        const event = {} as MouseEvent;
+        // tslint:disable-next-line:no-empty / reason: mock preventDefault of MouseEvent
+        const event = { preventDefault: () => {} } as MouseEvent;
         component.isResizingHeight = true;
         component.onMouseDown(event);
         expect(toolbarServiceSpy.onMouseDown).not.toHaveBeenCalled();
@@ -114,15 +117,31 @@ describe('DrawingComponent', () => {
         expect(toolbarServiceSpy.onMouseUp).toHaveBeenCalledWith(event);
     });
 
+    it('onMouseUp should change height of base canvas when isResizingHeight is true', () => {
+        const event = {} as MouseEvent;
+        component.isResizingHeight = true;
+        component.previewCanvas.nativeElement.height = CANVAS_MIN_HEIGHT;
+        component.onMouseUp(event);
+        expect(component.height).toEqual(CANVAS_MIN_HEIGHT);
+    });
+
     it('onMouseUp should change width of base canvas when isResizingWidth is true', () => {
         const event = {} as MouseEvent;
         component.isResizingWidth = true;
         component.previewCanvas.nativeElement.width = CANVAS_MIN_WIDTH;
-        // setTimeout(() => {
         component.onMouseUp(event);
-        // expect(component.baseCanvas.nativeElement.width).toEqual(CANVAS_MIN_WIDTH);
-        expect(component.isResizingWidth).toEqual(false);
-        // }, 0);
+        expect(component.width).toEqual(CANVAS_MIN_WIDTH);
+    });
+
+    it('onMouseUp should change width and height of base canvas when isResizingHeight and isResizingWidth are true', () => {
+        const event = {} as MouseEvent;
+        component.isResizingHeight = true;
+        component.isResizingWidth = true;
+        component.previewCanvas.nativeElement.height = CANVAS_MIN_HEIGHT;
+        component.previewCanvas.nativeElement.width = CANVAS_MIN_WIDTH;
+        component.onMouseUp(event);
+        expect(component.height).toEqual(CANVAS_MIN_HEIGHT);
+        expect(component.width).toEqual(CANVAS_MIN_WIDTH);
     });
 
     it(' should call the toolbarService onMouseEnter when mouseEnter', () => {
@@ -260,5 +279,15 @@ describe('DrawingComponent', () => {
         component.onResizeBothStart(mouseEvent);
         expect(spyResizeWidth).toHaveBeenCalledWith(mouseEvent);
         expect(spyResizeHeight).toHaveBeenCalledWith(mouseEvent);
+    });
+
+    it('should update drawing container sizes when dimensionsUpdatedEvent is notified', () => {
+        spyOn(component.requestDrawingContainerDimensions, 'emit');
+        spyOn(component, 'newCanvasSetSize');
+        component.ngAfterViewInit();
+        drawingServiceStub.emitCreateNewDrawingEvent();
+        dimensionsUpdatedSubjectStub.next([width, height]);
+        expect(component.drawingContainerWidth).toEqual(width);
+        expect(component.drawingContainerHeight).toEqual(height);
     });
 });

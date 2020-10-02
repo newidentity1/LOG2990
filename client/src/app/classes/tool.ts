@@ -40,7 +40,6 @@ export abstract class Tool {
     }
 
     setThickness(value: number | null): void {
-        // TODO possiblement ajouter de la validation ici aussi
         value = value === null ? 1 : value;
         this.toolProperties.thickness = value;
         this.drawingService.setThickness(value);

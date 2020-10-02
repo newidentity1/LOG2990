@@ -3,16 +3,8 @@ import { ShapeTool } from '@app/classes/shape-tool';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingType } from '@app/enums/drawing-type.enum';
+import { MouseButton } from '@app/enums/mouse-button.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-
-// TODO : Déplacer ça dans un fichier séparé accessible par tous
-export enum MouseButton {
-    Left = 0,
-    Middle = 1,
-    Right = 2,
-    Back = 3,
-    Forward = 4,
-}
 
 @Injectable({
     providedIn: 'root',
@@ -172,6 +164,7 @@ export class RectangleService extends ShapeTool {
         this.mouseDown = false;
         this.shiftDown = false;
         this.escapeDown = false;
+        this.setThickness(this.toolProperties.thickness);
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
     }
 }

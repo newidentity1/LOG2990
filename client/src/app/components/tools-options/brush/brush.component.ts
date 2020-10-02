@@ -23,10 +23,8 @@ export class BrushComponent {
         this.brushService.setThickness(brushProperties.thickness);
     }
 
-    // TODO: duplicate code from rectangle, clean
     onThicknessChange(event: MatSliderChange): void {
         if (event.value !== null && event.value >= MINIMUM_THICKNESS && event.value <= MAXIMUM_THICKNESS) this.brushService.setThickness(event.value);
-        // TODO voir comment deal avec le cas ou une entree est invalide
     }
 
     onFilterChange(event: MatRadioChange): void {
