@@ -33,11 +33,11 @@ import { BrushComponent } from './components/tools-options/brush/brush.component
 import { SVGFilterComponent } from './components/tools-options/brush/svgfilter/svgfilter.component';
 import { EllipseComponent } from './components/tools-options/ellipse/ellipse.component';
 import { EraseComponent } from './components/tools-options/erase/erase.component';
+import { EyedropperComponent } from './components/tools-options/eyedropper/eyedropper.component';
 import { LineComponent } from './components/tools-options/line/line.component';
 import { PencilComponent } from './components/tools-options/pencil/pencil.component';
 import { RectangleComponent } from './components/tools-options/rectangle/rectangle.component';
 import { ThicknessSliderComponent } from './components/tools-options/thickness-slider/thickness-slider.component';
-import { EyedropperComponent } from './components/tools-options/eyedropper/eyedropper.component';
 @NgModule({
     declarations: [
         AppComponent,

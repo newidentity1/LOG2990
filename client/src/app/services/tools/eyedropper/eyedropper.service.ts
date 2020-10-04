@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Color } from '@app/classes/color/color';
 import { Tool } from '@app/classes/tool/tool';
 import { Vec2 } from '@app/classes/vec2';
+import * as CONSTANTS from '@app/constants/constants';
 import { MouseButton } from '@app/enums/mouse-button.enum';
 import { ColorPickerService } from '@app/services/color-picker/color-picker.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -52,19 +53,19 @@ export class EyedropperService extends Tool {
         this.colorPreviewCtx.drawImage(
             this.drawingService.canvas,
             Math.min(
-                Math.max(0, mousePosition.x - EYEDROPPER_PREVIEW_SCALE_SIZE / 2),
-                this.drawingService.canvas.width - EYEDROPPER_PREVIEW_SCALE_SIZE,
+                Math.max(0, mousePosition.x - CONSTANTS.EYEDROPPER_PREVIEW_SCALE_SIZE / 2),
+                this.drawingService.canvas.width - CONSTANTS.EYEDROPPER_PREVIEW_SCALE_SIZE,
             ),
             Math.min(
-                Math.max(0, mousePosition.y - EYEDROPPER_PREVIEW_SCALE_SIZE / 2),
-                this.drawingService.canvas.height - EYEDROPPER_PREVIEW_SCALE_SIZE,
+                Math.max(0, mousePosition.y - CONSTANTS.EYEDROPPER_PREVIEW_SCALE_SIZE / 2),
+                this.drawingService.canvas.height - CONSTANTS.EYEDROPPER_PREVIEW_SCALE_SIZE,
             ),
-            EYEDROPPER_PREVIEW_SCALE_SIZE,
-            EYEDROPPER_PREVIEW_SCALE_SIZE,
+            CONSTANTS.EYEDROPPER_PREVIEW_SCALE_SIZE,
+            CONSTANTS.EYEDROPPER_PREVIEW_SCALE_SIZE,
             0,
             0,
-            EYEDROPPER_PREVIEW_CANVAS_WIDTH,
-            EYEDROPPER_PREVIEW_CANVAS_HEIGHT,
+            CONSTANTS.EYEDROPPER_PREVIEW_CANVAS_WIDTH,
+            CONSTANTS.EYEDROPPER_PREVIEW_CANVAS_HEIGHT,
         );
     }
 
@@ -75,7 +76,7 @@ export class EyedropperService extends Tool {
         color.red = rgbData[0];
         color.green = rgbData[1];
         color.blue = rgbData[2];
-        color.opacity = rgbData[3];
+        color.opacity = rgbData[CONSTANTS.IMAGE_DATA_OPACITY_INDEX];
 
         return color;
     }
