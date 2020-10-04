@@ -134,12 +134,6 @@ export class RectangleService extends ShapeTool {
         return Math.abs(this.width) < Math.abs(this.height);
     }
 
-    setThickness(value: number | null): void {
-        value = value === null ? 1 : value;
-        this.toolProperties.thickness = value;
-        this.drawingService.setThickness(value);
-    }
-
     setTypeDrawing(value: string): void {
         const rectangleProperties = this.toolProperties as BasicShapeProperties;
         rectangleProperties.currentType = value;
@@ -156,13 +150,5 @@ export class RectangleService extends ShapeTool {
     drawFillStrokeRect(ctx: CanvasRenderingContext2D, width: number, height: number): void {
         this.drawFillRect(ctx, width, height);
         this.drawStrokeRect(ctx, width, height);
-    }
-
-    resetContext(): void {
-        this.mouseDown = false;
-        this.shiftDown = false;
-        this.escapeDown = false;
-        this.setThickness(this.toolProperties.thickness);
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
     }
 }

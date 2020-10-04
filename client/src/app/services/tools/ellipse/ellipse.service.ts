@@ -88,12 +88,6 @@ export class EllipseService extends ShapeTool {
         }
     }
 
-    setThickness(value: number | null): void {
-        value = value === null ? 1 : value;
-        this.drawingService.setThickness(value);
-        this.toolProperties.thickness = value;
-    }
-
     setTypeDrawing(value: string): void {
         const ellipseProperties = this.toolProperties as BasicShapeProperties;
         ellipseProperties.currentType = value;
@@ -105,13 +99,12 @@ export class EllipseService extends ShapeTool {
         this.drawEllipse(this.drawingService.previewCtx);
     }
 
-    private drawBoxGuide(ctx: CanvasRenderingContext2D): void {
+    private drawBoxGuide(ctx: CanvasRenderingContext2D, dashedSegments: number): void {
         if (this.mouseDown) {
             ctx.lineWidth = MINIMUM_THICKNESS;
-
-            ctx.setLineDash([DASHED_SEGMENTS]);
+            ctx.setLineDash([dashedSegments]);
             ctx.beginPath();
-            ctx.strokeRect(this.pathStart.x, this.pathStart.y, this.width, this.height);
+            ctx.strokeRect(this.pathStart.x, this.pathStart.y, this.mouseDownCoord.x - this.pathStart.x, this.mouseDownCoord.y - this.pathStart.y);
             ctx.setLineDash([0]);
         }
     }
@@ -159,14 +152,6 @@ export class EllipseService extends ShapeTool {
                 ctx.stroke();
         }
 
-        this.drawBoxGuide(ctx);
-    }
-
-    resetContext(): void {
-        this.mouseDown = false;
-        this.shiftDown = false;
-        this.escapeDown = false;
-        this.setThickness(this.toolProperties.thickness);
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.drawBoxGuide(ctx, DASHED_SEGMENTS);
     }
 }
