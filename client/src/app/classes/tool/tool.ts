@@ -12,6 +12,8 @@ export abstract class Tool {
     tooltip: string;
     iconName: string;
     toolProperties: BasicToolProperties;
+    currentPrimaryColor: Color;
+    currentSecondaryColor: Color;
 
     constructor(protected drawingService: DrawingService) {}
 

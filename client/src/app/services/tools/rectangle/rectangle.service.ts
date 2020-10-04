@@ -12,17 +12,14 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 export class RectangleService extends ShapeTool {
     startingX: number;
     startingY: number;
-    width: number;
-    height: number;
-    shiftDown: boolean = false;
     currentMousePosition: Vec2;
-    escapeDown: boolean = false;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.name = 'Rectangle';
         this.tooltip = 'Rectangle(1)';
         this.iconName = 'crop_square';
+        this.pathStart = { x: 0, y: 0 };
         this.toolProperties = new BasicShapeProperties();
     }
 
@@ -33,6 +30,7 @@ export class RectangleService extends ShapeTool {
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.startingX = this.mouseDownCoord.x;
             this.startingY = this.mouseDownCoord.y;
+            this.pathStart = this.mouseDownCoord;
         }
     }
 
@@ -128,8 +126,8 @@ export class RectangleService extends ShapeTool {
     }
 
     computeDimensions(mousePosition: Vec2): void {
-        this.width = mousePosition.x - this.startingX;
-        this.height = mousePosition.y - this.startingY;
+        this.width = mousePosition.x - this.pathStart.x;
+        this.height = mousePosition.y - this.pathStart.y;
     }
 
     isWidthSmallest(): boolean {
@@ -148,11 +146,11 @@ export class RectangleService extends ShapeTool {
     }
 
     drawFillRect(ctx: CanvasRenderingContext2D, width: number, height: number): void {
-        ctx.fillRect(this.startingX, this.startingY, width, height);
+        ctx.fillRect(this.pathStart.x, this.pathStart.y, width, height);
     }
 
     drawStrokeRect(ctx: CanvasRenderingContext2D, width: number, height: number): void {
-        ctx.strokeRect(this.startingX, this.startingY, width, height);
+        ctx.strokeRect(this.pathStart.x, this.pathStart.y, width, height);
     }
 
     drawFillStrokeRect(ctx: CanvasRenderingContext2D, width: number, height: number): void {
