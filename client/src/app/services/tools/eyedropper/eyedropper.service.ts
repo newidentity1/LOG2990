@@ -24,53 +24,48 @@ export class EyedropperService extends Tool {
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
         if (this.mouseDown) {
-            const mousePosition = this.getPositionFromMouse(event);
-
-            this.currentColor = this.getColorFromPosition(mousePosition);
-
-            this.drawingService.clearCanvas(this.colorPreviewCtx);
-            this.colorPreviewCtx.drawImage(
-                this.drawingService.canvas,
-                Math.min(Math.max(0, mousePosition.x - 5), this.drawingService.canvas.width - 10),
-                Math.min(Math.max(0, mousePosition.y - 5), this.drawingService.canvas.height - 10),
-                10,
-                10,
-                0,
-                0,
-                200,
-                200,
-            );
+            this.drawPreview(event);
         }
     }
 
     onMouseMove(event: MouseEvent): void {
         if (this.mouseDown) {
-            const mousePosition = this.getPositionFromMouse(event);
-            this.currentColor = this.getColorFromPosition(mousePosition);
-
-            this.drawingService.clearCanvas(this.colorPreviewCtx);
-            this.colorPreviewCtx.drawImage(
-                this.drawingService.canvas,
-                Math.min(Math.max(0, mousePosition.x - 5), this.drawingService.canvas.width - 10),
-                Math.min(Math.max(0, mousePosition.y - 5), this.drawingService.canvas.height - 10),
-                50,
-                50,
-                0,
-                0,
-                200,
-                200,
-            );
+            this.drawPreview(event);
         }
     }
 
     onMouseUp(event: MouseEvent): void {
-        console.log(event);
         if (this.mouseDown) {
-            const mousePosition = this.getPositionFromMouse(event);
-            const color = this.getColorFromPosition(mousePosition);
-            this.colorPickerService.setPrimaryColor(color);
+            this.colorPickerService.setPrimaryColor(this.currentColor);
         }
         this.mouseDown = false;
+    }
+
+    drawPreview(event: MouseEvent): void {
+        const mousePosition = this.getPositionFromMouse(event);
+        this.currentColor = this.getColorFromPosition(mousePosition);
+
+        this.drawingService.clearCanvas(this.colorPreviewCtx);
+
+        // Code adapted from
+        // https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Pixel_manipulation_with_canvas#Zooming_and_anti-aliasing
+        this.colorPreviewCtx.drawImage(
+            this.drawingService.canvas,
+            Math.min(
+                Math.max(0, mousePosition.x - EYEDROPPER_PREVIEW_SCALE_SIZE / 2),
+                this.drawingService.canvas.width - EYEDROPPER_PREVIEW_SCALE_SIZE,
+            ),
+            Math.min(
+                Math.max(0, mousePosition.y - EYEDROPPER_PREVIEW_SCALE_SIZE / 2),
+                this.drawingService.canvas.height - EYEDROPPER_PREVIEW_SCALE_SIZE,
+            ),
+            EYEDROPPER_PREVIEW_SCALE_SIZE,
+            EYEDROPPER_PREVIEW_SCALE_SIZE,
+            0,
+            0,
+            EYEDROPPER_PREVIEW_CANVAS_WIDTH,
+            EYEDROPPER_PREVIEW_CANVAS_HEIGHT,
+        );
     }
 
     private getColorFromPosition(position: Vec2): Color {
