@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Color } from '@app/classes/color/color';
 import { Tool } from '@app/classes/tool/tool';
 import { KeyShortcut } from '@app/enums/key-shortcuts.enum';
+import { ColorPickerService } from '@app/services/color-picker/color-picker.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { BrushService } from '@app/services/tools/brush/brush.service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
@@ -40,6 +41,7 @@ export class ToolbarService {
         protected eraseService: EraseService,
         protected eyedropperService: EyedropperService,
         protected drawingService: DrawingService,
+        private colorPickerService: ColorPickerService,
     ) {
         this.tools = [pencilService, brushService, rectangleService, ellipseService, lineService, eraseService, eyedropperService];
         this.currentTool = this.tools[0];
@@ -51,6 +53,16 @@ export class ToolbarService {
             .set(KeyShortcut.Line, lineService)
             .set(KeyShortcut.Eraser, eraseService)
             .set(KeyShortcut.Eyedropper, eyedropperService);
+    }
+
+    initializeColors(): void {
+        this.colorPickerService.primaryColor.subscribe((color: Color) => {
+            this.setColors(color, this.secondaryColor);
+        });
+
+        this.colorPickerService.secondaryColor.subscribe((color: Color) => {
+            this.setColors(this.primaryColor, color);
+        });
     }
 
     getTools(): Tool[] {

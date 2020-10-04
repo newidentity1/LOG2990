@@ -2,7 +2,6 @@ import { AfterContentInit, AfterViewInit, Component, ElementRef, EventEmitter, H
 import { Vec2 } from '@app/classes/vec2';
 import { CANVAS_MARGIN_LEFT, CANVAS_MARGIN_TOP, CANVAS_MIN_HEIGHT, CANVAS_MIN_WIDTH, DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants/constants';
 import { MouseButton } from '@app/enums/mouse-button.enum';
-import { ColorPickerService } from '@app/services/color-picker/color-picker.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 import { Observable } from 'rxjs';
@@ -30,7 +29,7 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit {
     isResizingWidth: boolean = false;
     isResizingHeight: boolean = false;
 
-    constructor(private drawingService: DrawingService, private toolbarService: ToolbarService, private colorService: ColorPickerService) {}
+    constructor(private drawingService: DrawingService, private toolbarService: ToolbarService) {}
 
     ngAfterContentInit(): void {
         this.newCanvasSetSize();
@@ -42,7 +41,6 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit {
         this.drawingService.baseCtx = this.baseCtx;
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
-        this.colorService.updateDrawingColor();
 
         this.drawingService.createNewDrawingEventListener().subscribe(() => {
             this.requestDrawingContainerDimensions.emit();
@@ -55,6 +53,7 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit {
                 this.toolbarService.applyCurrentTool();
             }, 0);
         });
+        this.toolbarService.initializeColors();
     }
 
     onMouseMove(event: MouseEvent): void {
