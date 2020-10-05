@@ -15,7 +15,7 @@ describe('EditorComponent', () => {
     let toolbarServiceMock: ToolbarService;
 
     beforeEach(async(() => {
-        toolbarServiceMock = jasmine.createSpyObj('ToolbarService', ['onKeyDown', 'onKeyPress', 'onKeyUp']);
+        toolbarServiceMock = jasmine.createSpyObj('ToolbarService', ['onKeyDown', 'onKeyPress', 'onKeyUp', 'initializeColors']);
 
         TestBed.configureTestingModule({
             declarations: [EditorComponent],

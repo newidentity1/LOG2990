@@ -41,7 +41,7 @@ export class ToolbarService {
         protected eraseService: EraseService,
         protected eyedropperService: EyedropperService,
         protected drawingService: DrawingService,
-        private colorPickerService: ColorPickerService,
+        protected colorPickerService: ColorPickerService,
     ) {
         this.tools = [pencilService, brushService, rectangleService, ellipseService, lineService, eraseService, eyedropperService];
         this.currentTool = this.tools[0];
