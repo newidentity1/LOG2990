@@ -15,31 +15,40 @@ export class EyedropperService extends Tool {
 
     currentColor: Color;
 
+    private leftMouseDown: boolean;
+    private rightMouseDown: boolean;
+
     constructor(private colorPickerService: ColorPickerService, drawingService: DrawingService) {
         super(drawingService);
         this.name = 'Eyedropper';
         this.tooltip = 'Pipette(I)';
         this.iconName = 'colorize';
+        this.leftMouseDown = false;
+        this.rightMouseDown = false;
     }
 
     onMouseDown(event: MouseEvent): void {
-        this.mouseDown = event.button === MouseButton.Left;
-        if (this.mouseDown) {
+        this.leftMouseDown = event.button === MouseButton.Left;
+        this.rightMouseDown = event.button === MouseButton.Right;
+        if (this.leftMouseDown || this.rightMouseDown) {
             this.drawPreview(event);
         }
     }
 
     onMouseMove(event: MouseEvent): void {
-        if (this.mouseDown) {
+        if (this.leftMouseDown || this.rightMouseDown) {
             this.drawPreview(event);
         }
     }
 
     onMouseUp(event: MouseEvent): void {
-        if (this.mouseDown) {
+        if (this.leftMouseDown) {
             this.colorPickerService.setPrimaryColor(this.currentColor);
+        } else if (this.rightMouseDown) {
+            this.colorPickerService.setSecondaryColor(this.currentColor);
         }
-        this.mouseDown = false;
+        this.leftMouseDown = false;
+        this.rightMouseDown = false;
     }
 
     drawPreview(event: MouseEvent): void {
@@ -76,8 +85,7 @@ export class EyedropperService extends Tool {
         color.red = rgbData[0];
         color.green = rgbData[1];
         color.blue = rgbData[2];
-        color.opacity = rgbData[CONSTANTS.IMAGE_DATA_OPACITY_INDEX];
-
+        color.opacity = rgbData[CONSTANTS.IMAGE_DATA_OPACITY_INDEX] / CONSTANTS.MAX_COLOR_VALUE;
         return color;
     }
 

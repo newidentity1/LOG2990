@@ -71,6 +71,7 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit {
 
     @HostListener('window:mouseup', ['$event'])
     onMouseUp(event: MouseEvent): void {
+        event.preventDefault();
         if (this.isResizingWidth || this.isResizingHeight) {
             const newWidth = this.isResizingWidth ? this.previewCanvas.nativeElement.width : this.width;
             const newHeight = this.isResizingHeight ? this.previewCanvas.nativeElement.height : this.height;
@@ -103,6 +104,10 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit {
 
     onClick(event: MouseEvent): void {
         this.toolbarService.onClick(event);
+    }
+
+    onRightClick(event: MouseEvent): boolean {
+        return false;
     }
 
     @HostListener('window:mousemove', ['$event'])
