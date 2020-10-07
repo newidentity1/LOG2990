@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ShapeTool } from '@app/classes/tool/shape-tool';
 import { PolygonProperties } from '@app/classes/tools-properties/polygon-properties';
 import { Vec2 } from '@app/classes/vec2';
-import { DASHED_SEGMENTS, MINIMUM_SIDES, MINIMUM_THICKNESS } from '@app/constants/constants';
+import { DASHED_SEGMENTS, MINIMUM_SIDES } from '@app/constants/constants';
 import { DrawingType } from '@app/enums/drawing-type.enum';
 import { MouseButton } from '@app/enums/mouse-button.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -111,18 +111,6 @@ export class PolygonService extends ShapeTool {
 
         if (ctx === this.drawingService.previewCtx) {
             ctx.setLineDash([DASHED_SEGMENTS]);
-        }
-    }
-
-    drawEllipsePerimeter(ctx: CanvasRenderingContext2D): void {
-        if (this.mouseDown) {
-            ctx.lineWidth = MINIMUM_THICKNESS;
-            ctx.setLineDash([DASHED_SEGMENTS]);
-            const radius: Vec2 = { x: this.width / 2, y: this.height / 2 };
-
-            ctx.beginPath();
-            ctx.ellipse(this.pathStart.x, this.pathStart.y, Math.abs(radius.x), Math.abs(radius.y), 0, 0, 2 * Math.PI);
-            ctx.stroke();
         }
     }
 
