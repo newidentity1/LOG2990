@@ -139,16 +139,4 @@ export class PolygonService extends ShapeTool {
         const polygonProperties = this.toolProperties as PolygonProperties;
         polygonProperties.numberOfSides = value;
     }
-
-    setTypeDrawing(value: string): void {
-        const polygonProperties = this.toolProperties as PolygonProperties;
-        polygonProperties.currentType = value;
-    }
-
-    resetContext(): void {
-        this.mouseDown = false;
-        this.escapeDown = false;
-        this.setThickness(this.toolProperties.thickness);
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
-    }
 }

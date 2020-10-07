@@ -88,11 +88,6 @@ export class EllipseService extends ShapeTool {
         }
     }
 
-    setTypeDrawing(value: string): void {
-        const ellipseProperties = this.toolProperties as BasicShapeProperties;
-        ellipseProperties.currentType = value;
-    }
-
     private drawPreview(): void {
         this.computeDimensions();
         this.drawingService.clearCanvas(this.drawingService.previewCtx);

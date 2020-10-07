@@ -1,4 +1,5 @@
 import { Color } from '@app/classes/color/color';
+import { BasicShapeProperties } from '../tools-properties/basic-shape-properties';
 import { Vec2 } from '../vec2';
 import { Tool } from './tool';
 
@@ -20,6 +21,11 @@ export abstract class ShapeTool extends Tool {
         this.currentSecondaryColor = secondaryColor;
         this.drawingService.setFillColor(primaryColor.toStringRGBA());
         this.drawingService.setStrokeColor(secondaryColor.toStringRGBA());
+    }
+
+    setTypeDrawing(value: string): void {
+        const shapeProperties = this.toolProperties as BasicShapeProperties;
+        shapeProperties.currentType = value;
     }
 
     resetContext(): void {
