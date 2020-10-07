@@ -6,6 +6,7 @@ import { DASHED_SEGMENTS, MINIMUM_SIDES, MINIMUM_THICKNESS } from '@app/constant
 import { DrawingType } from '@app/enums/drawing-type.enum';
 import { MouseButton } from '@app/enums/mouse-button.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
 
 @Injectable({
     providedIn: 'root',
@@ -16,6 +17,7 @@ export class PolygonService extends ShapeTool {
     height: number;
     currentMousePosition: Vec2;
     escapeDown: boolean = false;
+    ellipseService: EllipseService;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
@@ -23,6 +25,7 @@ export class PolygonService extends ShapeTool {
         this.tooltip = 'Polygone(3)';
         this.iconName = 'change_history';
         this.toolProperties = new PolygonProperties();
+        this.ellipseService = new EllipseService(drawingService);
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -31,6 +34,7 @@ export class PolygonService extends ShapeTool {
             this.escapeDown = false;
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.pathStart = this.mouseDownCoord;
+            this.ellipseService.pathStart = this.mouseDownCoord;
         }
     }
 
@@ -46,12 +50,18 @@ export class PolygonService extends ShapeTool {
     onMouseMove(event: MouseEvent): void {
         if (this.mouseDown) {
             this.currentMousePosition = this.getPositionFromMouse(event);
+            this.ellipseService.mouseDownCoord = this.currentMousePosition;
             this.computeDimensions(this.currentMousePosition);
+            this.ellipseService.width = this.width;
+            this.ellipseService.height = this.height;
+            this.ellipseService.setTypeDrawing(DrawingType.Stroke);
+            this.ellipseService.mouseDown = true;
 
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             const previewCtx = this.drawingService.previewCtx;
             this.drawingService.clearCanvas(previewCtx);
             this.draw(previewCtx);
+            this.ellipseService.drawEllipse(previewCtx, 0);
         }
     }
 
@@ -66,11 +76,13 @@ export class PolygonService extends ShapeTool {
         }
         const radiusX = Math.abs(this.width / 2);
         const radiusY = Math.abs(this.height / 2);
+        const centerX = this.pathStart.x + radiusX * this.signOf(this.width);
+        const centerY = this.pathStart.y + radiusY * this.signOf(this.height);
 
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         const polygonProperties = this.toolProperties as PolygonProperties;
         ctx.beginPath();
-        ctx.moveTo(this.pathStart.x, this.pathStart.y - radiusY);
+        ctx.moveTo(centerX, centerY - radiusY);
 
         const numberOfSides = polygonProperties.numberOfSides;
         const startingAngle = Math.PI / 2;
@@ -78,8 +90,8 @@ export class PolygonService extends ShapeTool {
 
         for (let i = 1; i <= numberOfSides; ++i) {
             const currentAngle = i * angle + startingAngle;
-            const pointX = this.pathStart.x + radiusX * Math.cos(currentAngle);
-            const pointY = this.pathStart.y - radiusY * Math.sin(currentAngle);
+            const pointX = centerX + radiusX * Math.cos(currentAngle);
+            const pointY = centerY - radiusY * Math.sin(currentAngle);
 
             ctx.lineTo(pointX, pointY);
         }
@@ -98,7 +110,7 @@ export class PolygonService extends ShapeTool {
         ctx.closePath();
 
         if (ctx === this.drawingService.previewCtx) {
-            this.drawEllipsePerimeter(ctx);
+            ctx.setLineDash([DASHED_SEGMENTS]);
         }
     }
 
@@ -114,9 +126,16 @@ export class PolygonService extends ShapeTool {
         }
     }
 
+    signOf(num: number): number {
+        return Math.abs(num) / num;
+    }
+
     computeDimensions(mousePosition: Vec2): void {
         this.width = mousePosition.x - this.pathStart.x;
         this.height = mousePosition.y - this.pathStart.y;
+        const min = Math.min(Math.abs(this.width), Math.abs(this.height));
+        this.width = min * this.signOf(this.width);
+        this.height = min * this.signOf(this.height);
     }
 
     setThickness(value: number | null): void {
