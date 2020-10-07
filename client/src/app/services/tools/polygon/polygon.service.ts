@@ -11,6 +11,8 @@ import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
 @Injectable({
     providedIn: 'root',
 })
+
+/** @todo Maybe extend EllipseService */
 export class PolygonService extends ShapeTool {
     pathStart: Vec2;
     width: number;
