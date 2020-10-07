@@ -52,7 +52,6 @@ export class DrawingService {
     }
 
     async removeDrawing(id: string): Promise<void> {
-        console.log(new ObjectId(id));
         this.collection.findOneAndDelete({ _id: new ObjectId(id) }).catch((error) => {
             throw new Error("Le dessin n'a pas pu être supprime!");
         });
