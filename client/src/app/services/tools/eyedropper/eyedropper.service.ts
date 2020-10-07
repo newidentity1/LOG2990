@@ -35,12 +35,10 @@ export class EyedropperService extends Tool {
 
     onMouseEnter(event: MouseEvent): void {
         this.inCanvas = true;
-        console.log('in');
     }
 
     onMouseLeave(event: MouseEvent): void {
         this.inCanvas = false;
-        console.log('out');
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -72,16 +70,21 @@ export class EyedropperService extends Tool {
 
         // Code adapted from
         // https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Pixel_manipulation_with_canvas#Zooming_and_anti-aliasing
+
+        const cappedXPos = Math.min(
+            Math.max(0, mousePosition.x - CONSTANTS.EYEDROPPER_PREVIEW_SCALE_SIZE / 2),
+            this.drawingService.canvas.width - CONSTANTS.EYEDROPPER_PREVIEW_SCALE_SIZE,
+        );
+
+        const cappedYPos = Math.min(
+            Math.max(0, mousePosition.y - CONSTANTS.EYEDROPPER_PREVIEW_SCALE_SIZE / 2),
+            this.drawingService.canvas.height - CONSTANTS.EYEDROPPER_PREVIEW_SCALE_SIZE,
+        );
+
         this.previewCircleCtx.drawImage(
             this.drawingService.canvas,
-            Math.min(
-                Math.max(0, mousePosition.x - CONSTANTS.EYEDROPPER_PREVIEW_SCALE_SIZE / 2),
-                this.drawingService.canvas.width - CONSTANTS.EYEDROPPER_PREVIEW_SCALE_SIZE,
-            ),
-            Math.min(
-                Math.max(0, mousePosition.y - CONSTANTS.EYEDROPPER_PREVIEW_SCALE_SIZE / 2),
-                this.drawingService.canvas.height - CONSTANTS.EYEDROPPER_PREVIEW_SCALE_SIZE,
-            ),
+            cappedXPos,
+            cappedYPos,
             CONSTANTS.EYEDROPPER_PREVIEW_SCALE_SIZE,
             CONSTANTS.EYEDROPPER_PREVIEW_SCALE_SIZE,
             0,
@@ -90,10 +93,19 @@ export class EyedropperService extends Tool {
             CONSTANTS.EYEDROPPER_PREVIEW_CANVAS_HEIGHT,
         );
 
-        this.cursorCtx.strokeStyle = this.currentColor.toStringRGBA();
         this.drawingService.clearCanvas(this.cursorCtx);
+
+        const cursorX = ((mousePosition.x - cappedXPos) * CONSTANTS.EYEDROPPER_PREVIEW_CANVAS_WIDTH) / CONSTANTS.EYEDROPPER_PREVIEW_SCALE_SIZE;
+        const cursorY = ((mousePosition.y - cappedYPos) * CONSTANTS.EYEDROPPER_PREVIEW_CANVAS_HEIGHT) / CONSTANTS.EYEDROPPER_PREVIEW_SCALE_SIZE;
+
         this.cursorCtx.lineWidth = 2;
-        this.cursorCtx.strokeRect(CONSTANTS.EYEDROPPER_PREVIEW_CANVAS_WIDTH / 2 - 10, CONSTANTS.EYEDROPPER_PREVIEW_CANVAS_HEIGHT / 2 - 10, 20, 20);
+        this.cursorCtx.strokeStyle = this.currentColor.toStringRGBA();
+        this.cursorCtx.strokeRect(
+            cursorX - CONSTANTS.EYEDROPPER_PREVIEW_CURSOR_SIZE / 2,
+            cursorY - CONSTANTS.EYEDROPPER_PREVIEW_CURSOR_SIZE / 2,
+            CONSTANTS.EYEDROPPER_PREVIEW_CURSOR_SIZE,
+            CONSTANTS.EYEDROPPER_PREVIEW_CURSOR_SIZE,
+        );
     }
 
     private getColorFromPosition(position: Vec2): Color {

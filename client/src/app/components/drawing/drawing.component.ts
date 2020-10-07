@@ -106,7 +106,7 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit {
         this.toolbarService.onClick(event);
     }
 
-    onRightClick(): boolean {
+    onContextMenu(): boolean {
         return false;
     }
 

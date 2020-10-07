@@ -14,6 +14,7 @@ describe('DrawingComponent', () => {
     const height: number = CANVAS_MIN_HEIGHT;
     const dimensionsUpdatedSubjectStub: BehaviorSubject<number[]> = new BehaviorSubject([width, height]);
     let toolbarServiceSpy: jasmine.SpyObj<ToolbarService>;
+    let mouseEvent: MouseEvent;
 
     beforeEach(async(() => {
         drawingServiceStub = new DrawingService();
@@ -40,6 +41,9 @@ describe('DrawingComponent', () => {
             ],
         }).compileComponents();
         toolbarServiceSpy = TestBed.inject(ToolbarService) as jasmine.SpyObj<ToolbarService>;
+
+        // tslint:disable-next-line:no-empty / reason: mocking mouse event
+        mouseEvent = { preventDefault: () => {} } as MouseEvent;
     }));
 
     beforeEach(() => {
@@ -66,107 +70,97 @@ describe('DrawingComponent', () => {
     });
 
     it(' onMouseMove should call toolbarService onMouseMove when receiving a mouse event', () => {
-        const event = {} as MouseEvent;
-        component.onMouseMove(event);
+        component.onMouseMove(mouseEvent);
         expect(toolbarServiceSpy.onMouseMove).toHaveBeenCalled();
-        expect(toolbarServiceSpy.onMouseMove).toHaveBeenCalledWith(event);
+        expect(toolbarServiceSpy.onMouseMove).toHaveBeenCalledWith(mouseEvent);
     });
 
     it('  onMouseDown should call toolbarService onMouseDown when receiving a mouse event', () => {
-        // tslint:disable-next-line:no-empty / reason: mock preventDefault of MouseEvent
-        const event = { preventDefault: () => {} } as MouseEvent;
-        component.onMouseDown(event);
+        component.onMouseDown(mouseEvent);
         expect(toolbarServiceSpy.onMouseDown).toHaveBeenCalled();
-        expect(toolbarServiceSpy.onMouseDown).toHaveBeenCalledWith(event);
+        expect(toolbarServiceSpy.onMouseDown).toHaveBeenCalledWith(mouseEvent);
     });
 
     it('  onMouseUp should call toolbarService onMouseUp when receiving a mouse event', () => {
-        const event = {} as MouseEvent;
-        component.onMouseUp(event);
+        component.onMouseUp(mouseEvent);
         expect(toolbarServiceSpy.onMouseUp).toHaveBeenCalled();
-        expect(toolbarServiceSpy.onMouseUp).toHaveBeenCalledWith(event);
+        expect(toolbarServiceSpy.onMouseUp).toHaveBeenCalledWith(mouseEvent);
     });
 
     it(' should not call the toolbarService onMouse when receiving a mouseMove if isResizingWidth or isResizingHeight', () => {
-        const event = {} as MouseEvent;
         component.isResizingHeight = true;
-        component.onMouseMove(event);
+        component.onMouseMove(mouseEvent);
         expect(toolbarServiceSpy.onMouseMove).not.toHaveBeenCalled();
 
         component.isResizingHeight = false;
         component.isResizingWidth = true;
-        component.onMouseMove(event);
+        component.onMouseMove(mouseEvent);
         expect(toolbarServiceSpy.onMouseMove).not.toHaveBeenCalled();
     });
 
     it(' should not call the toolbarService onMouse when receiving a mouseDown if isResizingWidth or isResizingHeight', () => {
-        // tslint:disable-next-line:no-empty / reason: mock preventDefault of MouseEvent
-        const event = { preventDefault: () => {} } as MouseEvent;
         component.isResizingHeight = true;
-        component.onMouseDown(event);
+        component.onMouseDown(mouseEvent);
         expect(toolbarServiceSpy.onMouseDown).not.toHaveBeenCalled();
 
         component.isResizingHeight = false;
         component.isResizingWidth = true;
-        component.onMouseDown(event);
+        component.onMouseDown(mouseEvent);
         expect(toolbarServiceSpy.onMouseDown).not.toHaveBeenCalled();
     });
 
     it(' should call the toolbarService onMouse when receiving a mouseUp if isResizingWidth and isResizingHeight are false', () => {
-        const event = {} as MouseEvent;
-        component.onMouseUp(event);
-        expect(toolbarServiceSpy.onMouseUp).toHaveBeenCalledWith(event);
+        component.onMouseUp(mouseEvent);
+        expect(toolbarServiceSpy.onMouseUp).toHaveBeenCalledWith(mouseEvent);
     });
 
     it('onMouseUp should change height of base canvas when isResizingHeight is true', () => {
-        const event = {} as MouseEvent;
         component.isResizingHeight = true;
         component.previewCanvas.nativeElement.height = CANVAS_MIN_HEIGHT;
-        component.onMouseUp(event);
+        component.onMouseUp(mouseEvent);
         expect(component.height).toEqual(CANVAS_MIN_HEIGHT);
     });
 
     it('onMouseUp should change width of base canvas when isResizingWidth is true', () => {
-        const event = {} as MouseEvent;
         component.isResizingWidth = true;
         component.previewCanvas.nativeElement.width = CANVAS_MIN_WIDTH;
-        component.onMouseUp(event);
+        component.onMouseUp(mouseEvent);
         expect(component.width).toEqual(CANVAS_MIN_WIDTH);
     });
 
     it('onMouseUp should change width and height of base canvas when isResizingHeight and isResizingWidth are true', () => {
-        const event = {} as MouseEvent;
         component.isResizingHeight = true;
         component.isResizingWidth = true;
         component.previewCanvas.nativeElement.height = CANVAS_MIN_HEIGHT;
         component.previewCanvas.nativeElement.width = CANVAS_MIN_WIDTH;
-        component.onMouseUp(event);
+        component.onMouseUp(mouseEvent);
         expect(component.height).toEqual(CANVAS_MIN_HEIGHT);
         expect(component.width).toEqual(CANVAS_MIN_WIDTH);
     });
 
     it(' should call the toolbarService onMouseEnter when mouseEnter', () => {
-        const event = {} as MouseEvent;
-        component.onMouseEnter(event);
+        component.onMouseEnter(mouseEvent);
         expect(toolbarServiceSpy.onMouseEnter).toHaveBeenCalled();
     });
 
     it(' should call the toolbarService onMouseLeave when mouseLeave', () => {
-        const event = {} as MouseEvent;
-        component.onMouseLeave(event);
+        component.onMouseLeave(mouseEvent);
         expect(toolbarServiceSpy.onMouseLeave).toHaveBeenCalled();
     });
 
     it(' should call the toolbarService onDoubleClick when doubleClick', () => {
-        const event = {} as MouseEvent;
-        component.onDoubleClick(event);
+        component.onDoubleClick(mouseEvent);
         expect(toolbarServiceSpy.onDoubleClick).toHaveBeenCalled();
     });
 
     it(' should call the toolbarService onClick when click', () => {
-        const event = {} as MouseEvent;
-        component.onClick(event);
+        component.onClick(mouseEvent);
         expect(toolbarServiceSpy.onClick).toHaveBeenCalled();
+    });
+
+    it(' onContextMenu should return false to prevent context menu from showing', () => {
+        const result = component.onContextMenu();
+        expect(result).toBeFalse();
     });
 
     it('onResize should set the width of preview canvas if its above or equal CANVAS_MIN_WIDTH and below width limit', () => {
@@ -274,7 +268,6 @@ describe('DrawingComponent', () => {
     });
 
     it('onResizeBothStart should call onResizeWidthStart and onResizeHeightStart', () => {
-        const mouseEvent = {} as MouseEvent;
         const spyResizeWidth = spyOn(component, 'onResizeWidthStart').and.callThrough();
         const spyResizeHeight = spyOn(component, 'onResizeHeightStart').and.callThrough();
         component.onResizeBothStart(mouseEvent);
