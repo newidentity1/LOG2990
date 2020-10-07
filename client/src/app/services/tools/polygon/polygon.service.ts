@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { ShapeTool } from '@app/classes/tool/shape-tool';
-import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
+import { PolygonProperties } from '@app/classes/tools-properties/polygon-properties';
 import { Vec2 } from '@app/classes/vec2';
-import { DASHED_SEGMENTS, MINIMUM_THICKNESS } from '@app/constants/constants';
+import { DASHED_SEGMENTS, MINIMUM_SIDES, MINIMUM_THICKNESS } from '@app/constants/constants';
 import { DrawingType } from '@app/enums/drawing-type.enum';
 import { MouseButton } from '@app/enums/mouse-button.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -19,10 +19,10 @@ export class PolygonService extends ShapeTool {
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
-        this.name = 'polygon';
+        this.name = 'Polygon';
         this.tooltip = 'Polygone(3)';
         this.iconName = 'change_history';
-        this.toolProperties = new BasicShapeProperties();
+        this.toolProperties = new PolygonProperties();
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -68,15 +68,15 @@ export class PolygonService extends ShapeTool {
         const radiusY = Math.abs(this.height / 2);
 
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        const polygonProperties = this.toolProperties as BasicShapeProperties;
+        const polygonProperties = this.toolProperties as PolygonProperties;
         ctx.beginPath();
         ctx.moveTo(this.pathStart.x, this.pathStart.y - radiusY);
 
-        const numberOfSides = 12;
+        const numberOfSides = polygonProperties.numberOfSides;
         const startingAngle = Math.PI / 2;
         const angle = (2 * Math.PI) / numberOfSides;
 
-        for (let i = 1; i < numberOfSides; ++i) {
+        for (let i = 1; i <= numberOfSides; ++i) {
             const currentAngle = i * angle + startingAngle;
             const pointX = this.pathStart.x + radiusX * Math.cos(currentAngle);
             const pointY = this.pathStart.y - radiusY * Math.sin(currentAngle);
@@ -95,6 +95,7 @@ export class PolygonService extends ShapeTool {
                 ctx.fill();
                 ctx.stroke();
         }
+        ctx.closePath();
 
         if (ctx === this.drawingService.previewCtx) {
             this.drawEllipsePerimeter(ctx);
@@ -124,9 +125,15 @@ export class PolygonService extends ShapeTool {
         this.drawingService.setThickness(value);
     }
 
+    setNumberOfSides(value: number | null): void {
+        value = value === null ? MINIMUM_SIDES : value;
+        const polygonProperties = this.toolProperties as PolygonProperties;
+        polygonProperties.numberOfSides = value;
+    }
+
     setTypeDrawing(value: string): void {
-        const rectangleProperties = this.toolProperties as BasicShapeProperties;
-        rectangleProperties.currentType = value;
+        const polygonProperties = this.toolProperties as PolygonProperties;
+        polygonProperties.currentType = value;
     }
 
     resetContext(): void {
