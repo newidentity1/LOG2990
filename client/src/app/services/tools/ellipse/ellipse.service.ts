@@ -15,12 +15,6 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
     providedIn: 'root',
 })
 export class EllipseService extends ShapeTool {
-    pathStart: Vec2;
-    width: number;
-    height: number;
-    shiftDown: boolean = false;
-    escapeDown: boolean = false;
-
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.name = 'Ellipse';
