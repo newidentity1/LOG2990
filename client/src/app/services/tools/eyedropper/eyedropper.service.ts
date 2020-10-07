@@ -11,7 +11,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
     providedIn: 'root',
 })
 export class EyedropperService extends Tool {
-    colorPreviewCtx: CanvasRenderingContext2D;
+    previewCircleCtx: CanvasRenderingContext2D;
     cursorCtx: CanvasRenderingContext2D;
 
     currentColor: Color;
@@ -68,11 +68,11 @@ export class EyedropperService extends Tool {
         const mousePosition = this.getPositionFromMouse(event);
         this.currentColor = this.getColorFromPosition(mousePosition);
 
-        this.drawingService.clearCanvas(this.colorPreviewCtx);
+        this.drawingService.clearCanvas(this.previewCircleCtx);
 
         // Code adapted from
         // https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Pixel_manipulation_with_canvas#Zooming_and_anti-aliasing
-        this.colorPreviewCtx.drawImage(
+        this.previewCircleCtx.drawImage(
             this.drawingService.canvas,
             Math.min(
                 Math.max(0, mousePosition.x - CONSTANTS.EYEDROPPER_PREVIEW_SCALE_SIZE / 2),

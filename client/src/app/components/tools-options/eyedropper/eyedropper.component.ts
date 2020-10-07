@@ -8,18 +8,18 @@ import { EyedropperService } from '@app/services/tools/eyedropper/eyedropper.ser
     styleUrls: ['./eyedropper.component.scss'],
 })
 export class EyedropperComponent implements AfterViewInit {
-    @ViewChild('colorPreviewCanvas', { static: false }) colorPreviewCanvas: ElementRef<HTMLCanvasElement>;
+    @ViewChild('previewCircleCanvas', { static: false }) previewCircleCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('cursorCanvas', { static: false }) cursorCanvas: ElementRef<HTMLCanvasElement>;
 
-    private colorPreviewCtx: CanvasRenderingContext2D;
+    private previewCircleCtx: CanvasRenderingContext2D;
     private cursorCtx: CanvasRenderingContext2D;
 
     constructor(private eyedropperService: EyedropperService) {}
 
     ngAfterViewInit(): void {
-        this.colorPreviewCtx = this.colorPreviewCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.previewCircleCtx = this.previewCircleCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.cursorCtx = this.cursorCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        this.eyedropperService.colorPreviewCtx = this.colorPreviewCtx;
+        this.eyedropperService.previewCircleCtx = this.previewCircleCtx;
         this.eyedropperService.cursorCtx = this.cursorCtx;
     }
 

@@ -1,4 +1,4 @@
 <div id="grid-container" [ngClass]="{ hidePreview: !isInCanvas() }">
-    <canvas #colorPreviewCanvas id="color-preview-canvas" [attr.width]="width" [attr.height]="height"></canvas>
+    <canvas #previewCircleCanvas id="preview-circle-canvas" [attr.width]="width" [attr.height]="height"></canvas>
     <canvas #cursorCanvas id="cursor-canvas" [attr.width]="width" [attr.height]="height"></canvas>
 </div>
