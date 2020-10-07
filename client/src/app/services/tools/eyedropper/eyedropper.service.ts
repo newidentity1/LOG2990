@@ -12,11 +12,13 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 })
 export class EyedropperService extends Tool {
     colorPreviewCtx: CanvasRenderingContext2D;
+    cursorCtx: CanvasRenderingContext2D;
 
     currentColor: Color;
 
     private leftMouseDown: boolean;
     private rightMouseDown: boolean;
+    private inCanvas: boolean;
 
     constructor(private colorPickerService: ColorPickerService, drawingService: DrawingService) {
         super(drawingService);
@@ -27,16 +29,27 @@ export class EyedropperService extends Tool {
         this.rightMouseDown = false;
     }
 
+    isInCanvas(): boolean {
+        return this.inCanvas;
+    }
+
+    onMouseEnter(event: MouseEvent): void {
+        this.inCanvas = true;
+        console.log('in');
+    }
+
+    onMouseLeave(event: MouseEvent): void {
+        this.inCanvas = false;
+        console.log('out');
+    }
+
     onMouseDown(event: MouseEvent): void {
         this.leftMouseDown = event.button === MouseButton.Left;
         this.rightMouseDown = event.button === MouseButton.Right;
-        if (this.leftMouseDown || this.rightMouseDown) {
-            this.drawPreview(event);
-        }
     }
 
     onMouseMove(event: MouseEvent): void {
-        if (this.leftMouseDown || this.rightMouseDown) {
+        if (this.inCanvas) {
             this.drawPreview(event);
         }
     }
@@ -76,6 +89,11 @@ export class EyedropperService extends Tool {
             CONSTANTS.EYEDROPPER_PREVIEW_CANVAS_WIDTH,
             CONSTANTS.EYEDROPPER_PREVIEW_CANVAS_HEIGHT,
         );
+
+        this.cursorCtx.strokeStyle = this.currentColor.toStringRGBA();
+        this.drawingService.clearCanvas(this.cursorCtx);
+        this.cursorCtx.lineWidth = 2;
+        this.cursorCtx.strokeRect(CONSTANTS.EYEDROPPER_PREVIEW_CANVAS_WIDTH / 2 - 10, CONSTANTS.EYEDROPPER_PREVIEW_CANVAS_HEIGHT / 2 - 10, 20, 20);
     }
 
     private getColorFromPosition(position: Vec2): Color {
@@ -86,7 +104,7 @@ export class EyedropperService extends Tool {
         color.green = rgbData[1];
         color.blue = rgbData[2];
         color.opacity = rgbData[CONSTANTS.IMAGE_DATA_OPACITY_INDEX] / CONSTANTS.MAX_COLOR_VALUE;
-        return color;
+        return color.opacity ? color : new Color(CONSTANTS.WHITE);
     }
 
     resetContext(): void {

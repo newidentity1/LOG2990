@@ -106,7 +106,7 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit {
         this.toolbarService.onClick(event);
     }
 
-    onRightClick(event: MouseEvent): boolean {
+    onRightClick(): boolean {
         return false;
     }
 
