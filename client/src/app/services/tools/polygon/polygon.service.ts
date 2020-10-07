@@ -44,6 +44,7 @@ export class PolygonService extends ShapeTool {
         if (this.mouseDown) {
             this.computeDimensions(this.currentMousePosition);
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.setThickness(this.toolProperties.thickness);
             this.draw(this.drawingService.baseCtx);
         }
         this.mouseDown = false;
@@ -62,6 +63,7 @@ export class PolygonService extends ShapeTool {
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             const previewCtx = this.drawingService.previewCtx;
             this.drawingService.clearCanvas(previewCtx);
+            this.setThickness(this.toolProperties.thickness);
             this.draw(previewCtx);
             this.ellipseService.drawEllipse(previewCtx, 0);
         }
@@ -126,12 +128,6 @@ export class PolygonService extends ShapeTool {
         const min = Math.min(Math.abs(this.width), Math.abs(this.height));
         this.width = min * this.signOf(this.width);
         this.height = min * this.signOf(this.height);
-    }
-
-    setThickness(value: number | null): void {
-        value = value === null ? 1 : value;
-        this.toolProperties.thickness = value;
-        this.drawingService.setThickness(value);
     }
 
     setNumberOfSides(value: number | null): void {
