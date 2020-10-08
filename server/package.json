@@ -42,6 +42,12 @@
         "sourceMap": true,
         "instrument": true
     },
+    "config": {
+        "mongodbMemoryServer": {
+            "debug": "1",
+            "version": "4.4.1"
+        }
+    },
     "dependencies": {
         "body-parser": "^1.19.0",
         "cookie-parser": "1.4.5",

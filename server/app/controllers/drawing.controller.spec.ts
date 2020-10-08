@@ -13,7 +13,7 @@ describe('DrawingController', () => {
     let app: Express.Application;
     let drawing: Drawing;
     beforeEach(async () => {
-        drawing = { id: '123', name: 'test', tags: ['test', 'first'], url: '/' };
+        drawing = { _id: '123', name: 'test', tags: ['test', 'first'], url: '/' };
         const [container, sandbox] = await testingContainer();
         container.rebind(TYPES.DrawingService).toConstantValue({
             getDrawing: sandbox.stub().resolves(drawing),
@@ -27,7 +27,7 @@ describe('DrawingController', () => {
 
     it('should return drawing from drawing service on valid get request with id ', async () => {
         return supertest(app)
-            .get('/api/drawing/' + drawing.id)
+            .get('/api/drawing/' + drawing._id)
             .expect(HTTP_STATUS_OK)
             .then((response: any) => {
                 expect(response.body).to.deep.equal(drawing);
@@ -69,7 +69,7 @@ describe('DrawingController', () => {
 
     it('should add a drawing in the database on valid post request to root with a drawing', async () => {
         const newDrawing: Drawing = drawing;
-        newDrawing.id = '124';
+        newDrawing._id = '124';
         return supertest(app).post('/api/drawing/').send(newDrawing).set('Accept', 'application/json').expect(HTTP_STATUS_CREATED);
     });
 
@@ -89,7 +89,7 @@ describe('DrawingController', () => {
 
     it('should remove a drawing in the database on valid delete request to root with id', async () => {
         return supertest(app)
-            .delete('/api/drawing/' + drawing.id)
+            .delete('/api/drawing/' + drawing._id)
             .then(() => {
                 expect(HTTP_STATUS_NO_CONTENT);
             });
