@@ -69,6 +69,24 @@ describe('Drawing service', () => {
         });
     });
 
+    // it('should throw an error', async () => {
+    //     const mockDbCollection = {
+    //         find() {
+    //             return {
+    //                 toArray() {
+    //                     throw new Error("Les dessins n'ont pas pu être récupérés!");
+    //                 },
+    //             };
+    //         },
+    //     };
+    //     sinon.stub(drawingService, 'collection').returns(mockDbCollection);
+    //     try {
+    //         await drawingService.getDrawings();
+    //     } catch (error) {
+    //         expect(error.message).to.equal("Les dessins n'ont pas pu être récupérés");
+    //     }
+    // });
+
     // it('should return an error when sending an invalid id', (done: Mocha.Done) => {
     //     drawingService.collection.find();
     //     drawingService.getDrawings().catch((err) => {

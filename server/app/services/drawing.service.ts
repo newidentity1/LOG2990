@@ -41,7 +41,7 @@ export class DrawingService {
                 return drawings;
             })
             .catch((error) => {
-                throw new Error("Les dessins n'ont pas pu être récupérés");
+                throw new Error("Les dessins n'ont pas pu être récupérés!");
             });
     }
 
