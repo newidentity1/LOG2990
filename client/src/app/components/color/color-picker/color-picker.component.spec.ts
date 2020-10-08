@@ -6,6 +6,7 @@ import { Color } from '@app/classes/color/color';
 import { BLACK, MAX_RECENT_COLORS_SIZE, WHITE } from '@app/constants/constants';
 import { MouseButton } from '@app/enums/mouse-button.enum';
 import { ColorPickerService } from '@app/services/color-picker/color-picker.service';
+import { BehaviorSubject } from 'rxjs';
 import { ColorPickerComponent } from './color-picker.component';
 
 describe('ColorPickerComponent', () => {
@@ -34,8 +35,8 @@ describe('ColorPickerComponent', () => {
         }).compileComponents();
 
         colorPickerServiceSpy = TestBed.inject(ColorPickerService) as jasmine.SpyObj<ColorPickerService>;
-        colorPickerServiceSpy.primaryColor = new Color(BLACK);
-        colorPickerServiceSpy.secondaryColor = new Color(WHITE);
+        colorPickerServiceSpy.primaryColor = new BehaviorSubject<Color>(new Color(BLACK));
+        colorPickerServiceSpy.secondaryColor = new BehaviorSubject<Color>(new Color(WHITE));
         colorPickerServiceSpy.selectedColor = new Color('FF0000');
         colorPickerServiceSpy.recentColors = [];
         for (let index = 0; index < MAX_RECENT_COLORS_SIZE; index++) {
@@ -87,7 +88,7 @@ describe('ColorPickerComponent', () => {
         component['data'].isSecondaryColorPicker = false;
         const returnedColor = component.getPreviousColor();
         expect(returnedColor).toBeTruthy();
-        expect(returnedColor).toEqual(colorPickerServiceSpy.primaryColor);
+        expect(returnedColor).toEqual(colorPickerServiceSpy.primaryColor.getValue());
     });
 
     it(' getPreviousColor should return secondary color if isSecondaryColorPicker is true', () => {
@@ -95,7 +96,7 @@ describe('ColorPickerComponent', () => {
         component['data'].isSecondaryColorPicker = true;
         const returnedColor = component.getPreviousColor();
         expect(returnedColor).toBeTruthy();
-        expect(returnedColor).toEqual(colorPickerServiceSpy.secondaryColor);
+        expect(returnedColor).toEqual(colorPickerServiceSpy.secondaryColor.getValue());
     });
 
     it(' onDialogClose should call confirmSelectedColor with false if isSecondaryColorPicker is false', () => {

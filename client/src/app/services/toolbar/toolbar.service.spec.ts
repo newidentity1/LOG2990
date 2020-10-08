@@ -5,6 +5,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { BrushService } from '@app/services/tools/brush/brush.service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
 import { EraseService } from '@app/services/tools/erase/erase.service';
+import { EyedropperService } from '@app/services/tools/eyedropper/eyedropper.service';
 import { LineService } from '@app/services/tools/line/line.service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle.service';
@@ -18,6 +19,7 @@ describe('ToolbarService', () => {
     let ellipseServiceSpy: jasmine.SpyObj<EllipseService>;
     let lineServiceSpy: jasmine.SpyObj<LineService>;
     let eraseServiceSpy: jasmine.SpyObj<EraseService>;
+    let eyedropperService: jasmine.SpyObj<EyedropperService>;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
 
     beforeEach(() => {
@@ -42,6 +44,7 @@ describe('ToolbarService', () => {
         ellipseServiceSpy = jasmine.createSpyObj('EllipseService', ['onKeyDown']);
         lineServiceSpy = jasmine.createSpyObj('LineService', ['onKeyDown']);
         eraseServiceSpy = jasmine.createSpyObj('LineService', ['onKeyDown']);
+        eyedropperService = jasmine.createSpyObj('EyedropperService', ['onKeyDown']);
         drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
 
         TestBed.configureTestingModule({
@@ -52,6 +55,7 @@ describe('ToolbarService', () => {
                 { provide: EllipseService, useValue: ellipseServiceSpy },
                 { provide: LineService, useValue: lineServiceSpy },
                 { provide: EraseService, useValue: eraseServiceSpy },
+                { provide: EyedropperService, useValue: eyedropperService },
                 { provide: DrawingService, useValue: drawingServiceSpy },
             ],
         });
@@ -62,6 +66,7 @@ describe('ToolbarService', () => {
         ellipseServiceSpy = TestBed.inject(EllipseService) as jasmine.SpyObj<EllipseService>;
         lineServiceSpy = TestBed.inject(LineService) as jasmine.SpyObj<LineService>;
         eraseServiceSpy = TestBed.inject(EraseService) as jasmine.SpyObj<EraseService>;
+        eyedropperService = TestBed.inject(EyedropperService) as jasmine.SpyObj<EyedropperService>;
         drawingServiceSpy = TestBed.inject(DrawingService) as jasmine.SpyObj<DrawingService>;
     });
 
@@ -69,9 +74,26 @@ describe('ToolbarService', () => {
         expect(service).toBeTruthy();
     });
 
+    it('initializeColors should set primary and secondary colors ', () => {
+        // tslint:disable-next-line:no-any / reason: spying on function
+        const setColorsSpy = spyOn<any>(service, 'setColors').and.callThrough();
+        service.initializeColors();
+        expect(setColorsSpy).toHaveBeenCalled();
+        expect(service.primaryColor).toBeTruthy();
+        expect(service.secondaryColor).toBeTruthy();
+    });
+
     it('getTools should return an array of tool services ', () => {
         const tools = service.getTools();
-        expect(tools).toEqual([pencilServiceSpy, brushServiceSpy, rectangleServiceSpy, ellipseServiceSpy, lineServiceSpy, eraseServiceSpy]);
+        expect(tools).toEqual([
+            pencilServiceSpy,
+            brushServiceSpy,
+            rectangleServiceSpy,
+            ellipseServiceSpy,
+            lineServiceSpy,
+            eraseServiceSpy,
+            eyedropperService,
+        ]);
     });
 
     it('getTool should return a Tool if the key exists ', () => {
