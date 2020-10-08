@@ -91,6 +91,8 @@ export class PolygonService extends ShapeTool {
         const numberOfSides = polygonProperties.numberOfSides;
         const startingAngle = Math.PI / 2;
         const angle = (2 * Math.PI) / numberOfSides;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
 
         for (let i = 1; i <= numberOfSides; ++i) {
             const currentAngle = i * angle + startingAngle;
