@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ShapeTool } from '@app/classes/tool/shape-tool';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
-import { Vec2 } from '@app/classes/vec2';
 import { DASHED_SEGMENTS, MINIMUM_THICKNESS } from '@app/constants/constants';
 import { DrawingType } from '@app/enums/drawing-type.enum';
 import { MouseButton } from '@app/enums/mouse-button.enum';
@@ -63,10 +62,6 @@ export class EllipseService extends ShapeTool {
         if (this.mouseDown) this.drawPreview();
     }
 
-    signOf(num: number): number {
-        return Math.abs(num) / num;
-    }
-
     transformToCircle(): void {
         const min = Math.min(Math.abs(this.width), Math.abs(this.height));
         this.width = min * this.signOf(this.width);
@@ -98,14 +93,6 @@ export class EllipseService extends ShapeTool {
         }
     }
 
-    adjustThickness(ellipseProperties: BasicShapeProperties, radius: Vec2): number {
-        return ellipseProperties.currentType === DrawingType.Fill
-            ? MINIMUM_THICKNESS
-            : this.toolProperties.thickness < Math.min(Math.abs(radius.x), Math.abs(radius.y))
-            ? this.toolProperties.thickness
-            : Math.min(Math.abs(radius.x), Math.abs(radius.y));
-    }
-
     /**
      * @description Draws the ellipse with the correct thickness and prioritizes
      * the dimensions of the guide perimeter (boxGuide) which follow the mouse
@@ -119,15 +106,19 @@ export class EllipseService extends ShapeTool {
             return;
         }
 
-        const radius: Vec2 = { x: this.width / 2, y: this.height / 2 };
         const ellipseProperties = this.toolProperties as BasicShapeProperties;
-        const thickness = this.adjustThickness(ellipseProperties, radius);
-        const dx = (thickness / 2) * this.signOf(this.width);
-        const dy = (thickness / 2) * this.signOf(this.height);
+        this.adjustThickness();
 
-        this.drawingService.setThickness(thickness);
         ctx.beginPath();
-        ctx.ellipse(this.pathStart.x + radius.x, this.pathStart.y + radius.y, Math.abs(radius.x - dx), Math.abs(radius.y - dy), 0, 0, 2 * Math.PI);
+        ctx.ellipse(
+            this.pathStart.x + this.width / 2,
+            this.pathStart.y + this.height / 2,
+            Math.abs(this.radius.x),
+            Math.abs(this.radius.y),
+            0,
+            0,
+            2 * Math.PI,
+        );
 
         switch (ellipseProperties.currentType) {
             case DrawingType.Stroke:
