@@ -134,9 +134,4 @@ export class ColorPickerService extends Tool {
             this.recentColors.unshift(color);
         }
     }
-
-    // not used
-    resetContext(): void {
-        throw new Error('Method not implemented.');
-    }
 }
