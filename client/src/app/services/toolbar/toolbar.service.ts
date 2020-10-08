@@ -10,6 +10,7 @@ import { EraseService } from '@app/services/tools/erase/erase.service';
 import { EyedropperService } from '@app/services/tools/eyedropper/eyedropper.service';
 import { LineService } from '@app/services/tools/line/line.service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
+import { RectangleSelectService } from '@app/services/tools/rectangle-select/rectangle-select.service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle.service';
 
 export enum toolsIndex {
@@ -20,6 +21,7 @@ export enum toolsIndex {
     lines,
     eraser,
     eyedropper,
+    rectangleSelect,
 }
 
 @Injectable({
@@ -40,10 +42,20 @@ export class ToolbarService {
         protected lineService: LineService,
         protected eraseService: EraseService,
         protected eyedropperService: EyedropperService,
+        protected rectangleSelectService: RectangleSelectService,
         protected drawingService: DrawingService,
         protected colorPickerService: ColorPickerService,
     ) {
-        this.tools = [pencilService, brushService, rectangleService, ellipseService, lineService, eraseService, eyedropperService];
+        this.tools = [
+            pencilService,
+            brushService,
+            rectangleService,
+            ellipseService,
+            lineService,
+            eraseService,
+            eyedropperService,
+            rectangleSelectService,
+        ];
         this.currentTool = this.tools[0];
         this.keyShortcuts
             .set(KeyShortcut.Pencil, pencilService)
@@ -52,7 +64,8 @@ export class ToolbarService {
             .set(KeyShortcut.Ellipse, ellipseService)
             .set(KeyShortcut.Line, lineService)
             .set(KeyShortcut.Eraser, eraseService)
-            .set(KeyShortcut.Eyedropper, eyedropperService);
+            .set(KeyShortcut.Eyedropper, eyedropperService)
+            .set(KeyShortcut.RectangleSelect, rectangleSelectService);
     }
 
     initializeColors(): void {
