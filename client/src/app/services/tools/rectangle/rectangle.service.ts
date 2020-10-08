@@ -32,7 +32,7 @@ export class RectangleService extends ShapeTool {
             this.computeDimensions();
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.mouseDown = false;
-            this.drawRectangle(this.drawingService.baseCtx);
+            this.draw(this.drawingService.baseCtx);
         }
         this.mouseDown = false;
     }
@@ -74,7 +74,7 @@ export class RectangleService extends ShapeTool {
     private drawPreview(): void {
         this.computeDimensions();
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        this.drawRectangle(this.drawingService.previewCtx);
+        this.draw(this.drawingService.previewCtx);
     }
 
     /**
@@ -84,7 +84,7 @@ export class RectangleService extends ShapeTool {
      * inside the perimeter, the ctx.lineWidth is assigned to the half of the
      * smallest of its sides.
      */
-    drawRectangle(ctx: CanvasRenderingContext2D): void {
+    draw(ctx: CanvasRenderingContext2D): void {
         if (this.escapeDown) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             return;

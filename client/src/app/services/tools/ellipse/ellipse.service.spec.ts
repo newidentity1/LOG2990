@@ -118,7 +118,7 @@ describe('EllipseService', () => {
         const properties = service.toolProperties as BasicShapeProperties;
         properties.currentType = DrawingType.Fill;
         const spyFill = spyOn(baseCtxStub, 'fill');
-        service.drawEllipse(baseCtxStub);
+        service.draw(baseCtxStub);
         expect(spyFill).toHaveBeenCalled();
     });
 
@@ -126,7 +126,7 @@ describe('EllipseService', () => {
         const properties = service.toolProperties as BasicShapeProperties;
         properties.currentType = DrawingType.Stroke;
         const spyStroke = spyOn(baseCtxStub, 'stroke');
-        service.drawEllipse(baseCtxStub);
+        service.draw(baseCtxStub);
         expect(spyStroke).toHaveBeenCalled();
     });
 
@@ -135,7 +135,7 @@ describe('EllipseService', () => {
         properties.currentType = DrawingType.FillAndStroke;
         const spyStroke = spyOn(baseCtxStub, 'stroke');
         const spyFill = spyOn(baseCtxStub, 'fill');
-        service.drawEllipse(baseCtxStub);
+        service.draw(baseCtxStub);
         expect(spyStroke).toHaveBeenCalled();
         expect(spyFill).toHaveBeenCalled();
     });
@@ -257,7 +257,7 @@ describe('EllipseService', () => {
         const value = 50;
         const radius: Vec2 = { x: 25, y: 25 };
         service.setThickness(value);
-        service.drawEllipse(baseCtxStub);
+        service.draw(baseCtxStub);
 
         expect(service.adjustThickness(properties, radius)).toEqual(radius.x);
     });
@@ -268,7 +268,7 @@ describe('EllipseService', () => {
         const value = 10;
         const radius: Vec2 = { x: 25, y: 25 };
         service.setThickness(value);
-        service.drawEllipse(baseCtxStub);
+        service.draw(baseCtxStub);
 
         expect(service.adjustThickness(properties, radius)).toEqual(value);
     });
@@ -279,7 +279,7 @@ describe('EllipseService', () => {
         const value = 50;
         const radius: Vec2 = { x: 25, y: 25 };
         service.setThickness(value);
-        service.drawEllipse(baseCtxStub);
+        service.draw(baseCtxStub);
 
         expect(service.adjustThickness(properties, radius)).toEqual(1);
     });
@@ -288,7 +288,7 @@ describe('EllipseService', () => {
         service.escapeDown = true;
         const spyFill = spyOn(baseCtxStub, 'fill');
         const spyStroke = spyOn(baseCtxStub, 'stroke');
-        service.drawEllipse(baseCtxStub);
+        service.draw(baseCtxStub);
         expect(spyFill).not.toHaveBeenCalled();
         expect(spyStroke).not.toHaveBeenCalled();
     });

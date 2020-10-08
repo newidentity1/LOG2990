@@ -38,7 +38,7 @@ export class EllipseService extends ShapeTool {
             this.computeDimensions();
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.mouseDown = false;
-            this.drawEllipse(this.drawingService.baseCtx, DASHED_SEGMENTS);
+            this.draw(this.drawingService.baseCtx, DASHED_SEGMENTS);
         }
         this.mouseDown = false;
     }
@@ -80,7 +80,7 @@ export class EllipseService extends ShapeTool {
     private drawPreview(): void {
         this.computeDimensions();
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        this.drawEllipse(this.drawingService.previewCtx, DASHED_SEGMENTS);
+        this.draw(this.drawingService.previewCtx, DASHED_SEGMENTS);
     }
 
     private drawBoxGuide(ctx: CanvasRenderingContext2D, dashedSegments: number): void {
@@ -100,7 +100,7 @@ export class EllipseService extends ShapeTool {
      * inside the perimeter, the ctx.lineWidth is assigned to the half of the
      * smallest of its sides.
      */
-    drawEllipse(ctx: CanvasRenderingContext2D, dashedSegments: number): void {
+    draw(ctx: CanvasRenderingContext2D, dashedSegments: number): void {
         if (this.escapeDown) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             return;
