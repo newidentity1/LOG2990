@@ -85,10 +85,12 @@ export class PolygonService extends ShapeTool {
 
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         const polygonProperties = this.toolProperties as PolygonProperties;
-        ctx.beginPath();
-        ctx.moveTo(centerX, centerY - radiusY);
-
+        const thickness = polygonProperties.thickness;
         const numberOfSides = polygonProperties.numberOfSides;
+        ctx.beginPath();
+        const thicknessRatio = numberOfSides / (numberOfSides / 2);
+        ctx.moveTo(centerX, centerY - (radiusY - thickness / thicknessRatio));
+
         const startingAngle = Math.PI / 2;
         const angle = (2 * Math.PI) / numberOfSides;
         ctx.lineCap = 'round';
@@ -96,8 +98,8 @@ export class PolygonService extends ShapeTool {
 
         for (let i = 1; i <= numberOfSides; ++i) {
             const currentAngle = i * angle + startingAngle;
-            const pointX = centerX + radiusX * Math.cos(currentAngle);
-            const pointY = centerY - radiusY * Math.sin(currentAngle);
+            const pointX = centerX + (radiusX - thickness / thicknessRatio) * Math.cos(currentAngle);
+            const pointY = centerY - (radiusY - thickness / thicknessRatio) * Math.sin(currentAngle);
 
             ctx.lineTo(pointX, pointY);
         }
