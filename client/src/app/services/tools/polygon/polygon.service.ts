@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { ShapeTool } from '@app/classes/tool/shape-tool';
+import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 import { PolygonProperties } from '@app/classes/tools-properties/polygon-properties';
 import { Vec2 } from '@app/classes/vec2';
-import { DASHED_SEGMENTS, MINIMUM_SIDES } from '@app/constants/constants';
+import { DASHED_SEGMENTS, MINIMUM_SIDES, MINIMUM_THICKNESS } from '@app/constants/constants';
 import { DrawingType } from '@app/enums/drawing-type.enum';
 import { MouseButton } from '@app/enums/mouse-button.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -73,22 +74,34 @@ export class PolygonService extends ShapeTool {
         this.escapeDown = event.key === 'Escape';
     }
 
+    // refactor apres les changements de Brando
+    adjustThickness(polygonProperties: BasicShapeProperties, radius: Vec2): number {
+        return polygonProperties.currentType === DrawingType.Fill
+            ? MINIMUM_THICKNESS
+            : this.toolProperties.thickness < Math.min(Math.abs(radius.x), Math.abs(radius.y))
+            ? this.toolProperties.thickness
+            : Math.min(Math.abs(radius.x), Math.abs(radius.y));
+    }
+
     draw(ctx: CanvasRenderingContext2D): void {
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
         if (this.escapeDown) {
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
             return;
         }
+
         const radiusX = Math.abs(this.width / 2);
         const radiusY = Math.abs(this.height / 2);
+
+        const polygonProperties = this.toolProperties as PolygonProperties;
+        const thickness = this.adjustThickness(this.toolProperties as BasicShapeProperties, { x: radiusX, y: radiusY } as Vec2);
+        this.drawingService.setThickness(thickness);
+        const numberOfSides = polygonProperties.numberOfSides;
+        const thicknessRatio = numberOfSides / (numberOfSides / 2);
+
         const centerX = this.pathStart.x + radiusX * this.signOf(this.width);
         const centerY = this.pathStart.y + radiusY * this.signOf(this.height);
 
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        const polygonProperties = this.toolProperties as PolygonProperties;
-        const thickness = polygonProperties.thickness;
-        const numberOfSides = polygonProperties.numberOfSides;
         ctx.beginPath();
-        const thicknessRatio = numberOfSides / (numberOfSides / 2);
         ctx.moveTo(centerX, centerY - (radiusY - thickness / thicknessRatio));
 
         const startingAngle = Math.PI / 2;
