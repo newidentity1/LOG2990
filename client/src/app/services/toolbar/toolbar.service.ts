@@ -5,6 +5,7 @@ import { KeyShortcut } from '@app/enums/key-shortcuts.enum';
 import { ColorPickerService } from '@app/services/color-picker/color-picker.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { BrushService } from '@app/services/tools/brush/brush.service';
+import { EllipseSelectService } from '@app/services/tools/ellipse-select/ellipse-select.service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
 import { EraseService } from '@app/services/tools/erase/erase.service';
 import { EyedropperService } from '@app/services/tools/eyedropper/eyedropper.service';
@@ -43,6 +44,7 @@ export class ToolbarService {
         protected eraseService: EraseService,
         protected eyedropperService: EyedropperService,
         protected rectangleSelectService: RectangleSelectService,
+        protected ellipseSelectService: EllipseSelectService,
         protected drawingService: DrawingService,
         protected colorPickerService: ColorPickerService,
     ) {
@@ -55,6 +57,7 @@ export class ToolbarService {
             eraseService,
             eyedropperService,
             rectangleSelectService,
+            ellipseSelectService,
         ];
         this.currentTool = this.tools[0];
         this.keyShortcuts
@@ -65,7 +68,8 @@ export class ToolbarService {
             .set(KeyShortcut.Line, lineService)
             .set(KeyShortcut.Eraser, eraseService)
             .set(KeyShortcut.Eyedropper, eyedropperService)
-            .set(KeyShortcut.RectangleSelect, rectangleSelectService);
+            .set(KeyShortcut.RectangleSelect, rectangleSelectService)
+            .set(KeyShortcut.EllipseSelect, ellipseSelectService);
     }
 
     initializeColors(): void {

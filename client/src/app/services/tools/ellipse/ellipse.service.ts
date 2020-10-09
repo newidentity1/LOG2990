@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ShapeTool } from '@app/classes/tool/shape-tool';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 import { Vec2 } from '@app/classes/vec2';
-import { DASHED_SEGMENTS, MINIMUM_THICKNESS } from '@app/constants/constants';
+import { DASHED_SEGMENTS, MINIMUM_THICKNESS, SELECTION_BOX_THICKNESS } from '@app/constants/constants';
 import { DrawingType } from '@app/enums/drawing-type.enum';
 import { MouseButton } from '@app/enums/mouse-button.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -19,7 +19,8 @@ export class EllipseService extends ShapeTool {
     width: number;
     height: number;
     shiftDown: boolean = false;
-    escapeDown: boolean = false;
+    // escapeDown: boolean = false;
+    currentMousePosition: Vec2;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
@@ -34,31 +35,35 @@ export class EllipseService extends ShapeTool {
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
         if (this.mouseDown) {
-            this.escapeDown = false;
+            // this.escapeDown = false;
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.pathStart = this.mouseDownCoord;
         }
     }
 
-    onMouseUp(): void {
+    onMouseUp(event: MouseEvent): void {
         if (this.mouseDown) {
             this.computeDimensions();
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.mouseDown = false;
             this.drawEllipse(this.drawingService.baseCtx);
         }
         this.mouseDown = false;
     }
 
     onMouseMove(event: MouseEvent): void {
+        this.currentMousePosition = this.getPositionFromMouse(event);
         if (this.mouseDown) {
-            this.mouseDownCoord = this.getPositionFromMouse(event);
             this.drawPreview();
         }
     }
 
     onKeyDown(event: KeyboardEvent): void {
-        this.escapeDown = event.key === 'Escape';
+        // this.escapeDown = event.key === 'Escape';
+        if (event.key === 'Escape') {
+            this.mouseDown = false;
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        }
+
         this.shiftDown = event.key === 'Shift';
 
         if (this.mouseDown) this.drawPreview();
@@ -80,8 +85,8 @@ export class EllipseService extends ShapeTool {
     }
 
     computeDimensions(): void {
-        this.width = this.mouseDownCoord.x - this.pathStart.x;
-        this.height = this.mouseDownCoord.y - this.pathStart.y;
+        this.width = this.currentMousePosition.x - this.pathStart.x;
+        this.height = this.currentMousePosition.y - this.pathStart.y;
 
         if (this.shiftDown) {
             this.transformToCircle();
@@ -105,9 +110,9 @@ export class EllipseService extends ShapeTool {
         this.drawEllipse(this.drawingService.previewCtx);
     }
 
-    private drawBoxGuide(ctx: CanvasRenderingContext2D): void {
+    protected drawBoxGuide(ctx: CanvasRenderingContext2D): void {
         if (this.mouseDown) {
-            ctx.lineWidth = MINIMUM_THICKNESS;
+            ctx.lineWidth = SELECTION_BOX_THICKNESS;
 
             ctx.setLineDash([DASHED_SEGMENTS]);
             ctx.beginPath();
@@ -132,10 +137,10 @@ export class EllipseService extends ShapeTool {
      * smallest of its sides.
      */
     drawEllipse(ctx: CanvasRenderingContext2D): void {
-        if (this.escapeDown) {
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            return;
-        }
+        // if (this.escapeDown) {
+        //     this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        //     return;
+        // }
 
         const radius: Vec2 = { x: this.width / 2, y: this.height / 2 };
         const ellipseProperties = this.toolProperties as BasicShapeProperties;
@@ -165,7 +170,7 @@ export class EllipseService extends ShapeTool {
     resetContext(): void {
         this.mouseDown = false;
         this.shiftDown = false;
-        this.escapeDown = false;
+        // this.escapeDown = false;
         this.setThickness(this.toolProperties.thickness);
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
     }
