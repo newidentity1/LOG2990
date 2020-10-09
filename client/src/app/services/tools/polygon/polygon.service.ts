@@ -120,6 +120,8 @@ export class PolygonService extends ShapeTool {
         if (ctx === this.drawingService.previewCtx) {
             ctx.setLineDash([DASHED_SEGMENTS]);
         }
+        ctx.lineCap = 'butt';
+        ctx.lineJoin = 'miter';
     }
 
     signOf(num: number): number {
