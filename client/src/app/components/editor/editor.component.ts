@@ -1,43 +1,66 @@
-import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Tool } from '@app/classes/tool/tool';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants/constants';
+import { ShortcutService } from '@app/services/shortcut/shortcut.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
     selector: 'app-editor',
     templateUrl: './editor.component.html',
     styleUrls: ['./editor.component.scss'],
 })
-export class EditorComponent implements OnInit {
+export class EditorComponent implements OnInit, OnDestroy {
     @ViewChild('drawingContainer', { static: true }) drawingContainer: ElementRef;
 
     @ViewChild(SidebarComponent) toolbarRef: SidebarComponent;
 
     height: number = DEFAULT_HEIGHT;
     width: number = DEFAULT_WIDTH;
-    isCtrlDown: boolean = false;
 
     dimensionsUpdatedSubject: BehaviorSubject<number[]> = new BehaviorSubject([this.width, this.height]);
 
-    constructor(private toolbarService: ToolbarService) {}
+    private destroyedNotifier: Subject<void> = new Subject(); // used to unsubscribe from shortcuts
+
+    constructor(private shortcutService: ShortcutService, private toolbarService: ToolbarService) {}
 
     ngOnInit(): void {
         this.computeDimensionsDrawingContainer();
+
+        this.toolbarService.keyShortcuts.forEach((tool: Tool, shortcut: string) => {
+            this.shortcutService
+                .addShortcut(shortcut)
+                .pipe(takeUntil(this.destroyedNotifier))
+                .subscribe(() => {
+                    this.toolbarService.changeTool(tool);
+                });
+        });
+
+        this.shortcutService
+            .addShortcut('control.o')
+            .pipe(takeUntil(this.destroyedNotifier))
+            .subscribe(() => {
+                this.toolbarRef.createNewDrawing();
+            });
+        this.shortcutService
+            .addShortcut('control.a')
+            .pipe(takeUntil(this.destroyedNotifier))
+            .subscribe(() => {
+                this.toolbarRef.createNewDrawing();
+            });
+    }
+
+    ngOnDestroy(): void {
+        this.destroyedNotifier.next();
+        this.destroyedNotifier.complete();
     }
 
     @HostListener('keydown', ['$event'])
     onKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
-        if (this.isCtrlDown && event.key === 'o') {
-            this.toolbarRef.createNewDrawing();
-        }
-        if (event.key === 'Control') {
-            this.isCtrlDown = true;
-        }
-        // Send the event to toolbar
         this.toolbarService.onKeyDown(event);
-        this.isCtrlDown = event.key === 'Control';
     }
 
     @HostListener('keypress', ['$event'])
