@@ -5,6 +5,7 @@ import { KeyShortcut } from '@app/enums/key-shortcuts.enum';
 import { ColorPickerService } from '@app/services/color-picker/color-picker.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { BrushService } from '@app/services/tools/brush/brush.service';
+import { BucketService } from '@app/services/tools/bucket/bucket.service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
 import { EraseService } from '@app/services/tools/erase/erase.service';
 import { EyedropperService } from '@app/services/tools/eyedropper/eyedropper.service';
@@ -42,8 +43,9 @@ export class ToolbarService {
         protected eyedropperService: EyedropperService,
         protected drawingService: DrawingService,
         protected colorPickerService: ColorPickerService,
+        protected bucketService: BucketService,
     ) {
-        this.tools = [pencilService, brushService, rectangleService, ellipseService, lineService, eraseService, eyedropperService];
+        this.tools = [pencilService, brushService, rectangleService, ellipseService, lineService, eraseService, eyedropperService, bucketService];
         this.currentTool = this.tools[0];
         this.keyShortcuts
             .set(KeyShortcut.Pencil, pencilService)
