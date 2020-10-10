@@ -4,8 +4,7 @@ import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants/constants';
 import { ShortcutService } from '@app/services/shortcut/shortcut.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
-import { BehaviorSubject, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-editor',
@@ -21,40 +20,19 @@ export class EditorComponent implements OnInit, OnDestroy {
     width: number = DEFAULT_WIDTH;
 
     dimensionsUpdatedSubject: BehaviorSubject<number[]> = new BehaviorSubject([this.width, this.height]);
-
-    private destroyedNotifier: Subject<void> = new Subject(); // used to unsubscribe from shortcuts
+    private subscribedShortcuts: Subscription[] = [];
 
     constructor(private shortcutService: ShortcutService, private toolbarService: ToolbarService) {}
 
     ngOnInit(): void {
         this.computeDimensionsDrawingContainer();
-
-        this.toolbarService.keyShortcuts.forEach((tool: Tool, shortcut: string) => {
-            this.shortcutService
-                .addShortcut(shortcut)
-                .pipe(takeUntil(this.destroyedNotifier))
-                .subscribe(() => {
-                    this.toolbarService.changeTool(tool);
-                });
-        });
-
-        this.shortcutService
-            .addShortcut('control.o')
-            .pipe(takeUntil(this.destroyedNotifier))
-            .subscribe(() => {
-                this.toolbarRef.createNewDrawing();
-            });
-        this.shortcutService
-            .addShortcut('control.a')
-            .pipe(takeUntil(this.destroyedNotifier))
-            .subscribe(() => {
-                this.toolbarRef.createNewDrawing();
-            });
+        this.initializeShortcuts();
     }
 
     ngOnDestroy(): void {
-        this.destroyedNotifier.next();
-        this.destroyedNotifier.complete();
+        this.subscribedShortcuts.forEach((subscribedShortcut: Subscription) => {
+            subscribedShortcut.unsubscribe();
+        });
     }
 
     @HostListener('keydown', ['$event'])
@@ -82,5 +60,21 @@ export class EditorComponent implements OnInit, OnDestroy {
         const widthString = getComputedStyle(this.drawingContainer.nativeElement).width;
         this.width = +widthString.substring(0, widthString.length - 2);
         this.dimensionsUpdatedSubject.next([this.width, this.height]);
+    }
+
+    initializeShortcuts(): void {
+        this.toolbarService.keyShortcuts.forEach((tool: Tool, shortcut: string) => {
+            this.subscribedShortcuts.push(
+                this.shortcutService.addShortcut(shortcut).subscribe(() => {
+                    this.toolbarService.changeTool(tool);
+                }),
+            );
+        });
+
+        this.subscribedShortcuts.push(
+            this.shortcutService.addShortcut('control.o').subscribe(() => {
+                this.toolbarRef.createNewDrawing();
+            }),
+        );
     }
 }

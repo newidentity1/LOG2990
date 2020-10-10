@@ -19,11 +19,7 @@ export class ShortcutService {
                 }
             };
 
-            const dispose = this.eventManager.addGlobalEventListener('document', `keydown.${keys}`, handler);
-
-            return () => {
-                dispose();
-            };
+            this.eventManager.addGlobalEventListener('document', `keydown.${keys}`, handler);
         });
     }
 }

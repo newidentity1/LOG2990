@@ -2,16 +2,10 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { Color } from '@app/classes/color/color';
+import { MatDialogMock } from '@app/classes/mat-dialog-test-helper';
 import { BLACK, WHITE } from '@app/constants/constants';
 import { ColorPickerService } from '@app/services/color-picker/color-picker.service';
 import { ColorToolComponent } from './color-tool.component';
-
-class MatDialogMock {
-    // When the component calls this.dialog.open(...) we'll return an empty object
-    open(): {} {
-        return {};
-    }
-}
 
 describe('ColorToolComponent', () => {
     let component: ColorToolComponent;
