@@ -19,7 +19,7 @@ describe('SidebarComponent', () => {
     let pencilToolMock: jasmine.SpyObj<PencilService>;
 
     beforeEach(async(() => {
-        toolbarServiceMock = jasmine.createSpyObj('ToolbarService', ['getTools', 'applyCurrentTool']);
+        toolbarServiceMock = jasmine.createSpyObj('ToolbarService', ['getTools', 'applyCurrentTool', 'initializeColors']);
         pencilToolMock = jasmine.createSpyObj('PencilService', ['resetContext']);
 
         TestBed.configureTestingModule({

@@ -80,7 +80,7 @@ export class ColorPickerComponent implements AfterViewInit {
     }
 
     getPreviousColor(): Color {
-        return this.data.isSecondaryColorPicker ? this.colorPickerService.secondaryColor : this.colorPickerService.primaryColor;
+        return this.data.isSecondaryColorPicker ? this.colorPickerService.secondaryColor.getValue() : this.colorPickerService.primaryColor.getValue();
     }
 
     onDialogClose(): void {

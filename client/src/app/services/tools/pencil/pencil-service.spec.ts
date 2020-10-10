@@ -133,7 +133,7 @@ describe('PencilService', () => {
         expect(drawLineSpy).not.toHaveBeenCalled();
     });
 
-    it(' updateDrawingColor should call setColors of pencilService', () => {
+    it(' setColors should call setColor of drawingService', () => {
         service.setColors(new Color(), new Color());
         expect(drawServiceSpy.setColor).toHaveBeenCalled();
     });
