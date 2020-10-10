@@ -16,7 +16,10 @@ import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
     providedIn: 'root',
 })
 export class EllipseSelectService extends EllipseService {
-    isAreaSelected: boolean;
+    private positiveStartingPos: Vec2;
+    private positiveWidth: number;
+    private positiveHeight: number;
+    private isAreaSelected: boolean;
 
     private resizers: string[] = ['nwse-resize', 'ns-resize', 'nesw-resize', 'ew-resize', '', 'ew-resize', 'nesw-resize', 'ns-resize', 'nwse-resize'];
 
@@ -25,6 +28,8 @@ export class EllipseSelectService extends EllipseService {
         this.name = 'Ellipse Select';
         this.tooltip = 'Selection par ellipse(s)';
         this.iconName = 'filter_tilt_shift';
+        this.isAreaSelected = false;
+        this.positiveStartingPos = { x: 0, y: 0 };
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -56,6 +61,7 @@ export class EllipseSelectService extends EllipseService {
             const mouseUpPosition = this.getPositionFromMouse(event);
             if (mouseUpPosition.x !== this.mouseDownCoord.x || mouseUpPosition.y !== this.mouseDownCoord.y) {
                 this.isAreaSelected = true;
+                this.computePositiveRectangleValues();
                 this.drawControlPoints(this.drawingService.previewCtx);
             }
         }
@@ -103,20 +109,14 @@ export class EllipseSelectService extends EllipseService {
     }
 
     private isInSelection(position: Vec2): boolean {
-        let inWidth = false;
-        let inHeight = false;
-        if (this.width >= 0) {
-            inWidth = position.x > this.pathStart.x && position.x < this.pathStart.x + this.width;
-        } else {
-            inWidth = position.x < this.pathStart.x && position.x > this.pathStart.x + this.width;
-        }
+        const inSelection =
+            position.x > this.positiveStartingPos.x &&
+            position.x < this.positiveStartingPos.x + this.positiveWidth &&
+            position.y > this.positiveStartingPos.y &&
+            position.y < this.positiveStartingPos.y + this.positiveHeight;
 
-        if (this.height >= 0) {
-            inHeight = position.y > this.pathStart.y && position.y < this.pathStart.y + this.height;
-        } else {
-            inHeight = position.y < this.pathStart.y && position.y > this.pathStart.y + this.height;
-        }
-        return inWidth && inHeight;
+        this.drawingService.previewCtx.canvas.style.cursor = inSelection ? 'move' : '';
+        return inSelection;
     }
 
     private isOnControlPoint(position: Vec2): boolean {
@@ -126,10 +126,10 @@ export class EllipseSelectService extends EllipseService {
             for (let j = 0; j < SELECTION_CONTROL_COLUMNS; j++) {
                 if (i !== 1 || j !== 1) {
                     if (
-                        position.x >= this.pathStart.x + (this.width * i) / 2 - SELECTION_CONTROL_POINT_SIZE &&
-                        position.x <= this.pathStart.x + (this.width * i) / 2 + SELECTION_CONTROL_POINT_SIZE &&
-                        position.y >= this.pathStart.y + (this.height * j) / 2 - SELECTION_CONTROL_POINT_SIZE &&
-                        position.y <= this.pathStart.y + (this.height * j) / 2 + SELECTION_CONTROL_POINT_SIZE
+                        position.x >= this.positiveStartingPos.x + (this.positiveWidth * i) / 2 - SELECTION_CONTROL_POINT_SIZE &&
+                        position.x <= this.positiveStartingPos.x + (this.positiveWidth * i) / 2 + SELECTION_CONTROL_POINT_SIZE &&
+                        position.y >= this.positiveStartingPos.y + (this.positiveHeight * j) / 2 - SELECTION_CONTROL_POINT_SIZE &&
+                        position.y <= this.positiveStartingPos.y + (this.positiveHeight * j) / 2 + SELECTION_CONTROL_POINT_SIZE
                     ) {
                         this.drawingService.previewCtx.canvas.style.cursor = this.resizers[i + j * SELECTION_CONTROL_COLUMNS];
                         onControlPoint = true;
@@ -139,6 +139,14 @@ export class EllipseSelectService extends EllipseService {
         }
 
         return onControlPoint;
+    }
+
+    private computePositiveRectangleValues(): void {
+        this.positiveStartingPos.x = this.width >= 0 ? this.pathStart.x : this.pathStart.x + this.width;
+        this.positiveWidth = Math.abs(this.width);
+
+        this.positiveStartingPos.y = this.height >= 0 ? this.pathStart.y : this.pathStart.y + this.height;
+        this.positiveHeight = Math.abs(this.height);
     }
 
     resetContext(): void {

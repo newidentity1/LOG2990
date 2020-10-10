@@ -16,7 +16,10 @@ import { RectangleService } from '@app/services/tools/rectangle/rectangle.servic
     providedIn: 'root',
 })
 export class RectangleSelectService extends RectangleService {
-    isAreaSelected: boolean;
+    private positiveStartingPos: Vec2;
+    private positiveWidth: number;
+    private positiveHeight: number;
+    private isAreaSelected: boolean;
 
     private resizers: string[] = ['nwse-resize', 'ns-resize', 'nesw-resize', 'ew-resize', '', 'ew-resize', 'nesw-resize', 'ns-resize', 'nwse-resize'];
 
@@ -26,6 +29,7 @@ export class RectangleSelectService extends RectangleService {
         this.tooltip = 'Selection par rectangle(r)';
         this.iconName = 'highlight_alt';
         this.isAreaSelected = false;
+        this.positiveStartingPos = { x: 0, y: 0 };
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -56,6 +60,7 @@ export class RectangleSelectService extends RectangleService {
             const mouseUpPosition = this.getPositionFromMouse(event);
             if (mouseUpPosition.x !== this.mouseDownCoord.x || mouseUpPosition.y !== this.mouseDownCoord.y) {
                 this.isAreaSelected = true;
+                this.computePositiveRectangleValues();
                 this.drawControlPoints(this.drawingService.previewCtx);
             }
         }
@@ -101,20 +106,14 @@ export class RectangleSelectService extends RectangleService {
     }
 
     private isInSelection(position: Vec2): boolean {
-        let inWidth = false;
-        let inHeight = false;
-        if (this.width >= 0) {
-            inWidth = position.x > this.startingX && position.x < this.startingX + this.width;
-        } else {
-            inWidth = position.x < this.startingX && position.x > this.startingX + this.width;
-        }
+        const inSelection =
+            position.x > this.positiveStartingPos.x &&
+            position.x < this.positiveStartingPos.x + this.positiveWidth &&
+            position.y > this.positiveStartingPos.y &&
+            position.y < this.positiveStartingPos.y + this.positiveHeight;
 
-        if (this.height >= 0) {
-            inHeight = position.y > this.startingY && position.y < this.startingY + this.height;
-        } else {
-            inHeight = position.y < this.startingY && position.y > this.startingY + this.height;
-        }
-        return inWidth && inHeight;
+        this.drawingService.previewCtx.canvas.style.cursor = inSelection ? 'move' : '';
+        return inSelection;
     }
 
     private isOnControlPoint(position: Vec2): boolean {
@@ -124,10 +123,10 @@ export class RectangleSelectService extends RectangleService {
             for (let j = 0; j < SELECTION_CONTROL_COLUMNS; j++) {
                 if (i !== 1 || j !== 1) {
                     if (
-                        position.x >= this.startingX + (this.width * i) / 2 - SELECTION_CONTROL_POINT_SIZE &&
-                        position.x <= this.startingX + (this.width * i) / 2 + SELECTION_CONTROL_POINT_SIZE &&
-                        position.y >= this.startingY + (this.height * j) / 2 - SELECTION_CONTROL_POINT_SIZE &&
-                        position.y <= this.startingY + (this.height * j) / 2 + SELECTION_CONTROL_POINT_SIZE
+                        position.x >= this.positiveStartingPos.x + (this.positiveWidth * i) / 2 - SELECTION_CONTROL_POINT_SIZE &&
+                        position.x <= this.positiveStartingPos.x + (this.positiveWidth * i) / 2 + SELECTION_CONTROL_POINT_SIZE &&
+                        position.y >= this.positiveStartingPos.y + (this.positiveHeight * j) / 2 - SELECTION_CONTROL_POINT_SIZE &&
+                        position.y <= this.positiveStartingPos.y + (this.positiveHeight * j) / 2 + SELECTION_CONTROL_POINT_SIZE
                     ) {
                         this.drawingService.previewCtx.canvas.style.cursor = this.resizers[i + j * SELECTION_CONTROL_COLUMNS];
                         onControlPoint = true;
@@ -137,6 +136,14 @@ export class RectangleSelectService extends RectangleService {
         }
 
         return onControlPoint;
+    }
+
+    private computePositiveRectangleValues(): void {
+        this.positiveStartingPos.x = this.width >= 0 ? this.startingX : this.startingX + this.width;
+        this.positiveWidth = Math.abs(this.width);
+
+        this.positiveStartingPos.y = this.height >= 0 ? this.startingY : this.startingY + this.height;
+        this.positiveHeight = Math.abs(this.height);
     }
 
     resetContext(): void {
