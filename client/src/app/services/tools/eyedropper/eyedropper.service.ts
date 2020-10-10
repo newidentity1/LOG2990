@@ -21,7 +21,7 @@ export class EyedropperService extends Tool {
     constructor(private colorPickerService: ColorPickerService, drawingService: DrawingService) {
         super(drawingService);
         this.name = 'Eyedropper';
-        this.tooltip = 'Pipette(I)';
+        this.tooltip = 'Pipette(i)';
         this.iconName = 'colorize';
     }
 
