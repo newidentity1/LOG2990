@@ -31,7 +31,6 @@ export class RectangleService extends ShapeTool {
         if (this.mouseDown) {
             this.computeDimensions();
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.mouseDown = false;
             this.draw(this.drawingService.baseCtx);
         }
         this.mouseDown = false;
@@ -56,7 +55,7 @@ export class RectangleService extends ShapeTool {
         if (this.mouseDown) this.drawPreview();
     }
 
-    transformToCircle(): void {
+    transformToSquare(): void {
         const min = Math.min(Math.abs(this.width), Math.abs(this.height));
         this.width = min * this.signOf(this.width);
         this.height = min * this.signOf(this.height);
@@ -67,11 +66,11 @@ export class RectangleService extends ShapeTool {
         this.height = this.mouseDownCoord.y - this.pathStart.y;
 
         if (this.shiftDown) {
-            this.transformToCircle();
+            this.transformToSquare();
         }
     }
 
-    private drawPreview(): void {
+    drawPreview(): void {
         this.computeDimensions();
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.draw(this.drawingService.previewCtx);
