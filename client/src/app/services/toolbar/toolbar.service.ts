@@ -145,10 +145,18 @@ export class ToolbarService {
 
     onDoubleClick(event: MouseEvent): void {
         this.currentTool.onDoubleClick(event);
+        this.triggerSelectAll();
     }
 
     onClick(event: MouseEvent): void {
         this.currentTool.onClick(event);
+    }
+
+    triggerSelectAll(): void {
+        // TODO: adapt to shortcut refactoring
+        this.currentTool = this.rectangleSelectService;
+        this.applyCurrentTool();
+        this.rectangleSelectService.selectAll();
     }
 
     private applyCurrentToolColor(): void {

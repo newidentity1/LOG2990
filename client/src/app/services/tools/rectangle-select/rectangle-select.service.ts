@@ -12,6 +12,7 @@ import {
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle.service';
 
+// TODO: Refactor with ellipse select, too much duplicate code
 @Injectable({
     providedIn: 'root',
 })
@@ -20,6 +21,8 @@ export class RectangleSelectService extends RectangleService {
     private positiveWidth: number;
     private positiveHeight: number;
     private isAreaSelected: boolean;
+    private isInSelection: boolean;
+    private isOnControlPoint: boolean;
 
     private resizers: string[] = ['nwse-resize', 'ns-resize', 'nesw-resize', 'ew-resize', '', 'ew-resize', 'nesw-resize', 'ns-resize', 'nwse-resize'];
 
@@ -30,11 +33,13 @@ export class RectangleSelectService extends RectangleService {
         this.iconName = 'highlight_alt';
         this.isAreaSelected = false;
         this.positiveStartingPos = { x: 0, y: 0 };
+        this.isInSelection = false;
+        this.isOnControlPoint = false;
     }
 
     onMouseDown(event: MouseEvent): void {
         this.mouseDownCoord = this.getPositionFromMouse(event);
-        if (this.isAreaSelected && (this.isInSelection(this.mouseDownCoord) || this.isOnControlPoint(this.mouseDownCoord))) {
+        if (this.isAreaSelected && (this.isInSelection || this.isOnControlPoint)) {
             // TODO: move selection and resize
         } else {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
@@ -46,12 +51,9 @@ export class RectangleSelectService extends RectangleService {
     onMouseMove(event: MouseEvent): void {
         super.onMouseMove(event);
         this.drawingService.previewCtx.canvas.style.cursor = '';
+        console.log(this.mouseDown, this.isAreaSelected);
         if (!this.mouseDown && this.isAreaSelected) {
-            if (this.isOnControlPoint(this.currentMousePosition)) {
-                // this.drawingService.previewCtx.canvas.style.cursor = 'ew-resize';
-            } else if (this.isInSelection(this.currentMousePosition)) {
-                this.drawingService.previewCtx.canvas.style.cursor = 'move';
-            }
+            this.updateCursor();
         }
     }
 
@@ -59,9 +61,7 @@ export class RectangleSelectService extends RectangleService {
         if (this.mouseDown) {
             const mouseUpPosition = this.getPositionFromMouse(event);
             if (mouseUpPosition.x !== this.mouseDownCoord.x || mouseUpPosition.y !== this.mouseDownCoord.y) {
-                this.isAreaSelected = true;
-                this.computePositiveRectangleValues();
-                this.drawControlPoints(this.drawingService.previewCtx);
+                this.drawSelectedArea();
             }
         }
         this.mouseDown = false;
@@ -82,6 +82,21 @@ export class RectangleSelectService extends RectangleService {
         this.drawingService.setColor(new Color(BLACK).toStringRGBA());
         this.drawStrokeRect(this.drawingService.previewCtx, this.width, this.height);
         this.drawingService.previewCtx.setLineDash([]);
+    }
+
+    selectAll(): void {
+        this.startingX = 0;
+        this.startingY = 0;
+        this.width = this.drawingService.canvas.width;
+        this.height = this.drawingService.canvas.height;
+        this.drawSelectedArea();
+    }
+
+    private drawSelectedArea(): void {
+        this.draw(this.drawingService.previewCtx);
+        this.drawControlPoints(this.drawingService.previewCtx);
+        this.computePositiveRectangleValues();
+        this.isAreaSelected = true;
     }
 
     private drawControlPoints(ctx: CanvasRenderingContext2D): void {
@@ -105,37 +120,33 @@ export class RectangleSelectService extends RectangleService {
         }
     }
 
-    private isInSelection(position: Vec2): boolean {
-        const inSelection =
-            position.x > this.positiveStartingPos.x &&
-            position.x < this.positiveStartingPos.x + this.positiveWidth &&
-            position.y > this.positiveStartingPos.y &&
-            position.y < this.positiveStartingPos.y + this.positiveHeight;
+    private CheckIsInSelection(): void {
+        this.isInSelection =
+            this.currentMousePosition.x > this.positiveStartingPos.x &&
+            this.currentMousePosition.x < this.positiveStartingPos.x + this.positiveWidth &&
+            this.currentMousePosition.y > this.positiveStartingPos.y &&
+            this.currentMousePosition.y < this.positiveStartingPos.y + this.positiveHeight;
 
-        this.drawingService.previewCtx.canvas.style.cursor = inSelection ? 'move' : '';
-        return inSelection;
+        this.drawingService.previewCtx.canvas.style.cursor = this.isInSelection ? 'move' : '';
     }
 
-    private isOnControlPoint(position: Vec2): boolean {
-        let onControlPoint = false;
-
+    private CheckIsOnControlPoint(): void {
+        this.isOnControlPoint = false;
         for (let i = 0; i < SELECTION_CONTROL_COLUMNS; i++) {
             for (let j = 0; j < SELECTION_CONTROL_COLUMNS; j++) {
                 if (i !== 1 || j !== 1) {
                     if (
-                        position.x >= this.positiveStartingPos.x + (this.positiveWidth * i) / 2 - SELECTION_CONTROL_POINT_SIZE &&
-                        position.x <= this.positiveStartingPos.x + (this.positiveWidth * i) / 2 + SELECTION_CONTROL_POINT_SIZE &&
-                        position.y >= this.positiveStartingPos.y + (this.positiveHeight * j) / 2 - SELECTION_CONTROL_POINT_SIZE &&
-                        position.y <= this.positiveStartingPos.y + (this.positiveHeight * j) / 2 + SELECTION_CONTROL_POINT_SIZE
+                        this.currentMousePosition.x >= this.positiveStartingPos.x + (this.positiveWidth * i) / 2 - SELECTION_CONTROL_POINT_SIZE &&
+                        this.currentMousePosition.x <= this.positiveStartingPos.x + (this.positiveWidth * i) / 2 + SELECTION_CONTROL_POINT_SIZE &&
+                        this.currentMousePosition.y >= this.positiveStartingPos.y + (this.positiveHeight * j) / 2 - SELECTION_CONTROL_POINT_SIZE &&
+                        this.currentMousePosition.y <= this.positiveStartingPos.y + (this.positiveHeight * j) / 2 + SELECTION_CONTROL_POINT_SIZE
                     ) {
                         this.drawingService.previewCtx.canvas.style.cursor = this.resizers[i + j * SELECTION_CONTROL_COLUMNS];
-                        onControlPoint = true;
+                        this.isOnControlPoint = true;
                     }
                 }
             }
         }
-
-        return onControlPoint;
     }
 
     private computePositiveRectangleValues(): void {
@@ -144,6 +155,11 @@ export class RectangleSelectService extends RectangleService {
 
         this.positiveStartingPos.y = this.height >= 0 ? this.startingY : this.startingY + this.height;
         this.positiveHeight = Math.abs(this.height);
+    }
+
+    private updateCursor(): void {
+        this.CheckIsInSelection();
+        this.CheckIsOnControlPoint();
     }
 
     resetContext(): void {
