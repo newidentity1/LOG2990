@@ -1,43 +1,44 @@
-import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Tool } from '@app/classes/tool/tool';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants/constants';
+import { ShortcutService } from '@app/services/shortcut/shortcut.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-editor',
     templateUrl: './editor.component.html',
     styleUrls: ['./editor.component.scss'],
 })
-export class EditorComponent implements OnInit {
+export class EditorComponent implements OnInit, OnDestroy {
     @ViewChild('drawingContainer', { static: true }) drawingContainer: ElementRef;
 
     @ViewChild(SidebarComponent) toolbarRef: SidebarComponent;
 
     height: number = DEFAULT_HEIGHT;
     width: number = DEFAULT_WIDTH;
-    isCtrlDown: boolean = false;
 
     dimensionsUpdatedSubject: BehaviorSubject<number[]> = new BehaviorSubject([this.width, this.height]);
+    private subscribedShortcuts: Subscription[] = [];
 
-    constructor(private toolbarService: ToolbarService) {}
+    constructor(private shortcutService: ShortcutService, private toolbarService: ToolbarService) {}
 
     ngOnInit(): void {
         this.computeDimensionsDrawingContainer();
+        this.initializeShortcuts();
+    }
+
+    ngOnDestroy(): void {
+        this.subscribedShortcuts.forEach((subscribedShortcut: Subscription) => {
+            subscribedShortcut.unsubscribe();
+        });
     }
 
     @HostListener('keydown', ['$event'])
     onKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
-        if (this.isCtrlDown && event.key === 'o') {
-            this.toolbarRef.createNewDrawing();
-        }
-        if (event.key === 'Control') {
-            this.isCtrlDown = true;
-        }
-        // Send the event to toolbar
         this.toolbarService.onKeyDown(event);
-        this.isCtrlDown = event.key === 'Control';
     }
 
     @HostListener('keypress', ['$event'])
@@ -59,5 +60,21 @@ export class EditorComponent implements OnInit {
         const widthString = getComputedStyle(this.drawingContainer.nativeElement).width;
         this.width = +widthString.substring(0, widthString.length - 2);
         this.dimensionsUpdatedSubject.next([this.width, this.height]);
+    }
+
+    initializeShortcuts(): void {
+        this.toolbarService.keyShortcuts.forEach((tool: Tool, shortcut: string) => {
+            this.subscribedShortcuts.push(
+                this.shortcutService.addShortcut(shortcut).subscribe(() => {
+                    this.toolbarService.changeTool(tool);
+                }),
+            );
+        });
+
+        this.subscribedShortcuts.push(
+            this.shortcutService.addShortcut('control.o').subscribe(() => {
+                this.toolbarRef.createNewDrawing();
+            }),
+        );
     }
 }
