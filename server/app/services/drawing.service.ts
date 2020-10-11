@@ -1,19 +1,24 @@
 import { DATABASE_COLLECTION, DATABASE_NAME, DATABASE_URL } from '@app/contants';
 import { Drawing } from '@common/communication/drawing.ts';
 import { injectable } from 'inversify';
-import { Collection, MongoClient } from 'mongodb';
+import { Collection, MongoClient, MongoClientOptions } from 'mongodb';
 import 'reflect-metadata';
 
 @injectable()
 export class DrawingService {
     collection: Collection<Drawing>;
 
+    private options: MongoClientOptions = {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    };
+
     constructor() {
-        MongoClient.connect(DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true })
+        MongoClient.connect(DATABASE_URL, this.options)
             .then((client: MongoClient) => {
                 this.collection = client.db(DATABASE_NAME).collection(DATABASE_COLLECTION);
             })
-            .catch((error) => {
+            .catch(() => {
                 console.error('Erreur de connection avec la base de donnee!');
                 process.exit(1);
             });
@@ -28,8 +33,8 @@ export class DrawingService {
                 }
                 return drawing;
             })
-            .catch((error) => {
-                throw error;
+            .catch(() => {
+                throw new Error("Le dessin n'a pas pu être récupéré!");
             });
     }
 
@@ -40,20 +45,20 @@ export class DrawingService {
             .then((drawings: Drawing[]) => {
                 return drawings;
             })
-            .catch((error) => {
+            .catch(() => {
                 throw new Error("Les dessins n'ont pas pu être récupérés!");
             });
     }
 
     async addDrawing(drawing: Drawing): Promise<void> {
         // TODO ajouter de la validation
-        this.collection.insertOne(drawing).catch((error) => {
+        this.collection.insertOne(drawing).catch(() => {
             throw new Error("Le dessin n'a pas pu être ajouté!");
         });
     }
 
     async removeDrawing(id: string): Promise<void> {
-        this.collection.findOneAndDelete({ _id: id }).catch((error) => {
+        this.collection.findOneAndDelete({ _id: id }).catch(() => {
             throw new Error("Le dessin n'a pas pu être supprimé!");
         });
     }

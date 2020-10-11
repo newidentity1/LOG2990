@@ -14,7 +14,7 @@ describe('Drawing service', () => {
     let db: Db;
     let mongoServer: MongoMemoryServer;
 
-    before(async () => {
+    beforeEach(async () => {
         drawing = { _id: '123456789123', name: 'test', tags: ['test', 'first'], url: '/' };
 
         mongoServer = new MongoMemoryServer();
@@ -31,9 +31,6 @@ describe('Drawing service', () => {
                 return;
             }
         });
-    });
-
-    beforeEach(async () => {
         const [container] = await testingContainer();
         drawingService = container.get<DrawingService>(TYPES.DrawingService);
 
@@ -43,6 +40,10 @@ describe('Drawing service', () => {
     after(async () => {
         await mongoServer.stop();
         await client.logout();
+    });
+
+    it('should exit the process', async () => {
+        // TODO comment tester le catch du constructeur
     });
 
     it('should return a drawing when sending a valid id', (done: Mocha.Done) => {
@@ -61,6 +62,13 @@ describe('Drawing service', () => {
         }
     });
 
+    it('should throw an error when a error is thrown during getDrawing', async () => {
+        await client.close();
+        drawingService.getDrawing('123').catch((result) => {
+            expect(result.message).to.equal("Le dessin n'a pas pu être récupéré!");
+        });
+    });
+
     it('should return all drawings', (done: Mocha.Done) => {
         const expectedResult = [drawing];
         drawingService.getDrawings().then((result) => {
@@ -69,31 +77,12 @@ describe('Drawing service', () => {
         });
     });
 
-    // it('should throw an error', async () => {
-    //     const mockDbCollection = {
-    //         find() {
-    //             return {
-    //                 toArray() {
-    //                     throw new Error("Les dessins n'ont pas pu être récupérés!");
-    //                 },
-    //             };
-    //         },
-    //     };
-    //     sinon.stub(drawingService, 'collection').returns(mockDbCollection);
-    //     try {
-    //         await drawingService.getDrawings();
-    //     } catch (error) {
-    //         expect(error.message).to.equal("Les dessins n'ont pas pu être récupérés");
-    //     }
-    // });
-
-    // it('should return an error when sending an invalid id', (done: Mocha.Done) => {
-    //     drawingService.collection.find();
-    //     drawingService.getDrawings().catch((err) => {
-    //         expect(err);
-    //         done();
-    //     });
-    // });
+    it('should throw an error when a error is thrown during getDrawings', async () => {
+        await client.close();
+        drawingService.getDrawings().catch((result) => {
+            expect(result.message).to.equal("Les dessins n'ont pas pu être récupérés");
+        });
+    });
 
     it('should add a drawing', (done: Mocha.Done) => {
         const newDrawing = drawing;
@@ -106,6 +95,14 @@ describe('Drawing service', () => {
         done();
     });
 
+    it('should throw an error when a error is thrown during addDrawing', async () => {
+        const newDrawing = drawing;
+        await client.close();
+        drawingService.addDrawing(newDrawing).catch((result) => {
+            expect(result.message).to.equal("Le dessin n'a pas pu être ajouté!");
+        });
+    });
+
     it('should delete a drawing', (done: Mocha.Done) => {
         let isSucess = true;
         drawingService.removeDrawing(drawing._id).catch(() => {
@@ -113,5 +110,12 @@ describe('Drawing service', () => {
         });
         expect(isSucess).to.equal(true);
         done();
+    });
+
+    it('should throw an error when a error is thrown during deleteDrawing', async () => {
+        await client.close();
+        drawingService.removeDrawing(drawing._id).catch((result) => {
+            expect(result.message).to.equal("Le dessin n'a pas pu être supprimé!");
+        });
     });
 });
