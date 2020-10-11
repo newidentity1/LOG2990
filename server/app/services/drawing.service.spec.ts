@@ -42,9 +42,7 @@ describe('Drawing service', () => {
         await client.logout();
     });
 
-    it('should exit the process', async () => {
-        // TODO comment tester le catch du constructeur
-    });
+    // TODO comment tester le catch du constructeur
 
     it('should return a drawing when sending a valid id', (done: Mocha.Done) => {
         const expectedResult = drawing;
