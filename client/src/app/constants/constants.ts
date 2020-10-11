@@ -45,3 +45,8 @@ export const EYEDROPPER_PREVIEW_SCALE_SIZE = 10;
 export const EYEDROPPER_PREVIEW_CURSOR_SIZE = 10;
 
 export const IMAGE_DATA_OPACITY_INDEX = 3;
+
+export const POURCENTAGE = 100;
+
+export const BUCKET_PIXEL_3X3 = 3;
+export const INDEX_3 = 3;

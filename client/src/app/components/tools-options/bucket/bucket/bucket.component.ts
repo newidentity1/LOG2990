@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatSliderChange } from '@angular/material/slider';
 import { BucketService } from '@app/services/tools/bucket/bucket.service';
 
@@ -7,7 +7,7 @@ import { BucketService } from '@app/services/tools/bucket/bucket.service';
     templateUrl: './bucket.component.html',
     styleUrls: ['./bucket.component.scss'],
 })
-export class BucketComponent implements OnInit {
+export class BucketComponent {
     tolerance: number = 1;
     constructor(public bucketService: BucketService) {
         // const rectangleProperties = bucketService.toolProperties as BasicShapeProperties;
@@ -16,5 +16,4 @@ export class BucketComponent implements OnInit {
     onToleranceChange(event: MatSliderChange): void {
         this.bucketService.setTolerance(event.value);
     }
-    ngOnInit(): void {}
 }

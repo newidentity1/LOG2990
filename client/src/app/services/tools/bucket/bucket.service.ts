@@ -3,6 +3,7 @@ import { Color } from '@app/classes/color/color';
 import { Pixel } from '@app/classes/pixel';
 import { Tool } from '@app/classes/tool/tool';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
+import * as CONSTANTS from '@app/constants/constants';
 import { MouseButton } from '@app/enums/mouse-button.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
@@ -79,8 +80,8 @@ export class BucketService extends Tool {
 
     setTolerance(tolerance: number | null): void {
         tolerance = tolerance === null ? 1 : tolerance;
-        this.tolerance = 254 * (tolerance / 100);
-        console.log(255 * (tolerance / 100));
+        this.tolerance = CONSTANTS.MAX_COLOR_VALUE * (tolerance / CONSTANTS.POURCENTAGE);
+        console.log(CONSTANTS.MAX_COLOR_VALUE * (tolerance / CONSTANTS.POURCENTAGE));
     }
 
     resetContext(): void {
@@ -179,8 +180,8 @@ export class BucketService extends Tool {
             pixel.data[1] < this.startPixel.data[1] + this.tolerance &&
             pixel.data[2] >= this.startPixel.data[2] - this.tolerance &&
             pixel.data[2] < this.startPixel.data[2] + this.tolerance &&
-            pixel.data[3] >= this.startPixel.data[3] - this.tolerance &&
-            pixel.data[3] < this.startPixel.data[3] + this.tolerance
+            pixel.data[CONSTANTS.INDEX_3] >= this.startPixel.data[CONSTANTS.INDEX_3] - this.tolerance &&
+            pixel.data[CONSTANTS.INDEX_3] < this.startPixel.data[CONSTANTS.INDEX_3] + this.tolerance
         ) {
             return true;
         }
@@ -188,6 +189,6 @@ export class BucketService extends Tool {
     }
 
     private colorPixel(pixel: Pixel): void {
-        this.drawingService.baseCtx.fillRect(pixel.x - 1, pixel.y - 1, 3, 3);
+        this.drawingService.baseCtx.fillRect(pixel.x - 1, pixel.y - 1, CONSTANTS.BUCKET_PIXEL_3X3, CONSTANTS.BUCKET_PIXEL_3X3);
     }
 }
