@@ -61,14 +61,6 @@ export class ToolbarService {
         return this.tools;
     }
 
-    getTool(keyShortcut: string): Tool | undefined {
-        let tool: Tool | undefined;
-        if (this.keyShortcuts.has(keyShortcut)) {
-            tool = this.keyShortcuts.get(keyShortcut);
-        }
-        return tool;
-    }
-
     setColors(primaryColor: Color, secondaryColor: Color): void {
         this.primaryColor = primaryColor;
         this.secondaryColor = secondaryColor;
@@ -80,14 +72,15 @@ export class ToolbarService {
         this.applyCurrentToolColor();
     }
 
-    onKeyDown(event: KeyboardEvent): void {
-        this.currentTool.onKeyDown(event);
-        const toolFound = this.getTool(event.key);
-        const isNewTool = toolFound && toolFound !== this.currentTool;
-        this.currentTool = toolFound ? toolFound : this.currentTool;
-        if (isNewTool) {
+    changeTool(tool: Tool): void {
+        if (tool !== this.currentTool) {
+            this.currentTool = tool;
             this.applyCurrentTool();
         }
+    }
+
+    onKeyDown(event: KeyboardEvent): void {
+        this.currentTool.onKeyDown(event);
     }
 
     onKeyPress(event: KeyboardEvent): void {
