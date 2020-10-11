@@ -14,6 +14,8 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
     providedIn: 'root',
 })
 export class EllipseService extends ShapeTool {
+    dashedSegments: number;
+
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.name = 'Ellipse';
@@ -38,7 +40,8 @@ export class EllipseService extends ShapeTool {
             this.computeDimensions();
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.mouseDown = false;
-            this.draw(this.drawingService.baseCtx, DASHED_SEGMENTS);
+            this.dashedSegments = DASHED_SEGMENTS;
+            this.draw(this.drawingService.baseCtx);
         }
         this.mouseDown = false;
     }
@@ -80,13 +83,14 @@ export class EllipseService extends ShapeTool {
     private drawPreview(): void {
         this.computeDimensions();
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        this.draw(this.drawingService.previewCtx, DASHED_SEGMENTS);
+        this.dashedSegments = DASHED_SEGMENTS;
+        this.draw(this.drawingService.previewCtx);
     }
 
-    private drawBoxGuide(ctx: CanvasRenderingContext2D, dashedSegments: number): void {
+    private drawBoxGuide(ctx: CanvasRenderingContext2D): void {
         if (this.mouseDown) {
             ctx.lineWidth = MINIMUM_THICKNESS;
-            ctx.setLineDash([dashedSegments]);
+            ctx.setLineDash([this.dashedSegments]);
             ctx.beginPath();
             ctx.strokeRect(this.pathStart.x, this.pathStart.y, this.mouseDownCoord.x - this.pathStart.x, this.mouseDownCoord.y - this.pathStart.y);
             ctx.setLineDash([0]);
@@ -100,7 +104,7 @@ export class EllipseService extends ShapeTool {
      * inside the perimeter, the ctx.lineWidth is assigned to the half of the
      * smallest of its sides.
      */
-    draw(ctx: CanvasRenderingContext2D, dashedSegments: number): void {
+    draw(ctx: CanvasRenderingContext2D): void {
         if (this.escapeDown) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             return;
@@ -132,6 +136,6 @@ export class EllipseService extends ShapeTool {
                 ctx.stroke();
         }
 
-        this.drawBoxGuide(ctx, dashedSegments);
+        this.drawBoxGuide(ctx);
     }
 }

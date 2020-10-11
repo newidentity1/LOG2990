@@ -65,7 +65,8 @@ export class PolygonService extends ShapeTool {
             this.drawingService.clearCanvas(previewCtx);
             this.setThickness(this.toolProperties.thickness);
             this.draw(previewCtx);
-            this.ellipseService.draw(previewCtx, 0);
+            this.ellipseService.dashedSegments = 0;
+            this.ellipseService.draw(previewCtx);
         }
     }
 
