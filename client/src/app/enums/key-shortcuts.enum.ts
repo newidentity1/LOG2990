@@ -5,4 +5,5 @@ export enum KeyShortcut {
     Ellipse = '2',
     Line = 'l',
     Eraser = 'e',
+    Eyedropper = 'i',
 }

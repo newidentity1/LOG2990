@@ -1,5 +1,5 @@
 <mat-sidenav-container>
-    <mat-sidenav #toolProperties mode="side" position="end">
+    <mat-sidenav #toolProperties mode="side" position="end" [disableClose]="true">
         <div *ngIf="currentTool" [ngSwitch]="currentTool.name">
             <app-pencil-options class="tool-options" *ngSwitchCase="'Crayon'"></app-pencil-options>
             <app-brush-options class="tool-options" *ngSwitchCase="'Brush'"></app-brush-options>
@@ -7,6 +7,7 @@
             <app-ellipse-options class="tool-options" *ngSwitchCase="'Ellipse'"></app-ellipse-options>
             <app-line-option class="tool-options" *ngSwitchCase="'Line'"></app-line-option>
             <app-erase-option class="tool-options" *ngSwitchCase="'Eraser'"></app-erase-option>
+            <app-eyedropper-option class="tool-options" *ngSwitchCase="'Eyedropper'"></app-eyedropper-option>
         </div>
     </mat-sidenav>
     <mat-sidenav-content>

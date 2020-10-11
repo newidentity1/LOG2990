@@ -3,14 +3,9 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialogMock } from '@app/classes/mat-dialog-test-helper';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { CreateNewDrawingComponent } from './create-new-drawing.component';
-
-class MatDialogMock {
-    open(): {} {
-        return {};
-    }
-}
 
 describe('CreateNewDrawingComponent', () => {
     let component: CreateNewDrawingComponent;
