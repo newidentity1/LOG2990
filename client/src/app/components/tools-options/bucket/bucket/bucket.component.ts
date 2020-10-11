@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MatSliderChange } from '@angular/material/slider';
 import { BucketService } from '@app/services/tools/bucket/bucket.service';
 
 @Component({
@@ -7,9 +8,13 @@ import { BucketService } from '@app/services/tools/bucket/bucket.service';
     styleUrls: ['./bucket.component.scss'],
 })
 export class BucketComponent implements OnInit {
+    tolerance: number = 1;
     constructor(public bucketService: BucketService) {
         // const rectangleProperties = bucketService.toolProperties as BasicShapeProperties;
     }
 
+    onToleranceChange(event: MatSliderChange): void {
+        this.bucketService.setTolerance(event.value);
+    }
     ngOnInit(): void {}
 }
