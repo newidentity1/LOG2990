@@ -44,7 +44,6 @@
     },
     "config": {
         "mongodbMemoryServer": {
-            "debug": "1",
             "version": "4.4.1"
         }
     },
