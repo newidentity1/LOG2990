@@ -3,6 +3,7 @@ import { Color } from '@app/classes/color/color';
 import { Tool } from '@app/classes/tool/tool';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 import { Vec2 } from '@app/classes/vec2';
+import { MouseButton } from '@app/enums/mouse-button.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
 @Injectable({
@@ -22,19 +23,36 @@ export class BucketService extends Tool {
         this.toolProperties = new BasicShapeProperties();
     }
 
-    onClick(event: MouseEvent): void {
+    onMouseDown(event: MouseEvent): void {
+        if (event.button === MouseButton.Left) {
+            this.floodFillLeft(this.fillColor, event);
+        } else {
+            this.floodFillRight(this.fillColor, event);
+        }
+    }
+
+    floodFillLeft(fillColor: Color, event: MouseEvent): void {
         this.clearList(this.openList);
         const mousePosition = this.getPositionFromMouse(event);
         this.openList.push(mousePosition);
         this.startPixel = this.drawingService.baseCtx.getImageData(mousePosition.x, mousePosition.y, 1, 1);
-        console.log(this.startPixel.data[0], this.startPixel.data[1], this.startPixel.data[2], this.startPixel.data[3]);
-        this.fill(this.fillColor);
-    }
-
-    fill(fillColor: Color): void {
-        this.setColors(fillColor);
         while (this.openList.length !== 0) {
             this.addNeighbours(this.openList);
+        }
+    }
+
+    floodFillRight(fillColor: Color, event: MouseEvent): void {
+        const mousePosition = this.getPositionFromMouse(event);
+        this.startPixel = this.drawingService.baseCtx.getImageData(mousePosition.x, mousePosition.y, 1, 1);
+        const pixel: Vec2 = { x: 0, y: 0 };
+        for (let i = 0; i < this.drawingService.canvas.height; i++) {
+            for (let j = 0; j < this.drawingService.canvas.width; j++) {
+                pixel.x = j;
+                pixel.y = i;
+                if (this.checkColor(pixel)) {
+                    this.colorPixel(pixel);
+                }
+            }
         }
     }
 
