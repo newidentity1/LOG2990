@@ -39,7 +39,7 @@ describe('ToolbarService', () => {
             'resetContext',
         ]);
 
-        brushServiceSpy = jasmine.createSpyObj('BrushService', ['onKeyDown', 'resetContext']);
+        brushServiceSpy = jasmine.createSpyObj('BrushService', ['onKeyDown', 'resetContext', 'setColors']);
         rectangleServiceSpy = jasmine.createSpyObj('RectangleService', ['onKeyDown']);
         ellipseServiceSpy = jasmine.createSpyObj('EllipseService', ['onKeyDown']);
         lineServiceSpy = jasmine.createSpyObj('LineService', ['onKeyDown']);
@@ -96,19 +96,9 @@ describe('ToolbarService', () => {
         ]);
     });
 
-    it('getTool should return a Tool if the key exists ', () => {
-        const tool = service.getTool(KeyShortcut.Pencil);
-        expect(tool).toEqual(pencilServiceSpy);
-    });
-
-    it('getTool should return a undefined if the key dont exist ', () => {
-        const tool = service.getTool('Shift');
-        expect(tool).toEqual(undefined);
-    });
-
     it('setColors should set the colors and call applyCurrentToolColor', () => {
         const color = new Color();
-        // tslint:disable-next-line: no-any
+        // tslint:disable-next-line: no-any / reason: spying on function
         const applyColorSpy = spyOn<any>(service, 'applyCurrentToolColor').and.callFake(() => {
             return;
         });
@@ -118,38 +108,43 @@ describe('ToolbarService', () => {
         expect(applyColorSpy).toHaveBeenCalled();
     });
 
-    it('applyCurrentToolColor should call setColors of the currentTool', () => {
-        service.currentTool = pencilServiceSpy;
-        const color = new Color();
-        service.primaryColor = color;
-        service.secondaryColor = color;
-        // tslint:disable-next-line:no-string-literal / reason : accessing private member
-        service['applyCurrentToolColor']();
-        expect(service.currentTool.setColors).toHaveBeenCalled();
+    it('applCurrentTool should call applyCurrentToolColor and call resetContext on currentTool', () => {
+        // tslint:disable-next-line: no-any / reason: spying on function
+        const applyColorSpy = spyOn<any>(service, 'applyCurrentToolColor').and.callFake(() => {
+            return;
+        });
+        service.applyCurrentTool();
+        expect(applyColorSpy).toHaveBeenCalled();
     });
 
-    it('onKeyDown should call the onKeyDown of the currentTool, getTool, not change the currentTool and call clearCanvas when key wrong', () => {
+    it('changeTool should change currentTool if tool is different and call applyCurrentTool', () => {
+        // tslint:disable-next-line: no-any / reason: spying on function
+        const applyCurrentToolSpy = spyOn<any>(service, 'applyCurrentTool').and.callFake(() => {
+            return;
+        });
+        service.currentTool = pencilServiceSpy;
+        service.changeTool(brushServiceSpy);
+        expect(service.currentTool).toEqual(brushServiceSpy);
+        expect(applyCurrentToolSpy).toHaveBeenCalled();
+    });
+
+    it('changeTool should should not call applyCurrentTool if tool is the same ', () => {
+        // tslint:disable-next-line: no-any / reason: spying on function
+        const applyCurrentToolSpy = spyOn<any>(service, 'applyCurrentTool').and.callFake(() => {
+            return;
+        });
+        service.currentTool = pencilServiceSpy;
+        service.changeTool(pencilServiceSpy);
+        expect(service.currentTool).toEqual(pencilServiceSpy);
+        expect(applyCurrentToolSpy).not.toHaveBeenCalled();
+    });
+
+    it('onKeyDown should call the onKeyDown of the currentTool', () => {
         service.currentTool = pencilServiceSpy;
         const keyboardEvent = { key: '' } as KeyboardEvent;
-        const spyGetTool = spyOn(service, 'getTool').and.callThrough();
         service.onKeyDown(keyboardEvent);
         expect(service.currentTool).toEqual(pencilServiceSpy);
         expect(service.currentTool.onKeyDown).toHaveBeenCalledWith(keyboardEvent);
-        expect(spyGetTool).toHaveBeenCalledWith(keyboardEvent.key);
-        expect(drawingServiceSpy.clearCanvas).not.toHaveBeenCalledWith(drawingServiceSpy.previewCtx);
-    });
-
-    it('onKeyDown should call the onKeyDown and clearContext of the currentTool, getTool and change the currentTool when key exist', () => {
-        service.currentTool = brushServiceSpy;
-        const keyboardEvent = { key: KeyShortcut.Pencil } as KeyboardEvent;
-        const spyGetTool = spyOn(service, 'getTool').and.callThrough();
-        const spyApplyCurrentTool = spyOn(service, 'applyCurrentTool').and.callThrough();
-        service.onKeyDown(keyboardEvent);
-
-        expect(brushServiceSpy.onKeyDown).toHaveBeenCalledWith(keyboardEvent);
-        expect(spyApplyCurrentTool).toHaveBeenCalled();
-        expect(spyGetTool).toHaveBeenCalledWith(keyboardEvent.key);
-        expect(service.currentTool).toEqual(pencilServiceSpy);
     });
 
     it('onKeyPress should call the onKeyPress of the currentTool', () => {
@@ -222,5 +217,15 @@ describe('ToolbarService', () => {
         service.onClick(mouseEvent);
 
         expect(service.currentTool.onClick).toHaveBeenCalledWith(mouseEvent);
+    });
+
+    it('applyCurrentToolColor should call setColors of the currentTool', () => {
+        service.currentTool = pencilServiceSpy;
+        const color = new Color();
+        service.primaryColor = color;
+        service.secondaryColor = color;
+        // tslint:disable-next-line:no-string-literal / reason : accessing private member
+        service['applyCurrentToolColor']();
+        expect(service.currentTool.setColors).toHaveBeenCalled();
     });
 });
