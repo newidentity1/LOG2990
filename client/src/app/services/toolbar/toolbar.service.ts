@@ -54,7 +54,7 @@ export class ToolbarService {
             .set(KeyShortcut.Ellipse, ellipseService)
             .set(KeyShortcut.Line, lineService)
             .set(KeyShortcut.Eraser, eraseService)
-            .set(KeyShortcut.Polygon, polygonService);
+            .set(KeyShortcut.Polygon, polygonService)
             .set(KeyShortcut.Eyedropper, eyedropperService);
     }
 

@@ -35,6 +35,11 @@ export class PolygonComponent {
     }
 
     onTypeDrawingChange(event: MatRadioChange): void {
-        if (Object.values(DrawingType).includes(event.value)) this.polygonService.setTypeDrawing(event.value);
+        for (const value in DrawingType) {
+            if (DrawingType[value as keyof typeof DrawingType] === event.value) {
+                this.polygonService.setTypeDrawing(event.value);
+                break;
+            }
+        }
     }
 }
