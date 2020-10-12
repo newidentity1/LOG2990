@@ -27,7 +27,7 @@ describe('EllipseService', () => {
             providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
         });
         service = TestBed.inject(EllipseService);
-        drawSpy = spyOn<any>(service, 'drawEllipse').and.callThrough();
+        drawSpy = spyOn<any>(service, 'draw').and.callThrough();
         transformToCirleSpy = spyOn<any>(service, 'transformToCircle').and.callThrough();
 
         // Configuration du spy du service
@@ -71,7 +71,7 @@ describe('EllipseService', () => {
         expect(service.pathStart.y).toEqual(expectedResult.y);
     });
 
-    it('onMouseUp should call drawEllipse if mouse was already down', () => {
+    it('onMouseUp should call draw if mouse was already down', () => {
         service.pathStart = { x: 0, y: 0 };
         service.mouseDown = true;
         service.mouseDownCoord = { x: mouseEventLeftClick.x, y: mouseEventLeftClick.y };
@@ -252,36 +252,37 @@ describe('EllipseService', () => {
     });
 
     it('adjustThickness should shrink the thickness when its not in fill mode bigger than the width or the height', () => {
-        const properties = service.toolProperties as BasicShapeProperties;
-        properties.currentType = DrawingType.Stroke;
         const value = 50;
         const radius: Vec2 = { x: 25, y: 25 };
+        service.width = radius.x * 2;
+        service.height = radius.y * 2;
+        service.setTypeDrawing(DrawingType.FillAndStroke);
         service.setThickness(value);
-        service.draw(baseCtxStub);
-
-        expect(service.adjustThickness(properties, radius)).toEqual(radius.x);
+        service.adjustThickness();
+        expect(service.adjustThickness()).toEqual(radius.x);
     });
 
     it('adjustThickness should keep the thickness when its not in fill mode and is smaller than the width or the height', () => {
-        const properties = service.toolProperties as BasicShapeProperties;
-        properties.currentType = DrawingType.Stroke;
         const value = 10;
         const radius: Vec2 = { x: 25, y: 25 };
+        service.width = radius.x * 2;
+        service.height = radius.y * 2;
+        service.setTypeDrawing(DrawingType.Stroke);
         service.setThickness(value);
-        service.draw(baseCtxStub);
 
-        expect(service.adjustThickness(properties, radius)).toEqual(value);
+        expect(service.adjustThickness()).toEqual(value);
     });
 
     it('adjustThickness should set the thickness to 1 when its in fill mode', () => {
-        const properties = service.toolProperties as BasicShapeProperties;
-        properties.currentType = DrawingType.Fill;
         const value = 50;
         const radius: Vec2 = { x: 25, y: 25 };
+        service.width = radius.x * 2;
+        service.height = radius.y * 2;
+        service.setTypeDrawing(DrawingType.Fill);
         service.setThickness(value);
-        service.draw(baseCtxStub);
+        service.adjustThickness();
 
-        expect(service.adjustThickness(properties, radius)).toEqual(1);
+        expect(service.adjustThickness()).toEqual(0);
     });
 
     it('should not draw on escape key press', () => {
@@ -300,28 +301,28 @@ describe('EllipseService', () => {
         expect(service.escapeDown).toEqual(true);
     });
 
-    it('onKeyDown should call drawEllipse if mouse is down', () => {
+    it('onKeyDown should call draw if mouse is down', () => {
         service.mouseDown = true;
         keyboardEvent = new KeyboardEvent('keyDown', { key: 'Shift' });
         service.onKeyDown(keyboardEvent);
         expect(drawSpy).toHaveBeenCalled();
     });
 
-    it('onKeyUp should call drawEllipse if mouse is down', () => {
+    it('onKeyUp should call draw if mouse is down', () => {
         service.mouseDown = true;
         keyboardEvent = new KeyboardEvent('keyUp', { key: 'Shift' });
         service.onKeyUp(keyboardEvent);
         expect(drawSpy).toHaveBeenCalled();
     });
 
-    it('onKeyDown should not call drawEllipse if mouse is not down', () => {
+    it('onKeyDown should not call draw if mouse is not down', () => {
         service.mouseDown = false;
         keyboardEvent = new KeyboardEvent('keyDown', { key: 'Shift' });
         service.onKeyDown(keyboardEvent);
         expect(drawSpy).not.toHaveBeenCalled();
     });
 
-    it('onKeyUp should not call drawEllipse if mouse is not down', () => {
+    it('onKeyUp should not call draw if mouse is not down', () => {
         service.mouseDown = false;
         keyboardEvent = new KeyboardEvent('keyUp', { key: 'Shift' });
         service.onKeyUp(keyboardEvent);

@@ -44,7 +44,7 @@ export abstract class ShapeTool extends Tool {
         return Math.abs(num) / num;
     }
 
-    adjustThickness(): void {
+    adjustThickness(): number {
         const shapeProperties = this.toolProperties as BasicShapeProperties;
         this.radius = { x: this.width / 2, y: this.height / 2 };
         const thickness =
@@ -58,5 +58,6 @@ export abstract class ShapeTool extends Tool {
         this.radius.x -= this.dx;
         this.radius.y -= this.dy;
         this.drawingService.setThickness(thickness);
+        return thickness;
     }
 }
