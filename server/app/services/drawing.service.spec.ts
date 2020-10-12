@@ -17,7 +17,7 @@ describe('Drawing service', () => {
     beforeEach(async () => {
         drawing = { _id: '123456789123', name: 'test', tags: ['test', 'first'], url: '/' };
 
-        mongoServer = new MongoMemoryServer({ binary: { version: '4.4.1' } });
+        mongoServer = new MongoMemoryServer({ binary: { version: 'latest' } });
         await mongoServer.start();
         const mongoUri = await mongoServer.getUri();
         client = await MongoClient.connect(mongoUri, {
