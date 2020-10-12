@@ -17,7 +17,7 @@ describe('Drawing service', () => {
     beforeEach(async () => {
         drawing = { _id: '123456789123', name: 'test', tags: ['test', 'first'], url: '/' };
 
-        mongoServer = new MongoMemoryServer({ binary: { version: 'latest' } });
+        mongoServer = new MongoMemoryServer();
         await mongoServer.start();
         const mongoUri = await mongoServer.getUri();
         client = await MongoClient.connect(mongoUri, {
@@ -26,11 +26,7 @@ describe('Drawing service', () => {
         });
         db = client.db(await mongoServer.getDbName());
         await db.createCollection('test');
-        await db.collection('test').insertOne(drawing, (error, drawingInserted) => {
-            if (error) {
-                return;
-            }
-        });
+        await db.collection('test').insertOne(drawing, (error, drawingInserted) => {});
         const [container] = await testingContainer();
         drawingService = container.get<DrawingService>(TYPES.DrawingService);
 
@@ -84,7 +80,7 @@ describe('Drawing service', () => {
 
     it('should add a drawing', (done: Mocha.Done) => {
         const newDrawing = drawing;
-        newDrawing._id = '124';
+        newDrawing._id = '123456789124';
         let isSucess = true;
         drawingService.addDrawing(newDrawing).catch(() => {
             isSucess = false;
