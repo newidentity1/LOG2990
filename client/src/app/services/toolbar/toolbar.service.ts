@@ -2,10 +2,12 @@ import { Injectable } from '@angular/core';
 import { Color } from '@app/classes/color/color';
 import { Tool } from '@app/classes/tool/tool';
 import { KeyShortcut } from '@app/enums/key-shortcuts.enum';
+import { ColorPickerService } from '@app/services/color-picker/color-picker.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { BrushService } from '@app/services/tools/brush/brush.service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
 import { EraseService } from '@app/services/tools/erase/erase.service';
+import { EyedropperService } from '@app/services/tools/eyedropper/eyedropper.service';
 import { LineService } from '@app/services/tools/line/line.service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { PolygonService } from '@app/services/tools/polygon/polygon.service';
@@ -18,6 +20,7 @@ export enum toolsIndex {
     ellipse,
     lines,
     eraser,
+    eyedropper,
 }
 
 @Injectable({
@@ -38,9 +41,11 @@ export class ToolbarService {
         protected lineService: LineService,
         protected eraseService: EraseService,
         protected polygonService: PolygonService,
+        protected eyedropperService: EyedropperService,
         protected drawingService: DrawingService,
+        protected colorPickerService: ColorPickerService,
     ) {
-        this.tools = [pencilService, brushService, rectangleService, ellipseService, polygonService, lineService, eraseService];
+        this.tools = [pencilService, brushService, rectangleService, ellipseService, polygonService, lineService, eraseService, eyedropperService];
         this.currentTool = this.tools[0];
         this.keyShortcuts
             .set(KeyShortcut.Pencil, pencilService)
@@ -50,18 +55,21 @@ export class ToolbarService {
             .set(KeyShortcut.Line, lineService)
             .set(KeyShortcut.Eraser, eraseService)
             .set(KeyShortcut.Polygon, polygonService);
+            .set(KeyShortcut.Eyedropper, eyedropperService);
+    }
+
+    initializeColors(): void {
+        this.colorPickerService.primaryColor.subscribe((color: Color) => {
+            this.setColors(color, this.secondaryColor);
+        });
+
+        this.colorPickerService.secondaryColor.subscribe((color: Color) => {
+            this.setColors(this.primaryColor, color);
+        });
     }
 
     getTools(): Tool[] {
         return this.tools;
-    }
-
-    getTool(keyShortcut: string): Tool | undefined {
-        let tool: Tool | undefined;
-        if (this.keyShortcuts.has(keyShortcut)) {
-            tool = this.keyShortcuts.get(keyShortcut);
-        }
-        return tool;
     }
 
     setColors(primaryColor: Color, secondaryColor: Color): void {
@@ -75,14 +83,15 @@ export class ToolbarService {
         this.applyCurrentToolColor();
     }
 
-    onKeyDown(event: KeyboardEvent): void {
-        this.currentTool.onKeyDown(event);
-        const toolFound = this.getTool(event.key);
-        const isNewTool = toolFound && toolFound !== this.currentTool;
-        this.currentTool = toolFound ? toolFound : this.currentTool;
-        if (isNewTool) {
+    changeTool(tool: Tool): void {
+        if (tool !== this.currentTool) {
+            this.currentTool = tool;
             this.applyCurrentTool();
         }
+    }
+
+    onKeyDown(event: KeyboardEvent): void {
+        this.currentTool.onKeyDown(event);
     }
 
     onKeyPress(event: KeyboardEvent): void {
