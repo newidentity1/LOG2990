@@ -14,7 +14,7 @@ export class BucketService extends Tool {
     private openList: Pixel[] = [];
     private matrice: Pixel[][] = [];
 
-    private startPixel: ImageData;
+    private startPixelColor: Uint8ClampedArray;
     protected tolerance: number = 1;
 
     constructor(drawingService: DrawingService) {
@@ -36,8 +36,10 @@ export class BucketService extends Tool {
         }
     }
     onMouseDown(event: MouseEvent): void {
-        this.generateMatrice();
+        const mousePosition = this.getPositionFromMouse(event);
+        this.startPixelColor = this.drawingService.baseCtx.getImageData(mousePosition.x, mousePosition.y, 1, 1).data;
         if (event.button === MouseButton.Left) {
+            this.generateMatrice();
             this.floodFillLeft(event);
         } else {
             this.floodFillRight(event);
@@ -49,7 +51,6 @@ export class BucketService extends Tool {
         const mousePosition = this.getPositionFromMouse(event);
         const start: Pixel = { x: mousePosition.x, y: mousePosition.y, status: 0 };
         this.openList.push(start);
-        this.startPixel = this.drawingService.baseCtx.getImageData(mousePosition.x, mousePosition.y, 1, 1);
         let security = 0;
         while (this.openList.length !== 0 && security < this.drawingService.canvas.height * this.drawingService.canvas.width) {
             this.addNeighbours(this.openList);
@@ -60,8 +61,6 @@ export class BucketService extends Tool {
     }
 
     floodFillRight(event: MouseEvent): void {
-        const mousePosition = this.getPositionFromMouse(event);
-        this.startPixel = this.drawingService.baseCtx.getImageData(mousePosition.x, mousePosition.y, 1, 1);
         const pixel: Pixel = { x: 0, y: 0, status: 0 };
         for (let i = 0; i < this.drawingService.canvas.height; i++) {
             for (let j = 0; j < this.drawingService.canvas.width; j++) {
@@ -89,16 +88,6 @@ export class BucketService extends Tool {
         this.setThickness(this.toolProperties.thickness);
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
     }
-
-    // private showList(list: Vec2[]): void {
-    //     if (list.length === 0) {
-    //         console.log('VIDE');
-    //     } else {
-    //         for (const pixel of list) {
-    //             console.log(pixel.x, pixel.y);
-    //         }
-    //     }
-    // }
 
     private clearList(list: Pixel[]): void {
         if (list.length === 0) {
@@ -174,14 +163,14 @@ export class BucketService extends Tool {
     private checkColor(point: Pixel): boolean {
         const pixel: ImageData = this.drawingService.baseCtx.getImageData(point.x, point.y, 1, 1);
         if (
-            pixel.data[0] >= this.startPixel.data[0] - this.tolerance &&
-            pixel.data[0] < this.startPixel.data[0] + this.tolerance &&
-            pixel.data[1] >= this.startPixel.data[1] - this.tolerance &&
-            pixel.data[1] < this.startPixel.data[1] + this.tolerance &&
-            pixel.data[2] >= this.startPixel.data[2] - this.tolerance &&
-            pixel.data[2] < this.startPixel.data[2] + this.tolerance &&
-            pixel.data[CONSTANTS.INDEX_3] >= this.startPixel.data[CONSTANTS.INDEX_3] - this.tolerance &&
-            pixel.data[CONSTANTS.INDEX_3] < this.startPixel.data[CONSTANTS.INDEX_3] + this.tolerance
+            pixel.data[0] >= this.startPixelColor[0] - this.tolerance &&
+            pixel.data[0] < this.startPixelColor[0] + this.tolerance &&
+            pixel.data[1] >= this.startPixelColor[1] - this.tolerance &&
+            pixel.data[1] < this.startPixelColor[1] + this.tolerance &&
+            pixel.data[2] >= this.startPixelColor[2] - this.tolerance &&
+            pixel.data[2] < this.startPixelColor[2] + this.tolerance &&
+            pixel.data[CONSTANTS.INDEX_3] >= this.startPixelColor[CONSTANTS.INDEX_3] - this.tolerance &&
+            pixel.data[CONSTANTS.INDEX_3] < this.startPixelColor[CONSTANTS.INDEX_3] + this.tolerance
         ) {
             return true;
         }
