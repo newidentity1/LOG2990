@@ -87,26 +87,23 @@ export class RectangleService extends ShapeTool {
         //     this.drawingService.clearCanvas(this.drawingService.previewCtx);
         //     return;
         // }
-
-        let width = this.width;
-        let height = this.height;
         if (this.shiftDown) {
-            const square: Vec2 = this.transformToSquare(width, height);
-            width = square.x;
-            height = square.y;
+            const square: Vec2 = this.transformToSquare(this.width, this.height);
+            this.width = square.x;
+            this.height = square.y;
         }
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         const rectangleProperties = this.toolProperties as BasicShapeProperties;
 
         switch (rectangleProperties.currentType) {
             case DrawingType.Fill:
-                this.drawFillRect(ctx, width, height);
+                this.drawFillRect(ctx, this.width, this.height);
                 break;
             case DrawingType.Stroke:
-                this.drawStrokeRect(ctx, width, height);
+                this.drawStrokeRect(ctx, this.width, this.height);
                 break;
             case DrawingType.FillAndStroke:
-                this.drawFillStrokeRect(ctx, width, height);
+                this.drawFillStrokeRect(ctx, this.width, this.height);
         }
     }
 

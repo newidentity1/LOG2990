@@ -99,6 +99,7 @@ export class ToolbarService {
 
     changeTool(tool: Tool): void {
         if (tool !== this.currentTool) {
+            this.resetSelection();
             this.currentTool = tool;
             this.applyCurrentTool();
         }
@@ -138,7 +139,6 @@ export class ToolbarService {
 
     onDoubleClick(event: MouseEvent): void {
         this.currentTool.onDoubleClick(event);
-        this.triggerSelectAll();
     }
 
     onClick(event: MouseEvent): void {
@@ -146,10 +146,17 @@ export class ToolbarService {
     }
 
     triggerSelectAll(): void {
-        // TODO: adapt to shortcut refactoring
         this.currentTool = this.rectangleSelectService;
         this.applyCurrentTool();
         this.rectangleSelectService.selectAll();
+    }
+
+    isAreaSelected(): boolean {
+        return this.rectangleSelectService.isAreaSelected;
+    }
+
+    resetSelection(): void {
+        if (this.isAreaSelected()) this.rectangleSelectService.resetSelection();
     }
 
     private applyCurrentToolColor(): void {
