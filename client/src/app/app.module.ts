@@ -25,6 +25,7 @@ import { CreateNewDrawingComponent } from './components/create-new-drawing/creat
 import { NewDrawingDialogComponent } from './components/create-new-drawing/new-drawing-dialog/new-drawing-dialog.component';
 import { DrawingComponent } from './components/drawing/drawing.component';
 import { EditorComponent } from './components/editor/editor.component';
+import { ExportComponent } from './components/export/export.component';
 import { GuideComponent } from './components/guide/guide.component';
 import { OpenGuideComponent } from './components/guide/open-guide/open-guide.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
@@ -38,6 +39,7 @@ import { LineComponent } from './components/tools-options/line/line.component';
 import { PencilComponent } from './components/tools-options/pencil/pencil.component';
 import { RectangleComponent } from './components/tools-options/rectangle/rectangle.component';
 import { ThicknessSliderComponent } from './components/tools-options/thickness-slider/thickness-slider.component';
+import { ExportDrawingDialogComponent } from './components/export/export-drawing-dialog/export-drawing-dialog.component';
 @NgModule({
     declarations: [
         AppComponent,
@@ -62,6 +64,8 @@ import { ThicknessSliderComponent } from './components/tools-options/thickness-s
         NewDrawingDialogComponent,
         OpenGuideComponent,
         EyedropperComponent,
+        ExportComponent,
+        ExportDrawingDialogComponent,
     ],
     imports: [
         BrowserModule,
