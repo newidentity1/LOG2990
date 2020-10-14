@@ -35,7 +35,7 @@ export class EditorComponent implements OnInit, OnDestroy {
         });
     }
 
-    @HostListener('keydown', ['$event'])
+    @HostListener('window:keydown', ['$event'])
     onKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
         this.toolbarService.onKeyDown(event);
@@ -47,7 +47,7 @@ export class EditorComponent implements OnInit, OnDestroy {
         this.toolbarService.onKeyPress(event);
     }
 
-    @HostListener('keyup', ['$event'])
+    @HostListener('window:keyup', ['$event'])
     onKeyUp(event: KeyboardEvent): void {
         event.preventDefault();
         this.toolbarService.onKeyUp(event);
@@ -62,7 +62,7 @@ export class EditorComponent implements OnInit, OnDestroy {
         this.dimensionsUpdatedSubject.next([this.width, this.height]);
     }
 
-    initializeShortcuts(): void {
+    private initializeShortcuts(): void {
         this.toolbarService.keyShortcuts.forEach((tool: Tool, shortcut: string) => {
             this.subscribedShortcuts.push(
                 this.shortcutService.addShortcut(shortcut).subscribe(() => {

@@ -5,14 +5,13 @@ import { KeyShortcut } from '@app/enums/key-shortcuts.enum';
 import { ColorPickerService } from '@app/services/color-picker/color-picker.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { BrushService } from '@app/services/tools/brush/brush.service';
-import { EllipseSelectService } from '@app/services/tools/ellipse-select/ellipse-select.service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
 import { EraseService } from '@app/services/tools/erase/erase.service';
 import { EyedropperService } from '@app/services/tools/eyedropper/eyedropper.service';
 import { LineService } from '@app/services/tools/line/line.service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
-import { RectangleSelectService } from '@app/services/tools/rectangle-select/rectangle-select.service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle.service';
+import { SelectionService } from '@app/services/tools/selection/selection.service';
 
 export enum toolsIndex {
     pencil,
@@ -43,22 +42,11 @@ export class ToolbarService {
         protected lineService: LineService,
         protected eraseService: EraseService,
         protected eyedropperService: EyedropperService,
-        protected rectangleSelectService: RectangleSelectService,
-        protected ellipseSelectService: EllipseSelectService,
+        protected selectionService: SelectionService,
         protected drawingService: DrawingService,
         protected colorPickerService: ColorPickerService,
     ) {
-        this.tools = [
-            pencilService,
-            brushService,
-            rectangleService,
-            ellipseService,
-            lineService,
-            eraseService,
-            eyedropperService,
-            rectangleSelectService,
-            ellipseSelectService,
-        ];
+        this.tools = [pencilService, brushService, rectangleService, ellipseService, lineService, eraseService, eyedropperService, selectionService];
         this.currentTool = this.tools[0];
         this.keyShortcuts
             .set(KeyShortcut.Pencil, pencilService)
@@ -68,8 +56,8 @@ export class ToolbarService {
             .set(KeyShortcut.Line, lineService)
             .set(KeyShortcut.Eraser, eraseService)
             .set(KeyShortcut.Eyedropper, eyedropperService)
-            .set(KeyShortcut.RectangleSelect, rectangleSelectService)
-            .set(KeyShortcut.EllipseSelect, ellipseSelectService);
+            .set(KeyShortcut.RectangleSelect, selectionService)
+            .set(KeyShortcut.EllipseSelect, selectionService);
     }
 
     initializeColors(): void {
@@ -146,17 +134,19 @@ export class ToolbarService {
     }
 
     triggerSelectAll(): void {
-        this.currentTool = this.rectangleSelectService;
+        this.currentTool = this.selectionService;
         this.applyCurrentTool();
-        this.rectangleSelectService.selectAll();
+        this.selectionService.selectAll();
     }
 
     isAreaSelected(): boolean {
-        return this.rectangleSelectService.isAreaSelected;
+        return this.selectionService.isAreaSelected;
     }
 
     resetSelection(): void {
-        if (this.isAreaSelected()) this.rectangleSelectService.resetSelection();
+        if (this.isAreaSelected()) {
+            this.selectionService.resetSelection();
+        }
     }
 
     private applyCurrentToolColor(): void {

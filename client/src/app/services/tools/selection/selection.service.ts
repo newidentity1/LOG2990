@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { ShapeTool } from '@app/classes/tool/shape-tool';
 import { Tool } from '@app/classes/tool/tool';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 import { Vec2 } from '@app/classes/vec2';
@@ -6,26 +7,30 @@ import { DASHED_SEGMENTS, SELECTION_BOX_THICKNESS } from '@app/constants/constan
 import { DrawingType } from '@app/enums/drawing-type.enum';
 import { MouseButton } from '@app/enums/mouse-button.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle.service';
 
-// TODO: Refactor with ellipse select, too much duplicate code
 @Injectable({
     providedIn: 'root',
 })
-export class RectangleSelectService extends Tool {
+export class SelectionService extends Tool {
     isAreaSelected: boolean;
-    private isMovingSelection: boolean;
-    private positiveStartingPos: Vec2;
-    private positiveWidth: number;
-    private positiveHeight: number;
-    private escapePressed: boolean;
-    imgData: ImageData;
+    protected isMovingSelection: boolean;
+    protected positiveStartingPos: Vec2;
+    protected positiveWidth: number;
+    protected positiveHeight: number;
+    protected escapePressed: boolean;
+    protected imgData: ImageData;
+    protected shapeService: ShapeTool;
+    private previousShapeType: DrawingType;
 
-    constructor(drawingService: DrawingService, private rectangleService: RectangleService) {
+    constructor(drawingService: DrawingService, rectangleService: RectangleService, ellipseService: EllipseService) {
         super(drawingService);
-        this.name = 'Rectangle Select';
-        this.tooltip = 'Selection par rectangle(r)';
+        this.name = 'Selection';
+        this.tooltip = 'Selection (r)';
         this.iconName = 'highlight_alt';
+        this.toolProperties = new BasicShapeProperties();
+        this.shapeService = rectangleService;
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -37,17 +42,24 @@ export class RectangleSelectService extends Tool {
                 this.isMovingSelection = true;
             } else {
                 this.isAreaSelected = false;
-                this.rectangleService.onMouseDown(event);
+                const shapeServiceProperties = this.shapeService.toolProperties as BasicShapeProperties;
+                this.previousShapeType = shapeServiceProperties.currentType as DrawingType;
+                this.shapeService.setTypeDrawing(DrawingType.Stroke);
                 this.drawingService.previewCtx.setLineDash([DASHED_SEGMENTS]);
+                this.setThickness(SELECTION_BOX_THICKNESS);
+                this.shapeService.onMouseDown(event);
             }
         }
     }
 
     onMouseMove(event: MouseEvent): void {
-        if (this.isMovingSelection) {
-            // // TODO : Handle move
-        } else {
-            this.rectangleService.onMouseMove(event);
+        if (this.mouseDown) {
+            if (this.isMovingSelection) {
+                // TODO : Handle move
+            } else {
+                this.drawingService.previewCtx.setLineDash([DASHED_SEGMENTS]);
+                this.shapeService.onMouseMove(event);
+            }
         }
     }
 
@@ -56,7 +68,7 @@ export class RectangleSelectService extends Tool {
             if (this.isMovingSelection) {
                 this.isMovingSelection = false;
             } else {
-                this.rectangleService.mouseDown = false;
+                this.shapeService.mouseDown = false;
                 const mouseUpPosition = this.getPositionFromMouse(event);
                 if (mouseUpPosition.x !== this.mouseDownCoord.x || mouseUpPosition.y !== this.mouseDownCoord.y) {
                     this.computePositiveRectangleValues();
@@ -64,7 +76,6 @@ export class RectangleSelectService extends Tool {
                     this.escapePressed = false;
                 }
             }
-            this.drawingService.previewCtx.setLineDash([]);
             this.mouseDown = false;
         }
     }
@@ -75,13 +86,14 @@ export class RectangleSelectService extends Tool {
             this.resetSelection();
         }
         if (this.mouseDown) {
-            this.rectangleService.onKeyDown(event);
+            this.drawingService.previewCtx.setLineDash([DASHED_SEGMENTS]);
+            this.shapeService.onKeyDown(event);
         }
     }
 
     onKeyUp(event: KeyboardEvent): void {
         if (this.mouseDown) {
-            this.rectangleService.onKeyUp(event);
+            this.shapeService.onKeyUp(event);
         }
     }
 
@@ -97,17 +109,27 @@ export class RectangleSelectService extends Tool {
         if (this.isAreaSelected) {
             this.isAreaSelected = false;
             const selectionCtx = this.drawingService.previewCtx;
-            this.imgData = selectionCtx.getImageData(0, 0, this.positiveWidth, this.positiveHeight);
-            const canvasTopOffset = +selectionCtx.canvas.style.top.substring(0, selectionCtx.canvas.style.top.length - 2);
-            const canvasLeftOffset = +selectionCtx.canvas.style.left.substring(0, selectionCtx.canvas.style.left.length - 2);
-            this.drawingService.baseCtx.putImageData(this.imgData, canvasLeftOffset, canvasTopOffset, 0, 0, this.positiveWidth, this.positiveWidth);
+            // this.imgData = selectionCtx.getImageData(0, 0, this.positiveWidth, this.positiveHeight);
+            // const canvasTopOffset = +selectionCtx.canvas.style.top.substring(0, selectionCtx.canvas.style.top.length - 2);
+            // const canvasLeftOffset = +selectionCtx.canvas.style.left.substring(0, selectionCtx.canvas.style.left.length - 2);
+            // this.drawingService.baseCtx.putImageData(
+            // this.imgData,
+            // canvasLeftOffset,
+            // canvasTopOffset,
+            // 0,
+            // 0,
+            // this.positiveWidth,
+            // this.positiveWidth
+            // );
             selectionCtx.canvas.width = this.drawingService.canvas.width;
             selectionCtx.canvas.height = this.drawingService.canvas.height;
             selectionCtx.canvas.style.left = '0px';
             selectionCtx.canvas.style.top = '0px';
 
             this.escapePressed = false;
+
             selectionCtx.canvas.style.cursor = '';
+            this.shapeService.setTypeDrawing(this.previousShapeType);
         }
     }
 
@@ -131,15 +153,19 @@ export class RectangleSelectService extends Tool {
         setTimeout(() => {
             selectionCtx.putImageData(this.imgData, 0, 0, 0, 0, this.positiveWidth, this.positiveWidth);
             this.drawingService.baseCtx.clearRect(this.positiveStartingPos.x, this.positiveStartingPos.y, this.positiveWidth, this.positiveHeight);
+
+            // this.ellipseService.mouseDownCoord = { x: 0, y: 0 };
+            // selectionCtx.setLineDash([DASHED_SEGMENTS]);
+            // this.ellipseService.drawShape(selectionCtx);
             selectionCtx.canvas.style.cursor = 'move';
         }, 0);
     }
 
     private computePositiveRectangleValues(): void {
-        this.positiveStartingPos.x = this.rectangleService.width >= 0 ? this.mouseDownCoord.x : this.mouseDownCoord.x + this.rectangleService.width;
-        this.positiveWidth = Math.abs(this.rectangleService.width);
-        this.positiveStartingPos.y = this.rectangleService.height >= 0 ? this.mouseDownCoord.y : this.mouseDownCoord.y + this.rectangleService.height;
-        this.positiveHeight = Math.abs(this.rectangleService.height);
+        this.positiveStartingPos.x = this.shapeService.width >= 0 ? this.mouseDownCoord.x : this.mouseDownCoord.x + this.shapeService.width;
+        this.positiveWidth = Math.abs(this.shapeService.width);
+        this.positiveStartingPos.y = this.shapeService.height >= 0 ? this.mouseDownCoord.y : this.mouseDownCoord.y + this.shapeService.height;
+        this.positiveHeight = Math.abs(this.shapeService.height);
     }
 
     resetContext(): void {
@@ -147,10 +173,6 @@ export class RectangleSelectService extends Tool {
         this.escapePressed = false;
         this.isMovingSelection = false;
         this.positiveStartingPos = { x: 0, y: 0 };
-
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        this.drawingService.setThickness(SELECTION_BOX_THICKNESS);
-        const rectangleServiceProperties = this.rectangleService.toolProperties as BasicShapeProperties;
-        rectangleServiceProperties.currentType = DrawingType.Stroke;
     }
 }

@@ -24,8 +24,7 @@ export class SidebarComponent {
 
     onToolChanged(tool: Tool): void {
         if (tool !== this.currentTool) {
-            this.currentTool = tool;
-            this.toolbarService.applyCurrentTool();
+            this.toolbarService.changeTool(tool);
             this.sidenavProperties.open();
         } else {
             this.sidenavProperties.toggle();
@@ -38,9 +37,5 @@ export class SidebarComponent {
 
     get currentTool(): Tool {
         return this.toolbarService.currentTool;
-    }
-
-    set currentTool(tool: Tool) {
-        this.toolbarService.currentTool = tool;
     }
 }

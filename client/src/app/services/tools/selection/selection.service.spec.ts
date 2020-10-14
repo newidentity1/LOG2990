@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
-import { EllipseSelectService } from './ellipse-select.service';
+import { SelectionService } from './selection.service';
 
-describe('EllipseSelectService', () => {
-    let service: EllipseSelectService;
+describe('SelectionService', () => {
+    let service: SelectionService;
 
     beforeEach(() => {
         TestBed.configureTestingModule({});
-        service = TestBed.inject(EllipseSelectService);
+        service = TestBed.inject(SelectionService);
     });
 
     it('should be created', () => {
