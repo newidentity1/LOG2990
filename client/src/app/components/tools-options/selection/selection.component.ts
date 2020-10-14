@@ -9,11 +9,8 @@ import { SelectionService } from '@app/services/tools/selection/selection.servic
 })
 export class SelectionComponent {
     typesSelection: typeof SelectionType = SelectionType;
-    currentType: string;
 
-    constructor(private selectionService: SelectionService) {
-        this.currentType = this.selectionService.currentType;
-    }
+    constructor(private selectionService: SelectionService) {}
 
     onTypeSelectionChange(type: SelectionType): void {
         this.selectionService.setSelectionType(type);
@@ -21,5 +18,9 @@ export class SelectionComponent {
 
     keepOriginalOrder(): number {
         return 0;
+    }
+
+    get currentType(): SelectionType {
+        return this.selectionService.currentType;
     }
 }

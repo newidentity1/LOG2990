@@ -2,6 +2,7 @@ import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } fro
 import { Tool } from '@app/classes/tool/tool';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants/constants';
+import { SelectionType } from '@app/enums/selection-type.enum';
 import { ShortcutService } from '@app/services/shortcut/shortcut.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
@@ -70,6 +71,18 @@ export class EditorComponent implements OnInit, OnDestroy {
                 }),
             );
         });
+
+        this.subscribedShortcuts.push(
+            this.shortcutService.addShortcut('r').subscribe(() => {
+                this.toolbarService.changeSelectionTool(SelectionType.RectangleSelection);
+            }),
+        );
+
+        this.subscribedShortcuts.push(
+            this.shortcutService.addShortcut('s').subscribe(() => {
+                this.toolbarService.changeSelectionTool(SelectionType.EllipseSelection);
+            }),
+        );
 
         this.subscribedShortcuts.push(
             this.shortcutService.addShortcut('control.o').subscribe(() => {

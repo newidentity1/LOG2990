@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Color } from '@app/classes/color/color';
 import { Tool } from '@app/classes/tool/tool';
 import { KeyShortcut } from '@app/enums/key-shortcuts.enum';
+import { SelectionType } from '@app/enums/selection-type.enum';
 import { ColorPickerService } from '@app/services/color-picker/color-picker.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { BrushService } from '@app/services/tools/brush/brush.service';
@@ -147,6 +148,10 @@ export class ToolbarService {
         if (this.isAreaSelected()) {
             this.selectionService.resetSelection();
         }
+    }
+
+    changeSelectionTool(type: SelectionType): void {
+        this.selectionService.setSelectionType(type);
     }
 
     private applyCurrentToolColor(): void {
