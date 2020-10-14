@@ -1,4 +1,4 @@
-import { DATABASE_COLLECTION, DATABASE_NAME, DATABASE_URL } from '@app/contants';
+import { DATABASE_COLLECTION, DATABASE_NAME, DATABASE_URL } from '@app/constants';
 import { Drawing } from '@common/communication/drawing.ts';
 import { injectable } from 'inversify';
 import { Collection, MongoClient, MongoClientOptions } from 'mongodb';
