@@ -35,7 +35,7 @@ export class EditorComponent implements OnInit, OnDestroy {
         });
     }
 
-    @HostListener('window:keydown', ['$event'])
+    @HostListener('keydown', ['$event'])
     onKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
         this.toolbarService.onKeyDown(event);

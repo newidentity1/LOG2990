@@ -6,6 +6,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { DASHED_SEGMENTS, SELECTION_BOX_THICKNESS } from '@app/constants/constants';
 import { DrawingType } from '@app/enums/drawing-type.enum';
 import { MouseButton } from '@app/enums/mouse-button.enum';
+import { SelectionType } from '@app/enums/selection-type.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle.service';
@@ -14,6 +15,7 @@ import { RectangleService } from '@app/services/tools/rectangle/rectangle.servic
     providedIn: 'root',
 })
 export class SelectionService extends Tool {
+    currentType: SelectionType;
     isAreaSelected: boolean;
     protected isMovingSelection: boolean;
     protected positiveStartingPos: Vec2;
@@ -24,13 +26,27 @@ export class SelectionService extends Tool {
     protected shapeService: ShapeTool;
     private previousShapeType: DrawingType;
 
-    constructor(drawingService: DrawingService, rectangleService: RectangleService, ellipseService: EllipseService) {
+    constructor(drawingService: DrawingService, private rectangleService: RectangleService, private ellipseService: EllipseService) {
         super(drawingService);
         this.name = 'Selection';
         this.tooltip = 'Selection (r)';
         this.iconName = 'highlight_alt';
         this.toolProperties = new BasicShapeProperties();
         this.shapeService = rectangleService;
+        this.currentType = SelectionType.RectangleSelection;
+    }
+
+    setSelectionType(type: SelectionType): void {
+        switch (type) {
+            case SelectionType.RectangleSelection:
+                this.shapeService = this.rectangleService;
+                this.currentType = SelectionType.RectangleSelection;
+                break;
+            case SelectionType.EllipseSelection:
+                this.shapeService = this.ellipseService;
+                this.currentType = SelectionType.EllipseSelection;
+                break;
+        }
     }
 
     onMouseDown(event: MouseEvent): void {
