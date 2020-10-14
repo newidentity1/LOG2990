@@ -16,6 +16,10 @@ export class SelectionComponent {
         this.selectionService.setSelectionType(type);
     }
 
+    triggerSelectAll(): void {
+        this.selectionService.selectAll();
+    }
+
     keepOriginalOrder(): number {
         return 0;
     }

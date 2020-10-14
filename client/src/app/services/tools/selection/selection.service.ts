@@ -114,6 +114,7 @@ export class SelectionService extends Tool {
     }
 
     selectAll(): void {
+        this.setSelectionType(SelectionType.RectangleSelection);
         this.positiveStartingPos.x = 0;
         this.positiveStartingPos.y = 0;
         this.positiveWidth = this.drawingService.canvas.width;
@@ -167,8 +168,8 @@ export class SelectionService extends Tool {
         );
 
         setTimeout(() => {
-            selectionCtx.putImageData(this.imgData, 0, 0, 0, 0, this.positiveWidth, this.positiveWidth);
-            this.drawingService.baseCtx.clearRect(this.positiveStartingPos.x, this.positiveStartingPos.y, this.positiveWidth, this.positiveHeight);
+            // selectionCtx.putImageData(this.imgData, 0, 0, 0, 0, this.positiveWidth, this.positiveWidth);
+            // this.drawingService.baseCtx.clearRect(this.positiveStartingPos.x, this.positiveStartingPos.y, this.positiveWidth, this.positiveHeight);
 
             // this.ellipseService.mouseDownCoord = { x: 0, y: 0 };
             // selectionCtx.setLineDash([DASHED_SEGMENTS]);
