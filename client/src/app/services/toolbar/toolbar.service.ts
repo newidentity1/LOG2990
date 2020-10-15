@@ -88,7 +88,7 @@ export class ToolbarService {
 
     changeTool(tool: Tool): void {
         if (tool !== this.currentTool) {
-            this.resetSelection();
+            // this.resetSelection();
             this.currentTool = tool;
             this.applyCurrentTool();
         }
