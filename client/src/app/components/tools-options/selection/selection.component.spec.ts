@@ -1,4 +1,6 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatRadioModule } from '@angular/material/radio';
 import { SelectionType } from '@app/enums/selection-type.enum';
 import { SelectionService } from '@app/services/tools/selection/selection.service';
 import { SelectionComponent } from './selection.component';
@@ -13,7 +15,9 @@ describe('SelectionComponent', () => {
 
         TestBed.configureTestingModule({
             declarations: [SelectionComponent],
+            imports: [MatRadioModule],
             providers: [{ provide: SelectionService, useValue: selectionServiceMock }],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
     }));
 
