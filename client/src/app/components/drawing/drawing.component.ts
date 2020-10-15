@@ -1,4 +1,5 @@
 import { AfterContentInit, AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild } from '@angular/core';
+import { ResizerProperties } from '@app/classes/resizer-properties';
 import { Vec2 } from '@app/classes/vec2';
 import {
     CANVAS_MARGIN_LEFT,
@@ -13,11 +14,6 @@ import { MouseButton } from '@app/enums/mouse-button.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 import { Observable } from 'rxjs';
-
-interface ResizerProperties {
-    top: string;
-    left: string;
-}
 
 @Component({
     selector: 'app-drawing',
