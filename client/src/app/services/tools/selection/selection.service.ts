@@ -57,7 +57,6 @@ export class SelectionService extends Tool {
                 // TODO : Handle move
                 this.isMovingSelection = true;
             } else {
-                this.isAreaSelected = false;
                 const shapeServiceProperties = this.shapeService.toolProperties as BasicShapeProperties;
                 this.previousShapeType = shapeServiceProperties.currentType as DrawingType;
                 this.shapeService.setTypeDrawing(DrawingType.Stroke);
@@ -70,12 +69,8 @@ export class SelectionService extends Tool {
 
     onMouseMove(event: MouseEvent): void {
         if (this.mouseDown) {
-            if (this.isMovingSelection) {
-                // TODO : Handle move
-            } else {
-                this.drawingService.previewCtx.setLineDash([DASHED_SEGMENTS]);
-                this.shapeService.onMouseMove(event);
-            }
+            this.drawingService.previewCtx.setLineDash([DASHED_SEGMENTS]);
+            this.shapeService.onMouseMove(event);
         }
     }
 
@@ -98,7 +93,7 @@ export class SelectionService extends Tool {
 
     onKeyDown(event: KeyboardEvent): void {
         this.escapePressed = event.key === 'Escape';
-        if (this.escapePressed) {
+        if (this.escapePressed && (this.mouseDown || this.isAreaSelected)) {
             this.resetSelection();
         }
         if (this.mouseDown) {
@@ -126,6 +121,8 @@ export class SelectionService extends Tool {
         if (this.isAreaSelected) {
             this.isAreaSelected = false;
             const selectionCtx = this.drawingService.previewCtx;
+            // TODO : Handle move
+
             // this.imgData = selectionCtx.getImageData(0, 0, this.positiveWidth, this.positiveHeight);
             // const canvasTopOffset = +selectionCtx.canvas.style.top.substring(0, selectionCtx.canvas.style.top.length - 2);
             // const canvasLeftOffset = +selectionCtx.canvas.style.left.substring(0, selectionCtx.canvas.style.left.length - 2);
@@ -168,6 +165,8 @@ export class SelectionService extends Tool {
         );
 
         setTimeout(() => {
+            // TODO : Handle move
+
             // selectionCtx.putImageData(this.imgData, 0, 0, 0, 0, this.positiveWidth, this.positiveWidth);
             // this.drawingService.baseCtx.clearRect(this.positiveStartingPos.x, this.positiveStartingPos.y, this.positiveWidth, this.positiveHeight);
 
@@ -186,6 +185,7 @@ export class SelectionService extends Tool {
     }
 
     resetContext(): void {
+        this.mouseDown = false;
         this.isAreaSelected = false;
         this.escapePressed = false;
         this.isMovingSelection = false;
