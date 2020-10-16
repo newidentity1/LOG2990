@@ -6,6 +6,7 @@ import { SelectionType } from '@app/enums/selection-type.enum';
 import { ColorPickerService } from '@app/services/color-picker/color-picker.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { BrushService } from '@app/services/tools/brush/brush.service';
+import { BucketService } from '@app/services/tools/bucket/bucket.service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
 import { EraseService } from '@app/services/tools/erase/erase.service';
 import { EyedropperService } from '@app/services/tools/eyedropper/eyedropper.service';
@@ -13,17 +14,6 @@ import { LineService } from '@app/services/tools/line/line.service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle.service';
 import { SelectionService } from '@app/services/tools/selection/selection.service';
-
-export enum toolsIndex {
-    pencil,
-    brush,
-    rectangle,
-    ellipse,
-    lines,
-    eraser,
-    eyedropper,
-    rectangleSelect,
-}
 
 @Injectable({
     providedIn: 'root',
@@ -46,8 +36,19 @@ export class ToolbarService {
         protected selectionService: SelectionService,
         protected drawingService: DrawingService,
         protected colorPickerService: ColorPickerService,
+        protected bucketService: BucketService,
     ) {
-        this.tools = [pencilService, brushService, rectangleService, ellipseService, lineService, eraseService, eyedropperService, selectionService];
+        this.tools = [
+            pencilService,
+            brushService,
+            rectangleService,
+            ellipseService,
+            lineService,
+            eraseService,
+            eyedropperService,
+            selectionService,
+            bucketService,
+        ];
         this.currentTool = this.tools[0];
         this.keyShortcuts
             .set(KeyShortcut.Pencil, pencilService)

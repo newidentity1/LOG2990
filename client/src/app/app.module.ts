@@ -31,6 +31,7 @@ import { MainPageComponent } from './components/main-page/main-page.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { BrushComponent } from './components/tools-options/brush/brush.component';
 import { SVGFilterComponent } from './components/tools-options/brush/svgfilter/svgfilter.component';
+import { BucketComponent } from './components/tools-options/bucket/bucket/bucket.component';
 import { EllipseComponent } from './components/tools-options/ellipse/ellipse.component';
 import { EraseComponent } from './components/tools-options/erase/erase.component';
 import { EyedropperComponent } from './components/tools-options/eyedropper/eyedropper.component';
@@ -64,6 +65,7 @@ import { ThicknessSliderComponent } from './components/tools-options/thickness-s
         OpenGuideComponent,
         EyedropperComponent,
         SelectionComponent,
+        BucketComponent,
     ],
     imports: [
         BrowserModule,

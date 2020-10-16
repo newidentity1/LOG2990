@@ -5,6 +5,7 @@ import { KeyShortcut } from '@app/enums/key-shortcuts.enum';
 import { SelectionType } from '@app/enums/selection-type.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { BrushService } from '@app/services/tools/brush/brush.service';
+import { BucketService } from '@app/services/tools/bucket/bucket.service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
 import { EraseService } from '@app/services/tools/erase/erase.service';
 import { EyedropperService } from '@app/services/tools/eyedropper/eyedropper.service';
@@ -24,6 +25,7 @@ describe('ToolbarService', () => {
     let eraseServiceSpy: jasmine.SpyObj<EraseService>;
     let eyedropperService: jasmine.SpyObj<EyedropperService>;
     let selectionService: jasmine.SpyObj<SelectionService>;
+    let bucketServiceSpy: jasmine.SpyObj<BucketService>;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
 
     beforeEach(() => {
@@ -51,6 +53,8 @@ describe('ToolbarService', () => {
         eyedropperService = jasmine.createSpyObj('EyedropperService', ['onKeyDown']);
         selectionService = jasmine.createSpyObj('SelectionService', ['selectAll', 'resetSelection', 'setSelectionType']);
         drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setStrokeColor']);
+        bucketServiceSpy = jasmine.createSpyObj('BucketService', ['onMouseDown']);
+        drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
 
         TestBed.configureTestingModule({
             providers: [
@@ -61,6 +65,7 @@ describe('ToolbarService', () => {
                 { provide: LineService, useValue: lineServiceSpy },
                 { provide: EraseService, useValue: eraseServiceSpy },
                 { provide: EyedropperService, useValue: eyedropperService },
+                { provide: BucketService, useValue: bucketServiceSpy },
                 { provide: DrawingService, useValue: drawingServiceSpy },
             ],
         });
@@ -74,6 +79,7 @@ describe('ToolbarService', () => {
         eyedropperService = TestBed.inject(EyedropperService) as jasmine.SpyObj<EyedropperService>;
         selectionService = TestBed.inject(SelectionService) as jasmine.SpyObj<SelectionService>;
         drawingServiceSpy = TestBed.inject(DrawingService) as jasmine.SpyObj<DrawingService>;
+        bucketServiceSpy = TestBed.inject(BucketService) as jasmine.SpyObj<BucketService>;
 
         drawingServiceSpy.canvas = canvasTestHelper.canvas;
         drawingServiceSpy.baseCtx = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
@@ -104,6 +110,7 @@ describe('ToolbarService', () => {
             eraseServiceSpy,
             eyedropperService,
             selectionService,
+            bucketServiceSpy,
         ]);
     });
 
