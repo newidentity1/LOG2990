@@ -17,7 +17,7 @@ export class SelectionService extends ShapeTool {
     protected positiveStartingPos: Vec2;
     protected positiveWidth: number;
     protected positiveHeight: number;
-    protected imgData: ImageData;
+    // protected imgData: ImageData;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
@@ -46,8 +46,6 @@ export class SelectionService extends ShapeTool {
             if (this.isAreaSelected) {
                 // TODO : Handle move
                 this.isMovingSelection = true;
-            } else {
-                super.onMouseDown(event);
             }
         }
     }
@@ -59,12 +57,15 @@ export class SelectionService extends ShapeTool {
         }
     }
 
-    onMouseUp(): void {
+    onMouseUp(event: MouseEvent): void {
         if (this.mouseDown) {
             if (this.isMovingSelection) {
                 this.isMovingSelection = false;
             } else {
-                this.drawSelectedArea();
+                this.currentMousePosition = this.getPositionFromMouse(event);
+                if (this.currentMousePosition.x !== this.mouseDownCoord.x || this.currentMousePosition.y !== this.mouseDownCoord.y) {
+                    this.drawSelectedArea();
+                }
             }
             this.mouseDown = false;
         }
@@ -164,12 +165,12 @@ export class SelectionService extends ShapeTool {
         selectionCtx.canvas.style.top = this.positiveStartingPos.y + 'px';
         selectionCtx.canvas.width = this.positiveWidth;
         selectionCtx.canvas.height = this.positiveHeight;
-        this.imgData = this.drawingService.baseCtx.getImageData(
-            this.positiveStartingPos.x,
-            this.positiveStartingPos.y,
-            this.positiveWidth,
-            this.positiveHeight,
-        );
+        // this.imgData = this.drawingService.baseCtx.getImageData(
+        //     this.positiveStartingPos.x,
+        //     this.positiveStartingPos.y,
+        //     this.positiveWidth,
+        //     this.positiveHeight,
+        // );
 
         setTimeout(() => {
             // TODO : Handle move

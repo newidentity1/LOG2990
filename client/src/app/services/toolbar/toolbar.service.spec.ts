@@ -50,7 +50,7 @@ describe('ToolbarService', () => {
         eraseServiceSpy = jasmine.createSpyObj('LineService', ['onKeyDown']);
         eyedropperService = jasmine.createSpyObj('EyedropperService', ['onKeyDown']);
         selectionService = jasmine.createSpyObj('SelectionService', ['selectAll', 'resetSelection', 'setSelectionType']);
-        drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
+        drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setStrokeColor']);
 
         TestBed.configureTestingModule({
             providers: [

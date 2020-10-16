@@ -90,7 +90,7 @@ describe('Class: ShapeTool', () => {
 
     it(' onMouseUp should call computeDimensions and drawShape if mouse was already down', () => {
         shapeTool.mouseDown = true;
-        shapeTool.onMouseUp();
+        shapeTool.onMouseUp(mouseEvent);
 
         expect(shapeTool.mouseDown).toBeFalse();
         expect(computeDimensionsSpy).toHaveBeenCalled();
@@ -99,7 +99,7 @@ describe('Class: ShapeTool', () => {
 
     it(' onMouseUp should call not computeDimensions and drawShape if mouse was not already down', () => {
         shapeTool.mouseDown = false;
-        shapeTool.onMouseUp();
+        shapeTool.onMouseUp(mouseEvent);
 
         expect(shapeTool.mouseDown).toBeFalse();
         expect(computeDimensionsSpy).not.toHaveBeenCalled();

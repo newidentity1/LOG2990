@@ -31,7 +31,8 @@ export abstract class ShapeTool extends Tool {
         }
     }
 
-    onMouseUp(): void {
+    onMouseUp(event: MouseEvent): void {
+        this.currentMousePosition = this.getPositionFromMouse(event);
         if (this.mouseDown) {
             this.mouseDown = false;
             this.computeDimensions();
