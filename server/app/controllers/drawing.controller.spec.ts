@@ -27,7 +27,7 @@ describe('DrawingController', () => {
 
     it('should return drawing from drawing service on valid get request with id ', async () => {
         return supertest(app)
-            .get('/api/drawing/' + drawing._id)
+            .get('/api/drawings/' + drawing._id)
             .expect(HTTP_STATUS_OK)
             .then((response: any) => {
                 expect(response.body).to.deep.equal(drawing);
@@ -37,7 +37,7 @@ describe('DrawingController', () => {
     it('should return an error from drawing service on invalid get request with id', async () => {
         drawingService.getDrawing.rejects();
         return supertest(app)
-            .get('/api/drawing/1234')
+            .get('/api/drawings/1234')
             .then((response: any) => {
                 expect(response.statusCode).to.equal(HTTP_STATUS_NOT_FOUND);
             })
@@ -48,7 +48,7 @@ describe('DrawingController', () => {
 
     it('should return all drawings from drawing service on valid get request to root', async () => {
         return supertest(app)
-            .get('/api/drawing')
+            .get('/api/drawings')
             .then((response: any) => {
                 expect(response.statusCode).to.equal(HTTP_STATUS_OK);
                 expect(response.body).to.deep.equal([drawing]);
@@ -58,7 +58,7 @@ describe('DrawingController', () => {
     it('should return an error from drawing service on invalid get request ', async () => {
         drawingService.getDrawings.rejects();
         return supertest(app)
-            .get('/api/drawing/')
+            .get('/api/drawings/')
             .then((response: any) => {
                 expect(response.statusCode).to.equal(HTTP_STATUS_NOT_FOUND);
             })
@@ -70,14 +70,14 @@ describe('DrawingController', () => {
     it('should add a drawing in the database on valid post request to root with a drawing', async () => {
         const newDrawing: Drawing = drawing;
         newDrawing._id = '124';
-        return supertest(app).post('/api/drawing/').send(newDrawing).set('Accept', 'application/json').expect(HTTP_STATUS_CREATED);
+        return supertest(app).post('/api/drawings/').send(newDrawing).set('Accept', 'application/json').expect(HTTP_STATUS_CREATED);
     });
 
     it('should return an error on invalid post request to root with a drawing', async () => {
         const newDrawing: Drawing = {} as Drawing;
         drawingService.addDrawing.rejects();
         return supertest(app)
-            .post('/api/drawing/')
+            .post('/api/drawings/')
             .send(newDrawing)
             .then((response: any) => {
                 expect(response.statusCode).to.equal(HTTP_STATUS_BAD_REQUEST);
@@ -89,7 +89,7 @@ describe('DrawingController', () => {
 
     it('should remove a drawing in the database on valid delete request to root with id', async () => {
         return supertest(app)
-            .delete('/api/drawing/' + drawing._id)
+            .delete('/api/drawings/' + drawing._id)
             .then(() => {
                 expect(HTTP_STATUS_NO_CONTENT);
             });
@@ -98,7 +98,7 @@ describe('DrawingController', () => {
     it('should return an error on invalid post request to root with a drawing', async () => {
         drawingService.removeDrawing.rejects();
         return supertest(app)
-            .delete('/api/drawing/124')
+            .delete('/api/drawings/124')
             .then((response: any) => {
                 expect(response.statusCode).to.equal(HTTP_STATUS_BAD_REQUEST);
             })
