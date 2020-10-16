@@ -46,6 +46,10 @@ export const EYEDROPPER_PREVIEW_CURSOR_SIZE = 10;
 
 export const IMAGE_DATA_OPACITY_INDEX = 3;
 
+export const SELECTION_CONTROL_POINT_SIZE = 7;
+export const SELECTION_CONTROL_COLUMNS = 3;
+export const SELECTION_BOX_THICKNESS = 2;
+
 export const POURCENTAGE = 100;
 
 export const BUCKET_PIXEL_3X3 = 3;
