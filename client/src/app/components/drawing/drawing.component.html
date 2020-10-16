@@ -26,25 +26,30 @@
         <div class="resizer top-right" [ngStyle]="calculateResizerStyle(0, 2)"></div>
         <div class="resizer left-center" [ngStyle]="calculateResizerStyle(1, 0)"></div>
         <div class="resizer bottom-left" [ngStyle]="calculateResizerStyle(2, 0)"></div>
+        <div class="resizer right-center" [ngStyle]="calculateResizerStyle(1, 2)"></div>
+        <div class="resizer bottom-center" [ngStyle]="calculateResizerStyle(2, 1)"></div>
+        <div class="resizer bottom-right" [ngStyle]="calculateResizerStyle(2, 2)"></div>
     </div>
 
-    <div
-        class="resizer right-center"
-        [ngStyle]="calculateResizerStyle(1, 2)"
-        (mousedown)="onResizeWidthStart($event)"
-        (mousemove)="onResize($event)"
-    ></div>
+    <div *ngIf="!isAreaSelected()">
+        <div
+            class="resizer right-center"
+            [ngStyle]="calculateResizerStyle(1, 2)"
+            (mousedown)="onResizeWidthStart($event)"
+            (mousemove)="onResize($event)"
+        ></div>
 
-    <div
-        class="resizer bottom-center"
-        [ngStyle]="calculateResizerStyle(2, 1)"
-        (mousedown)="onResizeHeightStart($event)"
-        (mousemove)="onResize($event)"
-    ></div>
-    <div
-        class="resizer bottom-right"
-        [ngStyle]="calculateResizerStyle(2, 2)"
-        (mousedown)="onResizeBothStart($event)"
-        (mousemove)="onResize($event)"
-    ></div>
+        <div
+            class="resizer bottom-center"
+            [ngStyle]="calculateResizerStyle(2, 1)"
+            (mousedown)="onResizeHeightStart($event)"
+            (mousemove)="onResize($event)"
+        ></div>
+        <div
+            class="resizer bottom-right"
+            [ngStyle]="calculateResizerStyle(2, 2)"
+            (mousedown)="onResizeBothStart($event)"
+            (mousemove)="onResize($event)"
+        ></div>
+    </div>
 </div>

@@ -7,7 +7,10 @@ import { BLACK, WHITE } from '@app/constants/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
 // To instanciate a ShapeTool object
-export class ShapeToolTest extends ShapeTool {}
+export class ShapeToolTest extends ShapeTool {
+    // tslint:disable-next-line:no-empty / reason: mocking class for test
+    drawShape(ctx: CanvasRenderingContext2D): void {}
+}
 
 // tslint:disable:no-any
 describe('Class: ShapeTool', () => {

@@ -61,16 +61,14 @@ export abstract class ShapeTool extends Tool {
         shapeProperties.currentType = value;
     }
 
-    // TODO: verifier si disable est autorisee ici
-    // tslint:disable-next-line:no-empty / reason: to be implemented by children
-    drawShape(ctx: CanvasRenderingContext2D): void {}
+    abstract drawShape(ctx: CanvasRenderingContext2D): void;
 
     setColors(primaryColor: Color, secondaryColor: Color): void {
         this.drawingService.setFillColor(primaryColor.toStringRGBA());
         this.drawingService.setStrokeColor(secondaryColor.toStringRGBA());
     }
 
-    private drawPreview(): void {
+    protected drawPreview(): void {
         this.computeDimensions();
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.drawShape(this.drawingService.previewCtx);

@@ -16,7 +16,6 @@ export class RectangleService extends ShapeTool {
     }
 
     drawShape(ctx: CanvasRenderingContext2D): void {
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
         const rectangleProperties = this.toolProperties as BasicShapeProperties;
 
         ctx.beginPath();

@@ -69,6 +69,7 @@ export class EllipseService extends ShapeTool {
             ctx.lineWidth = SELECTION_BOX_THICKNESS;
             ctx.beginPath();
             ctx.rect(this.mouseDownCoord.x, this.mouseDownCoord.y, this.width, this.height);
+            ctx.setLineDash([]);
             ctx.strokeStyle = 'white';
             ctx.stroke();
             ctx.setLineDash([DASHED_SEGMENTS]);
