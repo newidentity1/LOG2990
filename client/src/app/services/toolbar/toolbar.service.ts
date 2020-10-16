@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Color } from '@app/classes/color/color';
 import { Tool } from '@app/classes/tool/tool';
 import { KeyShortcut } from '@app/enums/key-shortcuts.enum';
+import { SelectionType } from '@app/enums/selection-type.enum';
 import { ColorPickerService } from '@app/services/color-picker/color-picker.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { BrushService } from '@app/services/tools/brush/brush.service';
@@ -12,6 +13,7 @@ import { EyedropperService } from '@app/services/tools/eyedropper/eyedropper.ser
 import { LineService } from '@app/services/tools/line/line.service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle.service';
+import { SelectionService } from '@app/services/tools/selection/selection.service';
 
 @Injectable({
     providedIn: 'root',
@@ -31,11 +33,22 @@ export class ToolbarService {
         protected lineService: LineService,
         protected eraseService: EraseService,
         protected eyedropperService: EyedropperService,
+        protected selectionService: SelectionService,
         protected drawingService: DrawingService,
         protected colorPickerService: ColorPickerService,
         protected bucketService: BucketService,
     ) {
-        this.tools = [pencilService, brushService, rectangleService, ellipseService, lineService, eraseService, eyedropperService, bucketService];
+        this.tools = [
+            pencilService,
+            brushService,
+            rectangleService,
+            ellipseService,
+            lineService,
+            eraseService,
+            eyedropperService,
+            selectionService,
+            bucketService,
+        ];
         this.currentTool = this.tools[0];
         this.keyShortcuts
             .set(KeyShortcut.Pencil, pencilService)
@@ -44,7 +57,9 @@ export class ToolbarService {
             .set(KeyShortcut.Ellipse, ellipseService)
             .set(KeyShortcut.Line, lineService)
             .set(KeyShortcut.Eraser, eraseService)
-            .set(KeyShortcut.Eyedropper, eyedropperService);
+            .set(KeyShortcut.Eyedropper, eyedropperService)
+            .set(KeyShortcut.RectangleSelect, selectionService)
+            .set(KeyShortcut.EllipseSelect, selectionService);
     }
 
     initializeColors(): void {
@@ -74,6 +89,7 @@ export class ToolbarService {
 
     changeTool(tool: Tool): void {
         if (tool !== this.currentTool) {
+            this.resetSelection();
             this.currentTool = tool;
             this.applyCurrentTool();
         }
@@ -117,6 +133,26 @@ export class ToolbarService {
 
     onClick(event: MouseEvent): void {
         this.currentTool.onClick(event);
+    }
+
+    triggerSelectAll(): void {
+        this.currentTool = this.selectionService;
+        this.applyCurrentTool();
+        this.selectionService.selectAll();
+    }
+
+    isAreaSelected(): boolean {
+        return this.selectionService.isAreaSelected;
+    }
+
+    resetSelection(): void {
+        if (this.isAreaSelected()) {
+            this.selectionService.resetSelection();
+        }
+    }
+
+    changeSelectionTool(type: SelectionType): void {
+        this.selectionService.setSelectionType(type);
     }
 
     private applyCurrentToolColor(): void {
