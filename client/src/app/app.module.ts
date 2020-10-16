@@ -5,10 +5,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { ErrorStateMatcher, ShowOnDirtyErrorStateMatcher } from '@angular/material/core';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatSelectModule } from '@angular/material/select';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -25,6 +27,7 @@ import { CreateNewDrawingComponent } from './components/create-new-drawing/creat
 import { NewDrawingDialogComponent } from './components/create-new-drawing/new-drawing-dialog/new-drawing-dialog.component';
 import { DrawingComponent } from './components/drawing/drawing.component';
 import { EditorComponent } from './components/editor/editor.component';
+import { ExportDrawingDialogComponent } from './components/export/export-drawing-dialog/export-drawing-dialog.component';
 import { ExportComponent } from './components/export/export.component';
 import { GuideComponent } from './components/guide/guide.component';
 import { OpenGuideComponent } from './components/guide/open-guide/open-guide.component';
@@ -39,7 +42,7 @@ import { LineComponent } from './components/tools-options/line/line.component';
 import { PencilComponent } from './components/tools-options/pencil/pencil.component';
 import { RectangleComponent } from './components/tools-options/rectangle/rectangle.component';
 import { ThicknessSliderComponent } from './components/tools-options/thickness-slider/thickness-slider.component';
-import { ExportDrawingDialogComponent } from './components/export/export-drawing-dialog/export-drawing-dialog.component';
+
 @NgModule({
     declarations: [
         AppComponent,
@@ -88,6 +91,8 @@ import { ExportDrawingDialogComponent } from './components/export/export-drawing
         MatInputModule,
         MatFormFieldModule,
         MatButtonModule,
+        MatExpansionModule,
+        MatSelectModule,
     ],
     providers: [{ provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher }],
     bootstrap: [AppComponent],

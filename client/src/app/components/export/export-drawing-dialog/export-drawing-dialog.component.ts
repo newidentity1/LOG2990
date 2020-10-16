@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
     selector: 'app-export-drawing-dialog',
@@ -6,5 +7,8 @@ import { Component } from '@angular/core';
     styleUrls: ['./export-drawing-dialog.component.scss'],
 })
 export class ExportDrawingDialogComponent {
-    constructor() {}
+    constructor(public dialog: MatDialog) {}
+
+    selectedFormat: string = 'None';
+    selectedFilter: string = 'None';
 }

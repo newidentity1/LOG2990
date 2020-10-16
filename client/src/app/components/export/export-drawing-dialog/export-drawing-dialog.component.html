@@ -1,1 +1,45 @@
-<p>export-drawing-dialog works!</p>
+<div>
+    <mat-accordion>
+	<mat-expansion-panel>
+	    <mat-expansion-panel-header>
+		<mat-panel-title>
+		    Format
+		</mat-panel-title>
+	    </mat-expansion-panel-header>
+
+	    <mat-form-field>
+		<mat-select [(value)]="selectedFormat">
+		    <mat-option value="PNG">PNG</mat-option>
+		    <mat-option value="JPEG">JPEG</mat-option>
+		</mat-select>
+	    </mat-form-field>
+
+	    <p>You selected: {{selectedFormat}}</p>
+
+
+	    <mat-action-row>
+		<button mat-button> Sélectionner </button>
+	    </mat-action-row>
+
+	</mat-expansion-panel>
+
+	<mat-expansion-panel>
+	    <mat-expansion-panel-header>
+		<mat-panel-title>
+		    Filtre
+		</mat-panel-title>
+	    </mat-expansion-panel-header>
+
+	    <mat-select [(value)]="selectedFilter">
+		<mat-option>None</mat-option>
+		<mat-option value="1">Filtre1</mat-option>
+		<mat-option value="2">Filtre2</mat-option>
+	    </mat-select>
+
+	</mat-expansion-panel>
+    </mat-accordion>
+    <br>
+
+    <button class="buttons" mat-raised-button mat-dialog-close>Annuler</button>
+    <button class="buttons" mat-raised-button>OK</button>
+</div>
