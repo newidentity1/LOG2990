@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Color } from '@app/classes/color/color';
 import { Pixel } from '@app/classes/pixel';
 import { Tool } from '@app/classes/tool/tool';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
@@ -73,10 +72,6 @@ export class BucketService extends Tool {
         }
     }
 
-    setColors(primaryColor: Color): void {
-        this.drawingService.setColor(primaryColor.toStringRGBA());
-    }
-
     setTolerance(tolerance: number | null): void {
         tolerance = tolerance === null ? 1 : tolerance;
         this.tolerance = CONSTANTS.MAX_COLOR_VALUE * (tolerance / CONSTANTS.POURCENTAGE);
@@ -143,7 +138,7 @@ export class BucketService extends Tool {
         }
     }
 
-    private checkPixel(point: Pixel): void {
+    private checkPixel(point: Pixel | null): void {
         if (point !== null) {
             if (this.checkColor(point) && point.status === 0) {
                 this.openList.push(point);
