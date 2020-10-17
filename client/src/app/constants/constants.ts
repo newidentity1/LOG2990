@@ -49,6 +49,9 @@ export const IMAGE_DATA_OPACITY_INDEX = 3;
 export const SELECTION_CONTROL_POINT_SIZE = 7;
 export const SELECTION_CONTROL_COLUMNS = 3;
 export const SELECTION_BOX_THICKNESS = 2;
+export const SELECTION_MOVE_STEP = 3;
+export const SELECTION_MOVE_START_DELAY = 500;
+export const SELECTION_MOVE_DELAY = 100;
 
 export const POURCENTAGE = 100;
 
