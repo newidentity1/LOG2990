@@ -13,10 +13,11 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 export class SelectionService extends ShapeTool {
     currentType: SelectionType;
     isAreaSelected: boolean;
-    protected isMovingSelection: boolean;
     protected positiveStartingPos: Vec2;
     protected positiveWidth: number;
     protected positiveHeight: number;
+    private moveSelectionPos: Vec2;
+
     // protected imgData: ImageData;
 
     constructor(drawingService: DrawingService) {
@@ -26,6 +27,7 @@ export class SelectionService extends ShapeTool {
         this.iconName = 'highlight_alt';
         this.toolProperties = new BasicShapeProperties();
         this.currentType = SelectionType.RectangleSelection;
+        this.moveSelectionPos = { x: 0, y: 0 };
     }
 
     setSelectionType(type: SelectionType): void {
@@ -44,24 +46,29 @@ export class SelectionService extends ShapeTool {
         this.mouseDownCoord = this.getPositionFromMouse(event);
         if (this.mouseDown) {
             if (this.isAreaSelected) {
-                // TODO : Handle move
-                this.isMovingSelection = true;
+                this.moveSelectionPos = { x: event.clientX, y: event.clientY };
             }
         }
     }
 
     onMouseMove(event: MouseEvent): void {
         this.currentMousePosition = this.getPositionFromMouse(event);
-        if (this.mouseDown && !this.isAreaSelected) {
-            this.drawPreview();
+        if (this.mouseDown) {
+            if (this.isAreaSelected) {
+                const moveX = this.moveSelectionPos.x - event.clientX;
+                const moveY = this.moveSelectionPos.y - event.clientY;
+                this.moveSelectionPos.x = event.clientX;
+                this.moveSelectionPos.y = event.clientY;
+                this.moveSelection(moveX, moveY);
+            } else {
+                this.drawPreview();
+            }
         }
     }
 
     onMouseUp(event: MouseEvent): void {
         if (this.mouseDown) {
-            if (this.isMovingSelection) {
-                this.isMovingSelection = false;
-            } else {
+            if (!this.isAreaSelected) {
                 this.currentMousePosition = this.getPositionFromMouse(event);
                 if (this.currentMousePosition.x !== this.mouseDownCoord.x || this.currentMousePosition.y !== this.mouseDownCoord.y) {
                     this.drawSelectedArea();
@@ -77,6 +84,12 @@ export class SelectionService extends ShapeTool {
         }
         if (this.mouseDown) {
             super.onKeyDown(event);
+        }
+    }
+
+    onKeyUp(event: KeyboardEvent): void {
+        if (this.mouseDown) {
+            super.onKeyUp(event);
         }
     }
 
@@ -186,6 +199,19 @@ export class SelectionService extends ShapeTool {
         this.positiveHeight = Math.abs(this.height);
     }
 
+    private moveSelection(moveX: number, moveY: number): void {
+        const elementOffsetTop = this.drawingService.previewCtx.canvas.offsetTop;
+        const elementOffsetLeft = this.drawingService.previewCtx.canvas.offsetLeft;
+        this.drawingService.previewCtx.canvas.style.left =
+            elementOffsetLeft + this.positiveWidth - moveX >= 0 && elementOffsetLeft - moveX <= this.drawingService.canvas.width
+                ? elementOffsetLeft - moveX + 'px'
+                : elementOffsetLeft + 'px';
+        this.drawingService.previewCtx.canvas.style.top =
+            elementOffsetTop + this.positiveHeight - moveY >= 0 && elementOffsetTop - moveY <= this.drawingService.canvas.height
+                ? elementOffsetTop - moveY + 'px'
+                : elementOffsetTop + 'px';
+    }
+
     setColors(): void {
         this.drawingService.setStrokeColor('black');
     }
@@ -193,7 +219,6 @@ export class SelectionService extends ShapeTool {
     resetContext(): void {
         this.mouseDown = false;
         this.isAreaSelected = false;
-        this.isMovingSelection = false;
         this.positiveStartingPos = { x: 0, y: 0 };
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
     }
