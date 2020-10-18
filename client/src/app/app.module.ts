@@ -25,6 +25,7 @@ import { CreateNewDrawingComponent } from './components/create-new-drawing/creat
 import { NewDrawingDialogComponent } from './components/create-new-drawing/new-drawing-dialog/new-drawing-dialog.component';
 import { DrawingComponent } from './components/drawing/drawing.component';
 import { EditorComponent } from './components/editor/editor.component';
+import { OpenGalleryComponent } from './components/gallery/open-gallery/open-gallery.component';
 import { GuideComponent } from './components/guide/guide.component';
 import { OpenGuideComponent } from './components/guide/open-guide/open-guide.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
@@ -40,7 +41,6 @@ import { PencilComponent } from './components/tools-options/pencil/pencil.compon
 import { RectangleComponent } from './components/tools-options/rectangle/rectangle.component';
 import { SelectionComponent } from './components/tools-options/selection/selection.component';
 import { ThicknessSliderComponent } from './components/tools-options/thickness-slider/thickness-slider.component';
-import { OpenGalleryComponent } from './components/gallery/open-gallery/open-gallery.component';
 @NgModule({
     declarations: [
         AppComponent,

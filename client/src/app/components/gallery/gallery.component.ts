@@ -5,7 +5,11 @@ import { Component, OnInit } from '@angular/core';
     styleUrls: ['./gallery.component.scss'],
 })
 export class GalleryComponent implements OnInit {
-    constructor() {}
+    constructor() {
+        // TODO
+    }
 
-    ngOnInit(): void {}
+    ngOnInit(): void {
+        // TODO
+    }
 }
