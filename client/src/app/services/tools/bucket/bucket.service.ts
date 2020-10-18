@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Color } from '@app/classes/color/color';
 import { Pixel } from '@app/classes/pixel';
 import { Tool } from '@app/classes/tool/tool';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
@@ -26,7 +27,6 @@ export class BucketService extends Tool {
     }
 
     private generateMatrice(): void {
-        this.image = this.drawingService.baseCtx.getImageData(0, 0, this.drawingService.canvas.width, this.drawingService.canvas.height);
         for (let i = 0; i < this.drawingService.canvas.width; i++) {
             const line: Pixel[] = [];
             for (let j = 0; j < this.drawingService.canvas.height; j++) {
@@ -37,6 +37,7 @@ export class BucketService extends Tool {
         }
     }
     onMouseDown(event: MouseEvent): void {
+        this.image = this.drawingService.baseCtx.getImageData(0, 0, this.drawingService.canvas.width, this.drawingService.canvas.height);
         const mousePosition = this.getPositionFromMouse(event);
         this.startPixelColor = this.drawingService.baseCtx.getImageData(mousePosition.x, mousePosition.y, 1, 1).data;
         if (event.button === MouseButton.Left) {
@@ -78,6 +79,10 @@ export class BucketService extends Tool {
         tolerance = tolerance === null ? 1 : tolerance;
         this.tolerance = CONSTANTS.MAX_COLOR_VALUE * (tolerance / CONSTANTS.POURCENTAGE);
         console.log(CONSTANTS.MAX_COLOR_VALUE * (tolerance / CONSTANTS.POURCENTAGE));
+    }
+
+    setColors(primaryColor: Color): void {
+        this.drawingService.setColor(primaryColor.toStringRGBA());
     }
 
     resetContext(): void {
