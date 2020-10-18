@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
+import { Color } from '@app/classes/color/color';
 import { Pixel } from '@app/classes/pixel';
 import * as CONSTANTS from '@app/constants/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -42,9 +43,18 @@ describe('BucketService', () => {
             offsetY: 25,
             button: 2,
         } as MouseEvent;
+
+        service['width'] = CONSTANTS.TEST_IMAGE_SIZE;
+        service['height'] = CONSTANTS.TEST_IMAGE_SIZE;
     });
 
     it('should be created', () => {
+        const couleur: Color = new Color('RED');
+        service.setColors(couleur);
+        expect(drawServiceSpy.setColor).toHaveBeenCalled();
+    });
+
+    it('setColor should call drawing service.setColor()', () => {
         expect(service).toBeTruthy();
     });
 
@@ -124,6 +134,7 @@ describe('BucketService', () => {
     });
 
     it('AddNeighboors should add the 4 neighboors pixels if status = 0', () => {
+        service.onMouseDown(mouseEventclickRight);
         service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(2, 2, 1, 1).data;
         service['generateMatrice']();
         const checkPixelSpy = spyOn<any>(service, 'checkPixel').and.callThrough();
@@ -136,6 +147,7 @@ describe('BucketService', () => {
     });
 
     it('AddNeighboors should add the 0 neighboors pixels if status = 1 ', () => {
+        service.onMouseDown(mouseEventclickRight);
         service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(2, 2, 1, 1).data;
         service['generateMatrice']();
         const checkPixelSpy = spyOn<any>(service, 'checkPixel').and.callThrough();
@@ -153,7 +165,8 @@ describe('BucketService', () => {
         expect(service['openList'].length).toEqual(0);
     });
 
-    it('AddNeighboors should add 0 neighboors pixels if status = 1 ', () => {
+    it('AddNeighboors should add 1 neighboors pixels if status = 1 ', () => {
+        service.onMouseDown(mouseEventclickRight);
         service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(2, 2, 1, 1).data;
         service['generateMatrice']();
         const checkPixelSpy = spyOn<any>(service, 'checkPixel').and.callThrough();
@@ -172,7 +185,7 @@ describe('BucketService', () => {
     });
 
     it('checkPosition should return true if the pixel is in the canvas', () => {
-        const p1: Pixel = { x: 2, y: 2, status: 1 };
+        const p1: Pixel = { x: 0, y: 0, status: 1 };
         expect(service['checkPosition'](p1)).toEqual(true);
     });
 
@@ -182,12 +195,14 @@ describe('BucketService', () => {
     });
 
     it('checkPixel should do nothing if there is no pixel', () => {
+        service.onMouseDown(mouseEventclickRight);
         const colorPixelSpy = spyOn<any>(service, 'colorPixel').and.callThrough();
         service['checkPixel'](null);
         expect(colorPixelSpy).not.toHaveBeenCalled();
     });
 
     it('checkPixel should not call colorPixel if the pixel status = 1', () => {
+        service.onMouseDown(mouseEventclickRight);
         const colorPixelSpy = spyOn<any>(service, 'colorPixel').and.callThrough();
         service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(2, 2, 1, 1).data;
         service['generateMatrice']();
@@ -197,6 +212,8 @@ describe('BucketService', () => {
     });
 
     it('checkPixel should call colorPixel if the pixel status = 0', () => {
+        service.onMouseDown(mouseEventclickRight);
+        service['image'] = service['drawingService'].baseCtx.getImageData(0, 0, service['width'], service['height']);
         const colorPixelSpy = spyOn<any>(service, 'colorPixel').and.callThrough();
         service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(2, 2, 1, 1).data;
         service['generateMatrice']();
@@ -206,6 +223,7 @@ describe('BucketService', () => {
     });
 
     it('checkColor should verify if the color have to change', () => {
+        service.onMouseDown(mouseEventclickRight);
         service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(2, 2, 1, 1).data;
         service['generateMatrice']();
         const p1: Pixel = { x: 2, y: 2, status: 1 };
