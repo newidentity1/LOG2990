@@ -14,6 +14,8 @@ export class BucketService extends Tool {
     private openList: Pixel[] = [];
     private matrice: Pixel[][] = [];
     private image: ImageData;
+    private width: number = 0;
+    private height: number = 0;
 
     private startPixelColor: Uint8ClampedArray;
     protected tolerance: number = 1;
@@ -27,9 +29,9 @@ export class BucketService extends Tool {
     }
 
     private generateMatrice(): void {
-        for (let i = 0; i < this.drawingService.canvas.width; i++) {
+        for (let i = 0; i < this.width; i++) {
             const line: Pixel[] = [];
-            for (let j = 0; j < this.drawingService.canvas.height; j++) {
+            for (let j = 0; j < this.height; j++) {
                 const pixel: Pixel = { x: i, y: j, status: 0 };
                 line.push(pixel);
             }
@@ -37,7 +39,9 @@ export class BucketService extends Tool {
         }
     }
     onMouseDown(event: MouseEvent): void {
-        this.image = this.drawingService.baseCtx.getImageData(0, 0, this.drawingService.canvas.width, this.drawingService.canvas.height);
+        this.width = this.drawingService.canvas.width;
+        this.height = this.drawingService.canvas.height;
+        this.image = this.drawingService.baseCtx.getImageData(0, 0, this.width, this.height);
         const mousePosition = this.getPositionFromMouse(event);
         this.startPixelColor = this.drawingService.baseCtx.getImageData(mousePosition.x, mousePosition.y, 1, 1).data;
         if (event.button === MouseButton.Left) {
@@ -54,7 +58,7 @@ export class BucketService extends Tool {
         const start: Pixel = { x: mousePosition.x, y: mousePosition.y, status: 0 };
         this.openList.push(start);
         let security = 0;
-        while (this.openList.length !== 0 && security < this.drawingService.canvas.height * this.drawingService.canvas.width) {
+        while (this.openList.length !== 0 && security < this.height * this.width) {
             this.addNeighbours(this.openList);
             security++;
             console.log(security);
@@ -64,8 +68,8 @@ export class BucketService extends Tool {
 
     floodFillRight(event: MouseEvent): void {
         const pixel: Pixel = { x: 0, y: 0, status: 0 };
-        for (let i = 0; i < this.drawingService.canvas.height; i++) {
-            for (let j = 0; j < this.drawingService.canvas.width; j++) {
+        for (let i = 0; i < this.height; i++) {
+            for (let j = 0; j < this.width; j++) {
                 pixel.x = j;
                 pixel.y = i;
                 if (this.checkColor(pixel)) {
@@ -156,7 +160,7 @@ export class BucketService extends Tool {
     }
 
     private checkPosition(point: Pixel): boolean {
-        if (point.x >= 0 && point.y >= 0 && point.x < this.drawingService.canvas.width && point.y < this.drawingService.canvas.height) {
+        if (point.x >= 0 && point.y >= 0 && point.x < this.width && point.y < this.height) {
             return true;
         }
         return false;
@@ -164,7 +168,7 @@ export class BucketService extends Tool {
 
     private checkColor(point: Pixel): boolean {
         // tslint:disable-next-line:no-magic-numbers
-        const offset = (point.y * this.image.width + point.x) * 4;
+        const offset = (point.y * this.width + point.x) * 4;
         if (
             this.image.data[offset + 0] >= this.startPixelColor[0] - this.tolerance &&
             this.image.data[offset + 0] < this.startPixelColor[0] + this.tolerance &&
