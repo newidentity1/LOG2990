@@ -62,13 +62,15 @@ describe('BucketService', () => {
         expect(floodFillLeftSpy).toHaveBeenCalled();
     });
 
-    it('onMouseDown with a right click should call floodFillLeft algorithme', () => {
+    it('onMouseDown with a right click should call floodFillRight algorithme', () => {
+        service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(2, 2, 1, 1).data;
+        service['generateMatrice']();
         const floodFillRightSpy = spyOn<any>(service, 'floodFillRight').and.callThrough();
         service.onMouseDown(mouseEventclickRight);
         expect(floodFillRightSpy).toHaveBeenCalled();
     });
 
-    it('onMouseDown with a right click should call floodFillLeft algorithme', () => {
+    it('onMouseDown with a right click should call floodFillRight algorithme', () => {
         service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(2, 2, 1, 1).data;
         service['generateMatrice']();
         const p1: Pixel = { x: 0, y: 0, status: 0 };
@@ -125,7 +127,7 @@ describe('BucketService', () => {
         service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(2, 2, 1, 1).data;
         service['generateMatrice']();
         const checkPixelSpy = spyOn<any>(service, 'checkPixel').and.callThrough();
-        const p1: Pixel = { x: 2, y: 2, status: 0 };
+        const p1: Pixel = { x: 10, y: 10, status: 0 };
         service['openList'].push(p1);
         service['addNeighbours'](service['openList']);
         expect(checkPixelSpy).toHaveBeenCalled();
@@ -139,30 +141,30 @@ describe('BucketService', () => {
         const checkPixelSpy = spyOn<any>(service, 'checkPixel').and.callThrough();
         const p1: Pixel = { x: 2, y: 2, status: 1 };
         service['matrice'][2][2].status = 1;
-        service['matrice'][0][2].status = 1;
+        service['matrice'][1][2].status = 1;
         // tslint:disable-next-line: no-magic-numbers
-        service['matrice'][4][2].status = 1;
-        service['matrice'][2][0].status = 1;
+        service['matrice'][3][2].status = 1;
+        service['matrice'][2][1].status = 1;
         // tslint:disable-next-line: no-magic-numbers
-        service['matrice'][2][4].status = 1;
+        service['matrice'][2][3].status = 1;
         service['openList'].push(p1);
         service['addNeighbours'](service['openList']);
         expect(checkPixelSpy).toHaveBeenCalled();
         expect(service['openList'].length).toEqual(0);
     });
 
-    it('AddNeighboors should add the 0 neighboors pixels if status = 1 ', () => {
+    it('AddNeighboors should add 0 neighboors pixels if status = 1 ', () => {
         service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(2, 2, 1, 1).data;
         service['generateMatrice']();
         const checkPixelSpy = spyOn<any>(service, 'checkPixel').and.callThrough();
         const p1: Pixel = { x: 2, y: 2, status: 1 };
         service['matrice'][2][2].status = 1;
-        service['matrice'][0][2].status = 0;
+        service['matrice'][1][2].status = 0;
         // tslint:disable-next-line: no-magic-numbers
-        service['matrice'][4][2].status = 1;
-        service['matrice'][2][0].status = 1;
+        service['matrice'][3][2].status = 1;
+        service['matrice'][2][1].status = 1;
         // tslint:disable-next-line: no-magic-numbers
-        service['matrice'][2][4].status = 1;
+        service['matrice'][2][3].status = 1;
         service['openList'].push(p1);
         service['addNeighbours'](service['openList']);
         expect(checkPixelSpy).toHaveBeenCalled();

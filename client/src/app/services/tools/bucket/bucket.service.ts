@@ -12,6 +12,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 export class BucketService extends Tool {
     private openList: Pixel[] = [];
     private matrice: Pixel[][] = [];
+    private image: ImageData;
 
     private startPixelColor: Uint8ClampedArray;
     protected tolerance: number = 1;
@@ -25,6 +26,7 @@ export class BucketService extends Tool {
     }
 
     private generateMatrice(): void {
+        this.image = this.drawingService.baseCtx.getImageData(0, 0, this.drawingService.canvas.width, this.drawingService.canvas.height);
         for (let i = 0; i < this.drawingService.canvas.width; i++) {
             const line: Pixel[] = [];
             for (let j = 0; j < this.drawingService.canvas.height; j++) {
@@ -116,22 +118,22 @@ export class BucketService extends Tool {
         // this.showList(this.openList);
         this.clearList(this.openList);
         for (const pixel of newList) {
-            const topPixel: Pixel = { x: pixel.x, y: pixel.y + 2, status: 0 };
+            const topPixel: Pixel = { x: pixel.x, y: pixel.y + 1, status: 0 };
             if (this.checkPosition(topPixel)) {
                 this.checkPixel(this.matrice[topPixel.x][topPixel.y]);
             }
 
-            const downPixel: Pixel = { x: pixel.x, y: pixel.y - 2, status: 0 };
+            const downPixel: Pixel = { x: pixel.x, y: pixel.y - 1, status: 0 };
             if (this.checkPosition(downPixel)) {
                 this.checkPixel(this.matrice[downPixel.x][downPixel.y]);
             }
 
-            const leftPixel: Pixel = { x: pixel.x - 2, y: pixel.y, status: 0 };
+            const leftPixel: Pixel = { x: pixel.x - 1, y: pixel.y, status: 0 };
             if (this.checkPosition(leftPixel)) {
                 this.checkPixel(this.matrice[leftPixel.x][leftPixel.y]);
             }
 
-            const rightPixel: Pixel = { x: pixel.x + 2, y: pixel.y, status: 0 };
+            const rightPixel: Pixel = { x: pixel.x + 1, y: pixel.y, status: 0 };
             if (this.checkPosition(rightPixel)) {
                 this.checkPixel(this.matrice[rightPixel.x][rightPixel.y]);
             }
@@ -140,7 +142,7 @@ export class BucketService extends Tool {
 
     private checkPixel(point: Pixel | null): void {
         if (point !== null) {
-            if (this.checkColor(point) && point.status === 0) {
+            if (this.checkColor(point) && point.status !== 1) {
                 this.openList.push(point);
                 this.colorPixel(point);
                 point.status = 1;
@@ -156,16 +158,19 @@ export class BucketService extends Tool {
     }
 
     private checkColor(point: Pixel): boolean {
-        const pixel: ImageData = this.drawingService.baseCtx.getImageData(point.x, point.y, 1, 1);
+        // tslint:disable-next-line:no-magic-numbers
+        const offset = (point.y * this.image.width + point.x) * 4;
         if (
-            pixel.data[0] >= this.startPixelColor[0] - this.tolerance &&
-            pixel.data[0] < this.startPixelColor[0] + this.tolerance &&
-            pixel.data[1] >= this.startPixelColor[1] - this.tolerance &&
-            pixel.data[1] < this.startPixelColor[1] + this.tolerance &&
-            pixel.data[2] >= this.startPixelColor[2] - this.tolerance &&
-            pixel.data[2] < this.startPixelColor[2] + this.tolerance &&
-            pixel.data[CONSTANTS.INDEX_3] >= this.startPixelColor[CONSTANTS.INDEX_3] - this.tolerance &&
-            pixel.data[CONSTANTS.INDEX_3] < this.startPixelColor[CONSTANTS.INDEX_3] + this.tolerance
+            this.image.data[offset + 0] >= this.startPixelColor[0] - this.tolerance &&
+            this.image.data[offset + 0] < this.startPixelColor[0] + this.tolerance &&
+            this.image.data[offset + 1] >= this.startPixelColor[1] - this.tolerance &&
+            this.image.data[offset + 1] < this.startPixelColor[1] + this.tolerance &&
+            this.image.data[offset + 2] >= this.startPixelColor[2] - this.tolerance &&
+            this.image.data[offset + 2] < this.startPixelColor[2] + this.tolerance &&
+            // tslint:disable-next-line:no-magic-numbers
+            this.image.data[offset + 3] >= this.startPixelColor[CONSTANTS.INDEX_3] - this.tolerance &&
+            // tslint:disable-next-line:no-magic-numbers
+            this.image.data[offset + 3] < this.startPixelColor[CONSTANTS.INDEX_3] + this.tolerance
         ) {
             return true;
         }
@@ -173,6 +178,6 @@ export class BucketService extends Tool {
     }
 
     private colorPixel(pixel: Pixel): void {
-        this.drawingService.baseCtx.fillRect(pixel.x - 1, pixel.y - 1, CONSTANTS.BUCKET_PIXEL_3X3, CONSTANTS.BUCKET_PIXEL_3X3);
+        this.drawingService.baseCtx.fillRect(pixel.x, pixel.y, 1, 1);
     }
 }
