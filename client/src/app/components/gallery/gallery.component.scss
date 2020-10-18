@@ -1,0 +1,23 @@
+#delete {
+    background-color: #971010;
+}
+
+#open {
+    background-color: #4caf50;
+}
+
+button {
+    opacity: 0.6;
+    border-radius: 8px;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+button:hover {
+    opacity: 1;
+}

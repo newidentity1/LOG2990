@@ -40,6 +40,7 @@ import { PencilComponent } from './components/tools-options/pencil/pencil.compon
 import { RectangleComponent } from './components/tools-options/rectangle/rectangle.component';
 import { SelectionComponent } from './components/tools-options/selection/selection.component';
 import { ThicknessSliderComponent } from './components/tools-options/thickness-slider/thickness-slider.component';
+import { OpenGalleryComponent } from './components/gallery/open-gallery/open-gallery.component';
 @NgModule({
     declarations: [
         AppComponent,
@@ -66,6 +67,7 @@ import { ThicknessSliderComponent } from './components/tools-options/thickness-s
         EyedropperComponent,
         SelectionComponent,
         BucketComponent,
+        OpenGalleryComponent,
     ],
     imports: [
         BrowserModule,
