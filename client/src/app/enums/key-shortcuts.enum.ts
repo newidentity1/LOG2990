@@ -7,4 +7,6 @@ export enum KeyShortcut {
     Line = 'l',
     Eraser = 'e',
     Eyedropper = 'i',
+    RectangleSelect = 'r',
+    EllipseSelect = 's',
 }

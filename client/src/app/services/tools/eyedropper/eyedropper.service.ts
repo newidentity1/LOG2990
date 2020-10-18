@@ -16,17 +16,13 @@ export class EyedropperService extends Tool {
 
     currentColor: Color;
 
-    private leftMouseDown: boolean;
-    private rightMouseDown: boolean;
     private inCanvas: boolean;
 
     constructor(private colorPickerService: ColorPickerService, drawingService: DrawingService) {
         super(drawingService);
         this.name = 'Eyedropper';
-        this.tooltip = 'Pipette(I)';
+        this.tooltip = 'Pipette(i)';
         this.iconName = 'colorize';
-        this.leftMouseDown = false;
-        this.rightMouseDown = false;
     }
 
     isInCanvas(): boolean {
@@ -41,11 +37,6 @@ export class EyedropperService extends Tool {
         this.inCanvas = false;
     }
 
-    onMouseDown(event: MouseEvent): void {
-        this.leftMouseDown = event.button === MouseButton.Left;
-        this.rightMouseDown = event.button === MouseButton.Right;
-    }
-
     onMouseMove(event: MouseEvent): void {
         if (this.inCanvas) {
             this.drawPreview(event);
@@ -53,20 +44,16 @@ export class EyedropperService extends Tool {
     }
 
     onMouseUp(event: MouseEvent): void {
-        if (this.leftMouseDown) {
+        if (event.button === MouseButton.Left) {
             this.colorPickerService.setPrimaryColor(this.currentColor);
-        } else if (this.rightMouseDown) {
+        } else if (event.button === MouseButton.Right) {
             this.colorPickerService.setSecondaryColor(this.currentColor);
         }
-        this.leftMouseDown = false;
-        this.rightMouseDown = false;
     }
 
-    drawPreview(event: MouseEvent): void {
+    private drawPreview(event: MouseEvent): void {
         const mousePosition = this.getPositionFromMouse(event);
         this.currentColor = this.getColorFromPosition(mousePosition);
-
-        this.drawingService.clearCanvas(this.previewCircleCtx);
 
         // Code adapted from
         // https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Pixel_manipulation_with_canvas#Zooming_and_anti-aliasing
@@ -81,10 +68,22 @@ export class EyedropperService extends Tool {
             this.drawingService.canvas.height - CONSTANTS.EYEDROPPER_PREVIEW_SCALE_SIZE,
         );
 
+        const scaledZoneStartingPos = { x: cappedXPos, y: cappedYPos } as Vec2;
+        this.drawScaledZone(scaledZoneStartingPos);
+
+        const cursorX = ((mousePosition.x - cappedXPos) * CONSTANTS.EYEDROPPER_PREVIEW_CANVAS_WIDTH) / CONSTANTS.EYEDROPPER_PREVIEW_SCALE_SIZE;
+        const cursorY = ((mousePosition.y - cappedYPos) * CONSTANTS.EYEDROPPER_PREVIEW_CANVAS_HEIGHT) / CONSTANTS.EYEDROPPER_PREVIEW_SCALE_SIZE;
+        const cursorPosition = { x: cursorX, y: cursorY } as Vec2;
+        this.drawCursor(cursorPosition);
+    }
+
+    private drawScaledZone(startingPosition: Vec2): void {
+        this.drawingService.clearCanvas(this.previewCircleCtx);
+
         this.previewCircleCtx.drawImage(
             this.drawingService.canvas,
-            cappedXPos,
-            cappedYPos,
+            startingPosition.x,
+            startingPosition.y,
             CONSTANTS.EYEDROPPER_PREVIEW_SCALE_SIZE,
             CONSTANTS.EYEDROPPER_PREVIEW_SCALE_SIZE,
             0,
@@ -92,17 +91,16 @@ export class EyedropperService extends Tool {
             CONSTANTS.EYEDROPPER_PREVIEW_CANVAS_WIDTH,
             CONSTANTS.EYEDROPPER_PREVIEW_CANVAS_HEIGHT,
         );
+    }
 
+    private drawCursor(position: Vec2): void {
         this.drawingService.clearCanvas(this.cursorCtx);
-
-        const cursorX = ((mousePosition.x - cappedXPos) * CONSTANTS.EYEDROPPER_PREVIEW_CANVAS_WIDTH) / CONSTANTS.EYEDROPPER_PREVIEW_SCALE_SIZE;
-        const cursorY = ((mousePosition.y - cappedYPos) * CONSTANTS.EYEDROPPER_PREVIEW_CANVAS_HEIGHT) / CONSTANTS.EYEDROPPER_PREVIEW_SCALE_SIZE;
 
         this.cursorCtx.lineWidth = 2;
         this.cursorCtx.strokeStyle = this.currentColor.toStringRGBA();
         this.cursorCtx.strokeRect(
-            cursorX - CONSTANTS.EYEDROPPER_PREVIEW_CURSOR_SIZE / 2,
-            cursorY - CONSTANTS.EYEDROPPER_PREVIEW_CURSOR_SIZE / 2,
+            position.x - CONSTANTS.EYEDROPPER_PREVIEW_CURSOR_SIZE / 2,
+            position.y - CONSTANTS.EYEDROPPER_PREVIEW_CURSOR_SIZE / 2,
             CONSTANTS.EYEDROPPER_PREVIEW_CURSOR_SIZE,
             CONSTANTS.EYEDROPPER_PREVIEW_CURSOR_SIZE,
         );
@@ -117,9 +115,5 @@ export class EyedropperService extends Tool {
         color.blue = rgbData[2];
         color.opacity = rgbData[CONSTANTS.IMAGE_DATA_OPACITY_INDEX] / CONSTANTS.MAX_COLOR_VALUE;
         return color.opacity ? color : new Color(CONSTANTS.WHITE);
-    }
-
-    resetContext(): void {
-        // does nothing
     }
 }

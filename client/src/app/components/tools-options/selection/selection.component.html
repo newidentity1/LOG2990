@@ -1,0 +1,22 @@
+<div class="property">
+    <h3 class="title-property">Propriété de la selection</h3>
+    <label class="type-drawing-label">Choisissez le type de selection que vous souhaitez:</label>
+    <mat-radio-group aria-labelledby="type-selection-label" class="type-selection-group" ngDefaultControl>
+        <mat-radio-button
+            class="type-drawing"
+            *ngFor="let type of typesSelection | keyvalue: keepOriginalOrder"
+            [value]="type.value"
+            (change)="onTypeSelectionChange(type.value)"
+            [checked]="type.value === currentType"
+        >
+            {{ type.value }}
+        </mat-radio-button>
+    </mat-radio-group>
+
+    <div>
+        <button mat-button (click)="triggerSelectAll()">
+            <mat-icon>select_all</mat-icon>
+            <span>Sélectionner tout</span>
+        </button>
+    </div>
+</div>

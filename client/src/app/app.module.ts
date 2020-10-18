@@ -31,6 +31,7 @@ import { MainPageComponent } from './components/main-page/main-page.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { BrushComponent } from './components/tools-options/brush/brush.component';
 import { SVGFilterComponent } from './components/tools-options/brush/svgfilter/svgfilter.component';
+import { BucketComponent } from './components/tools-options/bucket/bucket/bucket.component';
 import { EllipseComponent } from './components/tools-options/ellipse/ellipse.component';
 import { EraseComponent } from './components/tools-options/erase/erase.component';
 import { EyedropperComponent } from './components/tools-options/eyedropper/eyedropper.component';
@@ -38,6 +39,7 @@ import { LineComponent } from './components/tools-options/line/line.component';
 import { PencilComponent } from './components/tools-options/pencil/pencil.component';
 import { PolygonComponent } from './components/tools-options/polygon/polygon.component';
 import { RectangleComponent } from './components/tools-options/rectangle/rectangle.component';
+import { SelectionComponent } from './components/tools-options/selection/selection.component';
 import { ThicknessSliderComponent } from './components/tools-options/thickness-slider/thickness-slider.component';
 @NgModule({
     declarations: [
@@ -64,6 +66,8 @@ import { ThicknessSliderComponent } from './components/tools-options/thickness-s
         OpenGuideComponent,
         PolygonComponent,
         EyedropperComponent,
+        SelectionComponent,
+        BucketComponent,
     ],
     imports: [
         BrowserModule,
