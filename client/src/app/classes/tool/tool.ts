@@ -49,5 +49,5 @@ export abstract class Tool {
 
     setColors(primaryColor: Color, secondaryColor: Color): void {}
 
-    abstract resetContext(): void;
+    resetContext(): void {}
 }

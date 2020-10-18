@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ResizerProperties } from '@app/classes/resizer-properties';
 import { SVGFilterComponent } from '@app/components/tools-options/brush/svgfilter/svgfilter.component';
-import { CANVAS_MARGIN_LEFT, CANVAS_MARGIN_TOP, CANVAS_MIN_HEIGHT, CANVAS_MIN_WIDTH } from '@app/constants/constants';
+import { CANVAS_MARGIN_LEFT, CANVAS_MARGIN_TOP, CANVAS_MIN_HEIGHT, CANVAS_MIN_WIDTH, SELECTION_CONTROL_POINT_SIZE } from '@app/constants/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 import { BehaviorSubject } from 'rxjs';
@@ -31,6 +32,8 @@ describe('DrawingComponent', () => {
             'createNewDrawingEventListener',
             'applyCurrentTool',
             'initializeColors',
+            'isAreaSelected',
+            'resetSelection',
         ]);
 
         TestBed.configureTestingModule({
@@ -283,5 +286,53 @@ describe('DrawingComponent', () => {
         dimensionsUpdatedSubjectStub.next([width, height]);
         expect(component.drawingContainerWidth).toEqual(width);
         expect(component.drawingContainerHeight).toEqual(height);
+    });
+
+    it('isAreaSelected should call isAreaSelected of toolbarService', () => {
+        component.isAreaSelected();
+        expect(toolbarServiceSpy.isAreaSelected).toHaveBeenCalled();
+    });
+
+    it('mouseDown on base canvas should call resetSelection if an area is selected and should call onMouseDown', () => {
+        spyOn(component, 'onMouseDown');
+        toolbarServiceSpy.isAreaSelected.and.callFake(() => {
+            return true;
+        });
+        component.onBaseCanvasMouseDown(mouseEvent);
+        expect(toolbarServiceSpy.resetSelection).toHaveBeenCalled();
+        expect(component.onMouseDown).toHaveBeenCalledWith(mouseEvent);
+    });
+
+    it('mouseDown on base canvas should not call resetSelection if an area is not selected and should not call onMouseDown', () => {
+        spyOn(component, 'onMouseDown');
+        toolbarServiceSpy.isAreaSelected.and.callFake(() => {
+            return false;
+        });
+        component.onBaseCanvasMouseDown(mouseEvent);
+        expect(toolbarServiceSpy.resetSelection).not.toHaveBeenCalled();
+        expect(component.onMouseDown).not.toHaveBeenCalled();
+    });
+
+    it('calculateResizerStyle should give correct positions for control points if preview canvas is set', () => {
+        // tslint:disable-next-line:no-any / reason: set typed object to null
+        component.previewCanvas.nativeElement.style.top = '100px';
+        component.previewCanvas.nativeElement.style.left = '100px';
+        // tslint:disable:no-magic-numbers / reason: testing with random position
+        const expectedPosition: ResizerProperties = {
+            top: `${100 - SELECTION_CONTROL_POINT_SIZE / 2}px`,
+            left: `${100 - SELECTION_CONTROL_POINT_SIZE / 2}px`,
+        };
+        // tslint:enable:no-magic-numbers
+
+        const result = component.calculateResizerStyle(0, 0);
+        expect(result).toEqual(expectedPosition);
+    });
+
+    it('calculateResizerStyle should use default width and height to calculate control points positions if preview canvas is not yet set', () => {
+        // tslint:disable-next-line:no-any / reason: set typed object to null
+        component.previewCanvas = null as any;
+        const expectedPosition: ResizerProperties = { top: `${-SELECTION_CONTROL_POINT_SIZE / 2}px`, left: `${-SELECTION_CONTROL_POINT_SIZE / 2}px` };
+        const result = component.calculateResizerStyle(0, 0);
+        expect(result).toEqual(expectedPosition);
     });
 });
