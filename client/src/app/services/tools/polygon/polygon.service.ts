@@ -3,11 +3,9 @@ import { ShapeTool } from '@app/classes/tool/shape-tool';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 import { PolygonProperties } from '@app/classes/tools-properties/polygon-properties';
 import { Vec2 } from '@app/classes/vec2';
-import { DASHED_SEGMENTS, MINIMUM_SIDES, MINIMUM_THICKNESS } from '@app/constants/constants';
+import { DASHED_SEGMENTS, MINIMUM_SIDES, SELECTION_BOX_THICKNESS } from '@app/constants/constants';
 import { DrawingType } from '@app/enums/drawing-type.enum';
-import { MouseButton } from '@app/enums/mouse-button.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
 
 @Injectable({
     providedIn: 'root',
@@ -15,75 +13,34 @@ import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
 
 /** @todo Maybe extend EllipseService */
 export class PolygonService extends ShapeTool {
-    pathStart: Vec2;
-    width: number;
-    height: number;
-    currentMousePosition: Vec2;
-    escapeDown: boolean = false;
-    ellipseService: EllipseService;
-
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.name = 'Polygon';
         this.tooltip = 'Polygone(3)';
         this.iconName = 'change_history';
         this.toolProperties = new PolygonProperties();
-        this.ellipseService = new EllipseService(drawingService);
-    }
-
-    onMouseDown(event: MouseEvent): void {
-        this.mouseDown = event.button === MouseButton.Left;
-        if (this.mouseDown) {
-            this.escapeDown = false;
-            this.mouseDownCoord = this.getPositionFromMouse(event);
-            this.pathStart = this.mouseDownCoord;
-            this.ellipseService.pathStart = this.mouseDownCoord;
-        }
-    }
-
-    onMouseUp(): void {
-        if (this.mouseDown) {
-            this.computeDimensions(this.currentMousePosition);
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.setThickness(this.toolProperties.thickness);
-            this.draw(this.drawingService.baseCtx);
-        }
-        this.mouseDown = false;
-    }
-
-    onMouseMove(event: MouseEvent): void {
-        if (this.mouseDown) {
-            this.currentMousePosition = this.getPositionFromMouse(event);
-            this.ellipseService.mouseDownCoord = this.currentMousePosition;
-            this.computeDimensions(this.currentMousePosition);
-            this.ellipseService.width = this.width;
-            this.ellipseService.height = this.height;
-            this.ellipseService.setTypeDrawing(DrawingType.Stroke);
-            this.ellipseService.mouseDown = true;
-
-            // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
-            const previewCtx = this.drawingService.previewCtx;
-            this.drawingService.clearCanvas(previewCtx);
-            this.setThickness(this.toolProperties.thickness);
-            this.draw(previewCtx);
-            this.ellipseService.drawEllipse(previewCtx, 0);
-        }
     }
 
     onKeyDown(event: KeyboardEvent): void {
-        this.escapeDown = event.key === 'Escape';
+        if (event.key === 'Escape') {
+            this.mouseDown = false;
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        }
     }
 
-    // refactor apres les changements de Brando
-    adjustThickness(polygonProperties: BasicShapeProperties, radius: Vec2): number {
-        return polygonProperties.currentType === DrawingType.Fill
-            ? MINIMUM_THICKNESS
-            : this.toolProperties.thickness < Math.min(Math.abs(radius.x), Math.abs(radius.y))
-            ? this.toolProperties.thickness
-            : Math.min(Math.abs(radius.x), Math.abs(radius.y));
+    onKeyUp(event: KeyboardEvent): void {
+        // no shift for polygon
     }
 
-    draw(ctx: CanvasRenderingContext2D): void {
+    computeDimensions(): void {
+        this.width = this.currentMousePosition.x - this.mouseDownCoord.x;
+        this.height = this.currentMousePosition.y - this.mouseDownCoord.y;
+        const min = Math.min(Math.abs(this.width), Math.abs(this.height));
+        this.width = min * this.signOf(this.width);
+        this.height = min * this.signOf(this.height);
+    }
+
+    drawShape(ctx: CanvasRenderingContext2D): void {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         if (this.escapeDown) {
             return;
@@ -98,14 +55,15 @@ export class PolygonService extends ShapeTool {
         const numberOfSides = polygonProperties.numberOfSides;
         const thicknessRatio = numberOfSides / (numberOfSides / 2);
 
-        const centerX = this.pathStart.x + radiusX * this.signOf(this.width);
-        const centerY = this.pathStart.y + radiusY * this.signOf(this.height);
+        const centerX = this.mouseDownCoord.x + radiusX * this.signOf(this.width);
+        const centerY = this.mouseDownCoord.y + radiusY * this.signOf(this.height);
 
         ctx.beginPath();
         ctx.moveTo(centerX, centerY - (radiusY - thickness / thicknessRatio));
 
         const startingAngle = Math.PI / 2;
         const angle = (2 * Math.PI) / numberOfSides;
+        ctx.save();
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
 
@@ -129,29 +87,42 @@ export class PolygonService extends ShapeTool {
                 ctx.stroke();
         }
         ctx.closePath();
+        ctx.restore();
 
-        if (ctx === this.drawingService.previewCtx) {
-            ctx.setLineDash([DASHED_SEGMENTS]);
-        }
-        ctx.lineCap = 'butt';
-        ctx.lineJoin = 'miter';
-    }
-
-    signOf(num: number): number {
-        return Math.abs(num) / num;
-    }
-
-    computeDimensions(mousePosition: Vec2): void {
-        this.width = mousePosition.x - this.pathStart.x;
-        this.height = mousePosition.y - this.pathStart.y;
-        const min = Math.min(Math.abs(this.width), Math.abs(this.height));
-        this.width = min * this.signOf(this.width);
-        this.height = min * this.signOf(this.height);
+        this.drawBoxGuide();
     }
 
     setNumberOfSides(value: number | null): void {
         value = value === null ? MINIMUM_SIDES : value;
         const polygonProperties = this.toolProperties as PolygonProperties;
         polygonProperties.numberOfSides = value;
+    }
+
+    drawBoxGuide(): void {
+        const ctx = this.drawingService.previewCtx;
+        if (this.mouseDown) {
+            ctx.save();
+
+            ctx.lineWidth = SELECTION_BOX_THICKNESS;
+            ctx.beginPath();
+            const radius: Vec2 = { x: this.width / 2, y: this.height / 2 };
+            ctx.ellipse(
+                this.mouseDownCoord.x + radius.x,
+                this.mouseDownCoord.y + radius.y,
+                Math.abs(radius.x),
+                Math.abs(radius.y),
+                0,
+                0,
+                2 * Math.PI,
+            );
+            ctx.rect(this.mouseDownCoord.x, this.mouseDownCoord.y, this.width, this.height);
+            ctx.setLineDash([]);
+            ctx.strokeStyle = 'white';
+            ctx.stroke();
+            ctx.setLineDash([DASHED_SEGMENTS]);
+            ctx.strokeStyle = 'black';
+            ctx.stroke();
+            ctx.restore();
+        }
     }
 }

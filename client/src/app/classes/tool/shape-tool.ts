@@ -1,6 +1,8 @@
 import { Color } from '@app/classes/color/color';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 import { Vec2 } from '@app/classes/vec2';
+import { DASHED_SEGMENTS, MINIMUM_THICKNESS, SELECTION_BOX_THICKNESS } from '@app/constants/constants';
+import { DrawingType } from '@app/enums/drawing-type.enum';
 import { MouseButton } from '@app/enums/mouse-button.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { Tool } from './tool';
@@ -10,14 +12,7 @@ export abstract class ShapeTool extends Tool {
     height: number;
     shiftDown: boolean = false;
     escapeDown: boolean = false;
-    pathStart: Vec2;
     currentMousePosition: Vec2;
-
-    setThickness(value: number | null): void {
-        value = value === null ? 1 : value;
-        this.drawingService.setThickness(value);
-        this.toolProperties.thickness = value;
-    }
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
@@ -43,9 +38,10 @@ export abstract class ShapeTool extends Tool {
         this.currentMousePosition = this.getPositionFromMouse(event);
         if (this.mouseDown) {
             this.mouseDown = false;
-            this.computeDimensions();
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawShape(this.drawingService.baseCtx);
+            if (this.currentMousePosition.x !== this.mouseDownCoord.x && this.currentMousePosition.y !== this.mouseDownCoord.y) {
+                this.drawShape(this.drawingService.baseCtx);
+            }
         }
     }
 
@@ -85,7 +81,7 @@ export abstract class ShapeTool extends Tool {
         this.drawShape(this.drawingService.previewCtx);
     }
 
-    private computeDimensions(): void {
+    protected computeDimensions(): void {
         this.width = this.currentMousePosition.x - this.mouseDownCoord.x;
         this.height = this.currentMousePosition.y - this.mouseDownCoord.y;
 
@@ -98,13 +94,43 @@ export abstract class ShapeTool extends Tool {
         if (Math.abs(this.width) === Math.abs(this.height)) return;
 
         const smallestSide = Math.min(Math.abs(this.width), Math.abs(this.height));
-        this.width = this.width >= 0 ? smallestSide : -smallestSide;
-        this.height = this.height >= 0 ? smallestSide : -smallestSide;
+        this.width = smallestSide * this.signOf(this.width);
+        this.height = smallestSide * this.signOf(this.height);
+    }
+
+    signOf(num: number): number {
+        return Math.abs(num) / num;
     }
 
     resetContext(): void {
         this.mouseDown = false;
         this.shiftDown = false;
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
+    }
+
+    drawBoxGuide(ctx: CanvasRenderingContext2D): void {
+        if (this.mouseDown) {
+            ctx.save();
+
+            ctx.lineWidth = SELECTION_BOX_THICKNESS;
+            ctx.beginPath();
+            ctx.rect(this.mouseDownCoord.x, this.mouseDownCoord.y, this.width, this.height);
+            ctx.setLineDash([]);
+            ctx.strokeStyle = 'white';
+            ctx.stroke();
+            ctx.setLineDash([DASHED_SEGMENTS]);
+            ctx.strokeStyle = 'black';
+            ctx.stroke();
+
+            ctx.restore();
+        }
+    }
+
+    adjustThickness(properties: BasicShapeProperties, dimensions: Vec2): number {
+        return properties.currentType === DrawingType.Fill
+            ? MINIMUM_THICKNESS
+            : this.toolProperties.thickness < Math.min(Math.abs(dimensions.x), Math.abs(dimensions.y))
+            ? this.toolProperties.thickness
+            : Math.min(Math.abs(dimensions.x), Math.abs(dimensions.y));
     }
 }
