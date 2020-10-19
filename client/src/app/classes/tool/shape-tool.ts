@@ -47,12 +47,11 @@ export abstract class ShapeTool extends Tool {
     adjustThickness(): number {
         const shapeProperties = this.toolProperties as BasicShapeProperties;
         this.radius = { x: this.width / 2, y: this.height / 2 };
-        const thickness =
-            shapeProperties.currentType === DrawingType.Fill
-                ? 0
-                : this.toolProperties.thickness < Math.min(Math.abs(this.radius.x), Math.abs(this.radius.y))
-                ? this.toolProperties.thickness
-                : Math.min(Math.abs(this.radius.x), Math.abs(this.radius.y));
+
+        const minRadius = Math.min(Math.abs(this.radius.x), Math.abs(this.radius.y));
+        const maxThickness = this.toolProperties.thickness < minRadius ? this.toolProperties.thickness : minRadius;
+
+        const thickness = shapeProperties.currentType === DrawingType.Fill ? 0 : maxThickness;
         this.dx = (thickness / 2) * this.signOf(this.width);
         this.dy = (thickness / 2) * this.signOf(this.height);
         this.radius.x -= this.dx;
