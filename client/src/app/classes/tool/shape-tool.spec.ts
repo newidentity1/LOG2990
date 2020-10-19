@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { canvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Color } from '@app/classes/color/color';
 import { ShapeTool } from '@app/classes/tool/shape-tool';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
@@ -6,7 +7,6 @@ import { Vec2 } from '@app/classes/vec2';
 import { BLACK, DASHED_SEGMENTS, WHITE } from '@app/constants/constants';
 import { DrawingType } from '@app/enums/drawing-type.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { canvasTestHelper } from '../canvas-test-helper';
 
 // To instanciate a ShapeTool object
 export class ShapeToolTest extends ShapeTool {
@@ -354,4 +354,5 @@ describe('Class: ShapeTool', () => {
 
         expect(shapeTool.adjustThickness(properties, radius)).toEqual(1);
     });
+    // tslint:disable-next-line: max-file-line-count / reason: its a test file
 });
