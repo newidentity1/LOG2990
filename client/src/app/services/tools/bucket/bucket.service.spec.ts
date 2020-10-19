@@ -15,8 +15,6 @@ describe('BucketService', () => {
     let mouseEventclickRight: MouseEvent;
 
     beforeEach(() => {
-        baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
-        previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setColor', 'setThickness']);
 
         TestBed.configureTestingModule({
@@ -25,11 +23,13 @@ describe('BucketService', () => {
         service = TestBed.inject(BucketService);
         // Configuration du spy du service
         // tslint:disable:no-string-literal
-        service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
-        service['drawingService'].previewCtx = previewCtxStub;
         const drawingCanvas = document.createElement('canvas');
         drawingCanvas.width = canvasTestHelper.canvas.width;
         drawingCanvas.height = canvasTestHelper.canvas.height;
+        baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
+        previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
+        service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
+        service['drawingService'].previewCtx = previewCtxStub;
         service['drawingService'].canvas = drawingCanvas;
 
         mouseEventclickLeft = {
@@ -133,24 +133,24 @@ describe('BucketService', () => {
         expect(newList.length).toEqual(2);
     });
 
+    // a réviser
     it('AddNeighboors should add the 4 neighboors pixels if status = 0', () => {
         service.onMouseDown(mouseEventclickRight);
-        service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(2, 2, 1, 1).data;
+        // tslint:disable-next-line:no-magic-numbers
+        service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(10, 10, 1, 1).data;
         service['generateMatrice']();
-        const checkPixelSpy = spyOn<any>(service, 'checkPixel').and.callThrough();
         const p1: Pixel = { x: 10, y: 10, status: 0 };
         service['openList'].push(p1);
         service['addNeighbours'](service['openList']);
-        expect(checkPixelSpy).toHaveBeenCalled();
         // tslint:disable-next-line:no-magic-numbers
         expect(service['openList'].length).toEqual(4);
     });
 
+    // a réviser
     it('AddNeighboors should add the 0 neighboors pixels if status = 1 ', () => {
         service.onMouseDown(mouseEventclickRight);
         service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(2, 2, 1, 1).data;
         service['generateMatrice']();
-        const checkPixelSpy = spyOn<any>(service, 'checkPixel').and.callThrough();
         const p1: Pixel = { x: 2, y: 2, status: 1 };
         service['matrice'][2][2].status = 1;
         service['matrice'][1][2].status = 1;
@@ -161,7 +161,6 @@ describe('BucketService', () => {
         service['matrice'][2][3].status = 1;
         service['openList'].push(p1);
         service['addNeighbours'](service['openList']);
-        expect(checkPixelSpy).toHaveBeenCalled();
         expect(service['openList'].length).toEqual(0);
     });
 
@@ -170,8 +169,8 @@ describe('BucketService', () => {
         service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(2, 2, 1, 1).data;
         service['generateMatrice']();
         const checkPixelSpy = spyOn<any>(service, 'checkPixel').and.callThrough();
-        const p1: Pixel = { x: 2, y: 2, status: 1 };
-        service['matrice'][2][2].status = 1;
+        const p1: Pixel = { x: 2, y: 2, status: 0 };
+        service['matrice'][2][2].status = 0;
         service['matrice'][1][2].status = 0;
         // tslint:disable-next-line: no-magic-numbers
         service['matrice'][3][2].status = 1;
