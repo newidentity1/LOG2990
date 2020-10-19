@@ -3,8 +3,10 @@ import { Color } from '@app/classes/color/color';
 import { ShapeTool } from '@app/classes/tool/shape-tool';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 import { Vec2 } from '@app/classes/vec2';
-import { BLACK, WHITE } from '@app/constants/constants';
+import { BLACK, DASHED_SEGMENTS, WHITE } from '@app/constants/constants';
+import { DrawingType } from '@app/enums/drawing-type.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { canvasTestHelper } from '../canvas-test-helper';
 
 // To instanciate a ShapeTool object
 export class ShapeToolTest extends ShapeTool {
@@ -23,14 +25,18 @@ describe('Class: ShapeTool', () => {
     let computeDimensionsSpy: jasmine.Spy<any>;
     let drawShapeSpy: jasmine.Spy<any>;
     let transformToEqualSidesSpy: jasmine.Spy<any>;
+    let baseCtxStub: CanvasRenderingContext2D;
 
     beforeEach(() => {
-        drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setColor', 'setFillColor', 'setStrokeColor']);
+        baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
+
+        drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setColor', 'setFillColor', 'setStrokeColor', 'setThickness']);
 
         TestBed.configureTestingModule({
             providers: [{ provide: DrawingService, useValue: drawingServiceSpy }],
         });
         drawingServiceSpy = TestBed.inject(DrawingService) as jasmine.SpyObj<DrawingService>;
+
         shapeTool = new ShapeToolTest(drawingServiceSpy);
         drawPreviewSpy = spyOn<any>(shapeTool, 'drawPreview').and.callThrough();
         computeDimensionsSpy = spyOn<any>(shapeTool, 'computeDimensions').and.callThrough();
@@ -46,11 +52,15 @@ describe('Class: ShapeTool', () => {
             button: 0,
         } as MouseEvent;
 
-        shapeTool.currentMousePosition = { x: mouseEvent.x, y: mouseEvent.y };
-        shapeTool.mouseDownCoord = { x: mouseEvent.x, y: mouseEvent.y };
+        shapeTool.currentMousePosition = { x: mouseEvent.offsetX, y: mouseEvent.offsetY };
+        shapeTool.mouseDownCoord = { x: mouseEvent.offsetX, y: mouseEvent.offsetY };
     });
 
     it('should be created', () => {
+        expect(shapeTool).toBeTruthy();
+    });
+
+    it('setThickness should set the ', () => {
         expect(shapeTool).toBeTruthy();
     });
 
@@ -78,7 +88,6 @@ describe('Class: ShapeTool', () => {
     it(' mouseMove should call drawPreview if mouse was already down', () => {
         shapeTool.mouseDown = true;
         shapeTool.onMouseMove(mouseEvent);
-        // tslint:disable-next-line:no-string-literal / reason: accessing private member
         expect(drawPreviewSpy).toHaveBeenCalled();
     });
 
@@ -88,12 +97,24 @@ describe('Class: ShapeTool', () => {
         expect(drawPreviewSpy).not.toHaveBeenCalled();
     });
 
-    it(' onMouseUp should call computeDimensions and drawShape if mouse was already down', () => {
+    it(' onMouseUp should not call drawShape if mouse was already down and position of mouse havent changed from initial', () => {
         shapeTool.mouseDown = true;
         shapeTool.onMouseUp(mouseEvent);
 
         expect(shapeTool.mouseDown).toBeFalse();
-        expect(computeDimensionsSpy).toHaveBeenCalled();
+        expect(drawShapeSpy).not.toHaveBeenCalled();
+    });
+
+    it(' onMouseUp should call drawShape if mouse was already down and position of mouse changed from initial', () => {
+        shapeTool.mouseDown = true;
+        const newMouseEvent = {
+            offsetX: 30,
+            offsetY: 30,
+            button: 0,
+        } as MouseEvent;
+        shapeTool.onMouseUp(newMouseEvent);
+
+        expect(shapeTool.mouseDown).toBeFalse();
         expect(drawShapeSpy).toHaveBeenCalled();
     });
 
@@ -212,7 +233,7 @@ describe('Class: ShapeTool', () => {
         shapeTool['computeDimensions']();
         expect(transformToEqualSidesSpy).not.toHaveBeenCalled();
     });
-    it(' transformToSquare should set a positive width and a positive height if the coords are on quadrant1', () => {
+    it(' transformToEqualSides should set a positive width and a positive height if the coords are on quadrant1', () => {
         // tslint:disable:no-magic-numbers / reason: using random values
         shapeTool.width = 150;
         shapeTool.height = 200;
@@ -223,7 +244,7 @@ describe('Class: ShapeTool', () => {
         expect(shapeTool.height).toEqual(expectedResult);
     });
 
-    it(' transformToSquare should return the a negative width and a positive height if the coords are on quadrant2', () => {
+    it(' transformToEqualSides should return the a negative width and a positive height if the coords are on quadrant2', () => {
         shapeTool.width = -150;
         shapeTool.height = 200;
         const expectedResult = 150;
@@ -233,7 +254,7 @@ describe('Class: ShapeTool', () => {
         expect(shapeTool.height).toEqual(expectedResult);
     });
 
-    it(' transformToSquare should return the a negative width and a negative height if the coords are on quadrant3', () => {
+    it(' transformToEqualSides should return the a negative width and a negative height if the coords are on quadrant3', () => {
         shapeTool.width = -150;
         shapeTool.height = -200;
         const expectedResult = -150;
@@ -243,7 +264,7 @@ describe('Class: ShapeTool', () => {
         expect(shapeTool.height).toEqual(expectedResult);
     });
 
-    it(' transformToSquare should return the a positive width and a negative height if the coords are on quadrant4', () => {
+    it(' transformToEqualSides should return the a positive width and a negative height if the coords are on quadrant4', () => {
         shapeTool.width = 150;
         shapeTool.height = -200;
         const expectedResult = 150;
@@ -253,7 +274,7 @@ describe('Class: ShapeTool', () => {
         expect(shapeTool.height).toEqual(-expectedResult);
     });
 
-    it(' transformToSquare should return the same input if they are equal', () => {
+    it(' transformToEqualSides should return the same input if they are equal', () => {
         const expectedResult = 150;
         shapeTool.width = expectedResult;
         shapeTool.height = expectedResult;
@@ -263,6 +284,17 @@ describe('Class: ShapeTool', () => {
         expect(shapeTool.height).toEqual(expectedResult);
     });
 
+    it('signOf should return 1 if number is positive', () => {
+        // tslint:disable:no-magic-numbers / reason: using random numbers
+        const result = shapeTool.signOf(10);
+        expect(result).toEqual(1);
+    });
+
+    it('signOf should return -1 if number is negative', () => {
+        const result = shapeTool.signOf(-10);
+        expect(result).toEqual(-1);
+    });
+
     it('resetContext should reset all the current changes that the tool made', () => {
         shapeTool.mouseDown = true;
         shapeTool.shiftDown = true;
@@ -270,5 +302,56 @@ describe('Class: ShapeTool', () => {
         expect(shapeTool.mouseDown).toEqual(false);
         expect(shapeTool.shiftDown).toEqual(false);
         expect(drawingServiceSpy.clearCanvas).toHaveBeenCalledWith(drawingServiceSpy.previewCtx);
+    });
+
+    it('drawBoxGuide should call stroke twice and setLineDash if mouse was down', () => {
+        shapeTool.mouseDown = true;
+        const spyStroke = spyOn(baseCtxStub, 'stroke');
+        const spyLineDash = spyOn(baseCtxStub, 'setLineDash');
+        shapeTool.drawBoxGuide(baseCtxStub);
+        expect(spyStroke).toHaveBeenCalledTimes(2);
+        expect(spyLineDash).toHaveBeenCalledWith([DASHED_SEGMENTS]);
+    });
+
+    it('drawBoxGuide should not call stroke and setLineDash if mouse was not down', () => {
+        shapeTool.mouseDown = false;
+        const spyStroke = spyOn(baseCtxStub, 'stroke');
+        const spyLineDash = spyOn(baseCtxStub, 'setLineDash');
+        shapeTool.drawBoxGuide(baseCtxStub);
+        expect(spyStroke).not.toHaveBeenCalled();
+        expect(spyLineDash).not.toHaveBeenCalled();
+    });
+
+    it('adjustThickness should shrink the thickness when its not in fill mode bigger than the width or the height', () => {
+        const properties = shapeTool.toolProperties as BasicShapeProperties;
+        properties.currentType = DrawingType.Stroke;
+        const value = 50;
+        const radius: Vec2 = { x: 25, y: 25 };
+        shapeTool.setThickness(value);
+        shapeTool.drawShape(baseCtxStub);
+
+        expect(shapeTool.adjustThickness(properties, radius)).toEqual(radius.x);
+    });
+
+    it('adjustThickness should keep the thickness when its not in fill mode and is smaller than the width or the height', () => {
+        const properties = shapeTool.toolProperties as BasicShapeProperties;
+        properties.currentType = DrawingType.Stroke;
+        const value = 10;
+        const radius: Vec2 = { x: 25, y: 25 };
+        shapeTool.setThickness(value);
+        shapeTool.drawShape(baseCtxStub);
+
+        expect(shapeTool.adjustThickness(properties, radius)).toEqual(value);
+    });
+
+    it('adjustThickness should set the thickness to 1 when its in fill mode', () => {
+        const properties = shapeTool.toolProperties as BasicShapeProperties;
+        properties.currentType = DrawingType.Fill;
+        const value = 50;
+        const radius: Vec2 = { x: 25, y: 25 };
+        shapeTool.setThickness(value);
+        shapeTool.drawShape(baseCtxStub);
+
+        expect(shapeTool.adjustThickness(properties, radius)).toEqual(1);
     });
 });

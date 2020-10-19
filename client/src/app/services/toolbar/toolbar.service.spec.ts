@@ -117,6 +117,9 @@ describe('ToolbarService', () => {
             polygonServiceSpy,
             lineServiceSpy,
             eraseServiceSpy,
+            eyedropperService,
+            selectionService,
+            bucketServiceSpy,
         ]);
     });
 
@@ -127,21 +130,6 @@ describe('ToolbarService', () => {
         expect(setColorsSpy).toHaveBeenCalled();
         expect(service.primaryColor).toBeTruthy();
         expect(service.secondaryColor).toBeTruthy();
-    });
-
-    it('getTools should return an array of tool services ', () => {
-        const tools = service.getTools();
-        expect(tools).toEqual([
-            pencilServiceSpy,
-            brushServiceSpy,
-            rectangleServiceSpy,
-            ellipseServiceSpy,
-            lineServiceSpy,
-            eraseServiceSpy,
-            eyedropperService,
-            selectionService,
-            bucketServiceSpy,
-        ]);
     });
 
     it('setColors should set the colors and call applyCurrentToolColor', () => {
