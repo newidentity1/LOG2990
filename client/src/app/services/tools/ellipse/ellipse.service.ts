@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { ShapeTool } from '@app/classes/tool/shape-tool';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 import { Vec2 } from '@app/classes/vec2';
-import { DASHED_SEGMENTS, MINIMUM_THICKNESS, SELECTION_BOX_THICKNESS } from '@app/constants/constants';
 import { DrawingType } from '@app/enums/drawing-type.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
@@ -54,37 +53,6 @@ export class EllipseService extends ShapeTool {
                 ctx.fill();
                 ctx.stroke();
         }
-
         this.drawBoxGuide(ctx);
-    }
-
-    private signOf(num: number): number {
-        return Math.abs(num) / num;
-    }
-
-    private drawBoxGuide(ctx: CanvasRenderingContext2D): void {
-        if (this.mouseDown) {
-            ctx.save();
-
-            ctx.lineWidth = SELECTION_BOX_THICKNESS;
-            ctx.beginPath();
-            ctx.rect(this.mouseDownCoord.x, this.mouseDownCoord.y, this.width, this.height);
-            ctx.setLineDash([]);
-            ctx.strokeStyle = 'white';
-            ctx.stroke();
-            ctx.setLineDash([DASHED_SEGMENTS]);
-            ctx.strokeStyle = 'black';
-            ctx.stroke();
-
-            ctx.restore();
-        }
-    }
-
-    private adjustThickness(ellipseProperties: BasicShapeProperties, radius: Vec2): number {
-        return ellipseProperties.currentType === DrawingType.Fill
-            ? MINIMUM_THICKNESS
-            : this.toolProperties.thickness < Math.min(Math.abs(radius.x), Math.abs(radius.y))
-            ? this.toolProperties.thickness
-            : Math.min(Math.abs(radius.x), Math.abs(radius.y));
     }
 }
