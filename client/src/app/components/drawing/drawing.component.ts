@@ -1,4 +1,15 @@
-import { AfterContentInit, AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild } from '@angular/core';
+import {
+    AfterContentInit,
+    AfterViewInit,
+    Component,
+    ElementRef,
+    EventEmitter,
+    HostListener,
+    Input,
+    OnDestroy,
+    Output,
+    ViewChild,
+} from '@angular/core';
 import { ResizerProperties } from '@app/classes/resizer-properties';
 import { Vec2 } from '@app/classes/vec2';
 import {
@@ -13,14 +24,14 @@ import {
 import { MouseButton } from '@app/enums/mouse-button.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-drawing',
     templateUrl: './drawing.component.html',
     styleUrls: ['./drawing.component.scss'],
 })
-export class DrawingComponent implements AfterViewInit, AfterContentInit {
+export class DrawingComponent implements AfterViewInit, AfterContentInit, OnDestroy {
     @ViewChild('baseCanvas', { static: false }) baseCanvas: ElementRef<HTMLCanvasElement>;
     // On utilise ce canvas pour dessiner sans affecter le dessin final
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
@@ -34,7 +45,8 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit {
     private baseCtx: CanvasRenderingContext2D;
     previewCtx: CanvasRenderingContext2D;
     private canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
-
+    private subscribeCreateNewDrawing: Subscription;
+    private subscribeDimensionsUpdated: Subscription;
     isResizingWidth: boolean = false;
     isResizingHeight: boolean = false;
 
@@ -51,12 +63,12 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit {
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
 
-        this.drawingService.createNewDrawingEventListener().subscribe(() => {
+        this.subscribeCreateNewDrawing = this.drawingService.createNewDrawingEventListener().subscribe(() => {
             this.toolbarService.resetSelection();
             this.drawingService.clearCanvas(this.drawingService.baseCtx);
             this.requestDrawingContainerDimensions.emit();
         });
-        this.dimensionsUpdatedEvent.subscribe((dimensions) => {
+        this.subscribeDimensionsUpdated = this.dimensionsUpdatedEvent.subscribe((dimensions) => {
             this.drawingContainerWidth = dimensions[0];
             this.drawingContainerHeight = dimensions[1];
             this.newCanvasSetSize();
@@ -65,6 +77,11 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit {
             }, 0);
         });
         this.toolbarService.initializeColors();
+    }
+
+    ngOnDestroy(): void {
+        this.subscribeCreateNewDrawing.unsubscribe();
+        this.subscribeDimensionsUpdated.unsubscribe();
     }
 
     onMouseMove(event: MouseEvent): void {
