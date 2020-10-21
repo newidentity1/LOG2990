@@ -5,6 +5,7 @@ import { Tool } from '@app/classes/tool/tool';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 import * as CONSTANTS from '@app/constants/constants';
 import { MouseButton } from '@app/enums/mouse-button.enum';
+import { ColorPickerService } from '@app/services/color-picker/color-picker.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
 @Injectable({
@@ -20,7 +21,7 @@ export class BucketService extends Tool {
     private startPixelColor: Uint8ClampedArray;
     protected tolerance: number = 1;
 
-    constructor(drawingService: DrawingService) {
+    constructor(drawingService: DrawingService, private colorPickerService: ColorPickerService) {
         super(drawingService);
         this.name = 'Bucket';
         this.tooltip = 'Bucket(1)';
@@ -67,16 +68,30 @@ export class BucketService extends Tool {
     }
 
     floodFillRight(event: MouseEvent): void {
-        const pixel: Pixel = { x: 0, y: 0, status: 0 };
-        for (let i = 0; i < this.height; i++) {
-            for (let j = 0; j < this.width; j++) {
-                pixel.x = j;
-                pixel.y = i;
-                if (this.checkColor(pixel)) {
-                    this.colorPixel(pixel);
-                }
+        const targetColor: Color = this.colorPickerService.selectedColor.clone();
+        console.log(targetColor.toStringRGBA(), this.startPixelColor.toString());
+        for (let i = 0; i < this.image.data.length; i += 4) {
+            if (
+                this.image.data[i + 0] >= this.startPixelColor[0] - this.tolerance &&
+                this.image.data[i + 0] < this.startPixelColor[0] + this.tolerance &&
+                this.image.data[i + 1] >= this.startPixelColor[1] - this.tolerance &&
+                this.image.data[i + 1] < this.startPixelColor[1] + this.tolerance &&
+                this.image.data[i + 2] >= this.startPixelColor[2] - this.tolerance &&
+                this.image.data[i + 2] < this.startPixelColor[2] + this.tolerance &&
+                // tslint:disable-next-line:no-magic-numbers
+                this.image.data[i + 3] >= this.startPixelColor[CONSTANTS.INDEX_3] - this.tolerance &&
+                // tslint:disable-next-line:no-magic-numbers
+                this.image.data[i + 3] < this.startPixelColor[CONSTANTS.INDEX_3] + this.tolerance
+            ) {
+                this.image.data[i] = targetColor.getRed;
+                // console.log(this.image.data[i + 0], this.startPixelColor[0]);
+                this.image.data[i + 1] = targetColor.getGreen;
+                this.image.data[i + 2] = targetColor.getBlue;
+                // tslint:disable-next-line:no-magic-numbers
+                this.image.data[i + 3] = targetColor.getOpacity * 255;
             }
         }
+        this.drawingService.baseCtx.putImageData(this.image, 0, 0);
     }
 
     setTolerance(tolerance: number | null): void {
