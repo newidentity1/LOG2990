@@ -5,7 +5,7 @@ import { BucketService } from '@app/services/tools/bucket/bucket.service';
 @Component({
     selector: 'app-bucket-option',
     templateUrl: './bucket.component.html',
-    styleUrls: ['./bucket.component.scss'],
+    styleUrls: ['../../sidebar/sidebar.component.scss'],
 })
 export class BucketComponent {
     tolerance: number = 1;
