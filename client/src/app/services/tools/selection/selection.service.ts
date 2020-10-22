@@ -301,15 +301,9 @@ export class SelectionService extends ShapeTool {
         const elementOffsetLeft = this.drawingService.previewCtx.canvas.offsetLeft;
         const elementOffsetTop = this.drawingService.previewCtx.canvas.offsetTop;
 
-        const newOffsetLeft =
-            elementOffsetLeft + this.positiveWidth - moveX >= 0 && elementOffsetLeft - moveX <= this.drawingService.canvas.width
-                ? elementOffsetLeft - moveX
-                : elementOffsetLeft;
+        const newOffsetLeft = elementOffsetLeft - moveX;
 
-        const newOffsetTop =
-            elementOffsetTop + this.positiveHeight - moveY >= 0 && elementOffsetTop - moveY <= this.drawingService.canvas.height
-                ? elementOffsetTop - moveY
-                : elementOffsetTop;
+        const newOffsetTop = elementOffsetTop - moveY;
 
         this.drawingService.previewCtx.canvas.style.left = newOffsetLeft + 'px';
         this.drawingService.previewCtx.canvas.style.top = newOffsetTop + 'px';
