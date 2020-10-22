@@ -77,7 +77,12 @@ export class SelectionService extends ShapeTool {
         if (this.mouseDown) {
             if (!this.isAreaSelected) {
                 this.currentMousePosition = this.getPositionFromMouse(event);
-                if (this.currentMousePosition.x !== this.mouseDownCoord.x || this.currentMousePosition.y !== this.mouseDownCoord.y) {
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                if (
+                    (this.currentMousePosition.x !== this.mouseDownCoord.x || this.currentMousePosition.y !== this.mouseDownCoord.y) &&
+                    this.width &&
+                    this.height
+                ) {
                     this.drawSelectedArea();
                 }
             }
@@ -309,11 +314,11 @@ export class SelectionService extends ShapeTool {
         this.drawingService.previewCtx.canvas.style.top = newOffsetTop + 'px';
 
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-
+        console.log(newOffsetLeft);
         this.drawingService.previewCtx.putImageData(
             this.imgData,
-            0,
-            0,
+            newOffsetLeft >= 0 ? 0 : -newOffsetLeft,
+            newOffsetTop >= 0 ? 0 : -newOffsetTop,
             0,
             0,
             this.drawingService.canvas.width - newOffsetLeft,
