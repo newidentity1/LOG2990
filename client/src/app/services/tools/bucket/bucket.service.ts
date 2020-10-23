@@ -58,18 +58,15 @@ export class BucketService extends Tool {
         const mousePosition = this.getPositionFromMouse(event);
         const start: Pixel = { x: mousePosition.x, y: mousePosition.y, status: 0 };
         this.openList.push(start);
-        let security = 0;
-        while (this.openList.length !== 0 && security < this.height * this.width) {
+        while (this.openList.length !== 0) {
             this.addNeighbours(this.openList);
-            security++;
-            console.log(security);
         }
         this.resetMatrice();
     }
 
     floodFillRight(event: MouseEvent): void {
         const targetColor: Color = this.colorPickerService.selectedColor.clone();
-        console.log(targetColor.toStringRGBA(), this.startPixelColor.toString());
+        // tslint:disable-next-line:no-magic-numbers
         for (let i = 0; i < this.image.data.length; i += 4) {
             if (
                 this.image.data[i + 0] >= this.startPixelColor[0] - this.tolerance &&
@@ -84,7 +81,6 @@ export class BucketService extends Tool {
                 this.image.data[i + 3] < this.startPixelColor[CONSTANTS.INDEX_3] + this.tolerance
             ) {
                 this.image.data[i] = targetColor.getRed;
-                // console.log(this.image.data[i + 0], this.startPixelColor[0]);
                 this.image.data[i + 1] = targetColor.getGreen;
                 this.image.data[i + 2] = targetColor.getBlue;
                 // tslint:disable-next-line:no-magic-numbers
@@ -97,7 +93,6 @@ export class BucketService extends Tool {
     setTolerance(tolerance: number | null): void {
         tolerance = tolerance === null ? 1 : tolerance;
         this.tolerance = CONSTANTS.MAX_COLOR_VALUE * (tolerance / CONSTANTS.POURCENTAGE);
-        console.log(CONSTANTS.MAX_COLOR_VALUE * (tolerance / CONSTANTS.POURCENTAGE));
     }
 
     setColors(primaryColor: Color): void {
@@ -111,9 +106,7 @@ export class BucketService extends Tool {
     }
 
     private clearList(list: Pixel[]): void {
-        if (list.length === 0) {
-            console.log('VIDE');
-        } else {
+        if (list.length !== 0) {
             while (list.length !== 0) {
                 list.pop();
             }
