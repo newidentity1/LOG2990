@@ -58,6 +58,14 @@ describe('BucketService', () => {
         expect(service).toBeTruthy();
     });
 
+    it('checkColor should return false if pixel is out ', () => {
+        service.onMouseDown(mouseEventclickLeft);
+        service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(2, 2, 1, 1).data;
+        service['generateMatrice']();
+        const p1: Pixel = { x: -1, y: -1, status: 0 };
+        expect(service['checkColor'](p1)).toEqual(false);
+    });
+
     it('GenerateMatrice should generate a matrice of Pixel with a status of 0', () => {
         service['generateMatrice']();
         const expectedResult: Pixel = { x: 0, y: 0, status: 0 };
@@ -75,6 +83,19 @@ describe('BucketService', () => {
     it('onMouseDown with a right click should call floodFillRight algorithme', () => {
         service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(2, 2, 1, 1).data;
         service['generateMatrice']();
+        const floodFillRightSpy = spyOn<any>(service, 'floodFillRight').and.callThrough();
+        service.onMouseDown(mouseEventclickRight);
+        expect(floodFillRightSpy).toHaveBeenCalled();
+    });
+
+    it('onMouseDown with a right click should call floodFillRight algorithme', () => {
+        service.onMouseDown(mouseEventclickLeft);
+        service['image'].data[0] = 1;
+        service['image'].data[1] = 1;
+        service['image'].data[2] = 1;
+        // tslint:disable-next-line:no-magic-numbers
+        service['image'].data[3] = 1;
+        service['drawingService'].baseCtx.putImageData(service['image'], 0, 0);
         const floodFillRightSpy = spyOn<any>(service, 'floodFillRight').and.callThrough();
         service.onMouseDown(mouseEventclickRight);
         expect(floodFillRightSpy).toHaveBeenCalled();
@@ -133,7 +154,16 @@ describe('BucketService', () => {
         expect(newList.length).toEqual(2);
     });
 
-    // a réviser
+    it('AddNeighboors should add the 2 neighboors pixels if the pixel is on left top corner', () => {
+        service.onMouseDown(mouseEventclickRight);
+        service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(2, 2, 1, 1).data;
+        service['generateMatrice']();
+        const p1: Pixel = { x: 0, y: 0, status: 0 };
+        service['openList'].push(p1);
+        service['addNeighbours'](service['openList']);
+        expect(service['openList'].length).toEqual(2);
+    });
+
     it('AddNeighboors should add the 4 neighboors pixels if status = 0', () => {
         service.onMouseDown(mouseEventclickRight);
         // tslint:disable-next-line:no-magic-numbers
@@ -146,7 +176,6 @@ describe('BucketService', () => {
         expect(service['openList'].length).toEqual(4);
     });
 
-    // a réviser
     it('AddNeighboors should add the 0 neighboors pixels if status = 1 ', () => {
         service.onMouseDown(mouseEventclickRight);
         service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(2, 2, 1, 1).data;
