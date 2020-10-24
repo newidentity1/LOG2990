@@ -239,7 +239,7 @@ export class SelectionService extends ShapeTool {
         let y = 0;
         for (let i = 0; i < this.imgData.data.length; i += CONSTANTS.IMAGE_DATA_OPACITY_INDEX + 1) {
             if (this.currentType === SelectionType.EllipseSelection) {
-                const x = (i / 4) % this.imgData.width;
+                const x = (i / (CONSTANTS.IMAGE_DATA_OPACITY_INDEX + 1)) % this.imgData.width;
                 if (x === 0) y++;
                 const isPointInEllipse =
                     Math.pow(x - this.positiveWidth / 2, 2) / Math.pow(this.positiveWidth / 2, 2) +
