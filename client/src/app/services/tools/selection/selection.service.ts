@@ -14,15 +14,14 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 export class SelectionService extends ShapeTool {
     currentType: SelectionType;
     isAreaSelected: boolean;
-    protected positiveStartingPos: Vec2;
-    protected positiveWidth: number;
-    protected positiveHeight: number;
+    private positiveStartingPos: Vec2;
+    private positiveWidth: number;
+    private positiveHeight: number;
     private moveSelectionPos: Vec2;
     private pressedKeys: number[];
     private canMoveSelection: boolean;
     private canMoveSelectionContiniously: boolean;
-
-    protected imgData: ImageData;
+    private imgData: ImageData;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
@@ -46,6 +45,7 @@ export class SelectionService extends ShapeTool {
                 this.currentType = SelectionType.EllipseSelection;
                 break;
         }
+        this.resetSelection();
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -159,12 +159,6 @@ export class SelectionService extends ShapeTool {
             const canvasTopOffset = +selectionCtx.canvas.offsetTop;
             const canvasLeftOffset = +selectionCtx.canvas.offsetLeft;
 
-            // const radius: Vec2 = { x: this.positiveWidth / 2, y: this.positiveHeight / 2 };
-
-            // this.drawingService.baseCtx.beginPath();
-            // this.drawingService.baseCtx.ellipse(canvasLeftOffset + radius.x, canvasTopOffset + radius.y, radius.x, radius.y, 0, 0, 2 * Math.PI);
-            // this.drawingService.baseCtx.clip();
-
             this.drawingService.clearCanvas(selectionCtx);
             selectionCtx.putImageData(this.imgData, 0, 0);
             this.drawingService.baseCtx.drawImage(selectionCtx.canvas, canvasLeftOffset, canvasTopOffset);
@@ -173,7 +167,6 @@ export class SelectionService extends ShapeTool {
             selectionCtx.canvas.height = this.drawingService.canvas.height;
             selectionCtx.canvas.style.left = '0px';
             selectionCtx.canvas.style.top = '0px';
-
             selectionCtx.canvas.style.cursor = '';
         }
     }
@@ -228,13 +221,6 @@ export class SelectionService extends ShapeTool {
         selectionCtx.canvas.width = this.positiveWidth;
         selectionCtx.canvas.height = this.positiveHeight;
 
-        if (this.currentType === SelectionType.EllipseSelection) {
-            const radius: Vec2 = { x: this.positiveWidth / 2, y: this.positiveHeight / 2 };
-            this.drawingService.previewCtx.beginPath();
-            this.drawingService.previewCtx.ellipse(radius.x, radius.y, radius.x, radius.y, 0, 0, 2 * Math.PI);
-            this.drawingService.previewCtx.clip();
-        }
-
         this.drawingService.previewCtx.drawImage(
             this.drawingService.canvas,
             this.positiveStartingPos.x,
@@ -247,41 +233,33 @@ export class SelectionService extends ShapeTool {
             this.positiveHeight,
         );
 
-        this.drawingService.baseCtx.save();
-        this.drawingService.baseCtx.fillStyle = 'white';
-        this.drawingService.baseCtx.beginPath();
-        if (this.currentType === SelectionType.RectangleSelection) {
-            console.log('rect');
-            this.drawingService.baseCtx.rect(this.positiveStartingPos.x, this.positiveStartingPos.y, this.positiveWidth, this.positiveHeight);
-        } else if (this.currentType === SelectionType.EllipseSelection) {
-            const radius: Vec2 = { x: this.positiveWidth / 2, y: this.positiveHeight / 2 };
-
-            this.drawingService.baseCtx.ellipse(
-                this.positiveStartingPos.x + radius.x,
-                this.positiveStartingPos.y + radius.y,
-                radius.x,
-                radius.y,
-                0,
-                0,
-                2 * Math.PI,
-            );
-        }
-        this.drawingService.baseCtx.fill();
-        this.drawingService.baseCtx.restore();
-
         this.imgData = this.drawingService.previewCtx.getImageData(0, 0, this.positiveWidth, this.positiveHeight);
+        const areaToClear = this.drawingService.previewCtx.getImageData(0, 0, this.positiveWidth, this.positiveHeight);
 
-        let rows = 0;
+        let y = 0;
         for (let i = 0; i < this.imgData.data.length; i += CONSTANTS.IMAGE_DATA_OPACITY_INDEX + 1) {
-            const x = (i / 4) % this.imgData.width;
-            if (x === 0) rows++;
-            const isPointInEllipse =
-                Math.pow(x - this.positiveWidth / 2, 2) / Math.pow(this.positiveWidth / 2, 2) +
-                    Math.pow(rows - this.positiveHeight / 2, 2) / Math.pow(this.positiveHeight / 2, 2) <=
-                1;
+            if (this.currentType === SelectionType.EllipseSelection) {
+                const x = (i / 4) % this.imgData.width;
+                if (x === 0) y++;
+                const isPointInEllipse =
+                    Math.pow(x - this.positiveWidth / 2, 2) / Math.pow(this.positiveWidth / 2, 2) +
+                        Math.pow(y - this.positiveHeight / 2, 2) / Math.pow(this.positiveHeight / 2, 2) <=
+                    1;
+
+                if (!isPointInEllipse) {
+                    this.imgData.data[i] = 0;
+                    this.imgData.data[i + 1] = 0;
+                    this.imgData.data[i + 2] = 0;
+                    this.imgData.data[i + CONSTANTS.IMAGE_DATA_OPACITY_INDEX] = 0;
+                    continue;
+                }
+            }
+            areaToClear.data[i] = 0;
+            areaToClear.data[i + 1] = 0;
+            areaToClear.data[i + 2] = 0;
+            areaToClear.data[i + CONSTANTS.IMAGE_DATA_OPACITY_INDEX] = 0;
 
             if (this.imgData.data[i + CONSTANTS.IMAGE_DATA_OPACITY_INDEX] === 0) {
-                if (!isPointInEllipse && this.currentType === SelectionType.EllipseSelection) continue;
                 this.imgData.data[i] = CONSTANTS.MAX_COLOR_VALUE;
                 this.imgData.data[i + 1] = CONSTANTS.MAX_COLOR_VALUE;
                 this.imgData.data[i + 2] = CONSTANTS.MAX_COLOR_VALUE;
@@ -290,9 +268,19 @@ export class SelectionService extends ShapeTool {
         }
 
         this.drawingService.previewCtx.putImageData(this.imgData, 0, 0, 0, 0, this.positiveWidth, this.positiveHeight);
-
+        this.drawingService.baseCtx.putImageData(
+            areaToClear,
+            this.positiveStartingPos.x,
+            this.positiveStartingPos.y,
+            0,
+            0,
+            this.positiveWidth,
+            this.positiveHeight,
+        );
+        this.setThickness(CONSTANTS.SELECTION_BOX_THICKNESS);
         this.drawEllipseSelection({ x: 0, y: 0 }, this.positiveWidth, this.positiveHeight);
         selectionCtx.canvas.style.cursor = 'move';
+        this.drawingService.previewCtx.fillStyle = 'green';
     }
 
     private computePositiveRectangleValues(): void {
@@ -314,13 +302,12 @@ export class SelectionService extends ShapeTool {
         this.drawingService.previewCtx.canvas.style.top = newOffsetTop + 'px';
 
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        console.log(newOffsetLeft);
         this.drawingService.previewCtx.putImageData(
             this.imgData,
+            0,
+            0,
             newOffsetLeft >= 0 ? 0 : -newOffsetLeft,
             newOffsetTop >= 0 ? 0 : -newOffsetTop,
-            0,
-            0,
             this.drawingService.canvas.width - newOffsetLeft,
             this.drawingService.canvas.height - newOffsetTop,
         );
