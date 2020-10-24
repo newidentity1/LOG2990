@@ -138,6 +138,8 @@ export class SelectionService extends ShapeTool {
             this.canMoveSelectionContiniously = this.pressedKeys.some((key) => {
                 return key !== 0;
             });
+
+            this.canMoveSelection = this.canMoveSelectionContiniously ? this.canMoveSelection : true;
         }
     }
 
