@@ -2,6 +2,7 @@ import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } fro
 import { Tool } from '@app/classes/tool/tool';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants/constants';
+import { SelectionType } from '@app/enums/selection-type.enum';
 import { ShortcutService } from '@app/services/shortcut/shortcut.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
@@ -47,7 +48,7 @@ export class EditorComponent implements OnInit, OnDestroy {
         this.toolbarService.onKeyPress(event);
     }
 
-    @HostListener('keyup', ['$event'])
+    @HostListener('window:keyup', ['$event'])
     onKeyUp(event: KeyboardEvent): void {
         event.preventDefault();
         this.toolbarService.onKeyUp(event);
@@ -62,7 +63,7 @@ export class EditorComponent implements OnInit, OnDestroy {
         this.dimensionsUpdatedSubject.next([this.width, this.height]);
     }
 
-    initializeShortcuts(): void {
+    private initializeShortcuts(): void {
         this.toolbarService.keyShortcuts.forEach((tool: Tool, shortcut: string) => {
             this.subscribedShortcuts.push(
                 this.shortcutService.addShortcut(shortcut).subscribe(() => {
@@ -72,6 +73,18 @@ export class EditorComponent implements OnInit, OnDestroy {
         });
 
         this.subscribedShortcuts.push(
+            this.shortcutService.addShortcut('r').subscribe(() => {
+                this.toolbarService.changeSelectionTool(SelectionType.RectangleSelection);
+            }),
+        );
+
+        this.subscribedShortcuts.push(
+            this.shortcutService.addShortcut('s').subscribe(() => {
+                this.toolbarService.changeSelectionTool(SelectionType.EllipseSelection);
+            }),
+        );
+
+        this.subscribedShortcuts.push(
             this.shortcutService.addShortcut('control.o').subscribe(() => {
                 this.toolbarRef.createNewDrawing();
             }),
@@ -79,6 +92,11 @@ export class EditorComponent implements OnInit, OnDestroy {
         this.subscribedShortcuts.push(
             this.shortcutService.addShortcut('control.e').subscribe(() => {
                 this.toolbarRef.exportDrawing();
+            }),
+        );
+        this.subscribedShortcuts.push(
+            this.shortcutService.addShortcut('control.a').subscribe(() => {
+                this.toolbarService.triggerSelectAll();
             }),
         );
     }
