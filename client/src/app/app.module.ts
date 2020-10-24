@@ -27,8 +27,8 @@ import { CreateNewDrawingComponent } from './components/create-new-drawing/creat
 import { NewDrawingDialogComponent } from './components/create-new-drawing/new-drawing-dialog/new-drawing-dialog.component';
 import { DrawingComponent } from './components/drawing/drawing.component';
 import { EditorComponent } from './components/editor/editor.component';
-import { ExportDrawingDialogComponent } from './components/export/export-drawing-dialog/export-drawing-dialog.component';
-import { ExportComponent } from './components/export/export.component';
+import { ExportDrawingDialogComponent } from './components/export-drawing/export-drawing-dialog/export-drawing-dialog.component';
+import { ExportDrawingComponent } from './components/export-drawing/export-drawing.component';
 import { GuideComponent } from './components/guide/guide.component';
 import { OpenGuideComponent } from './components/guide/open-guide/open-guide.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
@@ -71,7 +71,7 @@ import { ThicknessSliderComponent } from './components/tools-options/thickness-s
         OpenGuideComponent,
         PolygonComponent,
         EyedropperComponent,
-        ExportComponent,
+        ExportDrawingComponent,
         ExportDrawingDialogComponent,
         SelectionComponent,
         BucketComponent,
