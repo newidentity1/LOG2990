@@ -64,4 +64,6 @@ describe('EraseService', () => {
         expect(drawLineSpy).not.toHaveBeenCalled();
         expect(drawCursorSpy).toHaveBeenCalled();
     });
+
+    // Todo rajouter test
 });

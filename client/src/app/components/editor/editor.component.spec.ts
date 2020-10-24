@@ -9,6 +9,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatDialogMock } from '@app/classes/mat-dialog-test-helper';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { KeyShortcut } from '@app/enums/key-shortcuts.enum';
+import { SelectionType } from '@app/enums/selection-type.enum';
 import { ShortcutService } from '@app/services/shortcut/shortcut.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 import { BrushService } from '@app/services/tools/brush/brush.service';
@@ -26,7 +27,14 @@ describe('EditorComponent', () => {
     let shortcutService: ShortcutService;
 
     beforeEach(async(() => {
-        toolbarServiceMock = jasmine.createSpyObj('ToolbarService', ['onKeyDown', 'onKeyPress', 'onKeyUp', 'changeTool']);
+        toolbarServiceMock = jasmine.createSpyObj('ToolbarService', [
+            'onKeyDown',
+            'onKeyPress',
+            'onKeyUp',
+            'changeTool',
+            'changeSelectionTool',
+            'triggerSelectAll',
+        ]);
 
         pencilServiceSpy = jasmine.createSpyObj('PencilService', ['resetContext']);
         brushServiceSpy = jasmine.createSpyObj('BrushService', ['resetContext']);
@@ -89,9 +97,10 @@ describe('EditorComponent', () => {
     });
 
     it('initializeShortcuts should call addShortcut of shortcut service', () => {
-        // tslint:disable-next-line:no-any / reason spying on function
+        // tslint:disable-next-line:no-any / reason: spying on function
         const addShortcutSpy = spyOn<any>(shortcutService, 'addShortcut').and.callThrough();
-        component.initializeShortcuts();
+        // tslint:disable-next-line:no-string-literal / reason: calling private function
+        component['initializeShortcuts']();
         expect(addShortcutSpy).toHaveBeenCalled();
     });
 
@@ -99,6 +108,18 @@ describe('EditorComponent', () => {
         const shortcutEvent = new KeyboardEvent('keydown', { key: KeyShortcut.Pencil });
         document.dispatchEvent(shortcutEvent);
         expect(toolbarServiceMock.changeTool).toHaveBeenCalledWith(pencilServiceSpy);
+    });
+
+    it('rectangle selection tool shortcut should call changeSelectionTool of toolbar service', () => {
+        const shortcutEvent = new KeyboardEvent('keydown', { key: KeyShortcut.RectangleSelect });
+        document.dispatchEvent(shortcutEvent);
+        expect(toolbarServiceMock.changeSelectionTool).toHaveBeenCalledWith(SelectionType.RectangleSelection);
+    });
+
+    it('ellipse selection tool shortcut should call changeSelectionTool of toolbar service', () => {
+        const shortcutEvent = new KeyboardEvent('keydown', { key: KeyShortcut.EllipseSelect });
+        document.dispatchEvent(shortcutEvent);
+        expect(toolbarServiceMock.changeSelectionTool).toHaveBeenCalledWith(SelectionType.EllipseSelection);
     });
 
     it('tool shortcut should call createNewDrawing of SidebarComponent', () => {
@@ -109,5 +130,11 @@ describe('EditorComponent', () => {
         const shortcutEvent = new KeyboardEvent('keydown', { key: 'control.o' });
         document.dispatchEvent(shortcutEvent);
         expect(createNewDrawingSpy).toHaveBeenCalled();
+    });
+
+    it('select all shortcut should call triggerSelectAll of toolbar service', () => {
+        const shortcutEvent = new KeyboardEvent('keydown', { key: 'control.a' });
+        document.dispatchEvent(shortcutEvent);
+        expect(toolbarServiceMock.triggerSelectAll).toHaveBeenCalled();
     });
 });

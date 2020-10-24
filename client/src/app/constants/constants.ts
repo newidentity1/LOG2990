@@ -20,6 +20,8 @@ export const COLOR_PICKER_CURSOR_RADIUS = 10;
 export const MINIMUM_THICKNESS = 1;
 export const MAXIMUM_THICKNESS = 100;
 export const DASHED_SEGMENTS = 6;
+export const MINIMUM_SIDES = 3;
+export const MAXIMUM_SIDES = 12;
 
 export const DEFAULT_WIDTH = 1000;
 export const DEFAULT_HEIGHT = 800;
@@ -45,3 +47,12 @@ export const EYEDROPPER_PREVIEW_SCALE_SIZE = 10;
 export const EYEDROPPER_PREVIEW_CURSOR_SIZE = 10;
 
 export const IMAGE_DATA_OPACITY_INDEX = 3;
+
+export const SELECTION_CONTROL_POINT_SIZE = 7;
+export const SELECTION_CONTROL_COLUMNS = 3;
+export const SELECTION_BOX_THICKNESS = 2;
+
+export const POURCENTAGE = 100;
+
+export const BUCKET_PIXEL_3X3 = 3;
+export const INDEX_3 = 3;

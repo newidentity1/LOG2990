@@ -1,0 +1,24 @@
+<div class="property">
+    <h3 class="title-property">Propriété du polygone</h3>
+    <label class="type-drawing-label">Choisissez le nombre de côtés du polygone:</label>
+    <div class="sliderWrapper">
+        <mat-slider thumbLabel (change)="onNumberOfSidesChange($event)" tickInterval="1" min="3" max="12" [value]="this.currentNumberOfSides">
+        </mat-slider>
+    </div>
+
+    <div class="sliderWrapper">
+        <app-thickness-slider (thicknessChange)="onThicknessChange($event)" [startingValue]="this.currentThickness"></app-thickness-slider>
+    </div>
+
+    <label class="type-drawing-label">Choisissez le type de polygone que vous souhaitez dessiner:</label>
+    <mat-radio-group aria-labelledby="type-drawing-label" class="type-drawing-group" [(ngModel)]="currentType" ngDefaultControl>
+        <mat-radio-button
+            class="type-drawing"
+            *ngFor="let type of typesDrawing | keyvalue"
+            [value]="type.value"
+            (change)="onTypeDrawingChange($event)"
+        >
+            {{ type.value }}
+        </mat-radio-button>
+    </mat-radio-group>
+</div>

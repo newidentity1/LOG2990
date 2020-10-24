@@ -12,6 +12,8 @@ export abstract class Tool {
     tooltip: string;
     iconName: string;
     toolProperties: BasicToolProperties;
+    currentPrimaryColor: Color;
+    currentSecondaryColor: Color;
 
     constructor(protected drawingService: DrawingService) {}
 
@@ -47,5 +49,5 @@ export abstract class Tool {
 
     setColors(primaryColor: Color, secondaryColor: Color): void {}
 
-    abstract resetContext(): void;
+    resetContext(): void {}
 }

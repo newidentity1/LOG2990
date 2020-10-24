@@ -1,17 +1,37 @@
-import { AfterContentInit, AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild } from '@angular/core';
+import {
+    AfterContentInit,
+    AfterViewInit,
+    Component,
+    ElementRef,
+    EventEmitter,
+    HostListener,
+    Input,
+    OnDestroy,
+    Output,
+    ViewChild,
+} from '@angular/core';
+import { ResizerProperties } from '@app/classes/resizer-properties';
 import { Vec2 } from '@app/classes/vec2';
-import { CANVAS_MARGIN_LEFT, CANVAS_MARGIN_TOP, CANVAS_MIN_HEIGHT, CANVAS_MIN_WIDTH, DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants/constants';
+import {
+    CANVAS_MARGIN_LEFT,
+    CANVAS_MARGIN_TOP,
+    CANVAS_MIN_HEIGHT,
+    CANVAS_MIN_WIDTH,
+    DEFAULT_HEIGHT,
+    DEFAULT_WIDTH,
+    SELECTION_CONTROL_POINT_SIZE,
+} from '@app/constants/constants';
 import { MouseButton } from '@app/enums/mouse-button.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-drawing',
     templateUrl: './drawing.component.html',
     styleUrls: ['./drawing.component.scss'],
 })
-export class DrawingComponent implements AfterViewInit, AfterContentInit {
+export class DrawingComponent implements AfterViewInit, AfterContentInit, OnDestroy {
     @ViewChild('baseCanvas', { static: false }) baseCanvas: ElementRef<HTMLCanvasElement>;
     // On utilise ce canvas pour dessiner sans affecter le dessin final
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
@@ -23,9 +43,10 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit {
     @Output() requestDrawingContainerDimensions: EventEmitter<void> = new EventEmitter();
 
     private baseCtx: CanvasRenderingContext2D;
-    private previewCtx: CanvasRenderingContext2D;
+    previewCtx: CanvasRenderingContext2D;
     private canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
-
+    private subscribeCreateNewDrawing: Subscription;
+    private subscribeDimensionsUpdated: Subscription;
     isResizingWidth: boolean = false;
     isResizingHeight: boolean = false;
 
@@ -42,10 +63,12 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit {
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
 
-        this.drawingService.createNewDrawingEventListener().subscribe(() => {
+        this.subscribeCreateNewDrawing = this.drawingService.createNewDrawingEventListener().subscribe(() => {
+            this.toolbarService.resetSelection();
+            this.drawingService.clearCanvas(this.drawingService.baseCtx);
             this.requestDrawingContainerDimensions.emit();
         });
-        this.dimensionsUpdatedEvent.subscribe((dimensions) => {
+        this.subscribeDimensionsUpdated = this.dimensionsUpdatedEvent.subscribe((dimensions) => {
             this.drawingContainerWidth = dimensions[0];
             this.drawingContainerHeight = dimensions[1];
             this.newCanvasSetSize();
@@ -54,6 +77,11 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit {
             }, 0);
         });
         this.toolbarService.initializeColors();
+    }
+
+    ngOnDestroy(): void {
+        this.subscribeCreateNewDrawing.unsubscribe();
+        this.subscribeDimensionsUpdated.unsubscribe();
     }
 
     onMouseMove(event: MouseEvent): void {
@@ -157,11 +185,43 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit {
         this.canvasSize.y = newHeight >= CANVAS_MIN_HEIGHT ? newHeight : CANVAS_MIN_HEIGHT;
     }
 
+    isAreaSelected(): boolean {
+        return this.toolbarService.isAreaSelected();
+    }
+
     get width(): number {
         return this.canvasSize.x;
     }
 
     get height(): number {
         return this.canvasSize.y;
+    }
+
+    onBaseCanvasMouseDown(event: MouseEvent): void {
+        if (this.isAreaSelected()) {
+            this.toolbarService.resetSelection();
+            this.onMouseDown(event);
+        }
+    }
+
+    calculateResizerStyle(rowPosition: number, columnPosition: number): ResizerProperties {
+        let resizerPosition: ResizerProperties;
+
+        if (this.previewCanvas) {
+            const previewCanvasElement = this.previewCanvas.nativeElement;
+            const canvasTopOffset = +previewCanvasElement.style.top.substring(0, previewCanvasElement.style.top.length - 2);
+            const canvasLeftOffset = +previewCanvasElement.style.left.substring(0, previewCanvasElement.style.left.length - 2);
+
+            resizerPosition = {
+                top: canvasTopOffset + (previewCanvasElement.height * rowPosition) / 2 - SELECTION_CONTROL_POINT_SIZE / 2 + 'px',
+                left: canvasLeftOffset + (previewCanvasElement.width * columnPosition) / 2 - SELECTION_CONTROL_POINT_SIZE / 2 + 'px',
+            };
+        } else {
+            resizerPosition = {
+                top: (this.height * rowPosition) / 2 - SELECTION_CONTROL_POINT_SIZE / 2 + 'px',
+                left: (this.width * columnPosition) / 2 - SELECTION_CONTROL_POINT_SIZE / 2 + 'px',
+            };
+        }
+        return resizerPosition;
     }
 }
