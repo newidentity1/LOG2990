@@ -60,10 +60,6 @@ describe('Class: ShapeTool', () => {
         expect(shapeTool).toBeTruthy();
     });
 
-    it('setThickness should set the ', () => {
-        expect(shapeTool).toBeTruthy();
-    });
-
     it(' mouseDown should set mouseDownCoord to correct position', () => {
         const expectedResult: Vec2 = { x: 25, y: 25 };
         shapeTool.onMouseDown(mouseEvent);
@@ -233,6 +229,7 @@ describe('Class: ShapeTool', () => {
         shapeTool['computeDimensions']();
         expect(transformToEqualSidesSpy).not.toHaveBeenCalled();
     });
+
     it(' transformToEqualSides should set a positive width and a positive height if the coords are on quadrant1', () => {
         // tslint:disable:no-magic-numbers / reason: using random values
         shapeTool.width = 150;
