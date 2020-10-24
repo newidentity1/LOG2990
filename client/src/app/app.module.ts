@@ -38,6 +38,7 @@ import { PencilComponent } from './components/tools-options/pencil/pencil.compon
 import { PolygonComponent } from './components/tools-options/polygon/polygon.component';
 import { RectangleComponent } from './components/tools-options/rectangle/rectangle.component';
 import { ThicknessSliderComponent } from './components/tools-options/thickness-slider/thickness-slider.component';
+import { UndoRedoComponent } from './components/undo-redo/undo-redo.component';
 @NgModule({
     declarations: [
         AppComponent,
@@ -62,6 +63,7 @@ import { ThicknessSliderComponent } from './components/tools-options/thickness-s
         NewDrawingDialogComponent,
         OpenGuideComponent,
         PolygonComponent,
+        UndoRedoComponent,
     ],
     imports: [
         BrowserModule,

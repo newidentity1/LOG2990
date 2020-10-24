@@ -121,6 +121,13 @@ export class ToolbarService {
         this.currentTool.onClick(event);
     }
 
+    undo(): void {
+        console.log('undo');
+    }
+
+    redo(): void {
+        console.log('redo');
+    }
     private applyCurrentToolColor(): void {
         this.currentTool.setColors(this.primaryColor, this.secondaryColor);
     }
