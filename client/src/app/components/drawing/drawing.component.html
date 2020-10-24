@@ -19,7 +19,7 @@
     ></canvas>
 </div>
 
-<div class="resizable" [style.width.px]="width" [style.height.px]="height">
+<div class="resizable">
     <div *ngIf="isAreaSelected()">
         <div class="resizer top-left" [ngStyle]="calculateResizerStyle(0, 0)"></div>
         <div class="resizer top-center" [ngStyle]="calculateResizerStyle(0, 1)"></div>
