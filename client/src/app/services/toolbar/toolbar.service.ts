@@ -25,6 +25,8 @@ export enum toolsIndex {
 })
 export class ToolbarService {
     private tools: Tool[];
+    private drawings: Tool[] = [];
+    private undoIndex: number = -1;
     currentTool: Tool;
     primaryColor: Color;
     secondaryColor: Color;
@@ -102,7 +104,14 @@ export class ToolbarService {
     }
 
     onMouseUp(event: MouseEvent): void {
-        this.currentTool.onMouseUp(event);
+        let tool: Tool | undefined;
+        tool = this.currentTool.onMouseUp(event);
+
+        if (tool !== undefined) {
+            this.drawings.push(tool);
+            this.undoIndex++;
+            console.log('saving shape ', this.undoIndex);
+        } else console.log('undefined');
     }
 
     onMouseEnter(event: MouseEvent): void {
@@ -122,12 +131,20 @@ export class ToolbarService {
     }
 
     undo(): void {
-        console.log('undo');
+        this.undoIndex--;
+        console.log('undoing ', this.undoIndex);
+        this.drawingService.clearCanvas(this.drawingService.baseCtx);
+        if (this.undoIndex >= 0) {
+            for (let i = 0; i <= this.undoIndex; i++) {
+                this.drawings[i].draw(this.drawingService.baseCtx);
+            }
+        }
     }
 
     redo(): void {
         console.log('redo');
     }
+
     private applyCurrentToolColor(): void {
         this.currentTool.setColors(this.primaryColor, this.secondaryColor);
     }

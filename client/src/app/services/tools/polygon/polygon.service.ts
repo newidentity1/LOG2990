@@ -40,7 +40,7 @@ export class PolygonService extends ShapeTool {
         }
     }
 
-    onMouseUp(): void {
+    onMouseUp(): ShapeTool | undefined {
         if (this.mouseDown) {
             this.computeDimensions(this.currentMousePosition);
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
@@ -48,6 +48,8 @@ export class PolygonService extends ShapeTool {
             this.draw(this.drawingService.baseCtx);
         }
         this.mouseDown = false;
+
+        return this;
     }
 
     onMouseMove(event: MouseEvent): void {

@@ -27,13 +27,15 @@ export class RectangleService extends ShapeTool {
         }
     }
 
-    onMouseUp(): void {
+    onMouseUp(): ShapeTool | undefined {
         if (this.mouseDown) {
             this.computeDimensions();
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.draw(this.drawingService.baseCtx);
         }
         this.mouseDown = false;
+
+        return this;
     }
 
     onMouseMove(event: MouseEvent): void {

@@ -35,15 +35,19 @@ export class EllipseService extends ShapeTool {
         }
     }
 
-    onMouseUp(): void {
+    onMouseUp(): ShapeTool | undefined {
+        let tool: ShapeTool | undefined;
         if (this.mouseDown) {
             this.computeDimensions();
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.mouseDown = false;
             this.dashedSegments = DASHED_SEGMENTS;
             this.draw(this.drawingService.baseCtx);
+            tool = this;
         }
         this.mouseDown = false;
+
+        return tool;
     }
 
     onMouseMove(event: MouseEvent): void {

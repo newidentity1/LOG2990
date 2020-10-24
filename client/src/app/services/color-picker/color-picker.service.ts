@@ -44,8 +44,9 @@ export class ColorPickerService extends Tool {
         }
     }
 
-    onMouseUp(event: MouseEvent): void {
+    onMouseUp(event: MouseEvent): Tool {
         this.mouseDown = false;
+        return this;
     }
 
     setRedHex(hex: string): void {

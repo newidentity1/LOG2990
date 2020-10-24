@@ -19,7 +19,9 @@ export abstract class Tool {
 
     onMouseDown(event: MouseEvent): void {}
 
-    onMouseUp(event: MouseEvent): void {}
+    onMouseUp(event: MouseEvent): Tool | undefined {
+        return this;
+    }
 
     onMouseMove(event: MouseEvent): void {}
 
@@ -36,6 +38,8 @@ export abstract class Tool {
     onDoubleClick(event: MouseEvent): void {}
 
     onClick(event: MouseEvent): void {}
+
+    draw(ctx: CanvasRenderingContext2D): void {}
 
     getPositionFromMouse(event: MouseEvent): Vec2 {
         return { x: event.offsetX, y: event.offsetY };
