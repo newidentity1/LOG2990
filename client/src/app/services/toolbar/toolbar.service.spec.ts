@@ -4,6 +4,7 @@ import { Color } from '@app/classes/color/color';
 import { KeyShortcut } from '@app/enums/key-shortcuts.enum';
 import { SelectionType } from '@app/enums/selection-type.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 import { BrushService } from '@app/services/tools/brush/brush.service';
 import { BucketService } from '@app/services/tools/bucket/bucket.service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
@@ -14,11 +15,11 @@ import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { PolygonService } from '@app/services/tools/polygon/polygon.service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle.service';
 import { SelectionService } from '@app/services/tools/selection/selection.service';
-import { ToolbarService } from './toolbar.service';
 
 describe('ToolbarService', () => {
     let service: ToolbarService;
     let pencilServiceSpy: jasmine.SpyObj<PencilService>;
+    let polygonService: jasmine.SpyObj<PolygonService>;
     let brushServiceSpy: jasmine.SpyObj<BrushService>;
     let rectangleServiceSpy: jasmine.SpyObj<RectangleService>;
     let ellipseServiceSpy: jasmine.SpyObj<EllipseService>;
@@ -72,6 +73,7 @@ describe('ToolbarService', () => {
         });
         service = TestBed.inject(ToolbarService);
         pencilServiceSpy = TestBed.inject(PencilService) as jasmine.SpyObj<PencilService>;
+        polygonService = TestBed.inject(PolygonService) as jasmine.SpyObj<PolygonService>;
         brushServiceSpy = TestBed.inject(BrushService) as jasmine.SpyObj<BrushService>;
         rectangleServiceSpy = TestBed.inject(RectangleService) as jasmine.SpyObj<RectangleService>;
         ellipseServiceSpy = TestBed.inject(EllipseService) as jasmine.SpyObj<EllipseService>;
@@ -104,6 +106,7 @@ describe('ToolbarService', () => {
         const tools = service.getTools();
         expect(tools).toEqual([
             pencilServiceSpy,
+            polygonService,
             brushServiceSpy,
             rectangleServiceSpy,
             ellipseServiceSpy,

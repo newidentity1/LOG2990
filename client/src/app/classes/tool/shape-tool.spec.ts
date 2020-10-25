@@ -34,7 +34,7 @@ describe('Class: ShapeTool', () => {
         shapeTool = new ShapeToolTest(drawingServiceSpy);
         drawPreviewSpy = spyOn<any>(shapeTool, 'drawPreview').and.callThrough();
         computeDimensionsSpy = spyOn<any>(shapeTool, 'computeDimensions').and.callThrough();
-        drawShapeSpy = spyOn<any>(shapeTool, 'drawShape').and.callThrough();
+        drawShapeSpy = spyOn<any>(shapeTool, 'draw').and.callThrough();
         transformToEqualSidesSpy = spyOn<any>(shapeTool, 'transformToEqualSides').and.callThrough();
 
         firstColor = new Color(WHITE);
