@@ -14,19 +14,24 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
     selectedFilter: string;
 
     constructor(public dialog: MatDialog, public exportDrawingService: ExportDrawingService) {
-        this.selectedFormat = '.jpg';
+        this.selectedFormat = 'jpg';
         this.selectedFilter = '0';
     }
 
     ngAfterViewInit(): void {
-        const imageUrl = this.exportDrawingService.getCanvasImageUrl();
-        this.drawingPreview.nativeElement.src = imageUrl;
-        this.drawingPreviewContainer.nativeElement.href = imageUrl;
+        this.setImageUrl();
     }
 
     downloadImage(): void {
+        this.setImageUrl();
         // TODO changer 'test' pour le nom choisit par l'usager
-        this.drawingPreviewContainer.nativeElement.download = 'test' + this.selectedFormat;
+        this.drawingPreviewContainer.nativeElement.download = 'test.' + this.selectedFormat;
         this.drawingPreviewContainer.nativeElement.click();
+    }
+
+    setImageUrl(): void {
+        const imageUrl = this.exportDrawingService.getCanvasImageUrl(this.selectedFormat);
+        this.drawingPreview.nativeElement.src = imageUrl;
+        this.drawingPreviewContainer.nativeElement.href = imageUrl;
     }
 }

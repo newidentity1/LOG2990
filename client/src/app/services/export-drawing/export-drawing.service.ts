@@ -7,7 +7,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 export class ExportDrawingService {
     constructor(public drawingService: DrawingService) {}
 
-    getCanvasImageUrl(): string {
-        return this.drawingService.canvas.toDataURL();
+    getCanvasImageUrl(format: string): string {
+        return this.drawingService.canvas.toDataURL('image/' + format);
     }
 }
