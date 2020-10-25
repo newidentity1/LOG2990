@@ -73,7 +73,7 @@ export class SelectionService extends ShapeTool {
         }
     }
 
-    onMouseUp(event: MouseEvent): void {
+    onMouseUp(event: MouseEvent): ShapeTool | undefined {
         if (this.mouseDown) {
             if (!this.isAreaSelected) {
                 this.currentMousePosition = this.getPositionFromMouse(event);
@@ -88,6 +88,8 @@ export class SelectionService extends ShapeTool {
             }
             this.mouseDown = false;
         }
+
+        return this;
     }
 
     onKeyDown(event: KeyboardEvent): void {
@@ -178,7 +180,7 @@ export class SelectionService extends ShapeTool {
         }
     }
 
-    drawShape(): void {
+    draw(): void {
         this.computePositiveRectangleValues();
         this.drawSelectionBox(this.positiveStartingPos, this.positiveWidth, this.positiveHeight);
     }

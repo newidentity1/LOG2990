@@ -7,6 +7,7 @@
             <app-ellipse-options class="tool-options" *ngSwitchCase="'Ellipse'"></app-ellipse-options>
             <app-line-option class="tool-options" *ngSwitchCase="'Line'"></app-line-option>
             <app-erase-option class="tool-options" *ngSwitchCase="'Eraser'"></app-erase-option>
+            <app-polygon-option class="tool-options" *ngSwitchCase="'Polygon'"></app-polygon-option>
             <app-eyedropper-option class="tool-options" *ngSwitchCase="'Eyedropper'"></app-eyedropper-option>
             <app-selection-option class="tool-options" *ngSwitchCase="'Selection'"></app-selection-option>
             <app-bucket-option class="tool-options" *ngSwitchCase="'Bucket'"></app-bucket-option>
@@ -24,6 +25,10 @@
             <div id="colors-container">
                 <app-recent-colors></app-recent-colors>
                 <app-color-tool></app-color-tool>
+            </div>
+            <hr />
+            <div id="undo-redo-container">
+                <app-undo-redo></app-undo-redo>
             </div>
             <hr />
             <div id="other-functionality-container">

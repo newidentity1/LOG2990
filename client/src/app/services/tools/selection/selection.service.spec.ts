@@ -215,7 +215,7 @@ describe('SelectionService', () => {
     it('drawShape should call drawRectangleSelection and drawEllipseSelection', () => {
         const drawRectangleSelectionSpy = spyOn<any>(service, 'drawRectangleSelection').and.callThrough();
         const drawEllipseSelectionSpy = spyOn<any>(service, 'drawEllipseSelection').and.callThrough();
-        service.drawShape();
+        service.draw();
         expect(drawRectangleSelectionSpy).toHaveBeenCalled();
         expect(drawEllipseSelectionSpy).toHaveBeenCalled();
     });

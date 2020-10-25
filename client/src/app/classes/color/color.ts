@@ -36,6 +36,10 @@ export class Color {
         }
     }
 
+    get getRed(): number {
+        return this.redValue;
+    }
+
     set green(value: number) {
         if (value >= 0 && value <= CONSTANTS.MAX_COLOR_VALUE) {
             this.greenValue = value;
@@ -43,11 +47,19 @@ export class Color {
         }
     }
 
+    get getGreen(): number {
+        return this.greenValue;
+    }
+
     set blue(value: number) {
         if (value >= 0 && value <= CONSTANTS.MAX_COLOR_VALUE) {
             this.blueValue = value;
             this.computeHexFromRGB();
         }
+    }
+
+    get getBlue(): number {
+        return this.blueValue;
     }
 
     get hex(): string {
@@ -65,6 +77,11 @@ export class Color {
         return this.alpha;
     }
 
+    get getOpacity(): number {
+        return this.alpha;
+    }
+
+    // tslint:disable-next-line: adjacent-overload-signatures
     set opacity(value: number) {
         if (value >= 0 && value <= 1) {
             this.alpha = value;
