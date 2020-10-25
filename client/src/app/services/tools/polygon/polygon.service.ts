@@ -24,16 +24,6 @@ export class PolygonService extends ShapeTool {
         this.ellipseService = new EllipseService(drawingService);
     }
 
-    onMouseUp(): ShapeTool | undefined {
-        if (this.mouseDown) {
-            this.computeDimensions();
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        }
-        this.mouseDown = false;
-
-        return this;
-    }
-
     onMouseMove(event: MouseEvent): void {
         if (this.mouseDown) {
             this.currentMousePosition = this.getPositionFromMouse(event);
@@ -52,6 +42,7 @@ export class PolygonService extends ShapeTool {
             this.draw(previewCtx);
             this.ellipseService.dashedSegments = 0;
             this.drawingService.previewCtx.setLineDash([DASHED_SEGMENTS]);
+            this.drawingService.previewCtx.strokeStyle = 'black';
             this.ellipseService.draw(previewCtx);
         }
     }
