@@ -16,11 +16,10 @@ describe('ColorPickerService', () => {
     let toolbarServiceSpy: jasmine.SpyObj<ToolbarService>;
     // tslint:disable: no-any / reason : needed for jasmine spy
     let updateSelectedColorSpy: jasmine.Spy<any>;
-    let updateDrawingColorSpy: jasmine.Spy<any>;
 
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setColor']);
-        toolbarServiceSpy = jasmine.createSpyObj('ToolbarService', ['setColors']);
+        toolbarServiceSpy = jasmine.createSpyObj('ToolbarService', ['setColors', 'initializeColors']);
 
         TestBed.configureTestingModule({
             providers: [
@@ -31,7 +30,6 @@ describe('ColorPickerService', () => {
         service = TestBed.inject(ColorPickerService);
 
         updateSelectedColorSpy = spyOn<any>(service, 'updateSelectedColor').and.callThrough();
-        updateDrawingColorSpy = spyOn<any>(service, 'updateDrawingColor').and.callThrough();
 
         service.canvas = document.createElement('canvas');
         service.canvas.width = canvasTestHelper.canvas.width;
@@ -141,16 +139,16 @@ describe('ColorPickerService', () => {
 
     it(' confirmSelectedColor should set primary to selectedColor if isSecondaryColorPicker is false', () => {
         service.selectedColor = new Color(BLACK);
-        service.primaryColor = new Color(WHITE);
+        service.primaryColor.next(new Color(WHITE));
         service.confirmSelectedColor(false);
-        expect(service.primaryColor).toEqual(service.selectedColor);
+        expect(service.primaryColor.getValue()).toEqual(service.selectedColor);
     });
 
     it(' confirmSelectedColor should set secondary to selectedColor if isSecondaryColorPicker is true', () => {
         service.selectedColor = new Color(BLACK);
-        service.primaryColor = new Color(WHITE);
+        service.primaryColor.next(new Color(WHITE));
         service.confirmSelectedColor(true);
-        expect(service.secondaryColor).toEqual(service.selectedColor);
+        expect(service.secondaryColor.getValue()).toEqual(service.selectedColor);
     });
 
     it(' confirmSelectedColor should call addToRecentColors', () => {
@@ -159,69 +157,65 @@ describe('ColorPickerService', () => {
         expect(addToRecentColorsSpy).toHaveBeenCalledWith(new Color(service.selectedColor.hex));
     });
 
-    it(' confirmSelectedColor should call updateDrawingColor', () => {
-        service.confirmSelectedColor(true);
-        expect(updateDrawingColorSpy).toHaveBeenCalled();
-    });
-
     it(' resetSelectedColor should set selected color to primary if isSecondaryColorPicker false', () => {
-        service.primaryColor = new Color(BLACK);
+        service.primaryColor.next(new Color(BLACK));
         service.selectedColor = new Color(WHITE);
         service.resetSelectedColor(false);
-        expect(service.selectedColor).toEqual(service.primaryColor);
+        expect(service.selectedColor).toEqual(service.primaryColor.getValue());
     });
 
     it(' resetSelectedColor should set selected color to secondary if isSecondaryColorPicker true', () => {
-        service.secondaryColor = new Color(BLACK);
+        service.secondaryColor.next(new Color(BLACK));
         service.selectedColor = new Color(WHITE);
         service.resetSelectedColor(true);
-        expect(service.selectedColor).toEqual(service.secondaryColor);
+        expect(service.selectedColor).toEqual(service.secondaryColor.getValue());
     });
 
     it(' swapColors should switch primary and secondary colors', () => {
-        service.primaryColor = new Color(BLACK);
-        service.secondaryColor = new Color(WHITE);
+        service.primaryColor.next(new Color(BLACK));
+        service.secondaryColor.next(new Color(WHITE));
 
         service.swapColors();
-        expect(service.primaryColor).toEqual(new Color(WHITE));
-        expect(service.secondaryColor).toEqual(new Color(BLACK));
-    });
-
-    it(' swapColors should call updateDrawingColor', () => {
-        service.swapColors();
-        expect(updateDrawingColorSpy).toHaveBeenCalled();
+        expect(service.primaryColor.getValue()).toEqual(new Color(WHITE));
+        expect(service.secondaryColor.getValue()).toEqual(new Color(BLACK));
     });
 
     it(' applyRecentColor should change primary if isSecondaryColor false', () => {
-        service.primaryColor = new Color(BLACK);
+        service.primaryColor.next(new Color(BLACK));
         service.applyRecentColor(new Color(WHITE), false);
-        expect(service.primaryColor).toEqual(new Color(WHITE));
+        expect(service.primaryColor.getValue()).toEqual(new Color(WHITE));
     });
 
     it(' applyRecentColor should change secondaryColor if isSecondaryColor true', () => {
-        service.secondaryColor = new Color(BLACK);
+        service.secondaryColor.next(new Color(BLACK));
         service.applyRecentColor(new Color(WHITE), true);
-        expect(service.secondaryColor).toEqual(new Color(WHITE));
+        expect(service.secondaryColor.getValue()).toEqual(new Color(WHITE));
     });
 
     it(' applyRecentColor should not change color opacity', () => {
         const expectedOpacity = 0.5;
-        service.primaryColor = new Color(BLACK, expectedOpacity);
+        service.primaryColor.next(new Color(BLACK, expectedOpacity));
         const tempColor = new Color(WHITE, 1);
 
         service.applyRecentColor(new Color(WHITE), false);
-        expect(service.primaryColor.hex).toEqual(tempColor.hex);
-        expect(service.primaryColor.opacity).toEqual(expectedOpacity);
+        expect(service.primaryColor.getValue().hex).toEqual(tempColor.hex);
+        expect(service.primaryColor.getValue().opacity).toEqual(expectedOpacity);
     });
 
-    it(' applyRecentColor should call updateDrawingColor', () => {
-        service.applyRecentColor(new Color(), true);
-        expect(updateDrawingColorSpy).toHaveBeenCalled();
+    it(' setPrimaryColor should change primary color', () => {
+        service.primaryColor.next(new Color(BLACK));
+        const expectedColor = new Color(WHITE);
+
+        service.setPrimaryColor(expectedColor);
+        expect(service.primaryColor.getValue()).toEqual(expectedColor);
     });
 
-    it(' updateDrawingColor should call setColors of toolbarService', () => {
-        service.updateDrawingColor();
-        expect(toolbarServiceSpy.setColors).toHaveBeenCalled();
+    it(' setSecondaryColor should change secondary color', () => {
+        service.secondaryColor.next(new Color(BLACK));
+        const expectedColor = new Color(WHITE);
+
+        service.setSecondaryColor(expectedColor);
+        expect(service.secondaryColor.getValue()).toEqual(expectedColor);
     });
 
     it(' updateSelectedColor should change selectedColor', () => {
@@ -292,11 +286,5 @@ describe('ColorPickerService', () => {
         service['addToRecentColors'](new Color(BLACK));
         service['addToRecentColors'](new Color(BLACK));
         expect(service.recentColors.length).toEqual(1);
-    });
-
-    it('resetContext should throw an error', () => {
-        expect((): void => {
-            service.resetContext();
-        }).toThrow(new Error('Method not implemented.'));
     });
 });

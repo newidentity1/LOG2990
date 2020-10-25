@@ -6,4 +6,7 @@ export enum KeyShortcut {
     Polygon = '3',
     Line = 'l',
     Eraser = 'e',
+    Eyedropper = 'i',
+    RectangleSelect = 'r',
+    EllipseSelect = 's',
 }

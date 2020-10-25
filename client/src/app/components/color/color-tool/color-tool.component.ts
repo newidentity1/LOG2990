@@ -20,11 +20,11 @@ export class ColorToolComponent {
     }
 
     getPrimaryColor(): string {
-        return this.colorPickerService.primaryColor.toStringRGBA();
+        return this.colorPickerService.primaryColor.getValue().toStringRGBA();
     }
 
     getSecondaryColor(): string {
-        return this.colorPickerService.secondaryColor.toStringRGBA();
+        return this.colorPickerService.secondaryColor.getValue().toStringRGBA();
     }
 
     onSwapColors(): void {
