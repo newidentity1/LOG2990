@@ -1,45 +1,36 @@
 <div>
     <mat-accordion>
-	<mat-expansion-panel>
-	    <mat-expansion-panel-header>
-		<mat-panel-title>
-		    Format
-		</mat-panel-title>
-	    </mat-expansion-panel-header>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title> Format </mat-panel-title>
+            </mat-expansion-panel-header>
 
-	    <mat-form-field>
-		<mat-select [(value)]="selectedFormat">
-		    <mat-option value="PNG">PNG</mat-option>
-		    <mat-option value="JPEG">JPEG</mat-option>
-		</mat-select>
-	    </mat-form-field>
+            <mat-form-field>
+                <mat-select [(value)]="selectedFormat">
+                    <mat-option value=".png">PNG</mat-option>
+                    <mat-option value=".jpg">JPG</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </mat-expansion-panel>
 
-	    <p>You selected: {{selectedFormat}}</p>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title> Filtre </mat-panel-title>
+            </mat-expansion-panel-header>
 
-
-	    <mat-action-row>
-		<button mat-button> Sélectionner </button>
-	    </mat-action-row>
-
-	</mat-expansion-panel>
-
-	<mat-expansion-panel>
-	    <mat-expansion-panel-header>
-		<mat-panel-title>
-		    Filtre
-		</mat-panel-title>
-	    </mat-expansion-panel-header>
-
-	    <mat-select [(value)]="selectedFilter">
-		<mat-option>None</mat-option>
-		<mat-option value="1">Filtre1</mat-option>
-		<mat-option value="2">Filtre2</mat-option>
-	    </mat-select>
-
-	</mat-expansion-panel>
+            <mat-select [(value)]="selectedFilter">
+                <mat-option value="0">Aucun</mat-option>
+                <mat-option value="1">Filtre1</mat-option>
+                <mat-option value="2">Filtre2</mat-option>
+            </mat-select>
+        </mat-expansion-panel>
     </mat-accordion>
-    <br>
+    <h3>Prévisualisation du dessin</h3>
+    <a #drawingPreviewContainer href="" download="">
+        <img id="drawingPreview" #drawingPreview src="" />
+    </a>
+    <br />
 
-    <button class="buttons" mat-raised-button mat-dialog-close>Annuler</button>
-    <button class="buttons" mat-raised-button>OK</button>
+    <button class="buttons" id="downloadButton" mat-raised-button (click)="downloadImage()">Télécharger</button>
+    <button class="buttons" id="cancelButton" mat-raised-button mat-dialog-close>Annuler</button>
 </div>
