@@ -38,8 +38,8 @@ export abstract class ShapeTool extends Tool {
     }
 
     onMouseMove(event: MouseEvent): void {
+        this.currentMousePosition = this.getPositionFromMouse(event);
         if (this.mouseDown) {
-            this.currentMousePosition = this.getPositionFromMouse(event);
             this.drawPreview();
         }
     }
