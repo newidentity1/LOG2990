@@ -96,17 +96,19 @@ export class SelectionService extends ShapeTool {
         if (event.key === 'Escape' && (this.mouseDown || this.isAreaSelected)) {
             this.resetSelection();
         }
-        super.onKeyDown(event);
 
         if (this.isAreaSelected) {
             this.checkArrowKeysPressed(event);
+        } else {
+            super.onKeyDown(event);
         }
     }
 
     onKeyUp(event: KeyboardEvent): void {
-        super.onKeyUp(event);
         if (this.isAreaSelected) {
             this.checkArrowKeysReleased(event);
+        } else {
+            super.onKeyUp(event);
         }
     }
 
@@ -124,7 +126,9 @@ export class SelectionService extends ShapeTool {
 
         const moveX = this.pressedKeys[SelectionArrowIndex.Left] + this.pressedKeys[SelectionArrowIndex.Right];
         const moveY = this.pressedKeys[SelectionArrowIndex.Up] + this.pressedKeys[SelectionArrowIndex.Down];
-        this.moveSelection(moveX, moveY);
+        if (moveX !== 0 || moveY !== 0) {
+            this.moveSelection(moveX, moveY);
+        }
 
         if (!this.canMoveSelectionContiniously) {
             this.canMoveSelectionContiniously = true;
