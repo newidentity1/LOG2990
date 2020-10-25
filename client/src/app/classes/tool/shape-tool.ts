@@ -93,7 +93,6 @@ export abstract class ShapeTool extends Tool {
         this.mouseDown = false;
         this.shiftDown = false;
         this.escapeDown = false;
-        this.setThickness(this.toolProperties.thickness);
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
     }
 

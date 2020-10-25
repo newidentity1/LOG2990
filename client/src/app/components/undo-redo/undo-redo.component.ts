@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 
 @Component({
@@ -6,10 +6,8 @@ import { ToolbarService } from '@app/services/toolbar/toolbar.service';
     templateUrl: './undo-redo.component.html',
     styleUrls: ['./undo-redo.component.scss'],
 })
-export class UndoRedoComponent implements OnInit {
+export class UndoRedoComponent {
     constructor(protected toolbarService: ToolbarService) {}
-
-    ngOnInit(): void {}
 
     undo(): void {
         this.toolbarService.undo();

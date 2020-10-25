@@ -19,13 +19,6 @@ export class EllipseService extends ShapeTool {
         this.dashedSegments = DASHED_SEGMENTS;
     }
 
-    /**
-     * @description Draws the ellipse with the correct thickness and prioritizes
-     * the dimensions of the guide perimeter (boxGuide) which follow the mouse
-     * movements. When the thickness is too big for the ellipse to be drawn
-     * inside the perimeter, the ctx.lineWidth is assigned to the half of the
-     * smallest of its sides.
-     */
     draw(ctx: CanvasRenderingContext2D): void {
         if (this.escapeDown) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
