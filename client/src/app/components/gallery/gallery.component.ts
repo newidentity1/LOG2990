@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Drawing } from '@common/communication/drawing';
 import { Observable } from 'rxjs';
+
 @Component({
     selector: 'app-open-gallery',
     templateUrl: './gallery.component.html',
@@ -9,7 +10,7 @@ import { Observable } from 'rxjs';
 })
 export class GalleryComponent implements OnInit {
     private drawingUrl: string = 'http://localhost:3000/api/drawings';
-    private list: Drawing[] = [];
+    list: Drawing[] = [];
     constructor(private http: HttpClient) {
         const obs: Observable<Drawing[]> = this.http.get<Drawing[]>(this.drawingUrl);
         obs.subscribe((data) => {
