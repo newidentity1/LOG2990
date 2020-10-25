@@ -12,6 +12,7 @@ import { EraseService } from '@app/services/tools/erase/erase.service';
 import { EyedropperService } from '@app/services/tools/eyedropper/eyedropper.service';
 import { LineService } from '@app/services/tools/line/line.service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
+import { PolygonService } from '@app/services/tools/polygon/polygon.service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle.service';
 import { SelectionService } from '@app/services/tools/selection/selection.service';
 
@@ -20,6 +21,8 @@ import { SelectionService } from '@app/services/tools/selection/selection.servic
 })
 export class ToolbarService {
     private tools: Tool[];
+    private drawings: Tool[] = [];
+    private undoIndex: number = -1;
     currentTool: Tool;
     primaryColor: Color;
     secondaryColor: Color;
@@ -32,6 +35,7 @@ export class ToolbarService {
         protected ellipseService: EllipseService,
         protected lineService: LineService,
         protected eraseService: EraseService,
+        protected polygonService: PolygonService,
         protected eyedropperService: EyedropperService,
         protected selectionService: SelectionService,
         protected drawingService: DrawingService,
@@ -40,6 +44,7 @@ export class ToolbarService {
     ) {
         this.tools = [
             pencilService,
+            polygonService,
             brushService,
             rectangleService,
             ellipseService,
@@ -57,6 +62,7 @@ export class ToolbarService {
             .set(KeyShortcut.Ellipse, ellipseService)
             .set(KeyShortcut.Line, lineService)
             .set(KeyShortcut.Eraser, eraseService)
+            .set(KeyShortcut.Polygon, polygonService)
             .set(KeyShortcut.Eyedropper, eyedropperService)
             .set(KeyShortcut.RectangleSelect, selectionService)
             .set(KeyShortcut.EllipseSelect, selectionService);
@@ -116,7 +122,13 @@ export class ToolbarService {
     }
 
     onMouseUp(event: MouseEvent): void {
-        this.currentTool.onMouseUp(event);
+        let tool: Tool | undefined;
+        tool = this.currentTool.onMouseUp(event);
+
+        if (tool !== undefined) {
+            this.drawings.push(tool);
+            this.undoIndex++;
+        }
     }
 
     onMouseEnter(event: MouseEvent): void {
@@ -133,6 +145,20 @@ export class ToolbarService {
 
     onClick(event: MouseEvent): void {
         this.currentTool.onClick(event);
+    }
+
+    undo(): void {
+        this.undoIndex--;
+        this.drawingService.clearCanvas(this.drawingService.baseCtx);
+        if (this.undoIndex >= 0) {
+            for (let i = 0; i <= this.undoIndex; i++) {
+                this.drawings[i].draw(this.drawingService.baseCtx);
+            }
+        }
+    }
+
+    redo(): void {
+        // Todo
     }
 
     triggerSelectAll(): void {

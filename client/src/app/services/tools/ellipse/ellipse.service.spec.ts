@@ -12,11 +12,9 @@ describe('EllipseService', () => {
     let service: EllipseService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     let baseCtxStub: CanvasRenderingContext2D;
-    let previewCtxStub: CanvasRenderingContext2D;
 
     beforeEach(() => {
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
-        previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
 
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setThickness']);
         TestBed.configureTestingModule({
@@ -27,7 +25,6 @@ describe('EllipseService', () => {
         // Configuration du spy du service
         // tslint:disable:no-string-literal
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
-        service['drawingService'].previewCtx = previewCtxStub;
         service['drawingService'].canvas = canvasTestHelper.canvas;
     });
 
@@ -35,11 +32,11 @@ describe('EllipseService', () => {
         expect(service).toBeTruthy();
     });
 
-    it('drawShape should call ctx.fill if DrawingType is Fill', () => {
+    it('draw should call ctx.fill if DrawingType is Fill', () => {
         const properties = service.toolProperties as BasicShapeProperties;
         properties.currentType = DrawingType.Fill;
         const spyFill = spyOn(baseCtxStub, 'fill');
-        service.drawShape(baseCtxStub);
+        service.draw(baseCtxStub);
         expect(spyFill).toHaveBeenCalled();
     });
 
@@ -47,7 +44,7 @@ describe('EllipseService', () => {
         const properties = service.toolProperties as BasicShapeProperties;
         properties.currentType = DrawingType.Stroke;
         const spyStroke = spyOn(baseCtxStub, 'stroke');
-        service.drawShape(baseCtxStub);
+        service.draw(baseCtxStub);
         expect(spyStroke).toHaveBeenCalled();
     });
 
@@ -56,7 +53,7 @@ describe('EllipseService', () => {
         properties.currentType = DrawingType.FillAndStroke;
         const spyStroke = spyOn(baseCtxStub, 'stroke');
         const spyFill = spyOn(baseCtxStub, 'fill');
-        service.drawShape(baseCtxStub);
+        service.draw(baseCtxStub);
         expect(spyStroke).toHaveBeenCalled();
         expect(spyFill).toHaveBeenCalled();
     });
@@ -72,12 +69,12 @@ describe('EllipseService', () => {
         expect(result).toEqual(-1);
     });
 
-    it('drawBoxGuide should call stroke twice and setLineDash if mouse was down', () => {
+    it('drawBoxGuide should call stroke and setLineDash if mouse was down', () => {
         service.mouseDown = true;
         const spyStroke = spyOn(baseCtxStub, 'stroke');
         const spyLineDash = spyOn(baseCtxStub, 'setLineDash');
         service['drawBoxGuide'](baseCtxStub);
-        expect(spyStroke).toHaveBeenCalledTimes(2);
+        expect(spyStroke).toHaveBeenCalled();
         expect(spyLineDash).toHaveBeenCalledWith([DASHED_SEGMENTS]);
     });
 
@@ -91,35 +88,44 @@ describe('EllipseService', () => {
     });
 
     it('adjustThickness should shrink the thickness when its not in fill mode bigger than the width or the height', () => {
-        const properties = service.toolProperties as BasicShapeProperties;
-        properties.currentType = DrawingType.Stroke;
         const value = 50;
         const radius: Vec2 = { x: 25, y: 25 };
+        service.width = radius.x * 2;
+        service.height = radius.y * 2;
+        service.setTypeDrawing(DrawingType.FillAndStroke);
         service.setThickness(value);
-        service.drawShape(baseCtxStub);
-
-        expect(service['adjustThickness'](properties, radius)).toEqual(radius.x);
+        service.adjustThickness();
+        expect(service.adjustThickness()).toEqual(radius.x);
     });
 
     it('adjustThickness should keep the thickness when its not in fill mode and is smaller than the width or the height', () => {
-        const properties = service.toolProperties as BasicShapeProperties;
-        properties.currentType = DrawingType.Stroke;
         const value = 10;
         const radius: Vec2 = { x: 25, y: 25 };
+        service.width = radius.x * 2;
+        service.height = radius.y * 2;
+        service.setTypeDrawing(DrawingType.Stroke);
         service.setThickness(value);
-        service.drawShape(baseCtxStub);
 
-        expect(service['adjustThickness'](properties, radius)).toEqual(value);
+        expect(service.adjustThickness()).toEqual(value);
     });
 
-    it('adjustThickness should set the thickness to 1 when its in fill mode', () => {
-        const properties = service.toolProperties as BasicShapeProperties;
-        properties.currentType = DrawingType.Fill;
-        const value = 50;
-        const radius: Vec2 = { x: 25, y: 25 };
-        service.setThickness(value);
-        service.drawShape(baseCtxStub);
+    it('should not draw on escape key press', () => {
+        service.escapeDown = true;
+        const spyFill = spyOn(baseCtxStub, 'fill');
+        const spyStroke = spyOn(baseCtxStub, 'stroke');
+        service.draw(baseCtxStub);
+        expect(spyFill).not.toHaveBeenCalled();
+        expect(spyStroke).not.toHaveBeenCalled();
+    });
 
-        expect(service['adjustThickness'](properties, radius)).toEqual(1);
+    it('resetContext should reset all the current changes that the tool made', () => {
+        service.mouseDown = true;
+        service.shiftDown = true;
+        service.escapeDown = true;
+        service.resetContext();
+        expect(service.mouseDown).toEqual(false);
+        expect(service.shiftDown).toEqual(false);
+        expect(service.escapeDown).toEqual(false);
+        expect(drawServiceSpy.clearCanvas).toHaveBeenCalledWith(drawServiceSpy.previewCtx);
     });
 });
