@@ -128,8 +128,7 @@ export class ToolbarService {
         if (tool !== undefined) {
             this.drawings.push(tool);
             this.undoIndex++;
-            console.log('saving shape ', this.undoIndex);
-        } else console.log('undefined');
+        }
     }
 
     onMouseEnter(event: MouseEvent): void {
@@ -150,7 +149,6 @@ export class ToolbarService {
 
     undo(): void {
         this.undoIndex--;
-        console.log('undoing ', this.undoIndex);
         this.drawingService.clearCanvas(this.drawingService.baseCtx);
         if (this.undoIndex >= 0) {
             for (let i = 0; i <= this.undoIndex; i++) {
@@ -160,7 +158,7 @@ export class ToolbarService {
     }
 
     redo(): void {
-        console.log('redo');
+        // Todo
     }
 
     triggerSelectAll(): void {
