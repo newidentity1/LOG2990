@@ -153,7 +153,6 @@ describe('EyedropperService', () => {
             1,
             1,
         ).data;
-        console.log(rgbData);
         expect(rgbData[0]).toEqual(expectedColor['redValue']);
         expect(rgbData[1]).toEqual(expectedColor['greenValue']);
         expect(rgbData[2]).toEqual(expectedColor['blueValue']);

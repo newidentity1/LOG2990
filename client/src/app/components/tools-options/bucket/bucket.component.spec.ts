@@ -1,22 +1,22 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatSliderModule } from '@angular/material/slider';
-import { PolygonComponent } from './polygon.component';
+import { BucketComponent } from './bucket.component';
 
-describe('PolygonComponent', () => {
-    let component: PolygonComponent;
-    let fixture: ComponentFixture<PolygonComponent>;
+describe('BucketComponent', () => {
+    let component: BucketComponent;
+    let fixture: ComponentFixture<BucketComponent>;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [PolygonComponent],
+            declarations: [BucketComponent],
             imports: [MatSliderModule],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
     }));
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(PolygonComponent);
+        fixture = TestBed.createComponent(BucketComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

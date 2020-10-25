@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
+import { ShapeTool } from '@app/classes/tool/shape-tool';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 import { DrawingType } from '@app/enums/drawing-type.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -31,6 +32,16 @@ describe('RectangleService', () => {
 
     it('should be created', () => {
         expect(service).toBeTruthy();
+    });
+
+    it('drawShape should call adjustThickness, setThickness and drawBoxGuide', () => {
+        const adjustThicknessSpy = spyOn(ShapeTool.prototype, 'adjustThickness');
+        const drawBoxGuideSpy = spyOn(ShapeTool.prototype, 'drawBoxGuide');
+
+        service.draw(baseCtxStub);
+        expect(adjustThicknessSpy).toHaveBeenCalled();
+        expect(drawServiceSpy.setThickness).toHaveBeenCalled();
+        expect(drawBoxGuideSpy).toHaveBeenCalled();
     });
 
     it('drawShape should call drawFillRect if DrawingType is Fill', () => {
