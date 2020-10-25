@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ShapeTool } from '@app/classes/tool/shape-tool';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
-import { DASHED_SEGMENTS, SELECTION_BOX_THICKNESS } from '@app/constants/constants';
 import { DrawingType } from '@app/enums/drawing-type.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
@@ -9,14 +8,11 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
     providedIn: 'root',
 })
 export class EllipseService extends ShapeTool {
-    dashedSegments: number;
-
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.name = 'Ellipse';
         this.tooltip = 'Ellipse(2)';
         this.iconName = 'panorama_fish_eye';
-        this.dashedSegments = DASHED_SEGMENTS;
     }
 
     draw(ctx: CanvasRenderingContext2D): void {
@@ -52,25 +48,5 @@ export class EllipseService extends ShapeTool {
         }
 
         this.drawBoxGuide(ctx);
-    }
-
-    private drawBoxGuide(ctx: CanvasRenderingContext2D): void {
-        if (this.mouseDown) {
-            ctx.save();
-
-            ctx.lineWidth = SELECTION_BOX_THICKNESS;
-            ctx.beginPath();
-            ctx.rect(
-                this.pathStart.x,
-                this.pathStart.y,
-                this.currentMousePosition.x - this.pathStart.x,
-                this.currentMousePosition.y - this.pathStart.y,
-            );
-            ctx.setLineDash([this.dashedSegments]);
-            ctx.strokeStyle = 'black';
-            ctx.stroke();
-
-            ctx.restore();
-        }
     }
 }

@@ -19,7 +19,7 @@ import { SelectionService } from '@app/services/tools/selection/selection.servic
 describe('ToolbarService', () => {
     let service: ToolbarService;
     let pencilServiceSpy: jasmine.SpyObj<PencilService>;
-    let polygonService: jasmine.SpyObj<PolygonService>;
+    let polygonServiceSpy: jasmine.SpyObj<PolygonService>;
     let brushServiceSpy: jasmine.SpyObj<BrushService>;
     let rectangleServiceSpy: jasmine.SpyObj<RectangleService>;
     let ellipseServiceSpy: jasmine.SpyObj<EllipseService>;
@@ -58,6 +58,12 @@ describe('ToolbarService', () => {
         bucketServiceSpy = jasmine.createSpyObj('BucketService', ['onMouseDown']);
         drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setStrokeColor']);
 
+        selectionService = jasmine.createSpyObj('SelectionService', ['selectAll', 'resetSelection', 'setSelectionType']);
+        drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setStrokeColor']);
+        bucketServiceSpy = jasmine.createSpyObj('BucketService', ['onMouseDown']);
+        drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setStrokeColor']);
+        polygonServiceSpy = jasmine.createSpyObj('PolygonService', ['onKeyDown']);
+
         TestBed.configureTestingModule({
             providers: [
                 { provide: PencilService, useValue: pencilServiceSpy },
@@ -66,6 +72,7 @@ describe('ToolbarService', () => {
                 { provide: EllipseService, useValue: ellipseServiceSpy },
                 { provide: LineService, useValue: lineServiceSpy },
                 { provide: EraseService, useValue: eraseServiceSpy },
+                { provide: PolygonService, useValue: polygonServiceSpy },
                 { provide: EyedropperService, useValue: eyedropperService },
                 { provide: BucketService, useValue: bucketServiceSpy },
                 { provide: DrawingService, useValue: drawingServiceSpy },
@@ -73,7 +80,7 @@ describe('ToolbarService', () => {
         });
         service = TestBed.inject(ToolbarService);
         pencilServiceSpy = TestBed.inject(PencilService) as jasmine.SpyObj<PencilService>;
-        polygonService = TestBed.inject(PolygonService) as jasmine.SpyObj<PolygonService>;
+        polygonServiceSpy = TestBed.inject(PolygonService) as jasmine.SpyObj<PolygonService>;
         brushServiceSpy = TestBed.inject(BrushService) as jasmine.SpyObj<BrushService>;
         rectangleServiceSpy = TestBed.inject(RectangleService) as jasmine.SpyObj<RectangleService>;
         ellipseServiceSpy = TestBed.inject(EllipseService) as jasmine.SpyObj<EllipseService>;
@@ -83,7 +90,6 @@ describe('ToolbarService', () => {
         selectionService = TestBed.inject(SelectionService) as jasmine.SpyObj<SelectionService>;
         drawingServiceSpy = TestBed.inject(DrawingService) as jasmine.SpyObj<DrawingService>;
         bucketServiceSpy = TestBed.inject(BucketService) as jasmine.SpyObj<BucketService>;
-
         drawingServiceSpy.canvas = canvasTestHelper.canvas;
         drawingServiceSpy.baseCtx = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         drawingServiceSpy.previewCtx = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
@@ -106,7 +112,7 @@ describe('ToolbarService', () => {
         const tools = service.getTools();
         expect(tools).toEqual([
             pencilServiceSpy,
-            polygonService,
+            polygonServiceSpy,
             brushServiceSpy,
             rectangleServiceSpy,
             ellipseServiceSpy,
@@ -116,6 +122,15 @@ describe('ToolbarService', () => {
             selectionService,
             bucketServiceSpy,
         ]);
+    });
+
+    it('initializeColors should set primary and secondary colors ', () => {
+        // tslint:disable-next-line:no-any / reason: spying on function
+        const setColorsSpy = spyOn<any>(service, 'setColors').and.callThrough();
+        service.initializeColors();
+        expect(setColorsSpy).toHaveBeenCalled();
+        expect(service.primaryColor).toBeTruthy();
+        expect(service.secondaryColor).toBeTruthy();
     });
 
     it('setColors should set the colors and call applyCurrentToolColor', () => {

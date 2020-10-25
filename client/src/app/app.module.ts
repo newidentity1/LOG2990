@@ -25,13 +25,15 @@ import { CreateNewDrawingComponent } from './components/create-new-drawing/creat
 import { NewDrawingDialogComponent } from './components/create-new-drawing/new-drawing-dialog/new-drawing-dialog.component';
 import { DrawingComponent } from './components/drawing/drawing.component';
 import { EditorComponent } from './components/editor/editor.component';
+import { GalleryComponent } from './components/gallery/gallery.component';
+import { OpenGalleryComponent } from './components/gallery/open-gallery/open-gallery.component';
 import { GuideComponent } from './components/guide/guide.component';
 import { OpenGuideComponent } from './components/guide/open-guide/open-guide.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { BrushComponent } from './components/tools-options/brush/brush.component';
 import { SVGFilterComponent } from './components/tools-options/brush/svgfilter/svgfilter.component';
-import { BucketComponent } from './components/tools-options/bucket/bucket/bucket.component';
+import { BucketComponent } from './components/tools-options/bucket/bucket.component';
 import { EllipseComponent } from './components/tools-options/ellipse/ellipse.component';
 import { EraseComponent } from './components/tools-options/erase/erase.component';
 import { EyedropperComponent } from './components/tools-options/eyedropper/eyedropper.component';
@@ -70,6 +72,8 @@ import { UndoRedoComponent } from './components/undo-redo/undo-redo.component';
         EyedropperComponent,
         SelectionComponent,
         BucketComponent,
+        OpenGalleryComponent,
+        GalleryComponent,
     ],
     imports: [
         BrowserModule,

@@ -12,11 +12,9 @@ describe('EllipseService', () => {
     let service: EllipseService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     let baseCtxStub: CanvasRenderingContext2D;
-    let previewCtxStub: CanvasRenderingContext2D;
 
     beforeEach(() => {
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
-        previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
 
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setThickness']);
         TestBed.configureTestingModule({
@@ -27,7 +25,6 @@ describe('EllipseService', () => {
         // Configuration du spy du service
         // tslint:disable:no-string-literal
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
-        service['drawingService'].previewCtx = previewCtxStub;
         service['drawingService'].canvas = canvasTestHelper.canvas;
     });
 
@@ -110,18 +107,6 @@ describe('EllipseService', () => {
         service.setThickness(value);
 
         expect(service.adjustThickness()).toEqual(value);
-    });
-
-    it('adjustThickness should set the thickness to 1 when its in fill mode', () => {
-        const value = 50;
-        const radius: Vec2 = { x: 25, y: 25 };
-        service.width = radius.x * 2;
-        service.height = radius.y * 2;
-        service.setTypeDrawing(DrawingType.Fill);
-        service.setThickness(value);
-        service.adjustThickness();
-
-        expect(service.adjustThickness()).toEqual(0);
     });
 
     it('should not draw on escape key press', () => {

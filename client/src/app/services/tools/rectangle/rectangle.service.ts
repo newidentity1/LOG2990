@@ -17,23 +17,28 @@ export class RectangleService extends ShapeTool {
 
     draw(ctx: CanvasRenderingContext2D): void {
         const rectangleProperties = this.toolProperties as BasicShapeProperties;
-        this.adjustThickness();
+        const thickness = this.adjustThickness();
+
+        this.drawingService.setThickness(thickness);
 
         ctx.beginPath();
-        ctx.rect(this.pathStart.x + this.dx, this.pathStart.y + this.dy, this.radius.x * 2, this.radius.y * 2);
-
-        ctx.beginPath();
-        ctx.rect(this.mouseDownCoord.x, this.mouseDownCoord.y, this.width, this.height);
+        ctx.rect(
+            this.mouseDownCoord.x + (thickness / 2) * this.signOf(this.width),
+            this.mouseDownCoord.y + (thickness / 2) * this.signOf(this.height),
+            this.width - thickness * this.signOf(this.width),
+            this.height - thickness * this.signOf(this.height),
+        );
         switch (rectangleProperties.currentType) {
-            case DrawingType.Stroke:
-                ctx.stroke();
-                break;
             case DrawingType.Fill:
                 ctx.fill();
                 break;
-            default:
+            case DrawingType.Stroke:
+                ctx.stroke();
+                break;
+            case DrawingType.FillAndStroke:
                 ctx.fill();
                 ctx.stroke();
         }
+        this.drawBoxGuide(ctx);
     }
 }

@@ -1,6 +1,7 @@
 import { Color } from '@app/classes/color/color';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 import { Vec2 } from '@app/classes/vec2';
+import { DASHED_SEGMENTS, SELECTION_BOX_THICKNESS } from '@app/constants/constants';
 import { DrawingType } from '@app/enums/drawing-type.enum';
 import { MouseButton } from '@app/enums/mouse-button.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -14,6 +15,7 @@ export abstract class ShapeTool extends Tool {
     radius: Vec2;
     pathStart: Vec2;
     currentMousePosition: Vec2;
+    dashedSegments: number;
     dx: number;
     dy: number;
 
@@ -23,12 +25,7 @@ export abstract class ShapeTool extends Tool {
         this.mouseDownCoord = { x: 0, y: 0 };
         this.currentMousePosition = { x: 0, y: 0 };
         this.toolProperties = new BasicShapeProperties();
-    }
-
-    setThickness(value: number | null): void {
-        value = value === null ? 1 : value;
-        this.drawingService.setThickness(value);
-        this.toolProperties.thickness = value;
+        this.dashedSegments = DASHED_SEGMENTS;
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -53,10 +50,17 @@ export abstract class ShapeTool extends Tool {
             this.mouseDown = false;
             this.computeDimensions();
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.draw(this.drawingService.baseCtx);
+            if (this.currentMousePosition.x !== this.mouseDownCoord.x && this.currentMousePosition.y !== this.mouseDownCoord.y) {
+                this.draw(this.drawingService.baseCtx);
+            }
         }
 
         return this;
+    }
+
+    setTypeDrawing(value: string): void {
+        const shapeProperties = this.toolProperties as BasicShapeProperties;
+        shapeProperties.currentType = value;
     }
 
     onKeyDown(event: KeyboardEvent): void {
@@ -75,9 +79,21 @@ export abstract class ShapeTool extends Tool {
         if (this.mouseDown) this.drawPreview();
     }
 
-    setTypeDrawing(value: string): void {
-        const shapeProperties = this.toolProperties as BasicShapeProperties;
-        shapeProperties.currentType = value;
+    protected computeDimensions(): void {
+        this.width = this.currentMousePosition.x - this.mouseDownCoord.x;
+        this.height = this.currentMousePosition.y - this.mouseDownCoord.y;
+
+        if (this.shiftDown) {
+            this.transformToEqualSides();
+        }
+    }
+
+    private transformToEqualSides(): void {
+        if (Math.abs(this.width) === Math.abs(this.height)) return;
+
+        const smallestSide = Math.min(Math.abs(this.width), Math.abs(this.height));
+        this.width = smallestSide * this.signOf(this.width);
+        this.height = smallestSide * this.signOf(this.height);
     }
 
     abstract draw(ctx: CanvasRenderingContext2D): void;
@@ -122,20 +138,23 @@ export abstract class ShapeTool extends Tool {
         this.draw(this.drawingService.previewCtx);
     }
 
-    protected computeDimensions(): void {
-        this.width = this.currentMousePosition.x - this.mouseDownCoord.x;
-        this.height = this.currentMousePosition.y - this.mouseDownCoord.y;
+    drawBoxGuide(ctx: CanvasRenderingContext2D): void {
+        if (this.mouseDown) {
+            ctx.save();
 
-        if (this.shiftDown) {
-            this.transformToEqualSides();
+            ctx.lineWidth = SELECTION_BOX_THICKNESS;
+            ctx.beginPath();
+            ctx.rect(
+                this.pathStart.x,
+                this.pathStart.y,
+                this.currentMousePosition.x - this.pathStart.x,
+                this.currentMousePosition.y - this.pathStart.y,
+            );
+            ctx.setLineDash([this.dashedSegments]);
+            ctx.strokeStyle = 'black';
+            ctx.stroke();
+
+            ctx.restore();
         }
-    }
-
-    private transformToEqualSides(): void {
-        if (Math.abs(this.width) === Math.abs(this.height)) return;
-
-        const smallestSide = Math.min(Math.abs(this.width), Math.abs(this.height));
-        this.width = this.width >= 0 ? smallestSide : -smallestSide;
-        this.height = this.height >= 0 ? smallestSide : -smallestSide;
     }
 }
