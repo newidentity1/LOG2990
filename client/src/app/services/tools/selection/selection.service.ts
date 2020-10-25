@@ -57,7 +57,7 @@ export class SelectionService extends ShapeTool {
         }
     }
 
-    onMouseUp(event: MouseEvent): void {
+    onMouseUp(event: MouseEvent): ShapeTool | undefined {
         if (this.mouseDown) {
             if (this.isMovingSelection) {
                 this.isMovingSelection = false;
@@ -69,6 +69,8 @@ export class SelectionService extends ShapeTool {
             }
             this.mouseDown = false;
         }
+
+        return this;
     }
 
     onKeyDown(event: KeyboardEvent): void {
@@ -117,7 +119,7 @@ export class SelectionService extends ShapeTool {
         }
     }
 
-    drawShape(): void {
+    draw(): void {
         this.computePositiveRectangleValues();
 
         const ctx = this.drawingService.previewCtx;
