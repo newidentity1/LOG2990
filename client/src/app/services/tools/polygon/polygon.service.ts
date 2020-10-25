@@ -5,7 +5,6 @@ import { Vec2 } from '@app/classes/vec2';
 import { DASHED_SEGMENTS, MINIMUM_SIDES, SELECTION_BOX_THICKNESS } from '@app/constants/constants';
 import { DrawingType } from '@app/enums/drawing-type.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
 
 @Injectable({
     providedIn: 'root',
@@ -13,38 +12,23 @@ import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
 
 /** @todo Maybe extend EllipseService */
 export class PolygonService extends ShapeTool {
-    ellipseService: EllipseService;
-
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.name = 'Polygon';
         this.tooltip = 'Polygone(3)';
         this.iconName = 'change_history';
         this.toolProperties = new PolygonProperties();
-        this.ellipseService = new EllipseService(drawingService);
     }
 
-    onMouseMove(event: MouseEvent): void {
-        if (this.mouseDown) {
-            this.currentMousePosition = this.getPositionFromMouse(event);
-            this.ellipseService.pathStart = this.pathStart;
-            this.ellipseService.currentMousePosition = this.currentMousePosition;
-            this.computeDimensions();
-            this.ellipseService.width = this.width;
-            this.ellipseService.height = this.height;
-            this.ellipseService.setTypeDrawing(DrawingType.Stroke);
-            this.ellipseService.mouseDown = true;
-
-            // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
-            const previewCtx = this.drawingService.previewCtx;
-            this.drawingService.clearCanvas(previewCtx);
-            this.setThickness(this.toolProperties.thickness);
-            this.draw(previewCtx);
-            this.ellipseService.dashedSegments = 0;
-            this.drawingService.previewCtx.setLineDash([DASHED_SEGMENTS]);
-            this.drawingService.previewCtx.strokeStyle = 'black';
-            this.ellipseService.draw(previewCtx);
+    onKeyDown(event: KeyboardEvent): void {
+        if (event.key === 'Escape') {
+            this.mouseDown = false;
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
         }
+    }
+
+    onKeyUp(event: KeyboardEvent): void {
+        // no shift for polygon
     }
 
     computeDimensions(): void {
@@ -102,6 +86,9 @@ export class PolygonService extends ShapeTool {
                 ctx.stroke();
         }
         ctx.closePath();
+        ctx.restore();
+
+        this.drawBoxGuide();
     }
 
     setNumberOfSides(value: number | null): void {
@@ -127,7 +114,12 @@ export class PolygonService extends ShapeTool {
                 0,
                 2 * Math.PI,
             );
-            ctx.rect(this.mouseDownCoord.x, this.mouseDownCoord.y, this.width, this.height);
+            ctx.rect(
+                this.mouseDownCoord.x,
+                this.mouseDownCoord.y,
+                this.currentMousePosition.x - this.pathStart.x,
+                this.currentMousePosition.y - this.pathStart.y,
+            );
             ctx.setLineDash([]);
             ctx.strokeStyle = 'white';
             ctx.stroke();

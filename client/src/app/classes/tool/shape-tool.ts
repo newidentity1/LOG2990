@@ -150,6 +150,11 @@ export abstract class ShapeTool extends Tool {
                 this.currentMousePosition.x - this.pathStart.x,
                 this.currentMousePosition.y - this.pathStart.y,
             );
+
+            ctx.setLineDash([]);
+            ctx.strokeStyle = 'white';
+            ctx.stroke();
+
             ctx.setLineDash([this.dashedSegments]);
             ctx.strokeStyle = 'black';
             ctx.stroke();
