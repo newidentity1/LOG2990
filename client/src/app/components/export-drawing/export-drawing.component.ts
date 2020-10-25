@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ExportDrawingDialogComponent } from './export-drawing-dialog/export-drawing-dialog.component';
 
 @Component({
     selector: 'app-export-drawing',
@@ -8,10 +8,9 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
     styleUrls: ['./export-drawing.component.scss'],
 })
 export class ExportDrawingComponent {
-    constructor(public dialog: MatDialog, public drawingService: DrawingService) {}
+    constructor(public dialog: MatDialog) {}
+
     exportDrawing(): void {
-        // TODO: voir comment download automatiquement sans demander le répertoire
-        const url = this.drawingService.canvas.toDataURL();
-        // this.dialog.open(ExportDrawingDialogComponent);
+        this.dialog.open(ExportDrawingDialogComponent);
     }
 }
