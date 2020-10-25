@@ -6,9 +6,9 @@
             </mat-expansion-panel-header>
 
             <mat-form-field>
-                <mat-select [(value)]="selectedFormat">
+                <mat-select [(value)]="selectedFormat" (selectionChange)="onFormatChange()">
                     <mat-option value="png">PNG</mat-option>
-                    <mat-option value="jpg">JPG</mat-option>
+                    <mat-option value="jpeg">JPG</mat-option>
                 </mat-select>
             </mat-form-field>
         </mat-expansion-panel>
@@ -17,17 +17,25 @@
             <mat-expansion-panel-header>
                 <mat-panel-title> Filtre </mat-panel-title>
             </mat-expansion-panel-header>
-
-            <mat-select [(value)]="selectedFilter">
-                <mat-option value="0">Aucun</mat-option>
-                <mat-option value="1">Filtre1</mat-option>
-                <mat-option value="2">Filtre2</mat-option>
-            </mat-select>
+            <mat-form-field>
+                <mat-select [(value)]="selectedFilter">
+                    <mat-option value="0">Aucun</mat-option>
+                    <mat-option value="1">Filtre1</mat-option>
+                    <mat-option value="2">Filtre2</mat-option>
+                </mat-select>
+            </mat-form-field>
         </mat-expansion-panel>
     </mat-accordion>
+    <form>
+        <mat-form-field>
+            <mat-label>Titre du dessin</mat-label>
+            <input matInput [(ngModel)]="drawingTitle" name="drawingTitle" />
+        </mat-form-field>
+    </form>
+
     <h3>Prévisualisation du dessin</h3>
     <a #drawingPreviewContainer href="" download="">
-        <img id="drawingPreview" #drawingPreview src="" />
+        <img width="400" height="400" id="drawingPreview" #drawingPreview src="" />
     </a>
     <br />
 
