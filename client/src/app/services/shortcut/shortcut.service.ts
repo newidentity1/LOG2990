@@ -12,9 +12,9 @@ export class ShortcutService {
     addShortcut(keys: string): Observable<KeyboardEvent> {
         return new Observable((observer) => {
             const handler = (event: KeyboardEvent) => {
-                event.preventDefault();
                 // disable shortcuts if a modal is open
                 if (this.dialog.openDialogs.length === 0) {
+                    event.preventDefault();
                     observer.next(event);
                 }
             };
