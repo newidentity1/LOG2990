@@ -1,8 +1,16 @@
 import { AfterContentInit, AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild } from '@angular/core';
+import { ResizerProperties } from '@app/classes/resizer-properties';
 import { Vec2 } from '@app/classes/vec2';
-import { CANVAS_MARGIN_LEFT, CANVAS_MARGIN_TOP, CANVAS_MIN_HEIGHT, CANVAS_MIN_WIDTH, DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants/constants';
+import {
+    CANVAS_MARGIN_LEFT,
+    CANVAS_MARGIN_TOP,
+    CANVAS_MIN_HEIGHT,
+    CANVAS_MIN_WIDTH,
+    DEFAULT_HEIGHT,
+    DEFAULT_WIDTH,
+    SELECTION_CONTROL_POINT_SIZE,
+} from '@app/constants/constants';
 import { MouseButton } from '@app/enums/mouse-button.enum';
-import { ColorPickerService } from '@app/services/color-picker/color-picker.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 import { Observable } from 'rxjs';
@@ -24,13 +32,13 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit {
     @Output() requestDrawingContainerDimensions: EventEmitter<void> = new EventEmitter();
 
     private baseCtx: CanvasRenderingContext2D;
-    private previewCtx: CanvasRenderingContext2D;
+    previewCtx: CanvasRenderingContext2D;
     private canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
 
     isResizingWidth: boolean = false;
     isResizingHeight: boolean = false;
 
-    constructor(private drawingService: DrawingService, private toolbarService: ToolbarService, private colorService: ColorPickerService) {}
+    constructor(private drawingService: DrawingService, private toolbarService: ToolbarService) {}
 
     ngAfterContentInit(): void {
         this.newCanvasSetSize();
@@ -42,9 +50,10 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit {
         this.drawingService.baseCtx = this.baseCtx;
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
-        this.colorService.updateDrawingColor();
 
         this.drawingService.createNewDrawingEventListener().subscribe(() => {
+            this.toolbarService.resetSelection();
+            this.drawingService.clearCanvas(this.drawingService.baseCtx);
             this.requestDrawingContainerDimensions.emit();
         });
         this.dimensionsUpdatedEvent.subscribe((dimensions) => {
@@ -55,6 +64,7 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit {
                 this.toolbarService.applyCurrentTool();
             }, 0);
         });
+        this.toolbarService.initializeColors();
     }
 
     onMouseMove(event: MouseEvent): void {
@@ -72,6 +82,7 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit {
 
     @HostListener('window:mouseup', ['$event'])
     onMouseUp(event: MouseEvent): void {
+        event.preventDefault();
         if (this.isResizingWidth || this.isResizingHeight) {
             const newWidth = this.isResizingWidth ? this.previewCanvas.nativeElement.width : this.width;
             const newHeight = this.isResizingHeight ? this.previewCanvas.nativeElement.height : this.height;
@@ -104,6 +115,10 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit {
 
     onClick(event: MouseEvent): void {
         this.toolbarService.onClick(event);
+    }
+
+    onContextMenu(): boolean {
+        return false;
     }
 
     @HostListener('window:mousemove', ['$event'])
@@ -153,11 +168,43 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit {
         this.canvasSize.y = newHeight >= CANVAS_MIN_HEIGHT ? newHeight : CANVAS_MIN_HEIGHT;
     }
 
+    isAreaSelected(): boolean {
+        return this.toolbarService.isAreaSelected();
+    }
+
     get width(): number {
         return this.canvasSize.x;
     }
 
     get height(): number {
         return this.canvasSize.y;
+    }
+
+    onBaseCanvasMouseDown(event: MouseEvent): void {
+        if (this.isAreaSelected()) {
+            this.toolbarService.resetSelection();
+            this.onMouseDown(event);
+        }
+    }
+
+    calculateResizerStyle(rowPosition: number, columnPosition: number): ResizerProperties {
+        let resizerPosition: ResizerProperties;
+
+        if (this.previewCanvas) {
+            const previewCanvasElement = this.previewCanvas.nativeElement;
+            const canvasTopOffset = +previewCanvasElement.style.top.substring(0, previewCanvasElement.style.top.length - 2);
+            const canvasLeftOffset = +previewCanvasElement.style.left.substring(0, previewCanvasElement.style.left.length - 2);
+
+            resizerPosition = {
+                top: canvasTopOffset + (previewCanvasElement.height * rowPosition) / 2 - SELECTION_CONTROL_POINT_SIZE / 2 + 'px',
+                left: canvasLeftOffset + (previewCanvasElement.width * columnPosition) / 2 - SELECTION_CONTROL_POINT_SIZE / 2 + 'px',
+            };
+        } else {
+            resizerPosition = {
+                top: (this.height * rowPosition) / 2 - SELECTION_CONTROL_POINT_SIZE / 2 + 'px',
+                left: (this.width * columnPosition) / 2 - SELECTION_CONTROL_POINT_SIZE / 2 + 'px',
+            };
+        }
+        return resizerPosition;
     }
 }

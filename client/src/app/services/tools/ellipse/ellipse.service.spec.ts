@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 import { Vec2 } from '@app/classes/vec2';
+import { DASHED_SEGMENTS } from '@app/constants/constants';
 import { DrawingType } from '@app/enums/drawing-type.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { EllipseService } from './ellipse.service';
@@ -9,12 +10,7 @@ import { EllipseService } from './ellipse.service';
 // tslint:disable:no-any
 describe('EllipseService', () => {
     let service: EllipseService;
-    let mouseEventLeftClick: MouseEvent;
-    let mouseEventRightClick: MouseEvent;
-    let keyboardEvent: KeyboardEvent;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
-    let drawSpy: jasmine.Spy<any>;
-    let transformToCirleSpy: jasmine.Spy<any>;
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
 
@@ -35,20 +31,6 @@ describe('EllipseService', () => {
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
         service['drawingService'].previewCtx = previewCtxStub;
         service['drawingService'].canvas = canvasTestHelper.canvas;
-
-        mouseEventLeftClick = {
-            offsetX: 100,
-            offsetY: 100,
-            button: 0,
-        } as MouseEvent;
-
-        mouseEventRightClick = {
-            offsetX: 100,
-            offsetY: 100,
-            button: 1,
-        } as MouseEvent;
-
-        keyboardEvent = new KeyboardEvent('keyDown', { key: 'Shift' });
     });
 
     it('should be created', () => {
@@ -122,7 +104,7 @@ describe('EllipseService', () => {
         expect(spyFill).toHaveBeenCalled();
     });
 
-    it('draw should call ctx.stroke if DrawingType is Stroke', () => {
+    it('drawShape should call ctx.stroke if DrawingType is Stroke', () => {
         const properties = service.toolProperties as BasicShapeProperties;
         properties.currentType = DrawingType.Stroke;
         const spyStroke = spyOn(baseCtxStub, 'stroke');
@@ -130,7 +112,7 @@ describe('EllipseService', () => {
         expect(spyStroke).toHaveBeenCalled();
     });
 
-    it('draw should call ctx.stroke and ctx.fill if DrawingType is FillAndStroke', () => {
+    it('drawShape should call ctx.stroke and ctx.fill if DrawingType is FillAndStroke', () => {
         const properties = service.toolProperties as BasicShapeProperties;
         properties.currentType = DrawingType.FillAndStroke;
         const spyStroke = spyOn(baseCtxStub, 'stroke');
@@ -140,115 +122,33 @@ describe('EllipseService', () => {
         expect(spyFill).toHaveBeenCalled();
     });
 
-    it('computeDimensions should return a positive width and a positive height if the coords are on quadrant1', () => {
-        const fakeRectangle: Vec2 = { x: 150, y: 200 };
-        service.width = fakeRectangle.x;
-        service.height = fakeRectangle.y;
-        const expectedResult: Vec2 = { x: 150, y: 150 };
-        service.transformToCircle();
-        expect({ x: service.width, y: service.height }).toEqual(expectedResult);
+    it('signOf should return 1 if number is positive', () => {
+        // tslint:disable:no-magic-numbers / reason: using random numbers
+        const result = service['signOf'](10);
+        expect(result).toEqual(1);
     });
 
-    it('transformToCircle should return a negative width and a positive height if the coords are on quadrant2', () => {
-        const fakeRectangle: Vec2 = { x: -150, y: 200 };
-        service.width = fakeRectangle.x;
-        service.height = fakeRectangle.y;
-        const expectedResult: Vec2 = { x: -150, y: 150 };
-        service.transformToCircle();
-        expect({ x: service.width, y: service.height }).toEqual(expectedResult);
+    it('signOf should return -1 if number is negative', () => {
+        const result = service['signOf'](-10);
+        expect(result).toEqual(-1);
     });
 
-    it('transformToCircle should return a negative width and a negative height if the coords are on quadrant3', () => {
-        const fakeRectangle: Vec2 = { x: -150, y: -200 };
-        service.width = fakeRectangle.x;
-        service.height = fakeRectangle.y;
-        const expectedResult: Vec2 = { x: -150, y: -150 };
-        service.transformToCircle();
-        expect({ x: service.width, y: service.height }).toEqual(expectedResult);
-    });
-
-    it('transformToCircle should return a positive width and a negative height if the coords are on quadrant4', () => {
-        const fakeRectangle: Vec2 = { x: 150, y: -200 };
-        service.width = fakeRectangle.x;
-        service.height = fakeRectangle.y;
-        const expectedResult: Vec2 = { x: 150, y: -150 };
-        service.transformToCircle();
-        expect({ x: service.width, y: service.height }).toEqual(expectedResult);
-    });
-
-    it('onMouseUp should call transformToCircle if shift and mouse is down', () => {
+    it('drawBoxGuide should call stroke twice and setLineDash if mouse was down', () => {
         service.mouseDown = true;
-        service.shiftDown = true;
-        service.mouseDownCoord = { x: 0, y: 0 };
-        service.mouseDownCoord = { x: mouseEventLeftClick.x, y: mouseEventLeftClick.y };
-
-        service.onMouseUp();
-        expect(transformToCirleSpy).toHaveBeenCalled();
+        const spyStroke = spyOn(baseCtxStub, 'stroke');
+        const spyLineDash = spyOn(baseCtxStub, 'setLineDash');
+        service['drawBoxGuide'](baseCtxStub);
+        expect(spyStroke).toHaveBeenCalledTimes(2);
+        expect(spyLineDash).toHaveBeenCalledWith([DASHED_SEGMENTS]);
     });
 
-    it('onMouseUp should not call transformToCircle if shift is not down and mouse is down', () => {
-        service.mouseDown = true;
-        service.shiftDown = false;
-        service.mouseDownCoord = { x: 0, y: 0 };
-        service.mouseDownCoord = { x: mouseEventLeftClick.x, y: mouseEventLeftClick.y };
-
-        service.onMouseUp();
-        expect(transformToCirleSpy).not.toHaveBeenCalled();
-    });
-
-    it('onMouseMove should call draw if mouse was already down', () => {
-        service.mouseDownCoord = { x: 0, y: 0 };
-        service.mouseDown = true;
-
-        service.onMouseMove(mouseEventLeftClick);
-        expect(drawSpy).toHaveBeenCalled();
-    });
-
-    it('onMouseMove should not call draw if mouse was not already down', () => {
+    it('drawBoxGuide should not call stroke and setLineDash if mouse was not down', () => {
         service.mouseDown = false;
-        service.mouseDownCoord = { x: 0, y: 0 };
-
-        service.onMouseMove(mouseEventLeftClick);
-        expect(drawSpy).not.toHaveBeenCalled();
-    });
-
-    it('transformToSquare should return the same input if they are equal', () => {
-        const fakeRectangle: Vec2 = { x: 150, y: 150 };
-        service.width = fakeRectangle.x;
-        service.height = fakeRectangle.y;
-        const expectedResult: Vec2 = { x: 150, y: 150 };
-        service.transformToCircle();
-        expect({ x: service.width, y: service.height }).toEqual(expectedResult);
-    });
-
-    it('computeDimensions should set the value of width and height correctly', () => {
-        service.pathStart = { x: mouseEventLeftClick.offsetX, y: mouseEventLeftClick.offsetY };
-        service.mouseDownCoord = { x: 200, y: 200 };
-        const expectedResult: Vec2 = { x: 100, y: 100 };
-        service.computeDimensions();
-        expect(service.width).toEqual(expectedResult.x);
-        expect(service.height).toEqual(expectedResult.y);
-    });
-
-    it('setThickness should set the thickness of rectangleProperties to 1 when parameter is null and call setThickness of drawing service', () => {
-        const value = null;
-        service.setThickness(value);
-        expect(service.toolProperties.thickness).toEqual(1);
-        expect(drawServiceSpy.setThickness).toHaveBeenCalled();
-    });
-
-    it('setThickness should set the thickness of rectangleProperties to parameter if its a number and call setThickness of drawing service', () => {
-        const value = 50;
-        service.setThickness(value);
-        expect(service.toolProperties.thickness).toEqual(value);
-        expect(drawServiceSpy.setThickness).toHaveBeenCalled();
-    });
-
-    it('setTypeDrawing should set the currentType of rectangleProperties', () => {
-        const properties = service.toolProperties as BasicShapeProperties;
-        const value = properties.typesDrawing[0];
-        service.setTypeDrawing(value);
-        expect(properties.currentType).toEqual(properties.typesDrawing[0]);
+        const spyStroke = spyOn(baseCtxStub, 'stroke');
+        const spyLineDash = spyOn(baseCtxStub, 'setLineDash');
+        service['drawBoxGuide'](baseCtxStub);
+        expect(spyStroke).not.toHaveBeenCalled();
+        expect(spyLineDash).not.toHaveBeenCalled();
     });
 
     it('adjustThickness should shrink the thickness when its not in fill mode bigger than the width or the height', () => {

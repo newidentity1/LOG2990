@@ -1,14 +1,8 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDialogMock } from '@app/classes/mat-dialog-test-helper';
 import { OpenGuideComponent } from './open-guide.component';
-
-class MatDialogMock {
-    // When the component calls this.dialog.open(...) we'll return an empty object
-    open(): {} {
-        return {};
-    }
-}
 
 describe('OpenGuideComponent', () => {
     let component: OpenGuideComponent;

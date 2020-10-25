@@ -5,7 +5,7 @@ import { Vec2 } from '@app/classes/vec2';
 import * as CONSTANTS from '@app/constants/constants';
 import { MouseButton } from '@app/enums/mouse-button.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { ToolbarService } from '@app/services/toolbar/toolbar.service';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -15,15 +15,15 @@ export class ColorPickerService extends Tool {
     cursorCanvasCtx: CanvasRenderingContext2D;
     canvas: HTMLCanvasElement;
 
-    primaryColor: Color;
-    secondaryColor: Color;
+    primaryColor: BehaviorSubject<Color>;
+    secondaryColor: BehaviorSubject<Color>;
     selectedColor: Color;
     recentColors: Color[];
 
-    constructor(protected drawingService: DrawingService, private toolbarService: ToolbarService) {
+    constructor(protected drawingService: DrawingService) {
         super(drawingService);
-        this.primaryColor = new Color(CONSTANTS.BLACK);
-        this.secondaryColor = new Color(CONSTANTS.WHITE);
+        this.primaryColor = new BehaviorSubject<Color>(new Color(CONSTANTS.BLACK));
+        this.secondaryColor = new BehaviorSubject<Color>(new Color(CONSTANTS.WHITE));
         this.selectedColor = new Color(CONSTANTS.BLACK);
         this.recentColors = [];
         for (let i = 0; i < CONSTANTS.MAX_RECENT_COLORS_SIZE; i++) {
@@ -63,39 +63,41 @@ export class ColorPickerService extends Tool {
 
     confirmSelectedColor(isSecondaryColorPicker: boolean): void {
         if (isSecondaryColorPicker) {
-            this.secondaryColor = this.selectedColor.clone();
+            this.secondaryColor.next(this.selectedColor.clone());
         } else {
-            this.primaryColor = this.selectedColor.clone();
+            this.primaryColor.next(this.selectedColor.clone());
         }
         this.addToRecentColors(new Color(this.selectedColor.hex));
-
-        this.updateDrawingColor();
     }
 
     resetSelectedColor(isSecondaryColorPicker: boolean): void {
         if (isSecondaryColorPicker) {
-            this.selectedColor = this.secondaryColor.clone();
+            this.selectedColor = this.secondaryColor.getValue().clone();
         } else {
-            this.selectedColor = this.primaryColor.clone();
+            this.selectedColor = this.primaryColor.getValue().clone();
         }
     }
 
     swapColors(): void {
-        [this.primaryColor, this.secondaryColor] = [this.secondaryColor, this.primaryColor];
-        this.updateDrawingColor();
+        const tempColor = this.primaryColor.getValue();
+        this.primaryColor.next(this.secondaryColor.getValue());
+        this.secondaryColor.next(tempColor);
     }
 
     applyRecentColor(color: Color, isSecondaryColor: boolean): void {
         if (isSecondaryColor) {
-            this.secondaryColor.hex = color.hex;
+            this.secondaryColor.next(new Color(color.hex, this.secondaryColor.getValue().opacity));
         } else {
-            this.primaryColor.hex = color.hex;
+            this.primaryColor.next(new Color(color.hex, this.primaryColor.getValue().opacity));
         }
-        this.updateDrawingColor();
     }
 
-    updateDrawingColor(): void {
-        this.toolbarService.setColors(this.primaryColor, this.secondaryColor);
+    setPrimaryColor(newColor: Color): void {
+        this.primaryColor.next(newColor);
+    }
+
+    setSecondaryColor(newColor: Color): void {
+        this.secondaryColor.next(newColor);
     }
 
     private drawCursor(ctx: CanvasRenderingContext2D, position: Vec2): void {
@@ -132,10 +134,5 @@ export class ColorPickerService extends Tool {
             }
             this.recentColors.unshift(color);
         }
-    }
-
-    // not used
-    resetContext(): void {
-        throw new Error('Method not implemented.');
     }
 }

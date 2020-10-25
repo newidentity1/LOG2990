@@ -42,7 +42,7 @@ export class PolygonService extends ShapeTool {
 
     onMouseUp(): ShapeTool | undefined {
         if (this.mouseDown) {
-            this.computeDimensions(this.currentMousePosition);
+            this.computeDimensions();
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.setThickness(this.toolProperties.thickness);
             this.draw(this.drawingService.baseCtx);
@@ -55,8 +55,9 @@ export class PolygonService extends ShapeTool {
     onMouseMove(event: MouseEvent): void {
         if (this.mouseDown) {
             this.currentMousePosition = this.getPositionFromMouse(event);
-            this.ellipseService.mouseDownCoord = this.currentMousePosition;
-            this.computeDimensions(this.currentMousePosition);
+            this.ellipseService.pathStart = this.pathStart;
+            this.ellipseService.currentMousePosition = this.currentMousePosition;
+            this.computeDimensions();
             this.ellipseService.width = this.width;
             this.ellipseService.height = this.height;
             this.ellipseService.setTypeDrawing(DrawingType.Stroke);
@@ -68,6 +69,7 @@ export class PolygonService extends ShapeTool {
             this.setThickness(this.toolProperties.thickness);
             this.draw(previewCtx);
             this.ellipseService.dashedSegments = 0;
+            this.drawingService.previewCtx.setLineDash([DASHED_SEGMENTS]);
             this.ellipseService.draw(previewCtx);
         }
     }
@@ -115,22 +117,10 @@ export class PolygonService extends ShapeTool {
                 ctx.stroke();
         }
         ctx.closePath();
-
-        if (ctx === this.drawingService.previewCtx) {
-            ctx.setLineDash([DASHED_SEGMENTS]);
-        }
     }
 
     signOf(num: number): number {
         return Math.abs(num) / num;
-    }
-
-    computeDimensions(mousePosition: Vec2): void {
-        this.width = mousePosition.x - this.pathStart.x;
-        this.height = mousePosition.y - this.pathStart.y;
-        const min = Math.min(Math.abs(this.width), Math.abs(this.height));
-        this.width = min * this.signOf(this.width);
-        this.height = min * this.signOf(this.height);
     }
 
     setNumberOfSides(value: number | null): void {
