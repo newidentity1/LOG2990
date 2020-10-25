@@ -23,9 +23,6 @@ export class UploadComponent implements OnInit {
         link.download = 'image.png';
         link.href = myImage;
         link.click();
-        console.log(this.filePath);
-        // tslint:disable-next-line: prettier
-        this.filePath = 'C:\Users\Noe Berguin\Downloads'; 
     }
 
     ngOnInit(): void {
