@@ -94,53 +94,59 @@ export class SelectionService extends ShapeTool {
         if (event.key === 'Escape' && (this.mouseDown || this.isAreaSelected)) {
             this.resetSelection();
         }
-        if (this.mouseDown) {
-            super.onKeyDown(event);
-        } else if (this.isAreaSelected) {
-            if (!this.canMoveSelection) return;
+        super.onKeyDown(event);
 
-            this.canMoveSelection = false;
-            this.pressedKeys[SelectionArrowIndex.Left] =
-                event.key === 'ArrowLeft' ? CONSTANTS.SELECTION_MOVE_STEP : this.pressedKeys[SelectionArrowIndex.Left];
-            this.pressedKeys[SelectionArrowIndex.Up] =
-                event.key === 'ArrowUp' ? CONSTANTS.SELECTION_MOVE_STEP : this.pressedKeys[SelectionArrowIndex.Up];
-            this.pressedKeys[SelectionArrowIndex.Right] =
-                event.key === 'ArrowRight' ? -CONSTANTS.SELECTION_MOVE_STEP : this.pressedKeys[SelectionArrowIndex.Right];
-            this.pressedKeys[SelectionArrowIndex.Down] =
-                event.key === 'ArrowDown' ? -CONSTANTS.SELECTION_MOVE_STEP : this.pressedKeys[SelectionArrowIndex.Down];
-
-            const moveX = this.pressedKeys[SelectionArrowIndex.Left] + this.pressedKeys[SelectionArrowIndex.Right];
-            const moveY = this.pressedKeys[SelectionArrowIndex.Up] + this.pressedKeys[SelectionArrowIndex.Down];
-            this.moveSelection(moveX, moveY);
-
-            if (!this.canMoveSelectionContiniously) {
-                this.canMoveSelectionContiniously = true;
-                setTimeout(() => {
-                    this.canMoveSelection = true;
-                }, CONSTANTS.SELECTION_MOVE_START_DELAY);
-            } else {
-                setTimeout(() => {
-                    this.canMoveSelection = true;
-                }, CONSTANTS.SELECTION_MOVE_DELAY);
-            }
+        if (this.isAreaSelected) {
+            this.checkArrowKeysPressed(event);
         }
     }
 
     onKeyUp(event: KeyboardEvent): void {
-        if (this.mouseDown) {
-            super.onKeyUp(event);
-        } else if (this.isAreaSelected) {
-            this.pressedKeys[SelectionArrowIndex.Left] = event.key === 'ArrowLeft' ? 0 : this.pressedKeys[SelectionArrowIndex.Left];
-            this.pressedKeys[SelectionArrowIndex.Up] = event.key === 'ArrowUp' ? 0 : this.pressedKeys[SelectionArrowIndex.Up];
-            this.pressedKeys[SelectionArrowIndex.Right] = event.key === 'ArrowRight' ? 0 : this.pressedKeys[SelectionArrowIndex.Right];
-            this.pressedKeys[SelectionArrowIndex.Down] = event.key === 'ArrowDown' ? 0 : this.pressedKeys[SelectionArrowIndex.Down];
-
-            this.canMoveSelectionContiniously = this.pressedKeys.some((key) => {
-                return key !== 0;
-            });
-
-            this.canMoveSelection = this.canMoveSelectionContiniously ? this.canMoveSelection : true;
+        super.onKeyUp(event);
+        if (this.isAreaSelected) {
+            this.checkArrowKeysReleased(event);
         }
+    }
+
+    private checkArrowKeysPressed(event: KeyboardEvent): void {
+        if (!this.canMoveSelection) return;
+
+        this.canMoveSelection = false;
+        this.pressedKeys[SelectionArrowIndex.Left] =
+            event.key === 'ArrowLeft' ? CONSTANTS.SELECTION_MOVE_STEP : this.pressedKeys[SelectionArrowIndex.Left];
+        this.pressedKeys[SelectionArrowIndex.Up] = event.key === 'ArrowUp' ? CONSTANTS.SELECTION_MOVE_STEP : this.pressedKeys[SelectionArrowIndex.Up];
+        this.pressedKeys[SelectionArrowIndex.Right] =
+            event.key === 'ArrowRight' ? -CONSTANTS.SELECTION_MOVE_STEP : this.pressedKeys[SelectionArrowIndex.Right];
+        this.pressedKeys[SelectionArrowIndex.Down] =
+            event.key === 'ArrowDown' ? -CONSTANTS.SELECTION_MOVE_STEP : this.pressedKeys[SelectionArrowIndex.Down];
+
+        const moveX = this.pressedKeys[SelectionArrowIndex.Left] + this.pressedKeys[SelectionArrowIndex.Right];
+        const moveY = this.pressedKeys[SelectionArrowIndex.Up] + this.pressedKeys[SelectionArrowIndex.Down];
+        this.moveSelection(moveX, moveY);
+
+        if (!this.canMoveSelectionContiniously) {
+            this.canMoveSelectionContiniously = true;
+            setTimeout(() => {
+                this.canMoveSelection = true;
+            }, CONSTANTS.SELECTION_MOVE_START_DELAY);
+        } else {
+            setTimeout(() => {
+                this.canMoveSelection = true;
+            }, CONSTANTS.SELECTION_MOVE_DELAY);
+        }
+    }
+
+    private checkArrowKeysReleased(event: KeyboardEvent): void {
+        this.pressedKeys[SelectionArrowIndex.Left] = event.key === 'ArrowLeft' ? 0 : this.pressedKeys[SelectionArrowIndex.Left];
+        this.pressedKeys[SelectionArrowIndex.Up] = event.key === 'ArrowUp' ? 0 : this.pressedKeys[SelectionArrowIndex.Up];
+        this.pressedKeys[SelectionArrowIndex.Right] = event.key === 'ArrowRight' ? 0 : this.pressedKeys[SelectionArrowIndex.Right];
+        this.pressedKeys[SelectionArrowIndex.Down] = event.key === 'ArrowDown' ? 0 : this.pressedKeys[SelectionArrowIndex.Down];
+
+        this.canMoveSelectionContiniously = this.pressedKeys.some((key) => {
+            return key !== 0;
+        });
+
+        this.canMoveSelection = this.canMoveSelectionContiniously ? this.canMoveSelection : true;
     }
 
     selectAll(): void {
@@ -162,8 +168,7 @@ export class SelectionService extends ShapeTool {
             const canvasLeftOffset = +selectionCtx.canvas.offsetLeft;
 
             this.drawingService.clearCanvas(selectionCtx);
-            selectionCtx.putImageData(this.imgData, 0, 0);
-            this.drawingService.baseCtx.drawImage(selectionCtx.canvas, canvasLeftOffset, canvasTopOffset);
+            this.drawingService.baseCtx.putImageData(this.imgData, canvasLeftOffset, canvasTopOffset);
 
             selectionCtx.canvas.width = this.drawingService.canvas.width;
             selectionCtx.canvas.height = this.drawingService.canvas.height;
@@ -175,21 +180,17 @@ export class SelectionService extends ShapeTool {
 
     drawShape(): void {
         this.computePositiveRectangleValues();
-
-        const ctx = this.drawingService.previewCtx;
-        ctx.save();
-
-        this.setThickness(CONSTANTS.SELECTION_BOX_THICKNESS);
-
-        this.drawRectangleSelection(this.positiveStartingPos, this.positiveWidth, this.positiveHeight);
-        this.drawEllipseSelection(this.positiveStartingPos, this.positiveWidth, this.positiveHeight);
-
-        ctx.restore();
+        this.drawSelectionBox(this.positiveStartingPos, this.positiveWidth, this.positiveHeight);
     }
 
-    private drawRectangleSelection(position: Vec2, width: number, height: number): void {
+    private drawSelectionBox(position: Vec2, width: number, height: number): void {
+        this.setThickness(CONSTANTS.SELECTION_BOX_THICKNESS);
         const ctx = this.drawingService.previewCtx;
         ctx.beginPath();
+        if (this.currentType === SelectionType.EllipseSelection) {
+            const radius: Vec2 = { x: width / 2, y: height / 2 };
+            ctx.ellipse(position.x + radius.x, position.y + radius.y, radius.x, radius.y, 0, 0, 2 * Math.PI);
+        }
         ctx.rect(position.x, position.y, width, height);
         ctx.setLineDash([]);
         ctx.strokeStyle = 'white';
@@ -197,21 +198,6 @@ export class SelectionService extends ShapeTool {
         ctx.setLineDash([CONSTANTS.DASHED_SEGMENTS]);
         ctx.strokeStyle = 'black';
         ctx.stroke();
-    }
-
-    private drawEllipseSelection(position: Vec2, width: number, height: number): void {
-        if (this.currentType === SelectionType.EllipseSelection) {
-            const ctx = this.drawingService.previewCtx;
-            const radius: Vec2 = { x: width / 2, y: height / 2 };
-            ctx.beginPath();
-            ctx.ellipse(position.x + radius.x, position.y + radius.y, radius.x, radius.y, 0, 0, 2 * Math.PI);
-            ctx.setLineDash([]);
-            ctx.strokeStyle = 'white';
-            ctx.stroke();
-            ctx.setLineDash([CONSTANTS.DASHED_SEGMENTS]);
-            ctx.strokeStyle = 'black';
-            ctx.stroke();
-        }
     }
 
     private drawSelectedArea(): void {
@@ -223,32 +209,26 @@ export class SelectionService extends ShapeTool {
         selectionCtx.canvas.width = this.positiveWidth;
         selectionCtx.canvas.height = this.positiveHeight;
 
-        this.drawingService.previewCtx.drawImage(
-            this.drawingService.canvas,
+        this.imgData = this.drawingService.baseCtx.getImageData(
             this.positiveStartingPos.x,
             this.positiveStartingPos.y,
             this.positiveWidth,
             this.positiveHeight,
-            0,
-            0,
+        );
+        const areaToClear = this.drawingService.baseCtx.getImageData(
+            this.positiveStartingPos.x,
+            this.positiveStartingPos.y,
             this.positiveWidth,
             this.positiveHeight,
         );
-
-        this.imgData = this.drawingService.previewCtx.getImageData(0, 0, this.positiveWidth, this.positiveHeight);
-        const areaToClear = this.drawingService.previewCtx.getImageData(0, 0, this.positiveWidth, this.positiveHeight);
 
         let y = 0;
         for (let i = 0; i < this.imgData.data.length; i += CONSTANTS.IMAGE_DATA_OPACITY_INDEX + 1) {
             if (this.currentType === SelectionType.EllipseSelection) {
                 const x = (i / (CONSTANTS.IMAGE_DATA_OPACITY_INDEX + 1)) % this.imgData.width;
                 if (x === 0) y++;
-                const isPointInEllipse =
-                    Math.pow(x - this.positiveWidth / 2, 2) / Math.pow(this.positiveWidth / 2, 2) +
-                        Math.pow(y - this.positiveHeight / 2, 2) / Math.pow(this.positiveHeight / 2, 2) <=
-                    1;
 
-                if (!isPointInEllipse) {
+                if (!this.isPositionInEllipse({ x, y })) {
                     this.imgData.data[i] = 0;
                     this.imgData.data[i + 1] = 0;
                     this.imgData.data[i + 2] = 0;
@@ -269,7 +249,7 @@ export class SelectionService extends ShapeTool {
             }
         }
 
-        this.drawingService.previewCtx.putImageData(this.imgData, 0, 0, 0, 0, this.positiveWidth, this.positiveHeight);
+        selectionCtx.putImageData(this.imgData, 0, 0, 0, 0, this.positiveWidth, this.positiveHeight);
         this.drawingService.baseCtx.putImageData(
             areaToClear,
             this.positiveStartingPos.x,
@@ -279,10 +259,16 @@ export class SelectionService extends ShapeTool {
             this.positiveWidth,
             this.positiveHeight,
         );
-        this.setThickness(CONSTANTS.SELECTION_BOX_THICKNESS);
-        this.drawEllipseSelection({ x: 0, y: 0 }, this.positiveWidth, this.positiveHeight);
+        this.drawSelectionBox({ x: 0, y: 0 }, this.positiveWidth, this.positiveHeight);
         selectionCtx.canvas.style.cursor = 'move';
-        this.drawingService.previewCtx.fillStyle = 'green';
+    }
+
+    private isPositionInEllipse(position: Vec2): boolean {
+        return (
+            Math.pow(position.x - this.positiveWidth / 2, 2) / Math.pow(this.positiveWidth / 2, 2) +
+                Math.pow(position.y - this.positiveHeight / 2, 2) / Math.pow(this.positiveHeight / 2, 2) <=
+            1
+        );
     }
 
     private computePositiveRectangleValues(): void {
@@ -297,7 +283,6 @@ export class SelectionService extends ShapeTool {
         const elementOffsetTop = this.drawingService.previewCtx.canvas.offsetTop;
 
         const newOffsetLeft = elementOffsetLeft - moveX;
-
         const newOffsetTop = elementOffsetTop - moveY;
 
         this.drawingService.previewCtx.canvas.style.left = newOffsetLeft + 'px';
@@ -313,7 +298,7 @@ export class SelectionService extends ShapeTool {
             this.drawingService.canvas.width - newOffsetLeft,
             this.drawingService.canvas.height - newOffsetTop,
         );
-        this.drawEllipseSelection({ x: 0, y: 0 }, this.positiveWidth, this.positiveHeight);
+        this.drawSelectionBox({ x: 0, y: 0 }, this.positiveWidth, this.positiveHeight);
     }
 
     setColors(): void {
