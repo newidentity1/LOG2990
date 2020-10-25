@@ -4,7 +4,7 @@ import { Drawing } from '@common/communication/drawing';
 import { Observable } from 'rxjs';
 
 @Component({
-    selector: 'app-open-gallery',
+    selector: 'app-gallery',
     templateUrl: './gallery.component.html',
     styleUrls: ['./gallery.component.scss'],
 })
