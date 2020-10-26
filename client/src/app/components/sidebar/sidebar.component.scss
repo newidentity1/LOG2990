@@ -1,5 +1,9 @@
 @import '../../style/color.scss';
 
+mat-sidenav-container {
+    z-index: 100;
+}
+
 #tool-container {
     height: auto;
     width: 80px;
