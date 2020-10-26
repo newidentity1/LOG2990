@@ -1,19 +1,29 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ExportDrawingComponent } from './export-drawing.component';
 
-import { ExportComponent } from './export-drawingcomponent';
+describe('ExportDrawingComponent', () => {
+    let component: ExportDrawingComponent;
+    let fixture: ComponentFixture<ExportDrawingComponent>;
 
-describe('ExportComponent', () => {
-    let component: ExportComponent;
-    let fixture: ComponentFixture<ExportComponent>;
+    const mockDialog = {
+        close: jasmine.createSpy('close'),
+    };
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [ExportComponent],
+            declarations: [ExportDrawingComponent],
+            providers: [
+                { provide: MatDialog, useValue: mockDialog },
+                { provide: MAT_DIALOG_DATA, useValue: [] },
+            ],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
     }));
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(ExportComponent);
+        fixture = TestBed.createComponent(ExportDrawingComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });
