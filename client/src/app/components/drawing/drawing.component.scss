@@ -10,7 +10,7 @@ canvas {
 }
 
 #canvas {
-    z-index: 1;
+    z-index: 0;
 }
 
 #canvas-container {
@@ -19,7 +19,7 @@ canvas {
 }
 
 #previewLayer {
-    z-index: 2;
+    z-index: 1;
 }
 
 .showOutline {
@@ -33,15 +33,14 @@ canvas {
 .resizable {
     position: absolute;
     margin: $margin-canvas;
-    box-sizing: border-box;
-    border: 1px solid $primaryColor;
 }
 
-.resizable .resizer {
+.resizer {
     width: 5px;
     height: 5px;
     background: $primaryColor;
     position: absolute;
+    border: 1px solid white;
     z-index: 2;
 }
 
@@ -72,6 +71,7 @@ canvas {
 .resizable .resizer.bottom-center {
     cursor: s-resize;
 }
+
 .resizable .resizer.bottom-right {
     cursor: nwse-resize;
 }
