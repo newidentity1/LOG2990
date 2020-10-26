@@ -1,3 +1,4 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { EYEDROPPER_PREVIEW_CANVAS_HEIGHT, EYEDROPPER_PREVIEW_CANVAS_WIDTH } from '@app/constants/constants';
 import { EyedropperService } from '@app/services/tools/eyedropper/eyedropper.service';
@@ -11,6 +12,7 @@ describe('EyedropperComponent', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [EyedropperComponent],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
         eyedropperServiceSpy = TestBed.inject(EyedropperService) as jasmine.SpyObj<EyedropperService>;
     }));

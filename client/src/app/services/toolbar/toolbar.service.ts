@@ -163,7 +163,6 @@ export class ToolbarService {
 
     triggerSelectAll(): void {
         this.currentTool = this.selectionService;
-        this.applyCurrentTool();
         this.selectionService.selectAll();
     }
 

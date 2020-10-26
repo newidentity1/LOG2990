@@ -1,5 +1,5 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { UndoRedoComponent } from './undo-redo.component';
 
 describe('UndoRedoComponent', () => {
@@ -9,6 +9,7 @@ describe('UndoRedoComponent', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [UndoRedoComponent],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
     }));
 
