@@ -8,142 +8,142 @@
 // import { SelectionService } from './selection.service';
 
 // describe('SelectionService', () => {
-//     // let service: SelectionService;
-//     // let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
-//     // let rectangleServiceSpy: jasmine.SpyObj<RectangleService>;
-//     // let ellipseServiceSpy: jasmine.SpyObj<EllipseService>;
-//     // // tslint:disable:no-any / reason: spying on function
-//     // let drawPreviewSpy: jasmine.Spy<any>;
-//     // let mouseEvent: MouseEvent;
+// let service: SelectionService;
+// let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
+// let rectangleServiceSpy: jasmine.SpyObj<RectangleService>;
+// let ellipseServiceSpy: jasmine.SpyObj<EllipseService>;
+// // tslint:disable:no-any / reason: spying on function
+// let drawPreviewSpy: jasmine.Spy<any>;
+// let mouseEvent: MouseEvent;
 
-//     // beforeEach(() => {
-//     //     drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setThickness', 'setStrokeColor']);
-//     //     rectangleServiceSpy = jasmine.createSpyObj('RectangleService', ['onMouseDown', 'onMouseMove', 'onKeyUp', 'onKeyDown', 'setTypeDrawing']);
-//     //     ellipseServiceSpy = jasmine.createSpyObj('EllipseService', ['onMouseDown', 'onMouseMove', 'onKeyUp', 'onKeyDown', 'setTypeDrawing']);
+// beforeEach(() => {
+//     drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setThickness', 'setStrokeColor']);
+//     rectangleServiceSpy = jasmine.createSpyObj('RectangleService', ['onMouseDown', 'onMouseMove', 'onKeyUp', 'onKeyDown', 'setTypeDrawing']);
+//     ellipseServiceSpy = jasmine.createSpyObj('EllipseService', ['onMouseDown', 'onMouseMove', 'onKeyUp', 'onKeyDown', 'setTypeDrawing']);
 
-//     //     TestBed.configureTestingModule({
-//     //         providers: [
-//     //             { provide: DrawingService, useValue: drawingServiceSpy },
-//     //             { provide: RectangleService, useValue: rectangleServiceSpy },
-//     //             { provide: EllipseService, useValue: ellipseServiceSpy },
-//     //         ],
-//     //     });
-//     //     service = TestBed.inject(SelectionService);
-//     //     // tslint:disable:no-string-literal / reason: accessing private member
-//     //     service['positiveStartingPos'] = { x: 0, y: 0 };
-//     //     service['currentMousePosition'] = { x: 0, y: 0 };
+//     TestBed.configureTestingModule({
+//         providers: [
+//             { provide: DrawingService, useValue: drawingServiceSpy },
+//             { provide: RectangleService, useValue: rectangleServiceSpy },
+//             { provide: EllipseService, useValue: ellipseServiceSpy },
+//         ],
+//     });
+//     service = TestBed.inject(SelectionService);
+//     // tslint:disable:no-string-literal / reason: accessing private member
+//     service['positiveStartingPos'] = { x: 0, y: 0 };
+//     service['currentMousePosition'] = { x: 0, y: 0 };
 
-//     //     drawingServiceSpy = TestBed.inject(DrawingService) as jasmine.SpyObj<DrawingService>;
-//     //     rectangleServiceSpy = TestBed.inject(RectangleService) as jasmine.SpyObj<RectangleService>;
-//     //     ellipseServiceSpy = TestBed.inject(EllipseService) as jasmine.SpyObj<EllipseService>;
+//     drawingServiceSpy = TestBed.inject(DrawingService) as jasmine.SpyObj<DrawingService>;
+//     rectangleServiceSpy = TestBed.inject(RectangleService) as jasmine.SpyObj<RectangleService>;
+//     ellipseServiceSpy = TestBed.inject(EllipseService) as jasmine.SpyObj<EllipseService>;
 
-//     //     drawingServiceSpy.canvas = canvasTestHelper.canvas;
-//     //     drawingServiceSpy.baseCtx = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
-//     //     drawingServiceSpy.previewCtx = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
+//     drawingServiceSpy.canvas = canvasTestHelper.canvas;
+//     drawingServiceSpy.baseCtx = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
+//     drawingServiceSpy.previewCtx = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
 
-//     //     drawPreviewSpy = spyOn<any>(service, 'drawPreview').and.callThrough();
+//     drawPreviewSpy = spyOn<any>(service, 'drawPreview').and.callThrough();
 
-//     //     mouseEvent = {
-//     //         offsetX: 25,
-//     //         offsetY: 25,
-//     //         button: MouseButton.Left,
-//     //     } as MouseEvent;
-//     // });
+//     mouseEvent = {
+//         offsetX: 25,
+//         offsetY: 25,
+//         button: MouseButton.Left,
+//     } as MouseEvent;
+// });
 
-//     // it('should be created', () => {
-//     //     expect(service).toBeTruthy();
-//     // });
+// it('should be created', () => {
+//     expect(service).toBeTruthy();
+// });
 
-//     // it('setSelectionType should change selection type and shape service', () => {
-//     //     service.currentType = SelectionType.EllipseSelection;
-//     //     service.setSelectionType(SelectionType.RectangleSelection);
-//     //     expect(service.currentType).toEqual(SelectionType.RectangleSelection);
-//     // });
+// it('setSelectionType should change selection type and shape service', () => {
+//     service.currentType = SelectionType.EllipseSelection;
+//     service.setSelectionType(SelectionType.RectangleSelection);
+//     expect(service.currentType).toEqual(SelectionType.RectangleSelection);
+// });
 
-//     // it('setSelectionType should change selection type and shape service', () => {
-//     //     service.currentType = SelectionType.RectangleSelection;
-//     //     service.setSelectionType(SelectionType.EllipseSelection);
-//     //     expect(service.currentType).toEqual(SelectionType.EllipseSelection);
-//     // });
+// it('setSelectionType should change selection type and shape service', () => {
+//     service.currentType = SelectionType.RectangleSelection;
+//     service.setSelectionType(SelectionType.EllipseSelection);
+//     expect(service.currentType).toEqual(SelectionType.EllipseSelection);
+// });
 
-//     // it('onMouseDown should set mouseDown to true if left mouse button was clicked', () => {
-//     //     service.mouseDown = false;
-//     //     service.onMouseDown(mouseEvent);
-//     //     expect(service.mouseDown).toBeTrue();
-//     // });
+// it('onMouseDown should set mouseDown to true if left mouse button was clicked', () => {
+//     service.mouseDown = false;
+//     service.onMouseDown(mouseEvent);
+//     expect(service.mouseDown).toBeTrue();
+// });
 
-//     // it('onMouseDown should not set mouseDown to true if right mouse button was clicked', () => {
-//     //     const rightMouseEvent = {
-//     //         offsetX: 25,
-//     //         offsetY: 25,
-//     //         button: MouseButton.Right,
-//     //     } as MouseEvent;
-//     //     service.mouseDown = false;
-//     //     service.onMouseDown(rightMouseEvent);
-//     //     expect(service.mouseDown).toBeFalse();
-//     // });
+// it('onMouseDown should not set mouseDown to true if right mouse button was clicked', () => {
+//     const rightMouseEvent = {
+//         offsetX: 25,
+//         offsetY: 25,
+//         button: MouseButton.Right,
+//     } as MouseEvent;
+//     service.mouseDown = false;
+//     service.onMouseDown(rightMouseEvent);
+//     expect(service.mouseDown).toBeFalse();
+// });
 
-//     // it('onMouseDown should set isMovingSelection to true if left mouse button was clicked and an area is selected', () => {
-//     //     service.mouseDown = false;
-//     //     service.isAreaSelected = true;
-//     //     service['isMovingSelection'] = false;
-//     //     service.onMouseDown(mouseEvent);
-//     //     expect(service.mouseDown).toBeTrue();
-//     //     expect(service['isMovingSelection']).toBeTrue();
-//     // });
+// it('onMouseDown should set isMovingSelection to true if left mouse button was clicked and an area is selected', () => {
+//     service.mouseDown = false;
+//     service.isAreaSelected = true;
+//     service['isMovingSelection'] = false;
+//     service.onMouseDown(mouseEvent);
+//     expect(service.mouseDown).toBeTrue();
+//     expect(service['isMovingSelection']).toBeTrue();
+// });
 
-//     // it('onMouseMove should not call drawPreview if mouse was not already down', () => {
-//     //     service.mouseDown = false;
-//     //     service.onMouseMove(mouseEvent);
+// it('onMouseMove should not call drawPreview if mouse was not already down', () => {
+//     service.mouseDown = false;
+//     service.onMouseMove(mouseEvent);
 
-//     //     expect(drawPreviewSpy).not.toHaveBeenCalled();
-//     // });
+//     expect(drawPreviewSpy).not.toHaveBeenCalled();
+// });
 
-//     // it('onMouseMove should call drawPreview if mouse was already down and an area is not selected', () => {
-//     //     service.mouseDown = true;
-//     //     service.isAreaSelected = false;
-//     //     service.onMouseMove(mouseEvent);
+// it('onMouseMove should call drawPreview if mouse was already down and an area is not selected', () => {
+//     service.mouseDown = true;
+//     service.isAreaSelected = false;
+//     service.onMouseMove(mouseEvent);
 
-//     //     expect(drawPreviewSpy).toHaveBeenCalled();
-//     // });
+//     expect(drawPreviewSpy).toHaveBeenCalled();
+// });
 
-//     // it('onMouseUp should set isMovingSelection to false if isMovingSelection and mouseDown were true', () => {
-//     //     service.mouseDown = true;
-//     //     service['isMovingSelection'] = true;
-//     //     service.onMouseUp(mouseEvent);
+// it('onMouseUp should set isMovingSelection to false if isMovingSelection and mouseDown were true', () => {
+//     service.mouseDown = true;
+//     service['isMovingSelection'] = true;
+//     service.onMouseUp(mouseEvent);
 
-//     //     expect(service['isMovingSelection']).toBeFalse();
-//     //     expect(service.mouseDown).toBeFalse();
-//     // });
+//     expect(service['isMovingSelection']).toBeFalse();
+//     expect(service.mouseDown).toBeFalse();
+// });
 
-//     // it('onMouseUp should call drawSelectedArea if mouse was down and is not moving a selection and mouse was moved', () => {
-//     //     const drawSelectedAreaSpy = spyOn<any>(service, 'drawSelectedArea').and.callThrough();
-//     //     service.mouseDown = true;
-//     //     service['isMovingSelection'] = false;
-//     //     service.mouseDownCoord = { x: 0, y: 0 };
-//     //     service.onMouseUp(mouseEvent);
+// it('onMouseUp should call drawSelectedArea if mouse was down and is not moving a selection and mouse was moved', () => {
+//     const drawSelectedAreaSpy = spyOn<any>(service, 'drawSelectedArea').and.callThrough();
+//     service.mouseDown = true;
+//     service['isMovingSelection'] = false;
+//     service.mouseDownCoord = { x: 0, y: 0 };
+//     service.onMouseUp(mouseEvent);
 
-//     //     expect(drawSelectedAreaSpy).toHaveBeenCalled();
-//     // });
+//     expect(drawSelectedAreaSpy).toHaveBeenCalled();
+// });
 
-//     // it('onMouseUp should not call drawSelectedArea if mouse was down and is not moving a selection and mouse was not moved', () => {
-//     //     const drawSelectedAreaSpy = spyOn<any>(service, 'drawSelectedArea').and.callThrough();
-//     //     service.mouseDown = true;
-//     //     service['isMovingSelection'] = false;
-//     //     service.mouseDownCoord = { x: mouseEvent.offsetX, y: mouseEvent.offsetY };
-//     //     service.onMouseUp(mouseEvent);
+// it('onMouseUp should not call drawSelectedArea if mouse was down and is not moving a selection and mouse was not moved', () => {
+//     const drawSelectedAreaSpy = spyOn<any>(service, 'drawSelectedArea').and.callThrough();
+//     service.mouseDown = true;
+//     service['isMovingSelection'] = false;
+//     service.mouseDownCoord = { x: mouseEvent.offsetX, y: mouseEvent.offsetY };
+//     service.onMouseUp(mouseEvent);
 
-//     //     expect(drawSelectedAreaSpy).not.toHaveBeenCalled();
-//     // });
+//     expect(drawSelectedAreaSpy).not.toHaveBeenCalled();
+// });
 
-//     // it('onMouseUp should not call drawSelectedArea and should not set isMovingSelection to false if mouse was not down', () => {
-//     //     const drawSelectedAreaSpy = spyOn<any>(service, 'drawSelectedArea').and.callThrough();
-//     //     service.mouseDown = false;
-//     //     service['isMovingSelection'] = true;
-//     //     service.onMouseUp(mouseEvent);
-//     //     expect(drawSelectedAreaSpy).not.toHaveBeenCalled();
-//     //     expect(service['isMovingSelection']).toBeTrue();
-//     // });
+// it('onMouseUp should not call drawSelectedArea and should not set isMovingSelection to false if mouse was not down', () => {
+//     const drawSelectedAreaSpy = spyOn<any>(service, 'drawSelectedArea').and.callThrough();
+//     service.mouseDown = false;
+//     service['isMovingSelection'] = true;
+//     service.onMouseUp(mouseEvent);
+//     expect(drawSelectedAreaSpy).not.toHaveBeenCalled();
+//     expect(service['isMovingSelection']).toBeTrue();
+// });
 
 //     it('resetSelection should be called if escape is pressed and mouse is down or an area is selected ', () => {
 //         service.isAreaSelected = true;
@@ -212,34 +212,34 @@
 //         expect(drawingServiceSpy.previewCtx.canvas.style.top).toEqual('20px');
 //     });
 
-//     // it('drawShape should call drawRectangleSelection and drawEllipseSelection', () => {
-//     //     const drawRectangleSelectionSpy = spyOn<any>(service, 'drawRectangleSelection').and.callThrough();
-//     //     const drawEllipseSelectionSpy = spyOn<any>(service, 'drawEllipseSelection').and.callThrough();
-//     //     service.draw();
-//     //     expect(drawRectangleSelectionSpy).toHaveBeenCalled();
-//     //     expect(drawEllipseSelectionSpy).toHaveBeenCalled();
-//     // });
+// it('drawShape should call drawRectangleSelection and drawEllipseSelection', () => {
+//     const drawRectangleSelectionSpy = spyOn<any>(service, 'drawRectangleSelection').and.callThrough();
+//     const drawEllipseSelectionSpy = spyOn<any>(service, 'drawEllipseSelection').and.callThrough();
+//     service.draw();
+//     expect(drawRectangleSelectionSpy).toHaveBeenCalled();
+//     expect(drawEllipseSelectionSpy).toHaveBeenCalled();
+// });
 
-//     // it('drawRectangleSelection should draw a rectangle', () => {
-//     //     const rectSpy = spyOn(drawingServiceSpy.previewCtx, 'rect').and.callThrough();
-//     //     service.currentType = SelectionType.RectangleSelection;
-//     //     service['drawRectangleSelection']({ x: 0, y: 0 }, 10, 10);
-//     //     expect(rectSpy).toHaveBeenCalled();
-//     // });
+// it('drawRectangleSelection should draw a rectangle', () => {
+//     const rectSpy = spyOn(drawingServiceSpy.previewCtx, 'rect').and.callThrough();
+//     service.currentType = SelectionType.RectangleSelection;
+//     service['drawRectangleSelection']({ x: 0, y: 0 }, 10, 10);
+//     expect(rectSpy).toHaveBeenCalled();
+// });
 
-//     // it('drawEllipseSelection should draw an ellipse if selection type is ellipse', () => {
-//     //     const ellipseSpy = spyOn(drawingServiceSpy.previewCtx, 'ellipse').and.callThrough();
-//     //     service.currentType = SelectionType.EllipseSelection;
-//     //     service['drawEllipseSelection']({ x: 0, y: 0 }, 10, 10);
-//     //     expect(ellipseSpy).toHaveBeenCalled();
-//     // });
+// it('drawEllipseSelection should draw an ellipse if selection type is ellipse', () => {
+//     const ellipseSpy = spyOn(drawingServiceSpy.previewCtx, 'ellipse').and.callThrough();
+//     service.currentType = SelectionType.EllipseSelection;
+//     service['drawEllipseSelection']({ x: 0, y: 0 }, 10, 10);
+//     expect(ellipseSpy).toHaveBeenCalled();
+// });
 
-//     // it('drawEllipseSelection should not draw an ellipse if selection type is not ellipse', () => {
-//     //     const ellipseSpy = spyOn(drawingServiceSpy.previewCtx, 'ellipse').and.callThrough();
-//     //     service.currentType = SelectionType.RectangleSelection;
-//     //     service['drawEllipseSelection']({ x: 0, y: 0 }, 10, 10);
-//     //     expect(ellipseSpy).not.toHaveBeenCalled();
-//     // });
+// it('drawEllipseSelection should not draw an ellipse if selection type is not ellipse', () => {
+//     const ellipseSpy = spyOn(drawingServiceSpy.previewCtx, 'ellipse').and.callThrough();
+//     service.currentType = SelectionType.RectangleSelection;
+//     service['drawEllipseSelection']({ x: 0, y: 0 }, 10, 10);
+//     expect(ellipseSpy).not.toHaveBeenCalled();
+// });
 
 //     it('drawSelectedArea should change preview canvas position and size if escape was not pressed', () => {
 //         service.isAreaSelected = false;
@@ -292,16 +292,16 @@
 //         expect(drawingServiceSpy.setStrokeColor).toHaveBeenCalledWith('black');
 //     });
 
-//     // it('resetContext should reset all the current changes that the tool made', () => {
-//     //     service.mouseDown = true;
-//     //     service.isAreaSelected = true;
-//     //     service['isMovingSelection'] = true;
-//     //     service['positiveStartingPos'] = { x: 1, y: 1 };
-//     //     service.resetContext();
-//     //     expect(service.mouseDown).toBeFalse();
-//     //     expect(service.isAreaSelected).toBeFalse();
-//     //     expect(service['isMovingSelection']).toBeFalse();
-//     //     expect(service['positiveStartingPos']).toEqual({ x: 0, y: 0 });
-//     //     expect(drawingServiceSpy.clearCanvas).toHaveBeenCalledWith(drawingServiceSpy.previewCtx);
-//     // });
+// it('resetContext should reset all the current changes that the tool made', () => {
+//     service.mouseDown = true;
+//     service.isAreaSelected = true;
+//     service['isMovingSelection'] = true;
+//     service['positiveStartingPos'] = { x: 1, y: 1 };
+//     service.resetContext();
+//     expect(service.mouseDown).toBeFalse();
+//     expect(service.isAreaSelected).toBeFalse();
+//     expect(service['isMovingSelection']).toBeFalse();
+//     expect(service['positiveStartingPos']).toEqual({ x: 0, y: 0 });
+//     expect(drawingServiceSpy.clearCanvas).toHaveBeenCalledWith(drawingServiceSpy.previewCtx);
+// });
 // });
