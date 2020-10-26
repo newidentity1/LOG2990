@@ -1,0 +1,12 @@
+@import '../../../style/color.scss';
+
+.menu {
+    margin-top: 22px;
+    text-align: center;
+    background-color: transparent;
+    border-radius: 10px;
+    color: $textColor;
+    width: 240px;
+    height: 55px;
+    border: 1px solid white;
+}
