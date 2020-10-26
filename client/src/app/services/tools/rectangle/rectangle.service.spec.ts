@@ -38,7 +38,7 @@ describe('RectangleService', () => {
         const adjustThicknessSpy = spyOn(ShapeTool.prototype, 'adjustThickness');
         const drawBoxGuideSpy = spyOn(ShapeTool.prototype, 'drawBoxGuide');
 
-        service.drawShape(baseCtxStub);
+        service.draw(baseCtxStub);
         expect(adjustThicknessSpy).toHaveBeenCalled();
         expect(drawServiceSpy.setThickness).toHaveBeenCalled();
         expect(drawBoxGuideSpy).toHaveBeenCalled();
@@ -48,7 +48,7 @@ describe('RectangleService', () => {
         const properties = service.toolProperties as BasicShapeProperties;
         properties.currentType = DrawingType.Fill;
         const spyFill = spyOn(baseCtxStub, 'fill');
-        service.drawShape(baseCtxStub);
+        service.draw(baseCtxStub);
         expect(spyFill).toHaveBeenCalled();
     });
 
@@ -56,7 +56,7 @@ describe('RectangleService', () => {
         const properties = service.toolProperties as BasicShapeProperties;
         properties.currentType = DrawingType.Stroke;
         const spyStroke = spyOn(baseCtxStub, 'stroke');
-        service.drawShape(baseCtxStub);
+        service.draw(baseCtxStub);
         expect(spyStroke).toHaveBeenCalled();
     });
 
@@ -65,7 +65,7 @@ describe('RectangleService', () => {
         properties.currentType = DrawingType.FillAndStroke;
         const spyFill = spyOn(baseCtxStub, 'fill');
         const spyStroke = spyOn(baseCtxStub, 'stroke');
-        service.drawShape(baseCtxStub);
+        service.draw(baseCtxStub);
         expect(spyFill).toHaveBeenCalled();
         expect(spyStroke).toHaveBeenCalled();
     });

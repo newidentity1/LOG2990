@@ -29,6 +29,8 @@ import { DrawingComponent } from './components/drawing/drawing.component';
 import { EditorComponent } from './components/editor/editor.component';
 import { ExportDrawingDialogComponent } from './components/export-drawing/export-drawing-dialog/export-drawing-dialog.component';
 import { ExportDrawingComponent } from './components/export-drawing/export-drawing.component';
+import { GalleryComponent } from './components/gallery/gallery.component';
+import { OpenGalleryComponent } from './components/gallery/open-gallery/open-gallery.component';
 import { GuideComponent } from './components/guide/guide.component';
 import { OpenGuideComponent } from './components/guide/open-guide/open-guide.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
@@ -45,7 +47,7 @@ import { PolygonComponent } from './components/tools-options/polygon/polygon.com
 import { RectangleComponent } from './components/tools-options/rectangle/rectangle.component';
 import { SelectionComponent } from './components/tools-options/selection/selection.component';
 import { ThicknessSliderComponent } from './components/tools-options/thickness-slider/thickness-slider.component';
-
+import { UndoRedoComponent } from './components/undo-redo/undo-redo.component';
 @NgModule({
     declarations: [
         AppComponent,
@@ -70,11 +72,14 @@ import { ThicknessSliderComponent } from './components/tools-options/thickness-s
         NewDrawingDialogComponent,
         OpenGuideComponent,
         PolygonComponent,
+        UndoRedoComponent,
         EyedropperComponent,
         ExportDrawingComponent,
         ExportDrawingDialogComponent,
         SelectionComponent,
         BucketComponent,
+        OpenGalleryComponent,
+        GalleryComponent,
     ],
     imports: [
         BrowserModule,
