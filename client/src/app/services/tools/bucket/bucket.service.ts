@@ -67,8 +67,7 @@ export class BucketService extends Tool {
 
     floodFillRight(event: MouseEvent): void {
         const targetColor: Color = this.colorPickerService.selectedColor.clone();
-        // tslint:disable-next-line:no-magic-numbers
-        for (let i = 0; i < this.image.data.length; i += 4) {
+        for (let i = 0; i < this.image.data.length; i += CONSTANTS.OFFSET) {
             if (
                 this.image.data[i + 0] >= this.startPixelColor[0] - this.tolerance &&
                 this.image.data[i + 0] < this.startPixelColor[0] + this.tolerance &&

@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { AngularFireStorage } from '@angular/fire/storage';
+import { AngularFireStorage, AngularFireStorageReference, AngularFireUploadTask } from '@angular/fire/storage';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { Observable } from 'rxjs';
+// import { Drawing } from '@common/communication/drawing';
 
 @Component({
     selector: 'app-upload',
@@ -8,21 +10,45 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
     styleUrls: ['./upload.component.scss'],
 })
 export class UploadComponent implements OnInit {
-    filePath: String;
+    filePath: string = '';
+    ref: AngularFireStorageReference;
+    task: AngularFireUploadTask;
+    urlImage: string = '';
+    dataImage: string = '';
     constructor(public drawingService: DrawingService, private afStorage: AngularFireStorage) {}
+
     uploadImage(): void {
-        this.saveImage();
-        // console.log(this.filePath);
-        this.afStorage.upload('/images' + Math.random() + this.filePath, this.filePath);
+        // met l'image dans la fireBase
+        const id = 'test2';
+        const baseImage = new Image();
+        baseImage.src = this.drawingService.canvas.toDataURL('image/png');
+        const blob = new Blob([baseImage.src]);
+        console.log(blob);
+        this.ref = this.afStorage.ref(id);
+        this.task = this.ref.put(blob);
+        this.downloadImageURL(); // stock l'url de retour dans urlImage
+
+        /************************************************************************************************************************** */
+
+        // recupere l'image de la fireBase
+        const xhr = new XMLHttpRequest();
+        xhr.responseType = 'blob';
+        xhr.onload = () => {
+            const blob1 = xhr.response; // image sous forme de blob ici
+            console.log(blob1);
+        };
+        xhr.open('GET', this.urlImage);
+        xhr.send();
     }
 
-    saveImage(): void {
-        const myImage = this.drawingService.canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
-        // window.location.href = myImage;
-        const link = document.createElement('a');
-        link.download = 'image.png';
-        link.href = myImage;
-        link.click();
+    downloadImageURL(): void {
+        const obs: Observable<Blob[]> = this.ref.getDownloadURL();
+        obs.subscribe((data) => {
+            for (const letter of data) {
+                this.urlImage = this.urlImage + letter;
+            }
+        });
+        console.log(this.urlImage);
     }
 
     ngOnInit(): void {
