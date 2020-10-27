@@ -144,21 +144,27 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit, OnDest
     onResize(event: MouseEvent): void {
         if (this.isResizingWidth) {
             event.preventDefault();
-            const newWidth = event.clientX - this.baseCanvas.nativeElement.getBoundingClientRect().x;
-
+            let newWidth = event.clientX - this.baseCanvas.nativeElement.getBoundingClientRect().x;
             const widthLimit = this.drawingContainerWidth - CANVAS_MARGIN_LEFT;
-            if (newWidth >= CANVAS_MIN_WIDTH && newWidth <= widthLimit) {
-                this.previewCanvas.nativeElement.width = newWidth;
+
+            if (newWidth < CANVAS_MIN_WIDTH) {
+                newWidth = CANVAS_MIN_WIDTH;
+            } else if (newWidth >= widthLimit) {
+                newWidth = widthLimit;
             }
+            this.previewCanvas.nativeElement.width = newWidth;
         }
 
         if (this.isResizingHeight) {
             event.preventDefault();
-            const newHeight = event.clientY - this.baseCanvas.nativeElement.getBoundingClientRect().y;
+            let newHeight = event.clientY - this.baseCanvas.nativeElement.getBoundingClientRect().y;
             const heightLimit = this.drawingContainerHeight - CANVAS_MARGIN_TOP;
-            if (newHeight >= CANVAS_MIN_HEIGHT && newHeight <= heightLimit) {
-                this.previewCanvas.nativeElement.height = newHeight;
+            if (newHeight < CANVAS_MIN_HEIGHT) {
+                newHeight = CANVAS_MIN_HEIGHT;
+            } else if (newHeight >= heightLimit) {
+                newHeight = heightLimit;
             }
+            this.previewCanvas.nativeElement.height = newHeight;
         }
     }
 
