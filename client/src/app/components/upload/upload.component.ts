@@ -23,22 +23,35 @@ export class UploadComponent implements OnInit {
         const baseImage = new Image();
         baseImage.src = this.drawingService.canvas.toDataURL('image/png');
         const blob = new Blob([baseImage.src]);
+        console.log('blob envoye');
         console.log(blob);
         this.ref = this.afStorage.ref(id);
         this.task = this.ref.put(blob);
         this.downloadImageURL(); // stock l'url de retour dans urlImage
 
         /************************************************************************************************************************** */
-
-        // recupere l'image de la fireBase
+        const b: Blob[] = [];
+        // recupere le  blob de la fireBase
         const xhr = new XMLHttpRequest();
         xhr.responseType = 'blob';
         xhr.onload = () => {
             const blob1 = xhr.response; // image sous forme de blob ici
+            console.log('blob recuperer');
             console.log(blob1);
+            b.push(new Blob([blob1]));
         };
         xhr.open('GET', this.urlImage);
         xhr.send();
+        console.log(b[0]);
+
+        // transforme le blob en image
+        const image = new Image();
+        const reader = new window.FileReader();
+        reader.readAsDataURL(blob);
+        reader.onloadend = () => {
+            image.src = reader.result as string;
+        };
+        console.log(image);
     }
 
     downloadImageURL(): void {
@@ -48,7 +61,6 @@ export class UploadComponent implements OnInit {
                 this.urlImage = this.urlImage + letter;
             }
         });
-        console.log(this.urlImage);
     }
 
     ngOnInit(): void {
