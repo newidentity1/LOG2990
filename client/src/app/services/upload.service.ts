@@ -4,7 +4,6 @@ import { AngularFireStorage, AngularFireStorageReference, AngularFireUploadTask 
 import { DrawingService } from '@app/services/drawing/drawing.service';
 // import { Drawing } from '@common/communication/drawing';
 import { Observable } from 'rxjs';
-import { finalize } from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root',
@@ -12,7 +11,6 @@ import { finalize } from 'rxjs/operators';
 export class UploadService {
     ref: AngularFireStorageReference;
     task: AngularFireUploadTask;
-    urlImage: string = '';
     url: string = '';
     constructor(public drawingService: DrawingService, private afStorage: AngularFireStorage) {}
 
@@ -24,18 +22,12 @@ export class UploadService {
         this.drawingService.canvas.toBlob((blob) => {
             this.ref = this.afStorage.ref(id);
             this.task = this.ref.put(blob);
-            // tslint:disable-next-line:no-unused-expression
-            this.task
-                .snapshotChanges()
-                .pipe(
-                    finalize(() => {
-                        this.downloadCanvasURL();
-                        this.url = this.urlImage;
-                        console.log(this.urlImage);
-                        this.reset();
-                    }),
-                )
-                .subscribe();
+            this.task.snapshotChanges().subscribe((event) => {
+                // ajouter ici le telechargement des donnees si besoin
+                if (event?.state === 'success') {
+                    this.downloadCanvasURL();
+                }
+            });
         });
     }
 
@@ -43,13 +35,14 @@ export class UploadService {
         const obs: Observable<Blob[]> = this.ref.getDownloadURL();
         obs.subscribe((data) => {
             for (const letter of data) {
-                this.urlImage = this.urlImage + letter;
+                this.url = this.url + letter;
             }
+            console.log(this.url);
+            this.reset();
         });
     }
 
     reset(): void {
-        this.urlImage = '';
         this.url = '';
     }
 }
