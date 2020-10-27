@@ -1,7 +1,5 @@
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
-import { AngularFireModule } from '@angular/fire';
-import { AngularFireStorageModule } from '@angular/fire/storage';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { ErrorStateMatcher, ShowOnDirtyErrorStateMatcher } from '@angular/material/core';
@@ -45,7 +43,6 @@ import { PolygonComponent } from './components/tools-options/polygon/polygon.com
 import { RectangleComponent } from './components/tools-options/rectangle/rectangle.component';
 import { SelectionComponent } from './components/tools-options/selection/selection.component';
 import { ThicknessSliderComponent } from './components/tools-options/thickness-slider/thickness-slider.component';
-import { UploadComponent } from './components/upload/upload.component';
 
 @NgModule({
     declarations: [
@@ -76,20 +73,8 @@ import { UploadComponent } from './components/upload/upload.component';
         BucketComponent,
         OpenGalleryComponent,
         GalleryComponent,
-        UploadComponent,
     ],
     imports: [
-        AngularFireModule.initializeApp({
-            apiKey: 'AIzaSyA-FAAkdvUBcaXpf87ypqLsMdPNW_ElUWU',
-            authDomain: 'log2990-2011.firebaseapp.com',
-            databaseURL: 'https://log2990-2011.firebaseio.com',
-            projectId: 'log2990-2011',
-            storageBucket: 'log2990-2011.appspot.com',
-            messagingSenderId: '408322091008',
-            appId: '1:408322091008:web:920757c8a7e33e14d910e5',
-            measurementId: 'G-9X4P4RJB02',
-        }),
-        AngularFireStorageModule,
         BrowserModule,
         HttpClientModule,
         AppRoutingModule,
