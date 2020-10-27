@@ -222,26 +222,50 @@ describe('DrawingComponent', () => {
         expect(component.previewCanvas.nativeElement.height).toEqual(CANVAS_MIN_HEIGHT);
     });
 
-    it('onResize should not set the width of preview canvas if its not between CANVAS_MIN_WIDTH and width limit', () => {
+    it('onResize should set the width of preview canvas to CANVAS_MIN_WIDTH if its below CANVAS_MIN_WIDTH', () => {
         component.isResizingWidth = true;
         component.previewCanvas.nativeElement.width = 0;
         const limitX = component.baseCanvas.nativeElement.getBoundingClientRect().x;
         const event = jasmine.createSpyObj('MouseEvent', ['preventDefault']);
-        event.clientX = CANVAS_MIN_WIDTH + limitX + 1; // width = CANVAS_MIN_WIDTH + 1
-        component.drawingContainerWidth = CANVAS_MIN_WIDTH + CANVAS_MARGIN_LEFT; // width limit = CANVAS_MIN_WIDTH
-        const expectResult = component.previewCanvas.nativeElement.width;
+        event.clientX = CANVAS_MIN_WIDTH + limitX - 1; // width = CANVAS_MIN_WIDTH -1
+        component.drawingContainerWidth = 0;
+        const expectResult = CANVAS_MIN_WIDTH;
         component.onResize(event);
         expect(component.previewCanvas.nativeElement.width).toEqual(expectResult);
     });
 
-    it('onResize should not set the height of preview canvas if its not between CANVAS_MIN_HEIGHT and height limit', () => {
+    it('onResize should set the width of preview canvas to widthLimit if its above widthLimit', () => {
+        component.isResizingWidth = true;
+        component.previewCanvas.nativeElement.width = 0;
+        const limitX = component.baseCanvas.nativeElement.getBoundingClientRect().x;
+        const event = jasmine.createSpyObj('MouseEvent', ['preventDefault']);
+        event.clientX = CANVAS_MIN_WIDTH + limitX + 2; // width = CANVAS_MIN_WIDTH + 2
+        component.drawingContainerWidth = CANVAS_MIN_WIDTH + CANVAS_MARGIN_LEFT + 1; // width limit = CANVAS_MIN_WIDTH + 1
+        const expectResult = component.drawingContainerWidth - CANVAS_MARGIN_LEFT;
+        component.onResize(event);
+        expect(component.previewCanvas.nativeElement.width).toEqual(expectResult);
+    });
+
+    it('onResize should set the height of preview canvas to CANVAS_MIN_HEIGHT  if its below CANVAS_MIN_HEIGHT', () => {
         component.isResizingHeight = true;
         component.previewCanvas.nativeElement.height = 0;
         const limitY = component.baseCanvas.nativeElement.getBoundingClientRect().y;
         const event = jasmine.createSpyObj('MouseEvent', ['preventDefault']);
-        event.clientY = CANVAS_MIN_HEIGHT + limitY + 1; // height = CANVAS_MIN_HEIGHT + 1
-        component.drawingContainerHeight = CANVAS_MIN_HEIGHT + CANVAS_MARGIN_TOP; // height limit = CANVAS_MIN_HEIGHT
-        const expectResult = component.previewCanvas.nativeElement.height;
+        event.clientY = CANVAS_MIN_HEIGHT + limitY - 1; // height = CANVAS_MIN_HEIGHT -1
+        component.drawingContainerHeight = 0;
+        const expectResult = CANVAS_MIN_HEIGHT;
+        component.onResize(event);
+        expect(component.previewCanvas.nativeElement.height).toEqual(expectResult);
+    });
+
+    it('onResize should set the height of preview canvas to heightLimit  if its above heightLimit', () => {
+        component.isResizingHeight = true;
+        component.previewCanvas.nativeElement.height = 0;
+        const limitY = component.baseCanvas.nativeElement.getBoundingClientRect().y;
+        const event = jasmine.createSpyObj('MouseEvent', ['preventDefault']);
+        event.clientY = CANVAS_MIN_HEIGHT + limitY + 1; // height = CANVAS_MIN_HEIGHT + 2
+        component.drawingContainerHeight = CANVAS_MIN_HEIGHT + CANVAS_MARGIN_TOP + 1; // height limit = CANVAS_MIN_HEIGHT + 1
+        const expectResult = component.drawingContainerHeight - CANVAS_MARGIN_TOP;
         component.onResize(event);
         expect(component.previewCanvas.nativeElement.height).toEqual(expectResult);
     });
