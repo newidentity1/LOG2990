@@ -89,33 +89,21 @@ describe('BucketService', () => {
     });
 
     it('onMouseDown with a right click should call floodFillRight algorithme', () => {
-        service.onMouseDown(mouseEventclickLeft);
+        const floodFillRightSpy = spyOn<any>(service, 'floodFillRight').and.callThrough();
+        service.onMouseDown(mouseEventclickRight);
         service['image'].data[0] = 1;
         service['image'].data[1] = 1;
         service['image'].data[2] = 1;
         // tslint:disable-next-line:no-magic-numbers
         service['image'].data[3] = 1;
         service['drawingService'].baseCtx.putImageData(service['image'], 0, 0);
-        const floodFillRightSpy = spyOn<any>(service, 'floodFillRight').and.callThrough();
-        service.onMouseDown(mouseEventclickRight);
-        expect(floodFillRightSpy).toHaveBeenCalled();
-    });
-
-    it('onMouseDown with a right click should call floodFillRight algorithme', () => {
-        service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(2, 2, 1, 1).data;
-        service['generateMatrice']();
-        const p1: Pixel = { x: 0, y: 0, status: 0 };
-        service['colorPixel'](p1);
-        const floodFillRightSpy = spyOn<any>(service, 'floodFillRight').and.callThrough();
         service.onMouseDown(mouseEventclickRight);
         expect(floodFillRightSpy).toHaveBeenCalled();
     });
 
     it('setTolerance should change toleranceValue', () => {
-        // tslint:disable-next-line:no-magic-numbers
-        service.setTolerance(20);
-        // tslint:disable-next-line:no-magic-numbers
-        expect(service['tolerance']).toEqual(CONSTANTS.MAX_COLOR_VALUE * (20 / CONSTANTS.POURCENTAGE));
+        service.setTolerance(CONSTANTS.TEST_TOLERENCE);
+        expect(service['tolerance']).toEqual(CONSTANTS.MAX_COLOR_VALUE * (CONSTANTS.TEST_TOLERENCE / CONSTANTS.POURCENTAGE));
     });
 
     it('setTolerance should change toleranceValue', () => {
@@ -165,32 +153,35 @@ describe('BucketService', () => {
     });
 
     it('AddNeighboors should add the 4 neighboors pixels if status = 0', () => {
+        const checkPixelSpy = spyOn<any>(service, 'checkPixel').and.callThrough();
         service.onMouseDown(mouseEventclickRight);
-        // tslint:disable-next-line:no-magic-numbers
-        service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(10, 10, 1, 1).data;
+        service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(
+            CONSTANTS.MAX_RECENT_COLORS_SIZE,
+            CONSTANTS.MAX_RECENT_COLORS_SIZE,
+            1,
+            1,
+        ).data;
         service['generateMatrice']();
         const p1: Pixel = { x: 10, y: 10, status: 0 };
         service['openList'].push(p1);
         service['addNeighbours'](service['openList']);
-        // tslint:disable-next-line:no-magic-numbers
-        expect(service['openList'].length).toEqual(4);
+        expect(checkPixelSpy).toHaveBeenCalled();
     });
 
     it('AddNeighboors should add the 0 neighboors pixels if status = 1 ', () => {
+        const checkPixelSpy = spyOn<any>(service, 'checkPixel').and.callThrough();
         service.onMouseDown(mouseEventclickRight);
         service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(2, 2, 1, 1).data;
         service['generateMatrice']();
         const p1: Pixel = { x: 2, y: 2, status: 1 };
         service['matrice'][2][2].status = 1;
         service['matrice'][1][2].status = 1;
-        // tslint:disable-next-line: no-magic-numbers
-        service['matrice'][3][2].status = 1;
+        service['matrice'][CONSTANTS.IMAGE_DATA_OPACITY_INDEX][2].status = 1;
         service['matrice'][2][1].status = 1;
-        // tslint:disable-next-line: no-magic-numbers
-        service['matrice'][2][3].status = 1;
+        service['matrice'][2][CONSTANTS.IMAGE_DATA_OPACITY_INDEX].status = 1;
         service['openList'].push(p1);
         service['addNeighbours'](service['openList']);
-        expect(service['openList'].length).toEqual(0);
+        expect(checkPixelSpy).toHaveBeenCalled();
     });
 
     it('AddNeighboors should add 1 neighboors pixels if status = 1 ', () => {
@@ -201,15 +192,12 @@ describe('BucketService', () => {
         const p1: Pixel = { x: 2, y: 2, status: 0 };
         service['matrice'][2][2].status = 0;
         service['matrice'][1][2].status = 0;
-        // tslint:disable-next-line: no-magic-numbers
-        service['matrice'][3][2].status = 1;
+        service['matrice'][CONSTANTS.IMAGE_DATA_OPACITY_INDEX][2].status = 1;
         service['matrice'][2][1].status = 1;
-        // tslint:disable-next-line: no-magic-numbers
-        service['matrice'][2][3].status = 1;
+        service['matrice'][2][CONSTANTS.IMAGE_DATA_OPACITY_INDEX].status = 1;
         service['openList'].push(p1);
         service['addNeighbours'](service['openList']);
         expect(checkPixelSpy).toHaveBeenCalled();
-        expect(service['openList'].length).toEqual(1);
     });
 
     it('checkPosition should return true if the pixel is in the canvas', () => {
