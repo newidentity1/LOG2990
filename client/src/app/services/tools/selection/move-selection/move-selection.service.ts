@@ -90,7 +90,6 @@ export class MoveSelectionService {
     }
 
     copySelection(startingPos: Vec2, width: number, height: number, currentType: SelectionType): void {
-        // this.isAreaSelected = true;
         const selectionCtx = this.drawingService.previewCtx;
         selectionCtx.canvas.style.left = startingPos.x + 'px';
         selectionCtx.canvas.style.top = startingPos.y + 'px';
