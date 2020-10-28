@@ -77,6 +77,7 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit, OnDest
             }, 0);
         });
         this.toolbarService.initializeColors();
+        this.drawingService.setWhiteBackground();
     }
 
     ngOnDestroy(): void {
@@ -110,6 +111,7 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit, OnDest
             setTimeout(() => {
                 this.baseCtx.putImageData(imgData, 0, 0);
                 this.toolbarService.applyCurrentTool();
+                this.drawingService.setWhiteBackground();
             }, 0);
             this.isResizingWidth = false;
             this.isResizingHeight = false;
@@ -209,8 +211,8 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit, OnDest
 
         if (this.previewCanvas) {
             const previewCanvasElement = this.previewCanvas.nativeElement;
-            const canvasTopOffset = +previewCanvasElement.style.top.substring(0, previewCanvasElement.style.top.length - 2);
-            const canvasLeftOffset = +previewCanvasElement.style.left.substring(0, previewCanvasElement.style.left.length - 2);
+            const canvasTopOffset = previewCanvasElement.offsetTop;
+            const canvasLeftOffset = previewCanvasElement.offsetLeft;
 
             resizerPosition = {
                 top: canvasTopOffset + (previewCanvasElement.height * rowPosition) / 2 - SELECTION_CONTROL_POINT_SIZE / 2 + 'px',
