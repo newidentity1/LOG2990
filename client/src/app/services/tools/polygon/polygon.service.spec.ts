@@ -100,38 +100,38 @@ describe('PolygonService', () => {
         expect(service.height).toEqual(expectedResult.y);
     });
 
-    it('drawShape should call adjustThickness, setThickness and drawBoxGuide', () => {
+    it('draw should call adjustThickness, setThickness and drawBoxGuide', () => {
         const adjustThicknessSpy = spyOn(service, 'adjustThickness');
         const drawBoxGuideSpy = spyOn(service, 'drawBoxGuide');
 
-        service.drawShape(baseCtxStub);
+        service.draw(baseCtxStub);
         expect(adjustThicknessSpy).toHaveBeenCalled();
         expect(drawingServiceSpy.setThickness).toHaveBeenCalled();
         expect(drawBoxGuideSpy).toHaveBeenCalled();
     });
 
-    it('drawShape should call drawFillRect if DrawingType is Fill', () => {
+    it('draw should call drawFillRect if DrawingType is Fill', () => {
         const properties = service.toolProperties as BasicShapeProperties;
         properties.currentType = DrawingType.Fill;
         const spyFill = spyOn(baseCtxStub, 'fill');
-        service.drawShape(baseCtxStub);
+        service.draw(baseCtxStub);
         expect(spyFill).toHaveBeenCalled();
     });
 
-    it('drawShape should call drawStrokeRect if DrawingType is Stroke', () => {
+    it('draw should call drawStrokeRect if DrawingType is Stroke', () => {
         const properties = service.toolProperties as BasicShapeProperties;
         properties.currentType = DrawingType.Stroke;
         const spyStroke = spyOn(baseCtxStub, 'stroke');
-        service.drawShape(baseCtxStub);
+        service.draw(baseCtxStub);
         expect(spyStroke).toHaveBeenCalled();
     });
 
-    it('drawShape should call drawFillStrokeRect if DrawingType is FillStroke', () => {
+    it('draw should call drawFillStrokeRect if DrawingType is FillStroke', () => {
         const properties = service.toolProperties as BasicShapeProperties;
         properties.currentType = DrawingType.FillAndStroke;
         const spyFill = spyOn(baseCtxStub, 'fill');
         const spyStroke = spyOn(baseCtxStub, 'stroke');
-        service.drawShape(baseCtxStub);
+        service.draw(baseCtxStub);
         expect(spyFill).toHaveBeenCalled();
         expect(spyStroke).toHaveBeenCalled();
     });
