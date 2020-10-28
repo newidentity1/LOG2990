@@ -5,6 +5,7 @@ import { Tool } from '@app/classes/tool/tool';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 import * as CONSTANTS from '@app/constants/constants';
 import { MouseButton } from '@app/enums/mouse-button.enum';
+import { ColorPickerService } from '@app/services/color-picker/color-picker.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
 @Injectable({
@@ -13,11 +14,14 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 export class BucketService extends Tool {
     private openList: Pixel[] = [];
     private matrice: Pixel[][] = [];
+    private image: ImageData;
+    private width: number = 0;
+    private height: number = 0;
 
     private startPixelColor: Uint8ClampedArray;
     protected tolerance: number = 1;
 
-    constructor(drawingService: DrawingService) {
+    constructor(drawingService: DrawingService, private colorPickerService: ColorPickerService) {
         super(drawingService);
         this.name = 'Bucket';
         this.tooltip = 'Bucket(1)';
@@ -26,9 +30,9 @@ export class BucketService extends Tool {
     }
 
     private generateMatrice(): void {
-        for (let i = 0; i < this.drawingService.canvas.width; i++) {
+        for (let i = 0; i < this.width; i++) {
             const line: Pixel[] = [];
-            for (let j = 0; j < this.drawingService.canvas.height; j++) {
+            for (let j = 0; j < this.height; j++) {
                 const pixel: Pixel = { x: i, y: j, status: 0 };
                 line.push(pixel);
             }
@@ -36,6 +40,9 @@ export class BucketService extends Tool {
         }
     }
     onMouseDown(event: MouseEvent): void {
+        this.width = this.drawingService.canvas.width;
+        this.height = this.drawingService.canvas.height;
+        this.image = this.drawingService.baseCtx.getImageData(0, 0, this.width, this.height);
         const mousePosition = this.getPositionFromMouse(event);
         this.startPixelColor = this.drawingService.baseCtx.getImageData(mousePosition.x, mousePosition.y, 1, 1).data;
         if (event.button === MouseButton.Left) {
@@ -51,36 +58,45 @@ export class BucketService extends Tool {
         const mousePosition = this.getPositionFromMouse(event);
         const start: Pixel = { x: mousePosition.x, y: mousePosition.y, status: 0 };
         this.openList.push(start);
-        let security = 0;
-        while (this.openList.length !== 0 && security < this.drawingService.canvas.height * this.drawingService.canvas.width) {
+        while (this.openList.length !== 0) {
             this.addNeighbours(this.openList);
-            security++;
-            console.log(security);
         }
         this.resetMatrice();
     }
 
     floodFillRight(event: MouseEvent): void {
-        const pixel: Pixel = { x: 0, y: 0, status: 0 };
-        for (let i = 0; i < this.drawingService.canvas.height; i++) {
-            for (let j = 0; j < this.drawingService.canvas.width; j++) {
-                pixel.x = j;
-                pixel.y = i;
-                if (this.checkColor(pixel)) {
-                    this.colorPixel(pixel);
-                }
+        const targetColor: Color = this.colorPickerService.selectedColor.clone();
+        // tslint:disable-next-line:no-magic-numbers
+        for (let i = 0; i < this.image.data.length; i += 4) {
+            if (
+                this.image.data[i + 0] >= this.startPixelColor[0] - this.tolerance &&
+                this.image.data[i + 0] < this.startPixelColor[0] + this.tolerance &&
+                this.image.data[i + 1] >= this.startPixelColor[1] - this.tolerance &&
+                this.image.data[i + 1] < this.startPixelColor[1] + this.tolerance &&
+                this.image.data[i + 2] >= this.startPixelColor[2] - this.tolerance &&
+                this.image.data[i + 2] < this.startPixelColor[2] + this.tolerance &&
+                // tslint:disable-next-line:no-magic-numbers
+                this.image.data[i + 3] >= this.startPixelColor[CONSTANTS.INDEX_3] - this.tolerance &&
+                // tslint:disable-next-line:no-magic-numbers
+                this.image.data[i + 3] < this.startPixelColor[CONSTANTS.INDEX_3] + this.tolerance
+            ) {
+                this.image.data[i] = targetColor.getRed;
+                this.image.data[i + 1] = targetColor.getGreen;
+                this.image.data[i + 2] = targetColor.getBlue;
+                // tslint:disable-next-line:no-magic-numbers
+                this.image.data[i + 3] = targetColor.getOpacity * 255;
             }
         }
-    }
-
-    setColors(primaryColor: Color): void {
-        this.drawingService.setColor(primaryColor.toStringRGBA());
+        this.drawingService.baseCtx.putImageData(this.image, 0, 0);
     }
 
     setTolerance(tolerance: number | null): void {
         tolerance = tolerance === null ? 1 : tolerance;
         this.tolerance = CONSTANTS.MAX_COLOR_VALUE * (tolerance / CONSTANTS.POURCENTAGE);
-        console.log(CONSTANTS.MAX_COLOR_VALUE * (tolerance / CONSTANTS.POURCENTAGE));
+    }
+
+    setColors(primaryColor: Color): void {
+        this.drawingService.setColor(primaryColor.toStringRGBA());
     }
 
     resetContext(): void {
@@ -90,9 +106,7 @@ export class BucketService extends Tool {
     }
 
     private clearList(list: Pixel[]): void {
-        if (list.length === 0) {
-            console.log('VIDE');
-        } else {
+        if (list.length !== 0) {
             while (list.length !== 0) {
                 list.pop();
             }
@@ -121,31 +135,31 @@ export class BucketService extends Tool {
         // this.showList(this.openList);
         this.clearList(this.openList);
         for (const pixel of newList) {
-            const topPixel: Pixel = { x: pixel.x, y: pixel.y + 2, status: 0 };
+            const topPixel: Pixel = { x: pixel.x, y: pixel.y + 1, status: 0 };
             if (this.checkPosition(topPixel)) {
                 this.checkPixel(this.matrice[topPixel.x][topPixel.y]);
             }
 
-            const downPixel: Pixel = { x: pixel.x, y: pixel.y - 2, status: 0 };
+            const downPixel: Pixel = { x: pixel.x, y: pixel.y - 1, status: 0 };
             if (this.checkPosition(downPixel)) {
                 this.checkPixel(this.matrice[downPixel.x][downPixel.y]);
             }
 
-            const leftPixel: Pixel = { x: pixel.x - 2, y: pixel.y, status: 0 };
+            const leftPixel: Pixel = { x: pixel.x - 1, y: pixel.y, status: 0 };
             if (this.checkPosition(leftPixel)) {
                 this.checkPixel(this.matrice[leftPixel.x][leftPixel.y]);
             }
 
-            const rightPixel: Pixel = { x: pixel.x + 2, y: pixel.y, status: 0 };
+            const rightPixel: Pixel = { x: pixel.x + 1, y: pixel.y, status: 0 };
             if (this.checkPosition(rightPixel)) {
                 this.checkPixel(this.matrice[rightPixel.x][rightPixel.y]);
             }
         }
     }
 
-    private checkPixel(point: Pixel): void {
+    private checkPixel(point: Pixel | null): void {
         if (point !== null) {
-            if (this.checkColor(point) && point.status === 0) {
+            if (this.checkColor(point) && point.status !== 1) {
                 this.openList.push(point);
                 this.colorPixel(point);
                 point.status = 1;
@@ -154,23 +168,26 @@ export class BucketService extends Tool {
     }
 
     private checkPosition(point: Pixel): boolean {
-        if (point.x >= 0 && point.y >= 0 && point.x < this.drawingService.canvas.width && point.y < this.drawingService.canvas.height) {
+        if (point.x >= 0 && point.y >= 0 && point.x < this.width && point.y < this.height) {
             return true;
         }
         return false;
     }
 
     private checkColor(point: Pixel): boolean {
-        const pixel: ImageData = this.drawingService.baseCtx.getImageData(point.x, point.y, 1, 1);
+        // tslint:disable-next-line:no-magic-numbers
+        const offset = (point.y * this.width + point.x) * 4;
         if (
-            pixel.data[0] >= this.startPixelColor[0] - this.tolerance &&
-            pixel.data[0] < this.startPixelColor[0] + this.tolerance &&
-            pixel.data[1] >= this.startPixelColor[1] - this.tolerance &&
-            pixel.data[1] < this.startPixelColor[1] + this.tolerance &&
-            pixel.data[2] >= this.startPixelColor[2] - this.tolerance &&
-            pixel.data[2] < this.startPixelColor[2] + this.tolerance &&
-            pixel.data[CONSTANTS.INDEX_3] >= this.startPixelColor[CONSTANTS.INDEX_3] - this.tolerance &&
-            pixel.data[CONSTANTS.INDEX_3] < this.startPixelColor[CONSTANTS.INDEX_3] + this.tolerance
+            this.image.data[offset + 0] >= this.startPixelColor[0] - this.tolerance &&
+            this.image.data[offset + 0] < this.startPixelColor[0] + this.tolerance &&
+            this.image.data[offset + 1] >= this.startPixelColor[1] - this.tolerance &&
+            this.image.data[offset + 1] < this.startPixelColor[1] + this.tolerance &&
+            this.image.data[offset + 2] >= this.startPixelColor[2] - this.tolerance &&
+            this.image.data[offset + 2] < this.startPixelColor[2] + this.tolerance &&
+            // tslint:disable-next-line:no-magic-numbers
+            this.image.data[offset + 3] >= this.startPixelColor[CONSTANTS.INDEX_3] - this.tolerance &&
+            // tslint:disable-next-line:no-magic-numbers
+            this.image.data[offset + 3] < this.startPixelColor[CONSTANTS.INDEX_3] + this.tolerance
         ) {
             return true;
         }
@@ -178,6 +195,6 @@ export class BucketService extends Tool {
     }
 
     private colorPixel(pixel: Pixel): void {
-        this.drawingService.baseCtx.fillRect(pixel.x - 1, pixel.y - 1, CONSTANTS.BUCKET_PIXEL_3X3, CONSTANTS.BUCKET_PIXEL_3X3);
+        this.drawingService.baseCtx.fillRect(pixel.x, pixel.y, 1, 1);
     }
 }

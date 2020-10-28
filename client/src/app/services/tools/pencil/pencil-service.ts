@@ -31,12 +31,15 @@ export class PencilService extends Tool {
         }
     }
 
-    onMouseUp(event: MouseEvent): void {
+    onMouseUp(event: MouseEvent): Tool | undefined {
+        let tool: Tool | undefined;
         if (this.mouseDown) {
             this.drawLine(this.drawingService.baseCtx, this.pathData);
+            tool = this;
         }
         this.mouseDown = false;
         this.clearPath();
+        return tool;
     }
 
     onMouseMove(event: MouseEvent): void {
