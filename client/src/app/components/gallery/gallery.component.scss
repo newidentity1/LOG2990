@@ -1,12 +1,14 @@
 ul {
     display: flex;
     flex-wrap: wrap-reverse;
-    order: 3;
+    order: 2;
     padding: 0;
-    width: 500px;
     margin: 20px auto;
 }
-
+#window {
+    width: 630px;
+    height: 200px;
+}
 li {
     padding: 10px;
     display: flex;

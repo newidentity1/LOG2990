@@ -14,10 +14,11 @@ export class UploadService {
     task: AngularFireUploadTask;
     url: string = '';
     id: string = '';
+    private drawingUrl: string = 'http://localhost:3000/api/drawings';
     constructor(public drawingService: DrawingService, private afStorage: AngularFireStorage, private http: HttpClient) {}
 
+    // met le canvas sous forme d'image dans la fireBase
     uploadCanvas(): void {
-        // met l'image dans la fireBase
         this.id = Math.random() + 'test';
         const baseImage = new Image();
         baseImage.src = this.drawingService.canvas.toDataURL('image/png');
@@ -33,6 +34,7 @@ export class UploadService {
         });
     }
 
+    // permet de recuperer l'URL de retour envoye par fireBase
     downloadCanvasURL(): void {
         const obs: Observable<Blob[]> = this.ref.getDownloadURL();
         obs.subscribe((data) => {
@@ -45,9 +47,13 @@ export class UploadService {
         });
     }
 
+    // envois un objet de type dessin avec l'url de fireBase au serveur
     postDraw(): void {
         const draw: Drawing = { _id: this.id, name: this.id, tags: [], url: this.url };
-        this.http.post<Drawing>(this.url, draw);
+        const obs: Observable<Drawing> = this.http.post<Drawing>(this.drawingUrl, draw);
+        obs.subscribe((data) => {
+            console.log(data);
+        });
     }
 
     reset(): void {

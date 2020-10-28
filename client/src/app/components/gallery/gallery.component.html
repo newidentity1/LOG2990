@@ -1,11 +1,8 @@
-<h2>Carrousel de dessins</h2>
-<div class="row">
-    <ul id="list">
-        <li *ngFor="let image of list">
-            <p>{{ image.name }}</p>
-            <img alt="" src="../../../assets/screenshots/Sans titre.png" width="200" height="125" />
-        </li>
-    </ul>
+<div id="window">
+    <h2>Carrousel de dessins</h2>
+    <div class="row">
+        <ng-image-slider [images]="tab" #nav> </ng-image-slider>
+    </div>
+    <button id="open">Ouvrir</button>
+    <button id="delete">Supprimer</button>
 </div>
-<button id="open">Ouvrir</button>
-<button id="delete">Supprimer</button>
