@@ -52,10 +52,11 @@ export abstract class ShapeTool extends Tool {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             if (this.currentMousePosition.x !== this.mouseDownCoord.x && this.currentMousePosition.y !== this.mouseDownCoord.y) {
                 this.draw(this.drawingService.baseCtx);
+                return this.clone();
             }
         }
 
-        return this;
+        return undefined;
     }
 
     setTypeDrawing(value: string): void {
@@ -161,5 +162,22 @@ export abstract class ShapeTool extends Tool {
 
             ctx.restore();
         }
+    }
+
+    copy(shape: ShapeTool): void {
+        shape.width = this.width;
+        shape.height = this.height;
+        shape.pathStart = this.pathStart;
+        shape.currentMousePosition = this.currentMousePosition;
+        shape.mouseDownCoord = this.mouseDownCoord;
+        shape.toolProperties.thickness = this.toolProperties.thickness;
+        const shapeProperties = this.toolProperties as BasicShapeProperties;
+        shape.setTypeDrawing(shapeProperties.currentType);
+        shape.currentPrimaryColor = this.currentPrimaryColor;
+        shape.currentSecondaryColor = this.currentSecondaryColor;
+    }
+
+    clone(): ShapeTool {
+        return this;
     }
 }

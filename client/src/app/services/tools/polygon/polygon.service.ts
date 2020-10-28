@@ -129,4 +129,10 @@ export class PolygonService extends ShapeTool {
             ctx.restore();
         }
     }
+
+    clone(): ShapeTool {
+        const polygonClone: PolygonService = new PolygonService(this.drawingService);
+        this.copy(polygonClone);
+        return polygonClone;
+    }
 }
