@@ -6,8 +6,12 @@ ul {
     margin: 20px auto;
 }
 #window {
+    align-items: center;
     width: 630px;
     height: 200px;
+}
+#buttons {
+    align-items: center;
 }
 li {
     padding: 10px;
@@ -23,6 +27,7 @@ li {
 }
 
 button {
+    align-items: center;
     opacity: 0.6;
     border-radius: 8px;
     border: none;
