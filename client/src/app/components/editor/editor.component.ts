@@ -13,7 +13,6 @@ import { BehaviorSubject, Subscription } from 'rxjs';
     styleUrls: ['./editor.component.scss'],
 })
 export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
-    constructor(private shortcutService: ShortcutService, private toolbarService: ToolbarService) {}
     @ViewChild('drawingContainer', { static: true }) drawingContainer: ElementRef;
 
     @ViewChild(SidebarComponent) toolbarRef: SidebarComponent;
@@ -23,6 +22,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     dimensionsUpdatedSubject: BehaviorSubject<number[]> = new BehaviorSubject([this.width, this.height]);
     private subscribedShortcuts: Subscription[] = [];
+
+    constructor(private shortcutService: ShortcutService, private toolbarService: ToolbarService) {}
 
     ngOnInit(): void {
         this.initializeShortcuts();
