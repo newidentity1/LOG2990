@@ -67,7 +67,7 @@ describe('DrawingComponent', () => {
         component.drawingContainerWidth = fakeDrawingContainerWidth;
         const expectWidth = fakeDrawingContainerWidth / 2;
         const expectHeight = fakeDrawingContainerHeight / 2;
-        component.ngAfterContentInit();
+        component.ngAfterViewInit();
         expect(component.height).toEqual(expectHeight);
         expect(component.width).toEqual(expectWidth);
     });
@@ -359,4 +359,5 @@ describe('DrawingComponent', () => {
         const result = component.calculateResizerStyle(0, 0);
         expect(result).toEqual(expectedPosition);
     });
+    // tslint:disable-next-line: max-file-line-count / reason: test file
 });
