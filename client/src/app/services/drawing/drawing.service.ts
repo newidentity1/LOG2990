@@ -11,15 +11,6 @@ export class DrawingService {
     canvas: HTMLCanvasElement;
     createNewDrawingSubject: Subject<void> = new Subject<void>();
 
-    setWhiteBackground(): void {
-        console.log(this.canvas.width, this.canvas.height);
-        this.baseCtx.globalCompositeOperation = 'destination-over';
-        this.baseCtx.fillStyle = '#FFFFFF';
-        this.baseCtx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-        this.baseCtx.fillStyle = '#000000';
-        this.baseCtx.globalCompositeOperation = 'source-over';
-    }
-
     emitCreateNewDrawingEvent(): void {
         this.createNewDrawingSubject.next();
     }

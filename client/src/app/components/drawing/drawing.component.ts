@@ -77,7 +77,6 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit, OnDest
             }, 0);
         });
         this.toolbarService.initializeColors();
-        this.drawingService.setWhiteBackground();
     }
 
     ngOnDestroy(): void {
@@ -111,7 +110,6 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit, OnDest
             setTimeout(() => {
                 this.baseCtx.putImageData(imgData, 0, 0);
                 this.toolbarService.applyCurrentTool();
-                this.drawingService.setWhiteBackground();
             }, 0);
             this.isResizingWidth = false;
             this.isResizingHeight = false;

@@ -23,6 +23,14 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
     }
 
     ngAfterViewInit(): void {
+        this.cloneCtx = this.cloneCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+
+        this.cloneCtx.globalCompositeOperation = 'destination-over';
+        this.cloneCtx.fillStyle = '#FFFFFF';
+        this.cloneCtx.fillRect(0, 0, this.cloneCanvas.nativeElement.width, this.cloneCanvas.nativeElement.height);
+        this.cloneCtx.fillStyle = '#000000';
+        this.cloneCtx.globalCompositeOperation = 'source-over';
+
         this.setImageUrl();
         // TODO
         // this.cloneCtx = this.cloneCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
@@ -35,8 +43,6 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
     }
 
     onFilterChange(): void {
-        this.cloneCtx = this.cloneCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-
         switch (this.selectedFilter) {
             case '0':
                 this.cloneCtx.filter = 'none';
