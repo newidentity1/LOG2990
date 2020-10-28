@@ -18,6 +18,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NgImageSliderModule } from 'ng-image-slider';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './components/app/app.component';
 import { ColorPickerFormComponent } from './components/color/color-picker-form/color-picker-form.component';
@@ -85,6 +86,7 @@ import { UploadComponent } from './components/upload/upload.component';
         UploadComponent,
     ],
     imports: [
+        NgImageSliderModule,
         AngularFireModule.initializeApp({
             apiKey: 'AIzaSyA-FAAkdvUBcaXpf87ypqLsMdPNW_ElUWU',
             authDomain: 'log2990-2011.firebaseapp.com',
@@ -101,6 +103,7 @@ import { UploadComponent } from './components/upload/upload.component';
         MatIconModule,
         MatTooltipModule,
         BrowserAnimationsModule,
+        BrowserModule,
         MatDialogModule,
         MatSliderModule,
         MatButtonModule,
