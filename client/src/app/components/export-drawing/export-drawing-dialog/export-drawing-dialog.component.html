@@ -18,7 +18,7 @@
                 <mat-panel-title> Filtre </mat-panel-title>
             </mat-expansion-panel-header>
             <mat-form-field>
-                <mat-select [(value)]="selectedFilter">
+                <mat-select [(value)]="selectedFilter" (selectionChange)="onFilterChange()">
                     <mat-option value="0">Aucun</mat-option>
                     <mat-option value="1">Filtre1</mat-option>
                     <mat-option value="2">Filtre2</mat-option>
@@ -38,6 +38,9 @@
         <img width="600" height="400" id="drawingPreview" #drawingPreview src="" />
     </a>
     <br />
+
+    <!-- Will not appear on screen, disabled in CSS -->
+    <canvas id="cloneCanvas" #cloneCanvas [attr.width]="width" [attr.height]="height"></canvas>
 
     <button class="buttons" id="downloadButton" mat-raised-button (click)="downloadImage()">Télécharger</button>
     <button class="buttons" id="cancelButton" mat-raised-button mat-dialog-close>Annuler</button>
