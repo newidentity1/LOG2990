@@ -38,6 +38,12 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
         // this.cloneCanvas.nativeElement.width = this.drawingService.canvas.width;
     }
 
+    whiteBackground(): void {
+        this.cloneCtx.fillStyle = '#FFFFFF';
+        this.cloneCtx.fillRect(0, 0, this.cloneCanvas.nativeElement.width, this.cloneCanvas.nativeElement.height);
+        this.cloneCtx.fillStyle = '#000000';
+    }
+
     onFormatChange(): void {
         this.setImageUrl();
     }
@@ -46,15 +52,18 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
         switch (this.selectedFilter) {
             case '0':
                 this.cloneCtx.filter = 'none';
+                this.whiteBackground();
                 this.cloneCtx.drawImage(this.drawingService.canvas, 0, 0);
                 break;
             case '1':
                 this.cloneCtx.filter = 'blur(7px)';
+                this.whiteBackground();
                 this.cloneCtx.drawImage(this.drawingService.canvas, 0, 0);
                 this.cloneCtx.filter = 'none';
                 break;
             case '2':
                 this.cloneCtx.filter = 'sepia(100%)';
+                this.whiteBackground();
                 this.cloneCtx.drawImage(this.drawingService.canvas, 0, 0);
                 this.cloneCtx.filter = 'none';
                 break;
