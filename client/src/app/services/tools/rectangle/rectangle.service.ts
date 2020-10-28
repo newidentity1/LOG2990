@@ -15,9 +15,9 @@ export class RectangleService extends ShapeTool {
         this.iconName = 'crop_square';
     }
 
-    drawShape(ctx: CanvasRenderingContext2D): void {
+    draw(ctx: CanvasRenderingContext2D): void {
         const rectangleProperties = this.toolProperties as BasicShapeProperties;
-        const thickness = this.adjustThickness(rectangleProperties, { x: this.width / 2, y: this.height / 2 });
+        const thickness = this.adjustThickness();
 
         this.drawingService.setThickness(thickness);
 
