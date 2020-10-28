@@ -151,6 +151,7 @@ export class ToolbarService {
     undo(): void {
         this.undoIndex--;
         this.drawingService.clearCanvas(this.drawingService.baseCtx);
+        this.drawingService.setWhiteBackground();
         if (this.undoIndex >= 0) {
             for (let i = 0; i <= this.undoIndex; i++) {
                 this.drawings[i].setColors(this.drawings[i].currentPrimaryColor, this.drawings[i].currentSecondaryColor);
