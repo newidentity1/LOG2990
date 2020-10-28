@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Tool } from '@app/classes/tool/tool';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants/constants';
@@ -12,7 +12,8 @@ import { BehaviorSubject, Subscription } from 'rxjs';
     templateUrl: './editor.component.html',
     styleUrls: ['./editor.component.scss'],
 })
-export class EditorComponent implements OnInit, OnDestroy {
+export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
+    constructor(private shortcutService: ShortcutService, private toolbarService: ToolbarService) {}
     @ViewChild('drawingContainer', { static: true }) drawingContainer: ElementRef;
 
     @ViewChild(SidebarComponent) toolbarRef: SidebarComponent;
@@ -23,11 +24,14 @@ export class EditorComponent implements OnInit, OnDestroy {
     dimensionsUpdatedSubject: BehaviorSubject<number[]> = new BehaviorSubject([this.width, this.height]);
     private subscribedShortcuts: Subscription[] = [];
 
-    constructor(private shortcutService: ShortcutService, private toolbarService: ToolbarService) {}
-
     ngOnInit(): void {
-        this.computeDimensionsDrawingContainer();
         this.initializeShortcuts();
+    }
+
+    ngAfterViewInit(): void {
+        setTimeout(() => {
+            this.computeDimensionsDrawingContainer(true);
+        }, 0);
     }
 
     ngOnDestroy(): void {
@@ -54,13 +58,18 @@ export class EditorComponent implements OnInit, OnDestroy {
         this.toolbarService.onKeyUp(event);
     }
 
-    computeDimensionsDrawingContainer(): void {
+    @HostListener('window:resize', [])
+    onResize(): void {
+        this.computeDimensionsDrawingContainer(false);
+    }
+
+    computeDimensionsDrawingContainer(setCanvasSize: boolean): void {
         const heightString = getComputedStyle(this.drawingContainer.nativeElement).height;
         this.height = +heightString.substring(0, heightString.length - 2);
 
         const widthString = getComputedStyle(this.drawingContainer.nativeElement).width;
         this.width = +widthString.substring(0, widthString.length - 2);
-        this.dimensionsUpdatedSubject.next([this.width, this.height]);
+        this.dimensionsUpdatedSubject.next([this.width, this.height, +setCanvasSize]);
     }
 
     private initializeShortcuts(): void {

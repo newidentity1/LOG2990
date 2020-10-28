@@ -1,15 +1,4 @@
-import {
-    AfterContentInit,
-    AfterViewInit,
-    Component,
-    ElementRef,
-    EventEmitter,
-    HostListener,
-    Input,
-    OnDestroy,
-    Output,
-    ViewChild,
-} from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { ResizerProperties } from '@app/classes/resizer-properties';
 import { Vec2 } from '@app/classes/vec2';
 import {
@@ -31,7 +20,7 @@ import { Observable, Subscription } from 'rxjs';
     templateUrl: './drawing.component.html',
     styleUrls: ['./drawing.component.scss'],
 })
-export class DrawingComponent implements AfterViewInit, AfterContentInit, OnDestroy {
+export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('baseCanvas', { static: false }) baseCanvas: ElementRef<HTMLCanvasElement>;
     // On utilise ce canvas pour dessiner sans affecter le dessin final
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
@@ -52,8 +41,21 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit, OnDest
 
     constructor(private drawingService: DrawingService, private toolbarService: ToolbarService) {}
 
-    ngAfterContentInit(): void {
-        this.newCanvasSetSize();
+    ngOnInit(): void {
+        this.subscribeCreateNewDrawing = this.drawingService.createNewDrawingEventListener().subscribe(() => {
+            this.toolbarService.resetSelection();
+            this.drawingService.clearCanvas(this.drawingService.baseCtx);
+            this.requestDrawingContainerDimensions.emit();
+        });
+        this.subscribeDimensionsUpdated = this.dimensionsUpdatedEvent.subscribe((dimensions) => {
+            this.drawingContainerWidth = dimensions[0];
+            this.drawingContainerHeight = dimensions[1];
+            if (!!dimensions[2]) this.newCanvasSetSize();
+            setTimeout(() => {
+                this.toolbarService.applyCurrentTool();
+                this.drawingService.setWhiteBackground();
+            }, 0);
+        });
     }
 
     ngAfterViewInit(): void {
@@ -63,19 +65,6 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit, OnDest
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
 
-        this.subscribeCreateNewDrawing = this.drawingService.createNewDrawingEventListener().subscribe(() => {
-            this.toolbarService.resetSelection();
-            this.drawingService.clearCanvas(this.drawingService.baseCtx);
-            this.requestDrawingContainerDimensions.emit();
-        });
-        this.subscribeDimensionsUpdated = this.dimensionsUpdatedEvent.subscribe((dimensions) => {
-            this.drawingContainerWidth = dimensions[0];
-            this.drawingContainerHeight = dimensions[1];
-            this.newCanvasSetSize();
-            setTimeout(() => {
-                this.toolbarService.applyCurrentTool();
-            }, 0);
-        });
         this.toolbarService.initializeColors();
         this.drawingService.setWhiteBackground();
     }
@@ -146,7 +135,6 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit, OnDest
             event.preventDefault();
             let newWidth = event.clientX - this.baseCanvas.nativeElement.getBoundingClientRect().x;
             const widthLimit = this.drawingContainerWidth - CANVAS_MARGIN_LEFT;
-
             if (newWidth < CANVAS_MIN_WIDTH) {
                 newWidth = CANVAS_MIN_WIDTH;
             } else if (newWidth >= widthLimit) {
