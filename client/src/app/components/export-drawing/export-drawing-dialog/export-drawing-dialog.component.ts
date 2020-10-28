@@ -15,7 +15,6 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
     selectedFilter: string;
     drawingTitle: string;
     cloneCtx: CanvasRenderingContext2D;
-    cloneImage: CanvasImageSource;
 
     constructor(public dialog: MatDialog, public drawingService: DrawingService) {
         this.selectedFormat = 'jpeg';
@@ -29,7 +28,6 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
         // this.cloneCtx = this.cloneCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         // this.cloneCanvas.nativeElement.height = this.drawingService.canvas.height;
         // this.cloneCanvas.nativeElement.width = this.drawingService.canvas.width;
-        // this.cloneCtx = this.drawingService.canvas.getContext('2d') as CanvasRenderingContext2D; WONT WORK
     }
 
     onFormatChange(): void {
@@ -38,8 +36,6 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
 
     onFilterChange(): void {
         this.cloneCtx = this.cloneCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        // this.copyCanvas();
-        // this.cloneCtx = this.drawingService.baseCtx;
 
         switch (this.selectedFilter) {
             case '0':
@@ -52,30 +48,26 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
                 this.cloneCtx.filter = 'none';
                 break;
             case '2':
-                this.cloneCtx.filter = 'sepia(1)';
+                this.cloneCtx.filter = 'sepia(100%)';
+                this.cloneCtx.drawImage(this.drawingService.canvas, 0, 0);
+                this.cloneCtx.filter = 'none';
+                break;
+            case '3':
+                this.cloneCtx.filter = 'saturate(100%)';
+                this.cloneCtx.drawImage(this.drawingService.canvas, 0, 0);
+                this.cloneCtx.filter = 'none';
+                break;
+            case '4':
+                this.cloneCtx.filter = 'sepia(0.5)';
+                this.cloneCtx.drawImage(this.drawingService.canvas, 0, 0);
+                this.cloneCtx.filter = 'none';
+                break;
+            case '5':
+                this.cloneCtx.filter = 'sepia(0.5)';
                 this.cloneCtx.drawImage(this.drawingService.canvas, 0, 0);
                 this.cloneCtx.filter = 'none';
                 break;
         }
-        // if (this.selectedFilter === '1') {
-        //     this.cloneCtx.filter = 'blur(7px)';
-        //     this.cloneCtx.drawImage(this.drawingService.canvas, 0, 0);
-        //     this.cloneCtx.filter = 'none';
-        // }
-    }
-
-    copyCanvas(): void {
-        // Option 1
-        // this.cloneCanvas.nativeElement.getContext('2d').drawImage(this.drawingService.canvas, 0, 0);
-        // this.cloneCtx.drawImage(this.drawingService.canvas, 0, 0);
-
-        // Option 2
-        // const imgData = this.drawingService.baseCtx.getImageData(0, 0, this.drawingService.canvas.width, this.drawingService.canvas.height);
-        // this.cloneCtx.putImageData(imgData, 0, 0);
-
-        // Option 3
-
-        this.cloneCanvas.nativeElement = this.drawingService.canvas;
     }
 
     downloadImage(): void {
@@ -94,7 +86,3 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
         this.drawingPreviewContainer.nativeElement.href = imageUrl;
     }
 }
-
-// with DrawImage
-// With putImageData
-// With a new ctx in drawing service?
