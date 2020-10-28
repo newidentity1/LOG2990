@@ -20,11 +20,11 @@
             <mat-form-field>
                 <mat-select [(value)]="selectedFilter" (selectionChange)="setImageUrl()">
                     <mat-option value="0">Aucun</mat-option>
-                    <mat-option value="1">Filtre1</mat-option>
-                    <mat-option value="2">Filtre2</mat-option>
-                    <mat-option value="3">Filtre2</mat-option>
-                    <mat-option value="4">Filtre2</mat-option>
-                    <mat-option value="5">Filtre2</mat-option>
+                    <mat-option value="1">Brouillage</mat-option>
+                    <mat-option value="2">Sepia</mat-option>
+                    <mat-option value="3">Luminosité</mat-option>
+                    <mat-option value="4">Saturation</mat-option>
+                    <mat-option value="5">Filtre5</mat-option>
                 </mat-select>
             </mat-form-field>
         </mat-expansion-panel>
@@ -38,12 +38,14 @@
 
     <h3>Prévisualisation du dessin</h3>
     <a #drawingPreviewContainer href="" download=""> </a>
+    <canvas id="cloneCanvas" #cloneCanvas width="600" height="400"></canvas>
+    <!-- <canvas id="cloneCanvas" #cloneCanvas [attr.width]="width" [attr.height]="height"></canvas> -->
+
+    <!-- disabled in css -->
     <img width="600" height="400" id="drawingPreview" #drawingPreview src="" />
     <br />
 
-    <!-- Will not appear on screen, disabled in CSS -->
-    <canvas id="cloneCanvas" #cloneCanvas width="600" height="400"></canvas>
-    <!-- <canvas id="cloneCanvas" #cloneCanvas [attr.width]="width" [attr.height]="height"></canvas> -->
+
 
     <button class="buttons" id="downloadButton" mat-raised-button (click)="downloadImage()">Télécharger</button>
     <button class="buttons" id="cancelButton" mat-raised-button mat-dialog-close>Annuler</button>

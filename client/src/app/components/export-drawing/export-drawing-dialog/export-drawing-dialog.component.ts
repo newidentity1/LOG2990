@@ -62,23 +62,27 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
                 this.cloneCtx.filter = 'none';
                 break;
             case '2':
-                this.cloneCtx.filter = 'sepia(100%)';
+                this.cloneCtx.filter = 'contrast(1.4) sepia(1)';
                 this.whiteBackground();
                 this.cloneCtx.drawImage(this.drawingService.canvas, 0, 0);
                 this.cloneCtx.filter = 'none';
                 break;
             case '3':
-                this.cloneCtx.filter = 'saturate(100%)';
+                this.cloneCtx.filter = 'brightness(50%)';
+                // this.cloneCtx.filter = 'contrast(50%)'; CHOOSE
+                this.whiteBackground();
                 this.cloneCtx.drawImage(this.drawingService.canvas, 0, 0);
                 this.cloneCtx.filter = 'none';
                 break;
             case '4':
-                this.cloneCtx.filter = 'sepia(0.5)';
+                this.cloneCtx.filter = 'saturate(50%)';
+                this.whiteBackground();
                 this.cloneCtx.drawImage(this.drawingService.canvas, 0, 0);
                 this.cloneCtx.filter = 'none';
                 break;
             case '5':
-                this.cloneCtx.filter = 'sepia(0.5)';
+                this.cloneCtx.filter = 'dropshadow(50%)';
+                this.whiteBackground();
                 this.cloneCtx.drawImage(this.drawingService.canvas, 0, 0);
                 this.cloneCtx.filter = 'none';
                 break;
