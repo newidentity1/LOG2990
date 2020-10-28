@@ -15,7 +15,6 @@ import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { PolygonService } from '@app/services/tools/polygon/polygon.service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle.service';
 import { SelectionService } from '@app/services/tools/selection/selection.service';
-import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 
 @Injectable({
     providedIn: 'root',
@@ -127,7 +126,6 @@ export class ToolbarService {
         tool = this.currentTool.onMouseUp(event);
 
         if (tool !== undefined) {
-            console.log('adding');
             this.undoIndex++;
             this.drawings.length = this.undoIndex;
             this.drawings.push(tool);
@@ -151,7 +149,6 @@ export class ToolbarService {
     }
 
     undo(): void {
-        console.log('undo');
         this.undoIndex--;
         this.drawingService.clearCanvas(this.drawingService.baseCtx);
         if (this.undoIndex >= 0) {
@@ -159,8 +156,6 @@ export class ToolbarService {
                 this.drawings[i].setColors(this.drawings[i].currentPrimaryColor, this.drawings[i].currentSecondaryColor);
                 this.drawings[i].setThickness(this.drawings[i].toolProperties.thickness);
                 this.drawings[i].setColors(this.drawings[i].currentPrimaryColor, this.drawings[i].currentSecondaryColor);
-                const shapeProperties = this.drawings[i].toolProperties as BasicShapeProperties;
-                console.log(shapeProperties.currentType);
                 this.drawings[i].draw(this.drawingService.baseCtx);
             }
         }
@@ -168,7 +163,20 @@ export class ToolbarService {
     }
 
     redo(): void {
-        // Todo
+        if (this.undoIndex === this.drawings.length - 1) return;
+
+        this.undoIndex++;
+        this.drawings[this.undoIndex].setColors(
+            this.drawings[this.undoIndex].currentPrimaryColor,
+            this.drawings[this.undoIndex].currentSecondaryColor,
+        );
+        this.drawings[this.undoIndex].setThickness(this.drawings[this.undoIndex].toolProperties.thickness);
+        this.drawings[this.undoIndex].setColors(
+            this.drawings[this.undoIndex].currentPrimaryColor,
+            this.drawings[this.undoIndex].currentSecondaryColor,
+        );
+        this.drawings[this.undoIndex].draw(this.drawingService.baseCtx);
+        this.currentTool.setColors(this.currentTool.currentPrimaryColor, this.currentTool.currentSecondaryColor);
     }
 
     triggerSelectAll(): void {
