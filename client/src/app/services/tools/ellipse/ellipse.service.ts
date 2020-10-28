@@ -49,4 +49,10 @@ export class EllipseService extends ShapeTool {
 
         this.drawBoxGuide(ctx);
     }
+
+    clone(): ShapeTool {
+        const ellipseClone: EllipseService = new EllipseService(this.drawingService);
+        this.copy(ellipseClone);
+        return ellipseClone;
+    }
 }

@@ -17,6 +17,8 @@ export abstract class Tool {
 
     constructor(protected drawingService: DrawingService) {}
 
+    setTypeDrawing(value: string): void {}
+
     onMouseDown(event: MouseEvent): void {}
 
     onMouseUp(event: MouseEvent): Tool | undefined {
@@ -40,6 +42,12 @@ export abstract class Tool {
     onClick(event: MouseEvent): void {}
 
     draw(ctx: CanvasRenderingContext2D): void {}
+
+    copy(tool: Tool): void {}
+
+    clone(): Tool {
+        return this;
+    }
 
     getPositionFromMouse(event: MouseEvent): Vec2 {
         return { x: event.offsetX, y: event.offsetY };
