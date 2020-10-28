@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { ShapeTool } from '@app/classes/tool/shape-tool';
-import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 import { PolygonProperties } from '@app/classes/tools-properties/polygon-properties';
 import { Vec2 } from '@app/classes/vec2';
 import { DASHED_SEGMENTS, MINIMUM_SIDES, SELECTION_BOX_THICKNESS } from '@app/constants/constants';
@@ -40,7 +39,7 @@ export class PolygonService extends ShapeTool {
         this.height = min * this.signOf(this.height);
     }
 
-    drawShape(ctx: CanvasRenderingContext2D): void {
+    draw(ctx: CanvasRenderingContext2D): void {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         if (this.escapeDown) {
             return;
@@ -50,7 +49,7 @@ export class PolygonService extends ShapeTool {
         const radiusY = Math.abs(this.height / 2);
 
         const polygonProperties = this.toolProperties as PolygonProperties;
-        const thickness = this.adjustThickness(this.toolProperties as BasicShapeProperties, { x: radiusX, y: radiusY } as Vec2);
+        const thickness = this.adjustThickness();
         this.drawingService.setThickness(thickness);
         const numberOfSides = polygonProperties.numberOfSides;
         const thicknessRatio = numberOfSides / (numberOfSides / 2);
@@ -115,7 +114,12 @@ export class PolygonService extends ShapeTool {
                 0,
                 2 * Math.PI,
             );
-            ctx.rect(this.mouseDownCoord.x, this.mouseDownCoord.y, this.width, this.height);
+            ctx.rect(
+                this.mouseDownCoord.x,
+                this.mouseDownCoord.y,
+                this.currentMousePosition.x - this.pathStart.x,
+                this.currentMousePosition.y - this.pathStart.y,
+            );
             ctx.setLineDash([]);
             ctx.strokeStyle = 'white';
             ctx.stroke();
