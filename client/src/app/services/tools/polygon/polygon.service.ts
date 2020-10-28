@@ -133,6 +133,9 @@ export class PolygonService extends ShapeTool {
     clone(): ShapeTool {
         const polygonClone: PolygonService = new PolygonService(this.drawingService);
         this.copy(polygonClone);
+        const polygonCloneProperties = polygonClone.toolProperties as PolygonProperties;
+        const polygonProperties = this.toolProperties as PolygonProperties;
+        polygonCloneProperties.numberOfSides = polygonProperties.numberOfSides;
         return polygonClone;
     }
 }
