@@ -15,7 +15,7 @@ export class OpenGalleryComponent {
 
     openDialog(): void {
         this.dialog.open(GalleryComponent, {
-            height: '95%',
+            height: '55%',
         });
     }
 }
