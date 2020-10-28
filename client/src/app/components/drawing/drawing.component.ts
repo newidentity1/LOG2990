@@ -137,7 +137,7 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
             const widthLimit = this.drawingContainerWidth - CANVAS_MARGIN_LEFT;
             if (newWidth < CANVAS_MIN_WIDTH) {
                 newWidth = CANVAS_MIN_WIDTH;
-            } else if (newWidth >= widthLimit) {
+            } else if (newWidth > widthLimit) {
                 newWidth = widthLimit;
             }
             this.previewCanvas.nativeElement.width = newWidth;
@@ -149,7 +149,7 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
             const heightLimit = this.drawingContainerHeight - CANVAS_MARGIN_TOP;
             if (newHeight < CANVAS_MIN_HEIGHT) {
                 newHeight = CANVAS_MIN_HEIGHT;
-            } else if (newHeight >= heightLimit) {
+            } else if (newHeight > heightLimit) {
                 newHeight = heightLimit;
             }
             this.previewCanvas.nativeElement.height = newHeight;
