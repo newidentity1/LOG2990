@@ -21,6 +21,8 @@ import { SelectionService } from '@app/services/tools/selection/selection.servic
 })
 export class ToolbarService {
     private tools: Tool[];
+    private drawings: Tool[] = [];
+    private undoIndex: number = -1;
     currentTool: Tool;
     primaryColor: Color;
     secondaryColor: Color;
@@ -42,10 +44,10 @@ export class ToolbarService {
     ) {
         this.tools = [
             pencilService,
+            polygonService,
             brushService,
             rectangleService,
             ellipseService,
-            polygonService,
             lineService,
             eraseService,
             eyedropperService,
@@ -120,7 +122,13 @@ export class ToolbarService {
     }
 
     onMouseUp(event: MouseEvent): void {
-        this.currentTool.onMouseUp(event);
+        let tool: Tool | undefined;
+        tool = this.currentTool.onMouseUp(event);
+
+        if (tool !== undefined) {
+            this.drawings.push(tool);
+            this.undoIndex++;
+        }
     }
 
     onMouseEnter(event: MouseEvent): void {
@@ -139,9 +147,22 @@ export class ToolbarService {
         this.currentTool.onClick(event);
     }
 
+    undo(): void {
+        this.undoIndex--;
+        this.drawingService.clearCanvas(this.drawingService.baseCtx);
+        if (this.undoIndex >= 0) {
+            for (let i = 0; i <= this.undoIndex; i++) {
+                this.drawings[i].draw(this.drawingService.baseCtx);
+            }
+        }
+    }
+
+    redo(): void {
+        // Todo
+    }
+
     triggerSelectAll(): void {
         this.currentTool = this.selectionService;
-        this.applyCurrentTool();
         this.selectionService.selectAll();
     }
 

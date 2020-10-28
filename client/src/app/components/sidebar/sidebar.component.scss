@@ -1,5 +1,9 @@
 @import '../../style/color.scss';
 
+mat-sidenav-container {
+    z-index: 100;
+}
+
 #tool-container {
     height: auto;
     width: 80px;
@@ -39,6 +43,7 @@ mat-sidenav {
     background-color: #1a174f;
 }
 
+#undo-redo-container,
 #colors-container,
 #other-functionality-container {
     padding-left: 5px;
