@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { UploadService } from '@app/services/upload.service';
+import { UploadService } from '@app/services/firebase/upload/upload.service';
 @Component({
     selector: 'app-upload',
     templateUrl: './upload.component.html',
