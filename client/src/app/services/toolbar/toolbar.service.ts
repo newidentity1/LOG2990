@@ -166,7 +166,6 @@ export class ToolbarService {
 
     redo(): void {
         if (this.undoIndex === this.drawings.length - 1 || this.drawings.length === 0) return;
-
         this.undoIndex++;
         this.drawings[this.undoIndex].setColors(
             this.drawings[this.undoIndex].currentPrimaryColor,

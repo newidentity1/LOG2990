@@ -62,4 +62,10 @@ export class EraseService extends PencilService {
         );
         cursorCtx.lineWidth = this.toolProperties.thickness;
     }
+
+    clone(): EraseService {
+        const eraserClone: EraseService = new EraseService(this.drawingService);
+        this.copyTool(eraserClone);
+        return eraserClone;
+    }
 }
