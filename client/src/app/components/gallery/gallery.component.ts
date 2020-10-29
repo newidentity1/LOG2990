@@ -8,32 +8,26 @@ import { Observable } from 'rxjs';
 @Component({
     selector: 'app-gallery',
     styleUrls: ['./gallery.component.scss'],
-    template: `
-        <div id="window">
-            <h2>Carrousel de dessins</h2>
-            <div class="row">
-                <ng-image-slider [images]="tab" (imageClick)="continueDraw($event)" [imagePopup]="false" #nav> </ng-image-slider>
-            </div>
-            <div id="buttons">
-                <button id="open">Ouvrir</button>
-                <button id="delete" (click)="deleteDraw()">Supprimer</button>
-            </div>
-        </div>
-    `,
+    templateUrl: './gallery.component.html',
 })
 export class GalleryComponent implements OnInit {
     @ViewChild('nav') slider: NgImageSliderComponent;
     private drawingUrl: string = 'http://localhost:3000/api/drawings/';
-    list: Drawing[] = [];
+    drawings: Drawing[] = [];
     tab: object[] = [];
-    constructor(private http: HttpClient, private drawingService: DrawingService, private dialog: MatDialog) {
+    tags: string[] = ['blablabla'];
+    tagToAdd: string = '';
+
+    constructor(private http: HttpClient, private drawingService: DrawingService, private dialog: MatDialog) {}
+    ngOnInit(): void {
+        // TODO
         this.getDrawings();
     }
 
-    updateDraws(): void {
+    updateDrawings(totalDrawings: Drawing[]): void {
         this.tab.length = 0;
         this.slider.images.length = 0;
-        for (const image of this.list) {
+        for (const image of totalDrawings) {
             const obj = {
                 image: image.url,
                 thumbImage: image.url,
@@ -46,7 +40,7 @@ export class GalleryComponent implements OnInit {
 
     continueDraw(event: number): void {
         const image = new Image();
-        image.src = this.list[event].url;
+        image.src = this.drawings[event].url;
         const ctx = this.drawingService.canvas.getContext('2d');
         this.drawingService.canvas.width = image.width;
         this.drawingService.canvas.height = image.height;
@@ -58,14 +52,13 @@ export class GalleryComponent implements OnInit {
     deleteDraw(): void {
         const i = this.slider.visiableImageIndex;
         console.log(i);
-        const draw: Drawing = this.list[i];
+        const draw: Drawing = this.drawings[i];
         const obs: Observable<Drawing> = this.http.delete<Drawing>(this.drawingUrl + draw._id);
         obs.subscribe((data) => {
             console.log(data);
-            this.list = [];
+            this.drawings = [];
             this.getDrawings();
         });
-        // TODO
     }
 
     getDrawings(): void {
@@ -73,13 +66,48 @@ export class GalleryComponent implements OnInit {
         obs.subscribe((data) => {
             console.log(data);
             for (const draw of data) {
-                this.list.push(draw);
-                this.updateDraws();
+                this.drawings.push(draw);
             }
+            this.updateDrawings(this.drawings);
         });
     }
 
-    ngOnInit(): void {
-        // TODO
+    addTag(tag: string): void {
+        this.tags.push(tag);
+        this.tags = [...this.tags];
+        this.updateDrawingsByTags();
+        console.log(this.tags);
+    }
+
+    deleteTag(tag: string): void {
+        const index = this.tags.indexOf(tag);
+
+        if (index >= 0) {
+            this.tags.splice(index, 1);
+            this.updateDrawingsByTags();
+        }
+    }
+
+    drawingsFilteredByTags(): Drawing[] {
+        const filteredDrawing = [];
+
+        for (const drawing of this.drawings) {
+            for (const tag of this.tags) {
+                if (drawing.tags.includes(tag)) {
+                    filteredDrawing.push(drawing);
+                    break;
+                }
+            }
+        }
+        return filteredDrawing;
+    }
+
+    updateDrawingsByTags(): void {
+        const drawingsFiltered = this.drawingsFilteredByTags();
+        this.updateDrawings(drawingsFiltered);
+    }
+
+    validateTag(tag: string): boolean {
+        return tag.length > 0 && !this.tags.includes(tag);
     }
 }
