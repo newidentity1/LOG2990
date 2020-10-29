@@ -44,7 +44,7 @@ export class RectangleService extends ShapeTool {
 
     clone(): ShapeTool {
         const rectangleClone: RectangleService = new RectangleService(this.drawingService);
-        this.copy(rectangleClone);
+        this.copyShape(rectangleClone);
         return rectangleClone;
     }
 }

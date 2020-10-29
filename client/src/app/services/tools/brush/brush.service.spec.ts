@@ -64,7 +64,7 @@ describe('BrushService', () => {
 
     it('switchFilter should change to correct filter(Brouille)', () => {
         service.setFilter('Brouillé');
-        service['drawLine'](previewCtxStub, path);
+        service['draw'](previewCtxStub, path);
         expect(drawLineSpy).toHaveBeenCalled();
         const brushProperties = service.toolProperties as BrushProperties;
         expect(brushProperties.currentFilter).toEqual('Brouillé');
@@ -72,7 +72,7 @@ describe('BrushService', () => {
 
     it('switchFilter should change to correct filter(Brosse)', () => {
         service.setFilter('Brosse');
-        service['drawLine'](previewCtxStub, path);
+        service['draw'](previewCtxStub, path);
         expect(drawLineSpy).toHaveBeenCalled();
         const brushProperties = service.toolProperties as BrushProperties;
         expect(brushProperties.currentFilter).toEqual('Brosse');
@@ -80,7 +80,7 @@ describe('BrushService', () => {
 
     it('switchFilter should change to correct filter(Graffiti)', () => {
         service.setFilter('Graffiti');
-        service['drawLine'](previewCtxStub, path);
+        service['draw'](previewCtxStub, path);
         expect(drawLineSpy).toHaveBeenCalled();
         const brushProperties = service.toolProperties as BrushProperties;
         expect(brushProperties.currentFilter).toEqual('Graffiti');
@@ -88,7 +88,7 @@ describe('BrushService', () => {
 
     it('switchFilter should change to correct filter(Eclaboussure)', () => {
         service.setFilter('Éclaboussure');
-        service['drawLine'](previewCtxStub, path);
+        service['draw'](previewCtxStub, path);
         expect(drawLineSpy).toHaveBeenCalled();
         const brushProperties = service.toolProperties as BrushProperties;
         expect(brushProperties.currentFilter).toEqual('Éclaboussure');
@@ -96,7 +96,7 @@ describe('BrushService', () => {
 
     it('switchFilter should change to correct filter(Nuage)', () => {
         service.setFilter('Nuage');
-        service['drawLine'](previewCtxStub, path);
+        service['draw'](previewCtxStub, path);
         expect(drawLineSpy).toHaveBeenCalled();
         const brushProperties = service.toolProperties as BrushProperties;
         expect(brushProperties.currentFilter).toEqual('Nuage');

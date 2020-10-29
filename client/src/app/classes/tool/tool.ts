@@ -7,6 +7,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 // tslint:disable:no-empty
 export abstract class Tool {
     mouseDownCoord: Vec2;
+    pathData: Vec2[];
     mouseDown: boolean = false;
     name: string;
     tooltip: string;
@@ -43,7 +44,13 @@ export abstract class Tool {
 
     draw(ctx: CanvasRenderingContext2D): void {}
 
-    copy(tool: Tool): void {}
+    copyTool(tool: Tool): void {
+        tool.mouseDownCoord = this.mouseDownCoord;
+        tool.toolProperties.thickness = this.toolProperties.thickness;
+        tool.currentPrimaryColor = this.currentPrimaryColor;
+        tool.currentSecondaryColor = this.currentSecondaryColor;
+        tool.pathData = this.pathData;
+    }
 
     clone(): Tool {
         return this;
@@ -59,7 +66,11 @@ export abstract class Tool {
         this.drawingService.setThickness(value);
     }
 
-    setColors(primaryColor: Color, secondaryColor: Color): void {}
+    setColors(primaryColor: Color, secondaryColor: Color): void {
+        this.currentPrimaryColor = primaryColor;
+        this.currentSecondaryColor = secondaryColor;
+        this.drawingService.setColor(primaryColor.toStringRGBA());
+    }
 
     resetContext(): void {}
 }

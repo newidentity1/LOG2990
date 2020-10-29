@@ -164,17 +164,14 @@ export abstract class ShapeTool extends Tool {
         }
     }
 
-    copy(shape: ShapeTool): void {
+    copyShape(shape: ShapeTool): void {
+        this.copyTool(shape);
         shape.width = this.width;
         shape.height = this.height;
         shape.pathStart = this.pathStart;
         shape.currentMousePosition = this.currentMousePosition;
-        shape.mouseDownCoord = this.mouseDownCoord;
-        shape.toolProperties.thickness = this.toolProperties.thickness;
         const shapeProperties = this.toolProperties as BasicShapeProperties;
         shape.setTypeDrawing(shapeProperties.currentType);
-        shape.currentPrimaryColor = this.currentPrimaryColor;
-        shape.currentSecondaryColor = this.currentSecondaryColor;
     }
 
     clone(): ShapeTool {

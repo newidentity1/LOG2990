@@ -11,7 +11,6 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
     providedIn: 'root',
 })
 export class LineService extends Tool {
-    pathData: Vec2[];
     private mouse: Vec2;
 
     shift: boolean = false;
