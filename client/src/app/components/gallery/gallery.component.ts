@@ -16,6 +16,7 @@ export class GalleryComponent implements OnInit {
     private drawingUrl: string = 'http://localhost:3000/api/drawings/';
     list: Drawing[] = [];
     tab: object[] = [];
+    isDrawing: boolean = false;
     constructor(private http: HttpClient, private drawingService: DrawingService, private dialog: MatDialog, private deleteService: DeleteService) {
         this.getDrawings();
     }
@@ -65,6 +66,11 @@ export class GalleryComponent implements OnInit {
             for (const draw of data) {
                 this.list.push(draw);
                 this.updateDraws();
+            }
+            if (this.list.length > 0) {
+                this.isDrawing = true;
+            } else {
+                this.isDrawing = false;
             }
         });
     }
