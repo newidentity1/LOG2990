@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { DeleteService } from '@app/services/firebase/delete/delete.service';
 import { Drawing } from '@common/communication/drawing';
 import { NgImageSliderComponent } from 'ng-image-slider';
 import { Observable } from 'rxjs';
@@ -17,8 +18,10 @@ export class GalleryComponent implements OnInit {
     tab: object[] = [];
     tags: string[] = ['blablabla'];
     tagToAdd: string = '';
+    isDrawing: boolean = false;
 
-    constructor(private http: HttpClient, private drawingService: DrawingService, private dialog: MatDialog) {}
+    constructor(private http: HttpClient, private drawingService: DrawingService, private dialog: MatDialog, private deleteService: DeleteService) {}
+
     ngOnInit(): void {
         // TODO
         this.getDrawings();
@@ -50,25 +53,31 @@ export class GalleryComponent implements OnInit {
     }
 
     deleteDraw(): void {
-        const i = this.slider.visiableImageIndex;
-        console.log(i);
-        const draw: Drawing = this.drawings[i];
-        const obs: Observable<Drawing> = this.http.delete<Drawing>(this.drawingUrl + draw._id);
-        obs.subscribe((data) => {
-            console.log(data);
-            this.drawings = [];
-            this.getDrawings();
-        });
+        if (this.drawings.length !== 0) {
+            const i = this.slider.visiableImageIndex;
+            console.log(i);
+            const draw: Drawing = this.drawings[i];
+            this.deleteService.deleteImage(draw._id);
+            const obs: Observable<Drawing> = this.http.delete<Drawing>(this.drawingUrl + draw._id);
+            obs.subscribe((data) => {
+                this.drawings.length = 0;
+                this.getDrawings();
+            });
+        }
     }
 
     getDrawings(): void {
         const obs: Observable<Drawing[]> = this.http.get<Drawing[]>(this.drawingUrl);
         obs.subscribe((data) => {
-            console.log(data);
             for (const draw of data) {
                 this.drawings.push(draw);
             }
             this.updateDrawings(this.drawings);
+            if (this.drawings.length > 0) {
+                this.isDrawing = true;
+            } else {
+                this.isDrawing = false;
+            }
         });
     }
 
