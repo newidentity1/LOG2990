@@ -22,7 +22,6 @@ export class GalleryComponent implements OnInit {
 
     updateDraws(): void {
         this.tab.length = 0;
-        this.slider.images.length = 0;
         for (const image of this.list) {
             const obj = {
                 image: image.url,

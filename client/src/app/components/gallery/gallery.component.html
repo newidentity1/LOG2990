@@ -1,11 +1,13 @@
-
 <div id="window">
     <h2>Carrousel de dessins</h2>
-    <div class="row">
+    <div class="row" *ngIf="list.length > 0">
         <ng-image-slider [images]="tab" (imageClick)="continueDraw($event)" [imagePopup]="false" #nav> </ng-image-slider>
     </div>
+    <div class="row" *ngIf="list.length === 0">
+        <h1>Aucun dessin</h1>
+        <img src="../../../assets/leo/leonardo.jpg" />
+    </div>
     <div id="buttons">
-        <button id="open">Ouvrir</button>
         <button id="delete" (click)="deleteDraw()">Supprimer</button>
     </div>
 </div>
