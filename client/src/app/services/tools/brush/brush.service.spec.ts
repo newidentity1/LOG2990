@@ -15,7 +15,7 @@ describe('BrushService', () => {
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
-    let drawLineSpy: jasmine.Spy<any>;
+    let drawSpy: jasmine.Spy<any>;
     let drawCursorSpy: jasmine.Spy<any>;
     beforeEach(() => {
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
@@ -25,7 +25,7 @@ describe('BrushService', () => {
             providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
         });
         service = TestBed.inject(BrushService);
-        drawLineSpy = spyOn<any>(service, 'drawLine').and.callThrough();
+        drawSpy = spyOn<any>(service, 'draw').and.callThrough();
         drawCursorSpy = spyOn<any>(service, 'drawCursor').and.callThrough();
 
         // Configuration du spy du service
@@ -64,40 +64,45 @@ describe('BrushService', () => {
 
     it('switchFilter should change to correct filter(Brouille)', () => {
         service.setFilter('Brouillé');
-        service['draw'](previewCtxStub, path);
-        expect(drawLineSpy).toHaveBeenCalled();
+        service.pathData = path;
+        service['draw'](previewCtxStub);
+        expect(drawSpy).toHaveBeenCalled();
         const brushProperties = service.toolProperties as BrushProperties;
         expect(brushProperties.currentFilter).toEqual('Brouillé');
     });
 
     it('switchFilter should change to correct filter(Brosse)', () => {
         service.setFilter('Brosse');
-        service['draw'](previewCtxStub, path);
-        expect(drawLineSpy).toHaveBeenCalled();
+        service.pathData = path;
+        service['draw'](previewCtxStub);
+        expect(drawSpy).toHaveBeenCalled();
         const brushProperties = service.toolProperties as BrushProperties;
         expect(brushProperties.currentFilter).toEqual('Brosse');
     });
 
     it('switchFilter should change to correct filter(Graffiti)', () => {
         service.setFilter('Graffiti');
-        service['draw'](previewCtxStub, path);
-        expect(drawLineSpy).toHaveBeenCalled();
+        service.pathData = path;
+        service['draw'](previewCtxStub);
+        expect(drawSpy).toHaveBeenCalled();
         const brushProperties = service.toolProperties as BrushProperties;
         expect(brushProperties.currentFilter).toEqual('Graffiti');
     });
 
     it('switchFilter should change to correct filter(Eclaboussure)', () => {
         service.setFilter('Éclaboussure');
-        service['draw'](previewCtxStub, path);
-        expect(drawLineSpy).toHaveBeenCalled();
+        service.pathData = path;
+        service['draw'](previewCtxStub);
+        expect(drawSpy).toHaveBeenCalled();
         const brushProperties = service.toolProperties as BrushProperties;
         expect(brushProperties.currentFilter).toEqual('Éclaboussure');
     });
 
     it('switchFilter should change to correct filter(Nuage)', () => {
         service.setFilter('Nuage');
-        service['draw'](previewCtxStub, path);
-        expect(drawLineSpy).toHaveBeenCalled();
+        service.pathData = path;
+        service['draw'](previewCtxStub);
+        expect(drawSpy).toHaveBeenCalled();
         const brushProperties = service.toolProperties as BrushProperties;
         expect(brushProperties.currentFilter).toEqual('Nuage');
     });
