@@ -14,7 +14,7 @@ export class UploadService {
     task: AngularFireUploadTask;
     url: string = '';
     id: string = '';
-    private drawingUrl: string = 'http://localhost:3000/api/drawings';
+    private drawingUrl: string = 'http://localhost:3000/api/drawings/';
     constructor(public drawingService: DrawingService, private afStorage: AngularFireStorage, private http: HttpClient) {}
 
     // met le canvas sous forme d'image dans la fireBase
