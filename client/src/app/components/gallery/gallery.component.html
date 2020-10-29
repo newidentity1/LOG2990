@@ -1,9 +1,9 @@
 <div id="window">
     <h2>Carrousel de dessins</h2>
     <div class="row" *ngIf="list.length > 0">
-        <ng-image-slider [images]="tab" (imageClick)="continueDraw($event)" [imagePopup]="false" #nav> </ng-image-slider>
+        <ng-image-slider [images]="tab" (imageClick)="continueDraw($event)" [imagePopup]="false" [infinite]="true" #nav> </ng-image-slider>
     </div>
-    <div class="row" *ngIf="list.length === 0">
+    <div class="row" *ngIf="isDrawing === false">
         <h1>Aucun dessin</h1>
         <img src="../../../assets/leo/leonardo.jpg" />
     </div>
