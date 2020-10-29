@@ -12,11 +12,15 @@
             <mat-icon matChipRemove>cancel</mat-icon>
         </mat-chip>
     </mat-chip-list>
-    <div class="row">
-        <ng-image-slider [images]="tab" (imageClick)="continueDraw($event)" [imagePopup]="false" #nav> </ng-image-slider>
+
+    <div class="row" *ngIf="drawings.length > 0">
+        <ng-image-slider [images]="tab" (imageClick)="continueDraw($event)" [imagePopup]="false" [infinite]="true" #nav> </ng-image-slider>
+    </div>
+    <div class="row" *ngIf="isDrawing === false">
+        <h1>Aucun dessin</h1>
+        <img src="../../../assets/leo/unnamed.gif" width="320" height="200" />
     </div>
     <div id="buttons">
-        <button id="openButton">Ouvrir</button>
-        <button id="deleteButton" (click)="deleteDraw()">Supprimer</button>
+        <button id="delete" (click)="deleteDraw()">Supprimer</button>
     </div>
 </div>
