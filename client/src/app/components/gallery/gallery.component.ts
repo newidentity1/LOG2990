@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { DeleteService } from '@app/services/firebase/delete/delete.service';
@@ -11,25 +11,23 @@ import { Observable } from 'rxjs';
     styleUrls: ['./gallery.component.scss'],
     templateUrl: './gallery.component.html',
 })
-export class GalleryComponent implements OnInit {
-    @ViewChild('nav') slider: NgImageSliderComponent;
+export class GalleryComponent implements AfterViewInit {
+    @ViewChild('imageSlider', { static: false }) slider: NgImageSliderComponent;
     private drawingUrl: string = 'http://localhost:3000/api/drawings/';
     drawings: Drawing[] = [];
     tab: object[] = [];
-    tags: string[] = ['blablabla'];
+    drawingTags: string[] = [];
     tagToAdd: string = '';
     isDrawing: boolean = false;
 
     constructor(private http: HttpClient, private drawingService: DrawingService, private dialog: MatDialog, private deleteService: DeleteService) {}
 
-    ngOnInit(): void {
-        // TODO
+    ngAfterViewInit(): void {
         this.getDrawings();
     }
 
     updateDrawings(totalDrawings: Drawing[]): void {
-        this.tab.length = 0;
-        this.slider.images.length = 0;
+        this.tab = [];
         for (const image of totalDrawings) {
             const obj = {
                 image: image.url,
@@ -39,6 +37,9 @@ export class GalleryComponent implements OnInit {
             };
             this.tab.push(obj);
         }
+        console.log(this.tab);
+        this.slider.setSliderImages(this.tab);
+        this.isDrawing = this.tab.length > 0;
     }
 
     continueDraw(event: number): void {
@@ -82,26 +83,25 @@ export class GalleryComponent implements OnInit {
     }
 
     addTag(tag: string): void {
-        this.tags.push(tag);
-        this.tags = [...this.tags];
-        this.updateDrawingsByTags();
-        console.log(this.tags);
+        this.drawingTags.push(tag);
+        this.updateDrawingsBydrawingTags();
     }
 
     deleteTag(tag: string): void {
-        const index = this.tags.indexOf(tag);
+        const index = this.drawingTags.indexOf(tag);
 
         if (index >= 0) {
-            this.tags.splice(index, 1);
-            this.updateDrawingsByTags();
+            this.drawingTags.splice(index, 1);
+            this.updateDrawingsBydrawingTags();
         }
     }
 
-    drawingsFilteredByTags(): Drawing[] {
+    drawingsFilteredBydrawingTags(): Drawing[] {
+        if (this.drawingTags.length === 0) return this.drawings;
         const filteredDrawing = [];
 
         for (const drawing of this.drawings) {
-            for (const tag of this.tags) {
+            for (const tag of this.drawingTags) {
                 if (drawing.tags.includes(tag)) {
                     filteredDrawing.push(drawing);
                     break;
@@ -111,12 +111,12 @@ export class GalleryComponent implements OnInit {
         return filteredDrawing;
     }
 
-    updateDrawingsByTags(): void {
-        const drawingsFiltered = this.drawingsFilteredByTags();
+    updateDrawingsBydrawingTags(): void {
+        const drawingsFiltered = this.drawingsFilteredBydrawingTags();
         this.updateDrawings(drawingsFiltered);
     }
 
     validateTag(tag: string): boolean {
-        return tag.length > 0 && !this.tags.includes(tag);
+        return tag.length > 0 && !this.drawingTags.includes(tag);
     }
 }

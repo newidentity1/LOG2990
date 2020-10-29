@@ -20,14 +20,6 @@ li {
     display: flex;
 }
 
-#delete {
-    background-color: #971010;
-}
-
-#open {
-    background-color: #4caf50;
-}
-
 #openButton,
 #deleteButton {
     align-items: center;
@@ -49,7 +41,7 @@ li {
     opacity: 1;
 }
 
-#addTagButton {
+#addTagButton, #deleteDrawingButton {
     background-color: $primaryColor;
     margin-left: 5px;
 }

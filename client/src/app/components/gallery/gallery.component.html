@@ -1,26 +1,27 @@
 <div id="window">
     <h2>Carrousel de dessins</h2>
     <h4>Recherche par étiquette:</h4>
-    <mat-form-field class="example-form-field">
+    <mat-form-field>
         <mat-label>Ajouter une étiquette</mat-label>
         <input matInput type="text" [(ngModel)]="tagToAdd" />
     </mat-form-field>
-    <button id="addTagButton" mat-stroked-button [disabled]="!validateTag(tagToAdd)" (click)="addTag(tagToAdd)">Ajouter</button>
+    <button id="addTagButton" mat-stroked-button [disabled]="!validateTag(tagToAdd)" (click)="addTag(tagToAdd); tagToAdd = ''">Ajouter</button>
     <mat-chip-list #tags>
-        <mat-chip *ngFor="let tag of tags" [removable]="true" (removed)="deleteTag(tag)">
+        <mat-chip *ngFor="let tag of drawingTags" [removable]="true" (removed)="deleteTag(tag)">
             {{ tag }}
             <mat-icon matChipRemove>cancel</mat-icon>
         </mat-chip>
     </mat-chip-list>
 
-    <div class="row" *ngIf="drawings.length > 0">
-        <ng-image-slider [images]="tab" (imageClick)="continueDraw($event)" [imagePopup]="false" [infinite]="true" #nav> </ng-image-slider>
+    <div class="row" [hidden]="!isDrawing">
+        <ng-image-slider #imageSlider [images]="this.tab" (imageClick)="continueDraw($event)" [imagePopup]="false" [infinite]="true">
+        </ng-image-slider>
     </div>
-    <div class="row" *ngIf="isDrawing === false">
+    <div class="row" *ngIf="!isDrawing">
         <h1>Aucun dessin</h1>
         <img src="../../../assets/leo/unnamed.gif" width="320" height="200" />
     </div>
     <div id="buttons">
-        <button id="delete" (click)="deleteDraw()">Supprimer</button>
+        <button mat-stroked-button id="deleteDrawingButton" (click)="deleteDraw()">Supprimer</button>
     </div>
 </div>
