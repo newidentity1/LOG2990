@@ -2,31 +2,21 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { DeleteService } from '@app/services/firebase/delete/delete.service';
 import { Drawing } from '@common/communication/drawing';
 import { NgImageSliderComponent } from 'ng-image-slider';
 import { Observable } from 'rxjs';
 @Component({
     selector: 'app-gallery',
     styleUrls: ['./gallery.component.scss'],
-    template: `
-        <div id="window">
-            <h2>Carrousel de dessins</h2>
-            <div class="row">
-                <ng-image-slider [images]="tab" (imageClick)="continueDraw($event)" [imagePopup]="false" #nav> </ng-image-slider>
-            </div>
-            <div id="buttons">
-                <button id="open">Ouvrir</button>
-                <button id="delete" (click)="deleteDraw()">Supprimer</button>
-            </div>
-        </div>
-    `,
+    templateUrl: './gallery.component.html',
 })
 export class GalleryComponent implements OnInit {
     @ViewChild('nav') slider: NgImageSliderComponent;
     private drawingUrl: string = 'http://localhost:3000/api/drawings/';
     list: Drawing[] = [];
     tab: object[] = [];
-    constructor(private http: HttpClient, private drawingService: DrawingService, private dialog: MatDialog) {
+    constructor(private http: HttpClient, private drawingService: DrawingService, private dialog: MatDialog, private deleteService: DeleteService) {
         this.getDrawings();
     }
 
@@ -56,22 +46,23 @@ export class GalleryComponent implements OnInit {
     }
 
     deleteDraw(): void {
-        const i = this.slider.visiableImageIndex;
-        console.log(i);
-        const draw: Drawing = this.list[i];
-        const obs: Observable<Drawing> = this.http.delete<Drawing>(this.drawingUrl + draw._id);
-        obs.subscribe((data) => {
-            console.log(data);
-            this.list = [];
-            this.getDrawings();
-        });
+        if (this.list.length !== 0) {
+            const i = this.slider.visiableImageIndex;
+            console.log(i);
+            const draw: Drawing = this.list[i];
+            this.deleteService.deleteImage(draw._id);
+            const obs: Observable<Drawing> = this.http.delete<Drawing>(this.drawingUrl + draw._id);
+            obs.subscribe((data) => {
+                this.list.length = 0;
+                this.getDrawings();
+            });
+        }
         // TODO
     }
 
     getDrawings(): void {
         const obs: Observable<Drawing[]> = this.http.get<Drawing[]>(this.drawingUrl);
         obs.subscribe((data) => {
-            console.log(data);
             for (const draw of data) {
                 this.list.push(draw);
                 this.updateDraws();

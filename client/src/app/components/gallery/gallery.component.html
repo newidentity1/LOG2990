@@ -1,1 +1,11 @@
 
+<div id="window">
+    <h2>Carrousel de dessins</h2>
+    <div class="row">
+        <ng-image-slider [images]="tab" (imageClick)="continueDraw($event)" [imagePopup]="false" #nav> </ng-image-slider>
+    </div>
+    <div id="buttons">
+        <button id="open">Ouvrir</button>
+        <button id="delete" (click)="deleteDraw()">Supprimer</button>
+    </div>
+</div>
