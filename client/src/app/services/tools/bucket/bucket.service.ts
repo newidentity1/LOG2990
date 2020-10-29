@@ -51,6 +51,7 @@ export class BucketService extends Tool {
         } else {
             this.floodFillRight(event);
         }
+        this.drawingService.baseCtx.putImageData(this.image, 0, 0);
     }
 
     floodFillLeft(event: MouseEvent): void {
@@ -66,8 +67,7 @@ export class BucketService extends Tool {
 
     floodFillRight(event: MouseEvent): void {
         const targetColor: Color = this.colorPickerService.selectedColor.clone();
-        // tslint:disable-next-line:no-magic-numbers
-        for (let i = 0; i < this.image.data.length; i += 4) {
+        for (let i = 0; i < this.image.data.length; i += CONSTANTS.OFFSET) {
             if (
                 this.image.data[i + 0] >= this.startPixelColor[0] - this.tolerance &&
                 this.image.data[i + 0] < this.startPixelColor[0] + this.tolerance &&
@@ -75,19 +75,15 @@ export class BucketService extends Tool {
                 this.image.data[i + 1] < this.startPixelColor[1] + this.tolerance &&
                 this.image.data[i + 2] >= this.startPixelColor[2] - this.tolerance &&
                 this.image.data[i + 2] < this.startPixelColor[2] + this.tolerance &&
-                // tslint:disable-next-line:no-magic-numbers
-                this.image.data[i + 3] >= this.startPixelColor[CONSTANTS.INDEX_3] - this.tolerance &&
-                // tslint:disable-next-line:no-magic-numbers
-                this.image.data[i + 3] < this.startPixelColor[CONSTANTS.INDEX_3] + this.tolerance
+                this.image.data[i + CONSTANTS.IMAGE_DATA_OPACITY_INDEX] >= this.startPixelColor[CONSTANTS.INDEX_3] - this.tolerance &&
+                this.image.data[i + CONSTANTS.IMAGE_DATA_OPACITY_INDEX] < this.startPixelColor[CONSTANTS.INDEX_3] + this.tolerance
             ) {
                 this.image.data[i] = targetColor.getRed;
                 this.image.data[i + 1] = targetColor.getGreen;
                 this.image.data[i + 2] = targetColor.getBlue;
-                // tslint:disable-next-line:no-magic-numbers
-                this.image.data[i + 3] = targetColor.getOpacity * 255;
+                this.image.data[i + CONSTANTS.IMAGE_DATA_OPACITY_INDEX] = targetColor.getOpacity * CONSTANTS.MAX_COLOR_VALUE;
             }
         }
-        this.drawingService.baseCtx.putImageData(this.image, 0, 0);
     }
 
     setTolerance(tolerance: number | null): void {
@@ -106,11 +102,7 @@ export class BucketService extends Tool {
     }
 
     private clearList(list: Pixel[]): void {
-        if (list.length !== 0) {
-            while (list.length !== 0) {
-                list.pop();
-            }
-        }
+        list.length = 0;
     }
 
     private resetMatrice(): void {
@@ -122,12 +114,7 @@ export class BucketService extends Tool {
     }
 
     private copyList(list: Pixel[]): Pixel[] {
-        const newList: Pixel[] = [];
-        for (const point of list) {
-            const newPoint: Pixel = { x: point.x, y: point.y, status: point.status };
-            newList.push(newPoint);
-        }
-        return newList;
+        return list.slice();
     }
 
     private addNeighbours(pixels: Pixel[]): void {
@@ -175,8 +162,7 @@ export class BucketService extends Tool {
     }
 
     private checkColor(point: Pixel): boolean {
-        // tslint:disable-next-line:no-magic-numbers
-        const offset = (point.y * this.width + point.x) * 4;
+        const offset = (point.y * this.width + point.x) * CONSTANTS.OFFSET;
         if (
             this.image.data[offset + 0] >= this.startPixelColor[0] - this.tolerance &&
             this.image.data[offset + 0] < this.startPixelColor[0] + this.tolerance &&
@@ -184,10 +170,8 @@ export class BucketService extends Tool {
             this.image.data[offset + 1] < this.startPixelColor[1] + this.tolerance &&
             this.image.data[offset + 2] >= this.startPixelColor[2] - this.tolerance &&
             this.image.data[offset + 2] < this.startPixelColor[2] + this.tolerance &&
-            // tslint:disable-next-line:no-magic-numbers
-            this.image.data[offset + 3] >= this.startPixelColor[CONSTANTS.INDEX_3] - this.tolerance &&
-            // tslint:disable-next-line:no-magic-numbers
-            this.image.data[offset + 3] < this.startPixelColor[CONSTANTS.INDEX_3] + this.tolerance
+            this.image.data[offset + CONSTANTS.IMAGE_DATA_OPACITY_INDEX] >= this.startPixelColor[CONSTANTS.INDEX_3] - this.tolerance &&
+            this.image.data[offset + CONSTANTS.IMAGE_DATA_OPACITY_INDEX] < this.startPixelColor[CONSTANTS.INDEX_3] + this.tolerance
         ) {
             return true;
         }
@@ -195,6 +179,12 @@ export class BucketService extends Tool {
     }
 
     private colorPixel(pixel: Pixel): void {
+        const targetColor: Color = this.colorPickerService.selectedColor.clone();
+        const offset = (pixel.y * this.width + pixel.x) * CONSTANTS.OFFSET;
         this.drawingService.baseCtx.fillRect(pixel.x, pixel.y, 1, 1);
+        this.image.data[offset] = targetColor.getRed;
+        this.image.data[offset + 1] = targetColor.getGreen;
+        this.image.data[offset + 2] = targetColor.getBlue;
+        this.image.data[offset + CONSTANTS.IMAGE_DATA_OPACITY_INDEX] = targetColor.getOpacity * CONSTANTS.MAX_COLOR_VALUE;
     }
 }
