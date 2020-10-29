@@ -1,1 +1,22 @@
-
+<div id="window">
+    <h2>Carrousel de dessins</h2>
+    <h4>Recherche par étiquette:</h4>
+    <mat-form-field class="example-form-field">
+        <mat-label>Ajouter une étiquette</mat-label>
+        <input matInput type="text" [(ngModel)]="tagToAdd" />
+    </mat-form-field>
+    <button id="addTagButton" mat-stroked-button [disabled]="!validateTag(tagToAdd)" (click)="addTag(tagToAdd)">Ajouter</button>
+    <mat-chip-list #tags>
+        <mat-chip *ngFor="let tag of tags" [removable]="true" (removed)="deleteTag(tag)">
+            {{ tag }}
+            <mat-icon matChipRemove>cancel</mat-icon>
+        </mat-chip>
+    </mat-chip-list>
+    <div class="row">
+        <ng-image-slider [images]="tab" (imageClick)="continueDraw($event)" [imagePopup]="false" #nav> </ng-image-slider>
+    </div>
+    <div id="buttons">
+        <button id="openButton">Ouvrir</button>
+        <button id="deleteButton" (click)="deleteDraw()">Supprimer</button>
+    </div>
+</div>

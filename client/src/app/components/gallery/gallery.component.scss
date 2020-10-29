@@ -1,3 +1,5 @@
+@import '../../style/color.scss';
+
 ul {
     display: flex;
     flex-wrap: wrap-reverse;
@@ -26,7 +28,8 @@ li {
     background-color: #4caf50;
 }
 
-button {
+#openButton,
+#deleteButton {
     align-items: center;
     opacity: 0.6;
     border-radius: 8px;
@@ -37,8 +40,16 @@ button {
     text-decoration: none;
     display: inline-block;
     font-size: 16px;
+    margin-left: 5px;
+    background-color: $primaryColor;
 }
 
-button:hover {
+#openButton:hover,
+#deleteButton:hover {
     opacity: 1;
+}
+
+#addTagButton {
+    background-color: $primaryColor;
+    margin-left: 5px;
 }
