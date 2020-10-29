@@ -52,7 +52,7 @@ export class EllipseService extends ShapeTool {
 
     clone(): ShapeTool {
         const ellipseClone: EllipseService = new EllipseService(this.drawingService);
-        this.copy(ellipseClone);
+        this.copyShape(ellipseClone);
         return ellipseClone;
     }
 }

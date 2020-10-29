@@ -149,6 +149,7 @@ export class ToolbarService {
     }
 
     undo(): void {
+        if (this.undoIndex < 0) return;
         this.undoIndex--;
         this.drawingService.clearCanvas(this.drawingService.baseCtx);
         this.drawingService.setWhiteBackground();
@@ -156,15 +157,15 @@ export class ToolbarService {
             for (let i = 0; i <= this.undoIndex; i++) {
                 this.drawings[i].setColors(this.drawings[i].currentPrimaryColor, this.drawings[i].currentSecondaryColor);
                 this.drawings[i].setThickness(this.drawings[i].toolProperties.thickness);
-                this.drawings[i].setColors(this.drawings[i].currentPrimaryColor, this.drawings[i].currentSecondaryColor);
                 this.drawings[i].draw(this.drawingService.baseCtx);
             }
         }
-        this.currentTool.setColors(this.currentTool.currentPrimaryColor, this.currentTool.currentSecondaryColor);
+        this.applyCurrentToolColor();
+        this.currentTool.setThickness(this.currentTool.toolProperties.thickness);
     }
 
     redo(): void {
-        if (this.undoIndex === this.drawings.length - 1) return;
+        if (this.undoIndex === this.drawings.length - 1 || this.drawings.length === 0) return;
 
         this.undoIndex++;
         this.drawings[this.undoIndex].setColors(
@@ -177,7 +178,9 @@ export class ToolbarService {
             this.drawings[this.undoIndex].currentSecondaryColor,
         );
         this.drawings[this.undoIndex].draw(this.drawingService.baseCtx);
-        this.currentTool.setColors(this.currentTool.currentPrimaryColor, this.currentTool.currentSecondaryColor);
+
+        this.applyCurrentToolColor();
+        this.currentTool.setThickness(this.currentTool.toolProperties.thickness);
     }
 
     triggerSelectAll(): void {
