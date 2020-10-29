@@ -32,7 +32,7 @@ export class GalleryComponent implements AfterViewInit {
             const obj = {
                 image: image.url,
                 thumbImage: image.url,
-                title: image.name,
+                title: image.name + '\ntags: ' + this.getDrawingTagsToString(image),
                 alt: image.name,
             };
             this.tab.push(obj);
@@ -40,6 +40,14 @@ export class GalleryComponent implements AfterViewInit {
         console.log(this.tab);
         this.slider.setSliderImages(this.tab);
         this.isDrawing = this.tab.length > 0;
+    }
+
+    getDrawingTagsToString(drawing: Drawing): string {
+        let tags = '';
+        for (const tag of drawing.tags) {
+            tags += tag + ',';
+        }
+        return tags;
     }
 
     continueDraw(event: number): void {
