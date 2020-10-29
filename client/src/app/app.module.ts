@@ -48,6 +48,7 @@ import { RectangleComponent } from './components/tools-options/rectangle/rectang
 import { SelectionComponent } from './components/tools-options/selection/selection.component';
 import { ThicknessSliderComponent } from './components/tools-options/thickness-slider/thickness-slider.component';
 import { UndoRedoComponent } from './components/undo-redo/undo-redo.component';
+
 @NgModule({
     declarations: [
         AppComponent,
