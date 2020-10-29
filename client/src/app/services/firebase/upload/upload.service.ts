@@ -49,7 +49,7 @@ export class UploadService {
 
     // envois un objet de type dessin avec l'url de fireBase au serveur
     postDraw(): void {
-        const draw: Drawing = { _id: this.id, name: this.id, tags: ['2', '3'], url: this.url };
+        const draw: Drawing = { _id: this.id, name: this.id, tags: [], url: this.url };
         this.http.post(this.drawingUrl, draw, { responseType: 'text' }).subscribe({
             // tslint:disable-next-line: no-any
             next: (data: any) => {

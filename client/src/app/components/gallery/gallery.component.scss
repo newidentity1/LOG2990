@@ -41,7 +41,12 @@ li {
     opacity: 1;
 }
 
-#addTagButton, #deleteDrawingButton {
+#addTagButton,
+#deleteDrawingButton {
     background-color: $primaryColor;
     margin-left: 5px;
+}
+
+#imageSliderWrapper {
+    margin-top: 10px;
 }
