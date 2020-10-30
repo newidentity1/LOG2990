@@ -47,7 +47,7 @@ export class GalleryComponent implements AfterViewInit {
         for (const tag of drawing.tags) {
             tags += tag + ',';
         }
-        return tags;
+        return tags.length > 0 ? tags.substring(0, tags.length - 1) : tags;
     }
 
     continueDraw(event: number): void {
@@ -106,7 +106,7 @@ export class GalleryComponent implements AfterViewInit {
 
     drawingsFilteredBydrawingTags(): Drawing[] {
         if (this.drawingTags.length === 0) return this.drawings;
-        const filteredDrawing = [];
+        const filteredDrawing: Drawing[] = [];
 
         for (const drawing of this.drawings) {
             for (const tag of this.drawingTags) {
