@@ -23,7 +23,7 @@ export abstract class Tool {
     onMouseDown(event: MouseEvent): void {}
 
     onMouseUp(event: MouseEvent): Tool | undefined {
-        return this;
+        return undefined;
     }
 
     onMouseMove(event: MouseEvent): void {}
