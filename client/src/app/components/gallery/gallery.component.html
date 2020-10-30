@@ -3,7 +3,8 @@
     <h4>Recherche par étiquette:</h4>
     <mat-form-field>
         <mat-label>Ajouter une étiquette</mat-label>
-        <input matInput type="text" [(ngModel)]="tagToAdd" />
+        <mat-error>étiquette non valide</mat-error>
+        <input matInput type="text" [(ngModel)]="tagToAdd" [formControl]="tagForm" maxlength="15" />
     </mat-form-field>
     <button id="addTagButton" mat-stroked-button [disabled]="!validateTag(tagToAdd)" (click)="addTag(tagToAdd); tagToAdd = ''">Ajouter</button>
     <mat-chip-list #tags>

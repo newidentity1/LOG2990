@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { DeleteService } from '@app/services/firebase/delete/delete.service';
@@ -11,7 +12,7 @@ import { Observable } from 'rxjs';
     styleUrls: ['./gallery.component.scss'],
     templateUrl: './gallery.component.html',
 })
-export class GalleryComponent implements AfterViewInit {
+export class GalleryComponent implements OnInit, AfterViewInit {
     @ViewChild('imageSlider', { static: false }) slider: NgImageSliderComponent;
     private drawingUrl: string = 'http://localhost:3000/api/drawings/';
     drawings: Drawing[] = [];
@@ -19,8 +20,13 @@ export class GalleryComponent implements AfterViewInit {
     drawingTags: string[] = [];
     tagToAdd: string = '';
     isDrawing: boolean = false;
+    tagForm: FormControl;
 
     constructor(private http: HttpClient, private drawingService: DrawingService, private dialog: MatDialog, private deleteService: DeleteService) {}
+
+    ngOnInit(): void {
+        this.tagForm = new FormControl(this.tagToAdd, [Validators.pattern('^(\\d|[a-zA-ZÀ-ÿ]){0,15}$'), Validators.required]);
+    }
 
     ngAfterViewInit(): void {
         this.getDrawings();
@@ -125,6 +131,6 @@ export class GalleryComponent implements AfterViewInit {
     }
 
     validateTag(tag: string): boolean {
-        return tag.length > 0 && !this.drawingTags.includes(tag);
+        return tag.length > 0 && !this.drawingTags.includes(tag) && !this.tagForm.invalid;
     }
 }
