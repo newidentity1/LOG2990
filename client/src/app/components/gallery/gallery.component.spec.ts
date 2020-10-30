@@ -1,7 +1,7 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { DeleteService } from '@app/services/firebase/delete/delete.service';
@@ -19,7 +19,7 @@ describe('GalleryComponent', () => {
         drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
         TestBed.configureTestingModule({
             declarations: [GalleryComponent],
-            imports: [HttpClientTestingModule, MatDialogModule, FormsModule],
+            imports: [HttpClientTestingModule, MatDialogModule, FormsModule, ReactiveFormsModule],
             providers: [
                 { provide: DrawingService, useValue: drawingServiceSpy },
                 { provide: DeleteService, useValue: deleteServiceSpy },
@@ -96,14 +96,21 @@ describe('GalleryComponent', () => {
 
     it('validateTag should return true when tag is valid and its unique', () => {
         const tag = 'tag1';
+        component.tagForm.setValue(tag);
         expect(component.validateTag(tag)).toEqual(true);
     });
 
-    it('validateTag should return false when tag isnt valid and its not unique', () => {
+    it('validateTag should return false when tag is empty or its not unique', () => {
         const tag = 'tag1';
         component.drawingTags = [tag];
         const emptyTag = '';
         expect(component.validateTag(emptyTag)).toEqual(false);
+        expect(component.validateTag(tag)).toEqual(false);
+    });
+
+    it('validateTag should return false when tag isnt valid', () => {
+        const tag = '.@/,.';
+        component.tagForm.setValue(tag);
         expect(component.validateTag(tag)).toEqual(false);
     });
 });
