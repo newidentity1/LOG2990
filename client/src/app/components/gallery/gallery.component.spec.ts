@@ -3,31 +3,48 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
+import { canvasTestHelper } from '@app/classes/canvas-test-helper';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { DeleteService } from '@app/services/firebase/delete/delete.service';
+import { FireBaseService } from '@app/services/fire/fire-base.service';
 import { Drawing } from '@common/communication/drawing';
+import { NgImageSliderComponent } from 'ng-image-slider';
 import { GalleryComponent } from './gallery.component';
 
 describe('GalleryComponent', () => {
     let component: GalleryComponent;
     let fixture: ComponentFixture<GalleryComponent>;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
-    let deleteServiceSpy: jasmine.SpyObj<DeleteService>;
+    let baseCtxStub: CanvasRenderingContext2D;
+    let previewCtxStub: CanvasRenderingContext2D;
+    let slider: jasmine.SpyObj<NgImageSliderComponent>;
+    let fireBaseService: jasmine.SpyObj<FireBaseService>;
     let fakeDrawing: Drawing;
 
     beforeEach(async(() => {
         drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
+        slider = jasmine.createSpyObj('NgImageSliderComponent', ['setSliderImages']);
         TestBed.configureTestingModule({
             declarations: [GalleryComponent],
             imports: [HttpClientTestingModule, MatDialogModule, FormsModule, ReactiveFormsModule],
             providers: [
                 { provide: DrawingService, useValue: drawingServiceSpy },
-                { provide: DeleteService, useValue: deleteServiceSpy },
+                { provide: FireBaseService, useValue: fireBaseService },
+                { provide: NgImageSliderComponent, useValue: slider },
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
         drawingServiceSpy = TestBed.inject(DrawingService) as jasmine.SpyObj<DrawingService>;
-        deleteServiceSpy = TestBed.inject(DeleteService) as jasmine.SpyObj<DeleteService>;
+        fireBaseService = TestBed.inject(FireBaseService) as jasmine.SpyObj<FireBaseService>;
+        slider = TestBed.inject(NgImageSliderComponent) as jasmine.SpyObj<NgImageSliderComponent>;
+
+        const drawingCanvas = document.createElement('canvas');
+        drawingCanvas.width = canvasTestHelper.canvas.width;
+        drawingCanvas.height = canvasTestHelper.canvas.height;
+        baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
+        previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
+        drawingServiceSpy.baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
+        drawingServiceSpy.previewCtx = previewCtxStub;
+        drawingServiceSpy.canvas = drawingCanvas;
 
         fakeDrawing = {} as Drawing;
     }));
@@ -40,6 +57,23 @@ describe('GalleryComponent', () => {
 
     it('should create', () => {
         expect(component).toBeTruthy();
+    });
+
+    it('continueDraw should add the choosing draw to the canvas', () => {
+        component.slider = slider;
+        const fakeDrawing1: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
+        component.drawings.push(fakeDrawing1);
+        component.continueDraw(0);
+        expect(drawingServiceSpy.clearCanvas).toHaveBeenCalled();
+    });
+
+    it('updateDrawings should update drawings from the server', () => {
+        component.slider = slider;
+        const totalDrawings: Drawing[] = [];
+        const fakeDrawing1: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
+        totalDrawings.push(fakeDrawing1);
+        component.updateDrawings(totalDrawings);
+        expect(component.tab.length).toEqual(1);
     });
 
     it('getDrawingTagsToString should return the tags of the drawing in string', () => {

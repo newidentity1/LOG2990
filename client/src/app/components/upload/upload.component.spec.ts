@@ -1,21 +1,21 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { UploadService } from '@app/services/firebase/upload/upload.service';
+import { FireBaseService } from '@app/services/fire/fire-base.service';
 import { UploadComponent } from './upload.component';
 
 describe('UploadComponent', () => {
     let component: UploadComponent;
     let fixture: ComponentFixture<UploadComponent>;
-    let uploadServiceSpy: jasmine.SpyObj<UploadService>;
+    let fireBaseServiceSpy: jasmine.SpyObj<FireBaseService>;
 
     beforeEach(async(() => {
-        uploadServiceSpy = jasmine.createSpyObj('UploadService', ['uploadCanvas']);
+        fireBaseServiceSpy = jasmine.createSpyObj('FireBaseService', ['uploadCanvas']);
         TestBed.configureTestingModule({
             declarations: [UploadComponent],
-            providers: [{ provide: UploadService, useValue: uploadServiceSpy }],
+            providers: [{ provide: FireBaseService, useValue: fireBaseServiceSpy }],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
-        uploadServiceSpy = TestBed.inject(UploadService) as jasmine.SpyObj<UploadService>;
+        fireBaseServiceSpy = TestBed.inject(FireBaseService) as jasmine.SpyObj<FireBaseService>;
     }));
 
     beforeEach(() => {
