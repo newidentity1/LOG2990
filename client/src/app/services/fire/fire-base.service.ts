@@ -1,6 +1,6 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AngularFireStorage, AngularFireStorageReference, AngularFireUploadTask } from '@angular/fire/storage';
+import { CommunicationService } from '@app/services/communication.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { Drawing } from '@common/communication/drawing';
 // import { Drawing } from '@common/communication/drawing';
@@ -14,8 +14,7 @@ export class FireBaseService {
     task: AngularFireUploadTask;
     url: string = '';
     id: string = '';
-    private drawingUrl: string = 'http://localhost:3000/api/drawings/';
-    constructor(public drawingService: DrawingService, private afStorage: AngularFireStorage, private http: HttpClient) {}
+    constructor(public drawingService: DrawingService, private afStorage: AngularFireStorage, private communicationService: CommunicationService) {}
 
     // met le canvas sous forme d'image dans la fireBase
     uploadCanvas(): void {
@@ -50,16 +49,7 @@ export class FireBaseService {
     // envois un objet de type dessin avec l'url de fireBase au serveur
     postDraw(): void {
         const draw: Drawing = { _id: this.id, name: this.id, tags: [], url: this.url };
-        this.http.post(this.drawingUrl, draw, { responseType: 'text' }).subscribe({
-            // tslint:disable-next-line: no-any
-            next: (data: any) => {
-                console.log(data);
-            },
-            // tslint:disable-next-line: no-any
-            error: (error: any) => {
-                console.log(error);
-            },
-        });
+        this.communicationService.postDraw(draw);
     }
 
     deleteImage(id: string): void {
