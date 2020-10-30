@@ -4,6 +4,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
+import { CommunicationService } from '@app/services/communication.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { FireBaseService } from '@app/services/fire/fire-base.service';
 import { Drawing } from '@common/communication/drawing';
@@ -14,6 +15,7 @@ describe('GalleryComponent', () => {
     let component: GalleryComponent;
     let fixture: ComponentFixture<GalleryComponent>;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
+    let communicationSpy: jasmine.SpyObj<CommunicationService>;
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
     let slider: jasmine.SpyObj<NgImageSliderComponent>;
@@ -22,6 +24,7 @@ describe('GalleryComponent', () => {
 
     beforeEach(async(() => {
         drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
+        communicationSpy = jasmine.createSpyObj('CommunicationService', ['deleteDraw']);
         slider = jasmine.createSpyObj('NgImageSliderComponent', ['setSliderImages']);
         TestBed.configureTestingModule({
             declarations: [GalleryComponent],
@@ -34,6 +37,7 @@ describe('GalleryComponent', () => {
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
         drawingServiceSpy = TestBed.inject(DrawingService) as jasmine.SpyObj<DrawingService>;
+        communicationSpy = TestBed.inject(CommunicationService) as jasmine.SpyObj<CommunicationService>;
         fireBaseService = TestBed.inject(FireBaseService) as jasmine.SpyObj<FireBaseService>;
         slider = TestBed.inject(NgImageSliderComponent) as jasmine.SpyObj<NgImageSliderComponent>;
 
@@ -57,6 +61,15 @@ describe('GalleryComponent', () => {
 
     it('should create', () => {
         expect(component).toBeTruthy();
+    });
+
+    it('deleteDraw should delete the current draw', () => {
+        component.slider = slider;
+        component['fireBaseService'] = fireBaseService;
+        const fakeDrawing1: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
+        component.drawings.push(fakeDrawing1);
+        component.deleteDraw();
+        expect(communicationSpy.deleteDraw).toHaveBeenCalled();
     });
 
     it('continueDraw should add the choosing draw to the canvas', () => {

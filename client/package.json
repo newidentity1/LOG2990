@@ -25,7 +25,6 @@
     "@angular/router": "~10.0.9",
     "angularfire2": "^5.4.2",
     "firebase": "^7.24.0",
-    "ng-image-slider": "^2.6.4",
     "os-tmpdir": "^2.0.0",
     "rxjs": "~6.5.5",
     "tmp": "^0.2.1",
