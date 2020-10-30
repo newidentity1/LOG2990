@@ -1,5 +1,6 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 import { MatSliderModule } from '@angular/material/slider';
 import { PolygonComponent } from './polygon.component';
 
@@ -10,7 +11,7 @@ describe('PolygonComponent', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [PolygonComponent],
-            imports: [MatSliderModule],
+            imports: [MatSliderModule, FormsModule],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
     }));
