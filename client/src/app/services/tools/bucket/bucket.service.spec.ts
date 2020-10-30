@@ -43,7 +43,6 @@ describe('BucketService', () => {
             offsetY: 25,
             button: 2,
         } as MouseEvent;
-
         service['width'] = CONSTANTS.TEST_IMAGE_SIZE;
         service['height'] = CONSTANTS.TEST_IMAGE_SIZE;
     });
@@ -143,13 +142,14 @@ describe('BucketService', () => {
     });
 
     it('AddNeighboors should add the 2 neighboors pixels if the pixel is on left top corner', () => {
+        const checkPixelSpy = spyOn<any>(service, 'checkPixel').and.callThrough();
         service.onMouseDown(mouseEventclickRight);
         service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(2, 2, 1, 1).data;
         service['generateMatrice']();
         const p1: Pixel = { x: 0, y: 0, status: 0 };
         service['openList'].push(p1);
         service['addNeighbours'](service['openList']);
-        expect(service['openList'].length).toEqual(2);
+        expect(checkPixelSpy).toHaveBeenCalled();
     });
 
     it('AddNeighboors should add the 4 neighboors pixels if status = 0', () => {
