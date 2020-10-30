@@ -1,14 +1,14 @@
 import { Component } from '@angular/core';
-import { UploadService } from '@app/services/firebase/upload/upload.service';
+import { FireBaseService } from '@app/services/fire/fire-base.service';
 @Component({
     selector: 'app-upload',
     templateUrl: './upload.component.html',
     styleUrls: ['./upload.component.scss'],
 })
 export class UploadComponent {
-    constructor(private uploadService: UploadService) {}
+    constructor(private fireBaseService: FireBaseService) {}
 
     uploadImage(): void {
-        this.uploadService.uploadCanvas();
+        this.fireBaseService.uploadCanvas();
     }
 }

@@ -1,9 +1,9 @@
-import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { CommunicationService } from '@app/services/communication.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { DeleteService } from '@app/services/firebase/delete/delete.service';
+import { FireBaseService } from '@app/services/fire/fire-base.service';
 import { Drawing } from '@common/communication/drawing';
 import { NgImageSliderComponent } from 'ng-image-slider';
 import { Observable } from 'rxjs';
@@ -14,7 +14,6 @@ import { Observable } from 'rxjs';
 })
 export class GalleryComponent implements OnInit, AfterViewInit {
     @ViewChild('imageSlider', { static: false }) slider: NgImageSliderComponent;
-    private drawingUrl: string = 'http://localhost:3000/api/drawings/';
     drawings: Drawing[] = [];
     tab: object[] = [];
     drawingTags: string[] = [];
@@ -22,7 +21,12 @@ export class GalleryComponent implements OnInit, AfterViewInit {
     isDrawing: boolean = false;
     tagForm: FormControl;
 
-    constructor(private http: HttpClient, private drawingService: DrawingService, private dialog: MatDialog, private deleteService: DeleteService) {}
+    constructor(
+        private drawingService: DrawingService,
+        private dialog: MatDialog,
+        private fireBaseService: FireBaseService,
+        private communicationService: CommunicationService,
+    ) {}
 
     ngOnInit(): void {
         this.tagForm = new FormControl(this.tagToAdd, [Validators.pattern('^(\\d|[a-zA-ZÀ-ÿ]){0,15}$'), Validators.required]);
@@ -60,6 +64,7 @@ export class GalleryComponent implements OnInit, AfterViewInit {
         const image = new Image();
         image.src = this.drawings[event].url;
         const ctx = this.drawingService.canvas.getContext('2d');
+        this.drawingService.clearCanvas(ctx as CanvasRenderingContext2D);
         this.drawingService.canvas.width = image.width;
         this.drawingService.canvas.height = image.height;
         ctx?.drawImage(image, 0, 0);
@@ -72,17 +77,13 @@ export class GalleryComponent implements OnInit, AfterViewInit {
             const i = this.slider.visiableImageIndex;
             console.log(i);
             const draw: Drawing = this.drawings[i];
-            this.deleteService.deleteImage(draw._id);
-            const obs: Observable<Drawing> = this.http.delete<Drawing>(this.drawingUrl + draw._id);
-            obs.subscribe((data) => {
-                this.drawings.length = 0;
-                this.getDrawings();
-            });
+            this.fireBaseService.deleteImage(draw._id);
+            this.communicationService.deleteDraw(draw._id);
         }
     }
 
     getDrawings(): void {
-        const obs: Observable<Drawing[]> = this.http.get<Drawing[]>(this.drawingUrl);
+        const obs: Observable<Drawing[]> = this.communicationService.getDrawings();
         obs.subscribe((data) => {
             for (const draw of data) {
                 this.drawings.push(draw);
