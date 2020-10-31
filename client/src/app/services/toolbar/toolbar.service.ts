@@ -160,6 +160,7 @@ export class ToolbarService {
         if (this.undoIndex < 0) return;
         this.undoIndex--;
         this.drawingService.clearCanvas(this.drawingService.baseCtx);
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.drawingService.setWhiteBackground();
         if (this.undoIndex >= 0) {
             for (let i = 0; i <= this.undoIndex; i++) {
