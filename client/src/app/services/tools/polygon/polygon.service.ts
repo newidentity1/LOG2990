@@ -117,8 +117,8 @@ export class PolygonService extends ShapeTool {
             ctx.rect(
                 this.mouseDownCoord.x,
                 this.mouseDownCoord.y,
-                this.currentMousePosition.x - this.pathStart.x,
-                this.currentMousePosition.y - this.pathStart.y,
+                this.currentMousePosition.x - this.mouseDownCoord.x,
+                this.currentMousePosition.y - this.mouseDownCoord.y,
             );
             ctx.setLineDash([]);
             ctx.strokeStyle = 'white';
@@ -128,5 +128,14 @@ export class PolygonService extends ShapeTool {
             ctx.stroke();
             ctx.restore();
         }
+    }
+
+    clone(): ShapeTool {
+        const polygonClone: PolygonService = new PolygonService(this.drawingService);
+        this.copyShape(polygonClone);
+        const polygonCloneProperties = polygonClone.toolProperties as PolygonProperties;
+        const polygonProperties = this.toolProperties as PolygonProperties;
+        polygonCloneProperties.numberOfSides = polygonProperties.numberOfSides;
+        return polygonClone;
     }
 }
