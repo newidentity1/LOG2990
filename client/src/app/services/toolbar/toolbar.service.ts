@@ -22,8 +22,8 @@ import { SelectionService } from '@app/services/tools/selection/selection.servic
 })
 export class ToolbarService {
     private tools: Tool[];
-    private commands: Command[] = [];
     private undoIndex: number = -1;
+    commands: Command[] = [];
     currentTool: Tool;
     primaryColor: Color;
     secondaryColor: Color;
@@ -123,13 +123,16 @@ export class ToolbarService {
     }
 
     onMouseUp(event: MouseEvent): void {
-        let tool: Tool | undefined;
-        tool = this.currentTool.onMouseUp(event);
+        let command: Command | undefined;
+        command = this.currentTool.onMouseUp(event);
+        this.addCommand(command);
+    }
 
-        if (tool !== undefined) {
+    addCommand(command: Command | undefined): void {
+        if (command !== undefined) {
             this.undoIndex++;
             this.commands.length = this.undoIndex;
-            this.commands.push(tool);
+            this.commands.push(command);
         }
     }
 
@@ -142,14 +145,9 @@ export class ToolbarService {
     }
 
     onDoubleClick(event: MouseEvent): void {
-        let tool: Tool | undefined;
-        tool = this.currentTool.onDoubleClick(event);
-
-        if (tool !== undefined) {
-            this.undoIndex++;
-            this.commands.length = this.undoIndex;
-            this.commands.push(tool);
-        }
+        let command: Command | undefined;
+        command = this.currentTool.onDoubleClick(event);
+        this.addCommand(command);
     }
 
     onClick(event: MouseEvent): void {
