@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { PREVIEW_CANVAS_HEIGHT, PREVIEW_CANVAS_WIDTH } from '@app/constants/constants.ts';
+import { PREVIEW_CANVAS_HEIGHT, PREVIEW_CANVAS_WIDTH, MAX_PREVIEW_SIZE } from '@app/constants/constants.ts';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
 @Component({
@@ -37,8 +37,9 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
     }
 
     setInitialCanvasSize(): void {
-        this.previewCanvas.nativeElement.width = PREVIEW_CANVAS_WIDTH;
-        this.previewCanvas.nativeElement.height = PREVIEW_CANVAS_HEIGHT;
+        this.previewCanvas.nativeElement.width = PREVIEW_CANVAS_WIDTH; // will be reassigned by proportions, its a default value
+        this.previewCanvas.nativeElement.height = PREVIEW_CANVAS_HEIGHT; // will be reassigned by proportions, its a default value
+        this.setPreviewProportions();
         this.exportCanvas.nativeElement.width = this.drawingService.canvas.width;
         this.exportCanvas.nativeElement.height = this.drawingService.canvas.height;
     }
@@ -53,6 +54,57 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
         this.setImageUrl();
     }
 
+    // setPreviewProportions(): void {
+    //     let ratio: number;
+    //     ratio = this.drawingService.canvas.height / this.drawingService.canvas.width;
+
+    //     if (ratio < 0.6) {
+    //         this.previewCanvas.nativeElement.height = 400;
+    //         this.previewCanvas.nativeElement.width = 800;
+    //     } else if (ratio < 1.0) {
+    //         this.previewCanvas.nativeElement.height = 600;
+    //         this.previewCanvas.nativeElement.width = 800;
+    //     } else if (ratio < 1.2) {
+    //         this.previewCanvas.nativeElement.height = 600;
+    //         this.previewCanvas.nativeElement.width = 600;
+    //     } else if (ratio < 1.6) {
+    //         this.previewCanvas.nativeElement.height = 800;
+    //         this.previewCanvas.nativeElement.width = 600;
+    //     } else {
+    //         this.previewCanvas.nativeElement.height = 800;
+    //         this.previewCanvas.nativeElement.width = 400;
+    //     }
+    // }
+
+    setPreviewProportions(): void {
+        let ratio: number;
+        ratio = this.drawingService.canvas.height / this.drawingService.canvas.width;
+
+        // This logic will make sure the biggest possible size is 800
+
+        if (this.drawingService.canvas.height > MAX_PREVIEW_SIZE && this.drawingService.canvas.width > MAX_PREVIEW_SIZE) {
+            // take the biggest one of both, set and scale according to that one
+            ratio > 1 ? (this.previewCanvas.nativeElement.height = MAX_PREVIEW_SIZE) : (this.previewCanvas.nativeElement.width = MAX_PREVIEW_SIZE);
+            if (ratio > 1) {
+                this.previewCanvas.nativeElement.width = this.previewCanvas.nativeElement.height / ratio;
+            } else {
+                this.previewCanvas.nativeElement.height = this.previewCanvas.nativeElement.width * ratio;
+            }
+        } else if (this.drawingService.canvas.width > MAX_PREVIEW_SIZE) {
+            // set width to 800 and scale according to width
+            this.previewCanvas.nativeElement.width = MAX_PREVIEW_SIZE;
+            this.previewCanvas.nativeElement.height = this.previewCanvas.nativeElement.width * ratio;
+        } else if (this.drawingService.canvas.height > MAX_PREVIEW_SIZE) {
+            // set height to 800 and scale according to height
+            this.previewCanvas.nativeElement.height = MAX_PREVIEW_SIZE;
+            this.previewCanvas.nativeElement.width = this.previewCanvas.nativeElement.height / ratio;
+        } else {
+            // Size of canvas is small enough to display without rescaling
+            this.previewCanvas.nativeElement.width = this.drawingService.canvas.width;
+            this.previewCanvas.nativeElement.height = this.drawingService.canvas.height;
+        }
+    }
+
     drawPreviewCanvas(): void {
         this.previewCtx.drawImage(
             this.drawingService.canvas,
@@ -62,9 +114,24 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
             this.drawingService.canvas.height,
             0,
             0,
-            PREVIEW_CANVAS_WIDTH,
-            PREVIEW_CANVAS_HEIGHT,
+            this.previewCanvas.nativeElement.width,
+            this.previewCanvas.nativeElement.height, // Stretches image to fit preview
         );
+    }
+
+    downloadImage(): void {
+        this.setExportFilter();
+        this.setImageUrl();
+        const title = this.drawingTitle.length > 0 ? this.drawingTitle : 'image';
+        this.drawingImageContainer.nativeElement.download = title + '.' + this.selectedFormat;
+        this.drawingImageContainer.nativeElement.click();
+    }
+
+    setImageUrl(): void {
+        const format = 'image/' + this.selectedFormat;
+        const imageUrl = this.exportCanvas.nativeElement.toDataURL(format);
+        this.drawingImage.nativeElement.src = imageUrl;
+        this.drawingImageContainer.nativeElement.href = imageUrl;
     }
 
     // Sets filters on the preview
@@ -147,22 +214,5 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
                 this.exportCtx.filter = 'none';
                 break;
         }
-    }
-
-    downloadImage(): void {
-        this.setExportFilter();
-        this.setImageUrl();
-        const title = this.drawingTitle.length > 0 ? this.drawingTitle : 'image';
-        this.drawingImageContainer.nativeElement.download = title + '.' + this.selectedFormat;
-        this.drawingImageContainer.nativeElement.click();
-    }
-
-    setImageUrl(): void {
-        const format = 'image/' + this.selectedFormat;
-        // this.setExportFilter();
-        const imageUrl = this.exportCanvas.nativeElement.toDataURL(format);
-        // const imageUrl = this.drawingService.canvas.toDataURL(format);
-        this.drawingImage.nativeElement.src = imageUrl;
-        this.drawingImageContainer.nativeElement.href = imageUrl;
     }
 }
