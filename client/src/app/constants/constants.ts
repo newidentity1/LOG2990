@@ -25,8 +25,6 @@ export const MAXIMUM_SIDES = 12;
 
 export const DEFAULT_WIDTH = 1000;
 export const DEFAULT_HEIGHT = 800;
-export const PREVIEW_CANVAS_WIDTH = 800;
-export const PREVIEW_CANVAS_HEIGHT = 400;
 
 export const CANVAS_MIN_WIDTH = 250;
 export const CANVAS_MIN_HEIGHT = 250;
