@@ -1,4 +1,4 @@
-<div>
+<div id="wrap">
     <mat-accordion>
         <mat-expansion-panel>
             <mat-expansion-panel-header>
@@ -18,7 +18,7 @@
                 <mat-panel-title> Filtre </mat-panel-title>
             </mat-expansion-panel-header>
             <mat-form-field>
-                <mat-select [(value)]="selectedFilter" (selectionChange)="setImageUrl()">
+		 <mat-select [(value)]="selectedFilter" (selectionChange)="setPreviewFilter()">
                     <mat-option value="0">Aucun</mat-option>
                     <mat-option value="1">Brouillage</mat-option>
                     <mat-option value="2">Sepia</mat-option>
@@ -37,13 +37,14 @@
     </form>
 
     <h3>Prévisualisation du dessin</h3>
-    <a #drawingPreviewContainer href="" download=""> </a>
+    <a #drawingImageContainer href="" download=""> </a>
     <!-- default width and height  -->
-    <canvas id="cloneCanvas" #cloneCanvas width="250" height="250"></canvas>
+    <canvas id="previewCanvas" #previewCanvas width="250" height="250"></canvas>
     <!-- <canvas id="cloneCanvas" #cloneCanvas [attr.width]="width" [attr.height]="height"></canvas> -->
 
     <!-- disabled in css -->
-    <img width="600" height="400" id="drawingPreview" #drawingPreview src="" />
+    <canvas id="exportCanvas" #exportCanvas width="250" height="250"></canvas>
+    <img width="600" height="400" id="drawingImage" #drawingImage src="" />
     <br />
 
 
