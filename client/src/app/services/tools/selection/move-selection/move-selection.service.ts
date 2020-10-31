@@ -123,8 +123,6 @@ export class MoveSelectionService {
                 this.imgData.data[i + 1] = CONSTANTS.MAX_COLOR_VALUE;
                 this.imgData.data[i + 2] = CONSTANTS.MAX_COLOR_VALUE;
                 this.imgData.data[i + CONSTANTS.IMAGE_DATA_OPACITY_INDEX] = CONSTANTS.MAX_COLOR_VALUE;
-            } else {
-                areaToClear.data[i] = areaToClear.data[i];
             }
         }
 

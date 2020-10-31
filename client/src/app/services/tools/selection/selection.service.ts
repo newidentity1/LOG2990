@@ -18,7 +18,6 @@ export class SelectionService extends ShapeTool {
     private positiveWidth: number;
     private positiveHeight: number;
     private moveSelectionPos: Vec2;
-    // private imgData: ImageData;
 
     constructor(drawingService: DrawingService, private moveSelectionService: MoveSelectionService) {
         super(drawingService);
