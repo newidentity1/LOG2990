@@ -17,6 +17,7 @@ export class BucketService extends Tool {
     private image: ImageData;
     private width: number = 0;
     private height: number = 0;
+    mouseLeft: boolean = true;
 
     private startPixelColor: Uint8ClampedArray;
     protected tolerance: number = 1;
@@ -46,11 +47,21 @@ export class BucketService extends Tool {
         this.image = this.drawingService.baseCtx.getImageData(0, 0, this.width, this.height);
         this.mouseDownCoord = this.getPositionFromMouse(event);
         this.startPixelColor = this.drawingService.baseCtx.getImageData(this.mouseDownCoord.x, this.mouseDownCoord.y, 1, 1).data;
-        this.mouseDown = event.button === MouseButton.Left;
+        this.mouseDown = true;
+        this.mouseLeft = event.button === MouseButton.Left;
         this.draw(this.drawingService.baseCtx);
     }
 
+    onMouseUp(event: MouseEvent): Tool | undefined {
+        if (this.mouseDown) {
+            this.mouseDown = false;
+            return this.clone();
+        }
+        return undefined;
+    }
+
     floodFillLeft(): void {
+        console.log(this.mouseLeft);
         this.clearList(this.openList);
         const start: Pixel = { x: this.mouseDownCoord.x, y: this.mouseDownCoord.y, status: 0 };
         this.openList.push(start);
@@ -61,6 +72,7 @@ export class BucketService extends Tool {
     }
 
     floodFillRight(): void {
+        console.log(this.mouseLeft);
         const targetColor: Color = this.colorPickerService.selectedColor.clone();
         for (let i = 0; i < this.image.data.length; i += CONSTANTS.OFFSET) {
             if (
@@ -84,10 +96,6 @@ export class BucketService extends Tool {
     setTolerance(tolerance: number | null): void {
         tolerance = tolerance === null ? 1 : tolerance;
         this.tolerance = CONSTANTS.MAX_COLOR_VALUE * (tolerance / CONSTANTS.POURCENTAGE);
-    }
-
-    setColors(primaryColor: Color): void {
-        this.drawingService.setColor(primaryColor.toStringRGBA());
     }
 
     resetContext(): void {
@@ -185,10 +193,21 @@ export class BucketService extends Tool {
 
     copyBucket(bucket: BucketService): void {
         this.copyTool(bucket);
+        bucket.width = this.width;
+        bucket.height = this.height;
+        bucket.image = this.image;
+        bucket.startPixelColor = this.startPixelColor;
+        bucket.mouseLeft = this.mouseLeft;
+    }
+
+    clone(): BucketService {
+        const bucketClone: BucketService = new BucketService(this.drawingService, this.colorPickerService);
+        this.copyBucket(bucketClone);
+        return bucketClone;
     }
 
     draw(ctx: CanvasRenderingContext2D): void {
-        if (this.mouseDown) {
+        if (this.mouseLeft) {
             this.generateMatrice();
             this.floodFillLeft();
         } else {
