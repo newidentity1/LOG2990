@@ -120,4 +120,9 @@ export class EyedropperService extends Tool {
         color.opacity = rgbData[CONSTANTS.IMAGE_DATA_OPACITY_INDEX] / CONSTANTS.MAX_COLOR_VALUE;
         return color.opacity ? color : new Color(CONSTANTS.WHITE);
     }
+
+    resetContext(): void {
+        this.inCanvas = false;
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+    }
 }
