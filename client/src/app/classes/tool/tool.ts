@@ -2,10 +2,11 @@ import { Color } from '@app/classes/color/color';
 import { BasicToolProperties } from '@app/classes/tools-properties/basic-tool-properties';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { Command } from './command';
 
 // Ceci est justifié vu qu'on a des fonctions qui seront gérés par les classes enfant
 // tslint:disable:no-empty
-export abstract class Tool {
+export abstract class Tool implements Command {
     mouseDownCoord: Vec2;
     pathData: Vec2[];
     mouseDown: boolean = false;
@@ -38,7 +39,9 @@ export abstract class Tool {
 
     onKeyUp(event: KeyboardEvent): void {}
 
-    onDoubleClick(event: MouseEvent): void {}
+    onDoubleClick(event: MouseEvent): Tool | undefined {
+        return undefined;
+    }
 
     onClick(event: MouseEvent): void {}
 
@@ -50,10 +53,6 @@ export abstract class Tool {
         tool.currentPrimaryColor = this.currentPrimaryColor;
         tool.currentSecondaryColor = this.currentSecondaryColor;
         tool.pathData = this.pathData;
-    }
-
-    clone(): Tool {
-        return this;
     }
 
     getPositionFromMouse(event: MouseEvent): Vec2 {
@@ -72,5 +71,18 @@ export abstract class Tool {
         this.drawingService.setColor(primaryColor.toStringRGBA());
     }
 
+    applyCurrentSettings(): void {
+        this.setColors(this.currentPrimaryColor, this.currentSecondaryColor);
+        this.setThickness(this.toolProperties.thickness);
+    }
+
     resetContext(): void {}
+
+    clone(): Tool {
+        return this;
+    }
+
+    redo(): void {
+        this.draw(this.drawingService.baseCtx);
+    }
 }
