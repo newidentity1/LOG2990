@@ -1,7 +1,3 @@
-#drawingPreview {
-    background-color: white;
-}
-
 #downloadButton {
     background-color: green;
     margin-right: 5px;
@@ -11,6 +7,10 @@
     background-color: red;
 }
 
-// #cloneCanvas {
-//     display: none;
-// }
+#drawingImage {
+    display: none;
+}
+
+#exportCanvas {
+    display: none;
+}
