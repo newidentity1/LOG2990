@@ -191,7 +191,7 @@ export class ToolbarService {
 
     resetSelection(): void {
         if (this.isAreaSelected()) {
-            this.selectionService.resetSelection();
+            this.addCommand(this.selectionService.resetSelection());
         }
     }
 
