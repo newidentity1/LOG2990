@@ -1,5 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
+import { SelectionArrowIndex } from '@app/classes/selection-arrow-index.enum';
+import { SELECTION_MOVE_DELAY, SELECTION_MOVE_START_DELAY, SELECTION_MOVE_STEP } from '@app/constants/constants';
 import { SelectionType } from '@app/enums/selection-type.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { MoveSelectionService } from './move-selection.service';
@@ -21,7 +23,7 @@ describe('MoveSelectionService', () => {
         service.imgData = drawingServiceSpy.baseCtx.getImageData(0, 0, 1, 1);
     });
 
-    it('pressing arrow should call moveSelection', () => {
+    it('pressing arrow should call moveSelection if canMoveSelection is true', () => {
         // tslint:disable-next-line:no-any / reason: spying on function
         const moveSelectionSpy = spyOn<any>(service, 'moveSelection').and.callThrough();
         // tslint:disable:no-string-literal / reason: accessing private member
@@ -30,6 +32,120 @@ describe('MoveSelectionService', () => {
         service['pressedKeys'] = [0, 0, 0, 0];
         service.checkArrowKeysPressed(keyboardEvent);
         expect(moveSelectionSpy).toHaveBeenCalled();
+    });
+
+    it('pressing arrow should call moveSelection if canMoveSelection is false', () => {
+        // tslint:disable-next-line:no-any / reason: spying on function
+        const moveSelectionSpy = spyOn<any>(service, 'moveSelection').and.callThrough();
+        service.canMoveSelection = false;
+        const keyboardEvent = new KeyboardEvent('keyDown', { key: 'ArrowLeft' });
+        service['pressedKeys'] = [0, 0, 0, 0];
+        service.checkArrowKeysPressed(keyboardEvent);
+        expect(moveSelectionSpy).not.toHaveBeenCalled();
+    });
+
+    it('pressing non arrow key should not change pressedKeys arrays', () => {
+        service.canMoveSelection = true;
+        const keyboardEvent = new KeyboardEvent('keyDown', { key: 'a' });
+        service['pressedKeys'] = [0, 0, 0, 0];
+        service.checkArrowKeysPressed(keyboardEvent);
+        expect(service['pressedKeys']).toEqual([0, 0, 0, 0]);
+    });
+
+    it('pressing left arrow should change pressedKeys arrays at left arrow index', () => {
+        service.canMoveSelection = true;
+        service['pressedKeys'][SelectionArrowIndex.Left] = 0;
+        const keyboardEvent = new KeyboardEvent('keyDown', { key: 'ArrowLeft' });
+        service.checkArrowKeysPressed(keyboardEvent);
+        expect(service['pressedKeys'][SelectionArrowIndex.Left]).toEqual(SELECTION_MOVE_STEP);
+    });
+
+    it('pressing up arrow should change pressedKeys arrays at up arrow index', () => {
+        service.canMoveSelection = true;
+        const keyboardEvent = new KeyboardEvent('keyDown', { key: 'ArrowUp' });
+        service['pressedKeys'][SelectionArrowIndex.Up] = 0;
+        service.checkArrowKeysPressed(keyboardEvent);
+        expect(service['pressedKeys'][SelectionArrowIndex.Up]).toEqual(SELECTION_MOVE_STEP);
+    });
+
+    it('pressing right arrow should change pressedKeys arrays at right arrow index', () => {
+        service.canMoveSelection = true;
+        const keyboardEvent = new KeyboardEvent('keyDown', { key: 'ArrowRight' });
+        service['pressedKeys'][SelectionArrowIndex.Right] = 0;
+        service.checkArrowKeysPressed(keyboardEvent);
+        expect(service['pressedKeys'][SelectionArrowIndex.Right]).toEqual(-SELECTION_MOVE_STEP);
+    });
+
+    it('pressing down arrow should change pressedKeys arrays at down arrow index', () => {
+        service.canMoveSelection = true;
+        const keyboardEvent = new KeyboardEvent('keyDown', { key: 'ArrowDown' });
+        service['pressedKeys'][SelectionArrowIndex.Down] = 0;
+        service.checkArrowKeysPressed(keyboardEvent);
+        expect(service['pressedKeys'][SelectionArrowIndex.Down]).toEqual(-SELECTION_MOVE_STEP);
+    });
+
+    it('holding an arrow key for more than 100ms should set canMoveSelection to true if canMoveSelectionContiniously is true', () => {
+        const keyboardEvent = new KeyboardEvent('keyDown', { key: 'ArrowLeft' });
+        service.canMoveSelection = true;
+        service['canMoveSelectionContiniously'] = true;
+        jasmine.clock().install();
+        service.checkArrowKeysPressed(keyboardEvent);
+        jasmine.clock().tick(SELECTION_MOVE_DELAY);
+        expect(service.canMoveSelection).toBeTrue();
+        jasmine.clock().uninstall();
+    });
+
+    it('holding an arrow key for more than 500ms should set canMoveSelection to true if canMoveSelectionContiniously is false', () => {
+        const keyboardEvent = new KeyboardEvent('keyDown', { key: 'ArrowLeft' });
+        service.canMoveSelection = true;
+        service['canMoveSelectionContiniously'] = false;
+        jasmine.clock().install();
+        service.checkArrowKeysPressed(keyboardEvent);
+        jasmine.clock().tick(SELECTION_MOVE_START_DELAY);
+        expect(service.canMoveSelection).toBeTrue();
+        expect(service['canMoveSelectionContiniously']).toBeTrue();
+        jasmine.clock().uninstall();
+    });
+
+    it('releasing non arrow key should not change pressedKeys arrays', () => {
+        service.canMoveSelection = true;
+        const keyboardEvent = new KeyboardEvent('keyDown', { key: 'a' });
+        const expectedArray = [SELECTION_MOVE_STEP, SELECTION_MOVE_STEP, -SELECTION_MOVE_STEP, -SELECTION_MOVE_STEP];
+        service['pressedKeys'] = expectedArray;
+        service.checkArrowKeysReleased(keyboardEvent);
+        expect(service['pressedKeys']).toEqual(expectedArray);
+    });
+
+    it('releasing left arrow should change pressedKeys arrays at left arrow index', () => {
+        service.canMoveSelection = true;
+        const keyboardEvent = new KeyboardEvent('keyDown', { key: 'ArrowLeft' });
+        service['pressedKeys'][SelectionArrowIndex.Left] = SELECTION_MOVE_STEP;
+        service.checkArrowKeysReleased(keyboardEvent);
+        expect(service['pressedKeys'][SelectionArrowIndex.Left]).toEqual(0);
+    });
+
+    it('releasing up arrow should change pressedKeys arrays at up arrow index', () => {
+        service.canMoveSelection = true;
+        const keyboardEvent = new KeyboardEvent('keyDown', { key: 'ArrowUp' });
+        service['pressedKeys'][SelectionArrowIndex.Up] = SELECTION_MOVE_STEP;
+        service.checkArrowKeysReleased(keyboardEvent);
+        expect(service['pressedKeys'][SelectionArrowIndex.Up]).toEqual(0);
+    });
+
+    it('releasing right arrow should change pressedKeys arrays at right arrow index', () => {
+        service.canMoveSelection = true;
+        const keyboardEvent = new KeyboardEvent('keyDown', { key: 'ArrowRight' });
+        service['pressedKeys'][SelectionArrowIndex.Right] = -SELECTION_MOVE_STEP;
+        service.checkArrowKeysReleased(keyboardEvent);
+        expect(service['pressedKeys'][SelectionArrowIndex.Right]).toEqual(0);
+    });
+
+    it('releasing down arrow should change pressedKeys arrays at down arrow index', () => {
+        service.canMoveSelection = true;
+        const keyboardEvent = new KeyboardEvent('keyDown', { key: 'ArrowDown' });
+        service['pressedKeys'][SelectionArrowIndex.Down] = -SELECTION_MOVE_STEP;
+        service.checkArrowKeysReleased(keyboardEvent);
+        expect(service['pressedKeys'][SelectionArrowIndex.Down]).toEqual(0);
     });
 
     it('releasing arrow should set canMoveSelectionContiniously to true and should not change canMoveSelection if an arrow key is pressed', () => {
