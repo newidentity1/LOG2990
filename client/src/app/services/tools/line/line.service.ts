@@ -115,6 +115,7 @@ export class LineService extends Tool {
                 toolClone = this.clone();
                 this.clearPath();
             } else {
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.draw(this.drawingService.baseCtx);
                 toolClone = this.clone();
                 this.clearPath();

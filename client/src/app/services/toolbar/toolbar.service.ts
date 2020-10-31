@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Color } from '@app/classes/color/color';
+import { Command } from '@app/classes/tool/command';
 import { Tool } from '@app/classes/tool/tool';
 import { KeyShortcut } from '@app/enums/key-shortcuts.enum';
 import { SelectionType } from '@app/enums/selection-type.enum';
@@ -21,7 +22,7 @@ import { SelectionService } from '@app/services/tools/selection/selection.servic
 })
 export class ToolbarService {
     private tools: Tool[];
-    private drawings: Tool[] = [];
+    private commands: Command[] = [];
     private undoIndex: number = -1;
     currentTool: Tool;
     primaryColor: Color;
@@ -127,8 +128,8 @@ export class ToolbarService {
 
         if (tool !== undefined) {
             this.undoIndex++;
-            this.drawings.length = this.undoIndex;
-            this.drawings.push(tool);
+            this.commands.length = this.undoIndex;
+            this.commands.push(tool);
         }
     }
 
@@ -146,8 +147,8 @@ export class ToolbarService {
 
         if (tool !== undefined) {
             this.undoIndex++;
-            this.drawings.length = this.undoIndex;
-            this.drawings.push(tool);
+            this.commands.length = this.undoIndex;
+            this.commands.push(tool);
         }
     }
 
@@ -162,9 +163,8 @@ export class ToolbarService {
         this.drawingService.setWhiteBackground();
         if (this.undoIndex >= 0) {
             for (let i = 0; i <= this.undoIndex; i++) {
-                this.drawings[i].setColors(this.drawings[i].currentPrimaryColor, this.drawings[i].currentSecondaryColor);
-                this.drawings[i].setThickness(this.drawings[i].toolProperties.thickness);
-                this.drawings[i].draw(this.drawingService.baseCtx);
+                this.commands[i].applyCurrentSettings();
+                this.commands[i].redo();
             }
         }
         this.applyCurrentToolColor();
@@ -172,18 +172,10 @@ export class ToolbarService {
     }
 
     redo(): void {
-        if (this.undoIndex === this.drawings.length - 1 || this.drawings.length === 0) return;
+        if (this.undoIndex === this.commands.length - 1 || this.commands.length === 0) return;
         this.undoIndex++;
-        this.drawings[this.undoIndex].setColors(
-            this.drawings[this.undoIndex].currentPrimaryColor,
-            this.drawings[this.undoIndex].currentSecondaryColor,
-        );
-        this.drawings[this.undoIndex].setThickness(this.drawings[this.undoIndex].toolProperties.thickness);
-        this.drawings[this.undoIndex].setColors(
-            this.drawings[this.undoIndex].currentPrimaryColor,
-            this.drawings[this.undoIndex].currentSecondaryColor,
-        );
-        this.drawings[this.undoIndex].draw(this.drawingService.baseCtx);
+        this.commands[this.undoIndex].applyCurrentSettings();
+        this.commands[this.undoIndex].redo();
 
         this.applyCurrentToolColor();
         this.currentTool.setThickness(this.currentTool.toolProperties.thickness);
