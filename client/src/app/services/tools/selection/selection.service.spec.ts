@@ -10,25 +10,26 @@ import { SelectionService } from './selection.service';
 describe('SelectionService', () => {
     let service: SelectionService;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
-    let moveSelectionServiceSpy: jasmine.SpyObj<MoveSelectionService>;
+    let moveSelectionService: MoveSelectionService;
     // tslint:disable:no-any / reason: spying on function
     let drawPreviewSpy: jasmine.Spy<any>;
     let resetSelectionSpy: jasmine.Spy<any>;
+    let copySelectionSpy: jasmine.Spy<any>;
     let mouseEvent: MouseEvent;
 
     beforeEach(() => {
         drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setThickness', 'setStrokeColor']);
-        moveSelectionServiceSpy = jasmine.createSpyObj('MoveSelectionService', [
-            'checkArrowKeysPressed',
-            'checkArrowKeysReleased',
-            'moveSelection',
-            'copySelection',
-        ]);
-
+        // moveSelectionService = jasmine.createSpyObj('MoveSelectionService', [
+        //     'checkArrowKeysPressed',
+        //     'checkArrowKeysReleased',
+        //     'moveSelection',
+        //     'copySelection',
+        // ]);
+        moveSelectionService = new MoveSelectionService(drawingServiceSpy);
         TestBed.configureTestingModule({
             providers: [
                 { provide: DrawingService, useValue: drawingServiceSpy },
-                { provide: MoveSelectionService, useValue: moveSelectionServiceSpy },
+                { provide: MoveSelectionService, useValue: moveSelectionService },
             ],
         });
         service = TestBed.inject(SelectionService);
@@ -44,8 +45,9 @@ describe('SelectionService', () => {
         drawPreviewSpy = spyOn<any>(service, 'drawPreview').and.callThrough();
         resetSelectionSpy = spyOn<any>(service, 'resetSelection').and.callThrough();
 
-        moveSelectionServiceSpy = TestBed.inject(MoveSelectionService) as jasmine.SpyObj<MoveSelectionService>;
-        moveSelectionServiceSpy.imgData = drawingServiceSpy.baseCtx.getImageData(0, 0, 1, 1);
+        moveSelectionService = TestBed.inject(MoveSelectionService);
+        moveSelectionService.imgData = drawingServiceSpy.baseCtx.getImageData(0, 0, 1, 1);
+        copySelectionSpy = spyOn<any>(moveSelectionService, 'copySelection').and.callThrough();
 
         mouseEvent = {
             clientX: 25,
@@ -115,12 +117,13 @@ describe('SelectionService', () => {
     });
 
     it('onMouseMove should set moveSelectionPos if an area is selected and mouseDown were true', () => {
+        const moveSelectionSpy = spyOn<any>(moveSelectionService, 'moveSelection').and.callThrough();
         service.mouseDown = true;
         service.isAreaSelected = true;
         service['moveSelectionPos'] = { x: 0, y: 0 };
         service.onMouseMove(mouseEvent);
         expect(service['moveSelectionPos']).toEqual({ x: mouseEvent.clientX, y: mouseEvent.clientY });
-        expect(moveSelectionServiceSpy.moveSelection).toHaveBeenCalled();
+        expect(moveSelectionSpy).toHaveBeenCalled();
     });
 
     it('onMouseUp should set mouse down to false if mouse was down', () => {
@@ -136,7 +139,7 @@ describe('SelectionService', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.onMouseMove(mouseEvent);
         service.onMouseUp(mouseEvent);
-        expect(moveSelectionServiceSpy.copySelection).toHaveBeenCalled();
+        expect(copySelectionSpy).toHaveBeenCalled();
     });
 
     it('onMouseUp should not call copySelection if mouse was down and an area is not selected and mouse was not moved', () => {
@@ -152,13 +155,13 @@ describe('SelectionService', () => {
         } as MouseEvent;
         service.onMouseMove(event);
         service.onMouseUp(event);
-        expect(moveSelectionServiceSpy.copySelection).not.toHaveBeenCalled();
+        expect(copySelectionSpy).not.toHaveBeenCalled();
     });
 
     it('onMouseUp should not call copySelection if mouse was not down', () => {
         service.mouseDown = true;
         service.onMouseUp(mouseEvent);
-        expect(moveSelectionServiceSpy.copySelection).not.toHaveBeenCalled();
+        expect(copySelectionSpy).not.toHaveBeenCalled();
     });
 
     it('onMouseUp should not call copySelection if mouse was down and an area is selected', () => {
@@ -166,7 +169,7 @@ describe('SelectionService', () => {
         service.isAreaSelected = true;
         service.mouseDownCoord = { x: 0, y: 0 };
         service.onMouseUp(mouseEvent);
-        expect(moveSelectionServiceSpy.copySelection).not.toHaveBeenCalled();
+        expect(copySelectionSpy).not.toHaveBeenCalled();
     });
 
     it('resetSelection should be called if escape is pressed and mouse is down or an area is selected ', () => {
@@ -193,10 +196,11 @@ describe('SelectionService', () => {
     });
 
     it('onKeyDown should call checkArrowKeysPressed if an area is selected ', () => {
+        const checkArrowKeysPressedSpy = spyOn<any>(moveSelectionService, 'checkArrowKeysPressed').and.callThrough();
         service.isAreaSelected = true;
         const event = {} as KeyboardEvent;
         service.onKeyDown(event);
-        expect(moveSelectionServiceSpy.checkArrowKeysPressed).toHaveBeenCalled();
+        expect(checkArrowKeysPressedSpy).toHaveBeenCalled();
     });
 
     it('onKeyDown should call onkeydown of shapetool if an area is not selected ', () => {
@@ -207,11 +211,21 @@ describe('SelectionService', () => {
         expect(keyDownSpy).toHaveBeenCalled();
     });
 
+    it('onKeyDown should call drawSelectionBox if an arrow key is pressed and an area is selected ', () => {
+        const drawSelectionBoxSpy = spyOn<any>(service, 'drawSelectionBox').and.callThrough();
+        service.isAreaSelected = true;
+        const event = new KeyboardEvent('keyDown', { key: 'ArrowLeft' });
+        moveSelectionService.canMoveSelection = true;
+        service.onKeyDown(event);
+        expect(drawSelectionBoxSpy).toHaveBeenCalled();
+    });
+
     it('onKeyUp should call checkArrowKeysReleased if an area is selected ', () => {
+        const checkArrowKeysReleasedSpy = spyOn<any>(moveSelectionService, 'checkArrowKeysReleased').and.callThrough();
         service.isAreaSelected = true;
         const event = {} as KeyboardEvent;
         service.onKeyUp(event);
-        expect(moveSelectionServiceSpy.checkArrowKeysReleased).toHaveBeenCalled();
+        expect(checkArrowKeysReleasedSpy).toHaveBeenCalled();
     });
 
     it('onKeyUp should call onkeydown of shapetool if an area is not selected ', () => {
@@ -231,7 +245,7 @@ describe('SelectionService', () => {
         expect(service['positiveStartingPos']).toEqual({ x: 0, y: 0 });
         expect(service['positiveWidth']).toEqual(drawingServiceSpy.canvas.width);
         expect(service['positiveHeight']).toEqual(drawingServiceSpy.canvas.height);
-        expect(moveSelectionServiceSpy.copySelection).toHaveBeenCalled();
+        expect(copySelectionSpy).toHaveBeenCalled();
     });
 
     it('resetSelection should change preview canvas position and size back to normal if an area is selected', () => {
