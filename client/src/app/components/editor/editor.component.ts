@@ -99,5 +99,15 @@ export class EditorComponent implements OnInit, OnDestroy {
                 this.toolbarService.triggerSelectAll();
             }),
         );
+        this.subscribedShortcuts.push(
+            this.shortcutService.addShortcut('control.z').subscribe(() => {
+                this.toolbarService.undo();
+            }),
+        );
+        this.subscribedShortcuts.push(
+            this.shortcutService.addShortcut('control.shift.z').subscribe(() => {
+                this.toolbarService.redo();
+            }),
+        );
     }
 }

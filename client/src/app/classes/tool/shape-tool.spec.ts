@@ -113,8 +113,8 @@ describe('Class: ShapeTool', () => {
             offsetY: 30,
             button: 0,
         } as MouseEvent;
+        shapeTool.currentMousePosition = { x: 30, y: 30 };
         shapeTool.onMouseUp(newMouseEvent);
-
         expect(shapeTool.mouseDown).toBeFalse();
         expect(drawSpy).toHaveBeenCalled();
     });
@@ -371,7 +371,7 @@ describe('Class: ShapeTool', () => {
         expect(shapeTool.pathData).toEqual(shapeToolCopy.pathData);
         expect(shapeTool.width).toEqual(shapeToolCopy.width);
         expect(shapeTool.height).toEqual(shapeToolCopy.height);
-        expect(shapeTool.pathStart).toEqual(shapeToolCopy.pathStart);
+        expect(shapeTool.mouseDownCoord).toEqual(shapeToolCopy.mouseDownCoord);
         expect(shapeTool.currentMousePosition).toEqual(shapeToolCopy.currentMousePosition);
     });
     // tslint:disable-next-line: max-file-line-count / reason: its a test file

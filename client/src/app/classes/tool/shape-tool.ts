@@ -13,7 +13,6 @@ export abstract class ShapeTool extends Tool {
     shiftDown: boolean = false;
     escapeDown: boolean = false;
     radius: Vec2;
-    pathStart: Vec2;
     currentMousePosition: Vec2;
     dashedSegments: number;
     dx: number;
@@ -21,7 +20,7 @@ export abstract class ShapeTool extends Tool {
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
-        this.pathStart = { x: 0, y: 0 };
+        this.mouseDownCoord = { x: 0, y: 0 };
         this.mouseDownCoord = { x: 0, y: 0 };
         this.currentMousePosition = { x: 0, y: 0 };
         this.toolProperties = new BasicShapeProperties();
@@ -31,7 +30,7 @@ export abstract class ShapeTool extends Tool {
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
         if (this.mouseDown) {
-            this.pathStart = this.getPositionFromMouse(event);
+            this.mouseDownCoord = this.getPositionFromMouse(event);
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.currentMousePosition = this.getPositionFromMouse(event);
         }
@@ -45,7 +44,6 @@ export abstract class ShapeTool extends Tool {
     }
 
     onMouseUp(event: MouseEvent): Tool | undefined {
-        this.currentMousePosition = this.getPositionFromMouse(event);
         if (this.mouseDown) {
             this.mouseDown = false;
             this.computeDimensions();
@@ -146,10 +144,10 @@ export abstract class ShapeTool extends Tool {
             ctx.lineWidth = SELECTION_BOX_THICKNESS;
             ctx.beginPath();
             ctx.rect(
-                this.pathStart.x,
-                this.pathStart.y,
-                this.currentMousePosition.x - this.pathStart.x,
-                this.currentMousePosition.y - this.pathStart.y,
+                this.mouseDownCoord.x,
+                this.mouseDownCoord.y,
+                this.currentMousePosition.x - this.mouseDownCoord.x,
+                this.currentMousePosition.y - this.mouseDownCoord.y,
             );
 
             ctx.setLineDash([]);
@@ -168,7 +166,7 @@ export abstract class ShapeTool extends Tool {
         this.copyTool(shape);
         shape.width = this.width;
         shape.height = this.height;
-        shape.pathStart = this.pathStart;
+        shape.mouseDownCoord = this.mouseDownCoord;
         shape.currentMousePosition = this.currentMousePosition;
         const shapeProperties = this.toolProperties as BasicShapeProperties;
         shape.setTypeDrawing(shapeProperties.currentType);
