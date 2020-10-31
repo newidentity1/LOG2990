@@ -125,6 +125,7 @@ export class ToolbarService {
         let tool: Tool | undefined;
         tool = this.currentTool.onMouseUp(event);
 
+        console.log(tool);
         if (tool !== undefined) {
             this.undoIndex++;
             this.drawings.length = this.undoIndex;
