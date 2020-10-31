@@ -9,6 +9,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { FireBaseService } from '@app/services/fire/fire-base.service';
 import { Drawing } from '@common/communication/drawing';
 import { NgImageSliderComponent } from 'ng-image-slider';
+import { Observable } from 'rxjs';
 // import { Observable } from 'rxjs';
 import { GalleryComponent } from './gallery.component';
 // import { of } from 'rxjs';
@@ -76,9 +77,12 @@ describe('GalleryComponent', () => {
 
     it('getDrawing should get all the drawing present on the server', fakeAsync(() => {
         const spy = spyOn(component, 'transformData');
-        component.getDrawings();
+        const obs: Observable<Drawing[]> = component.getDrawings();
+        obs.subscribe(() => {
+            expect(spy).toHaveBeenCalled();
+        });
         tick();
-        expect(spy).toHaveBeenCalled();
+       // expect(spy).toHaveBeenCalled();
     }));
 
     it('transformData should call updateDrawings and set isDrawing to true', () => {
