@@ -117,8 +117,8 @@ export class PolygonService extends ShapeTool {
             ctx.rect(
                 this.mouseDownCoord.x,
                 this.mouseDownCoord.y,
-                this.currentMousePosition.x - this.pathStart.x,
-                this.currentMousePosition.y - this.pathStart.y,
+                this.currentMousePosition.x - this.mouseDownCoord.x,
+                this.currentMousePosition.y - this.mouseDownCoord.y,
             );
             ctx.setLineDash([]);
             ctx.strokeStyle = 'white';
