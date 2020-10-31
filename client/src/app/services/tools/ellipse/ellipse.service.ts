@@ -26,8 +26,8 @@ export class EllipseService extends ShapeTool {
 
         ctx.beginPath();
         ctx.ellipse(
-            this.pathStart.x + this.width / 2,
-            this.pathStart.y + this.height / 2,
+            this.mouseDownCoord.x + this.width / 2,
+            this.mouseDownCoord.y + this.height / 2,
             Math.abs(this.radius.x),
             Math.abs(this.radius.y),
             0,
@@ -48,5 +48,11 @@ export class EllipseService extends ShapeTool {
         }
 
         this.drawBoxGuide(ctx);
+    }
+
+    clone(): ShapeTool {
+        const ellipseClone: EllipseService = new EllipseService(this.drawingService);
+        this.copyShape(ellipseClone);
+        return ellipseClone;
     }
 }
