@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { PREVIEW_CANVAS_HEIGHT, PREVIEW_CANVAS_WIDTH } from '@app/constants/constants.ts';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
 @Component({
@@ -31,42 +32,21 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
 
         // Set Preview
         this.setInitialCanvasSize();
-        this.previewCtx.globalCompositeOperation = 'destination-over';
-        // this.whiteBackground();
-        this.whiteBackground();
-        this.previewCtx.globalCompositeOperation = 'source-over';
-
-        // this.exportCtx.globalCompositeOperation = 'destination-over';
-        // this.whiteBackground();
-        // this.exportCtx.globalCompositeOperation = 'source-over';
-
         this.setPreviewFilter();
         this.setImageUrl();
     }
 
     setInitialCanvasSize(): void {
-        this.previewCanvas.nativeElement.width = 800;
-        this.previewCanvas.nativeElement.height = 400;
+        this.previewCanvas.nativeElement.width = PREVIEW_CANVAS_WIDTH;
+        this.previewCanvas.nativeElement.height = PREVIEW_CANVAS_HEIGHT;
         this.exportCanvas.nativeElement.width = this.drawingService.canvas.width;
         this.exportCanvas.nativeElement.height = this.drawingService.canvas.height;
     }
 
-    whiteBackground(): void {
-        this.previewCtx.fillStyle = '#FFFFFF';
-        this.previewCtx.fillRect(0, 0, this.previewCanvas.nativeElement.width, this.previewCanvas.nativeElement.height);
-        this.previewCtx.fillStyle = '#000000';
-    }
-
-    whiteBackground1(ctx: CanvasRenderingContext2D): void {
+    whiteBackground(ctx: CanvasRenderingContext2D): void {
         ctx.fillStyle = '#FFFFFF';
         ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
         ctx.fillStyle = '#000000';
-    }
-
-    whiteBackground2(): void {
-        this.exportCtx.fillStyle = '#FFFFFF';
-        this.exportCtx.fillRect(0, 0, this.exportCanvas.nativeElement.width, this.exportCanvas.nativeElement.height);
-        this.exportCtx.fillStyle = '#000000';
     }
 
     onFormatChange(): void {
@@ -82,47 +62,46 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
             this.drawingService.canvas.height,
             0,
             0,
-            800,
-            400,
+            PREVIEW_CANVAS_WIDTH,
+            PREVIEW_CANVAS_HEIGHT,
         );
     }
+
     // Sets filters on the preview
     setPreviewFilter(): void {
         switch (this.selectedFilter) {
             case '0':
                 this.previewCtx.filter = 'none';
-                this.whiteBackground();
-                // this.whiteBackground1(previewCtx);
+                this.whiteBackground(this.previewCtx);
                 this.drawPreviewCanvas();
                 break;
             case '1':
                 this.previewCtx.filter = 'blur(7px)';
-                this.whiteBackground();
-                // this.whiteBackground1(previewCtx);
+                this.whiteBackground(this.previewCtx);
                 this.drawPreviewCanvas();
                 this.previewCtx.filter = 'none';
                 break;
             case '2':
                 this.previewCtx.filter = 'contrast(1.4) sepia(1)';
-                this.whiteBackground();
+                this.whiteBackground(this.previewCtx);
                 this.drawPreviewCanvas();
                 this.previewCtx.filter = 'none';
                 break;
             case '3':
                 this.previewCtx.filter = 'brightness(50%)';
-                this.whiteBackground();
+                this.whiteBackground(this.previewCtx);
                 this.drawPreviewCanvas();
                 this.previewCtx.filter = 'none';
                 break;
             case '4':
                 this.previewCtx.filter = 'saturate(50%)';
-                this.whiteBackground();
+                this.whiteBackground(this.previewCtx);
                 this.drawPreviewCanvas();
                 this.previewCtx.filter = 'none';
                 break;
             case '5':
                 this.previewCtx.filter = 'dropshadow(50%)';
-                this.whiteBackground();
+                this.whiteBackground(this.previewCtx);
                 this.drawPreviewCanvas();
                 this.previewCtx.filter = 'none';
                 break;
@@ -134,36 +113,36 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
         switch (this.selectedFilter) {
             case '0':
                 this.exportCtx.filter = 'none';
-                this.whiteBackground2();
+                this.whiteBackground(this.previewCtx);
                 this.exportCtx.drawImage(this.drawingService.canvas, 0, 0);
                 break;
             case '1':
                 this.exportCtx.filter = 'blur(7px)';
-                this.whiteBackground2();
+                this.whiteBackground(this.exportCtx);
                 this.exportCtx.drawImage(this.drawingService.canvas, 0, 0);
                 this.exportCtx.filter = 'none';
                 break;
             case '2':
                 this.exportCtx.filter = 'contrast(1.4) sepia(1)';
-                this.whiteBackground2();
+                this.whiteBackground(this.exportCtx);
                 this.exportCtx.drawImage(this.drawingService.canvas, 0, 0);
                 this.exportCtx.filter = 'none';
                 break;
             case '3':
                 this.exportCtx.filter = 'brightness(50%)';
-                this.whiteBackground2();
+                this.whiteBackground(this.exportCtx);
                 this.exportCtx.drawImage(this.drawingService.canvas, 0, 0);
                 this.exportCtx.filter = 'none';
                 break;
             case '4':
                 this.exportCtx.filter = 'saturate(50%)';
-                this.whiteBackground2();
+                this.whiteBackground(this.exportCtx);
                 this.exportCtx.drawImage(this.drawingService.canvas, 0, 0);
                 this.exportCtx.filter = 'none';
                 break;
             case '5':
                 this.exportCtx.filter = 'dropshadow(50%)';
-                this.whiteBackground2();
+                this.whiteBackground(this.exportCtx);
                 this.exportCtx.drawImage(this.drawingService.canvas, 0, 0);
                 this.exportCtx.filter = 'none';
                 break;
@@ -171,7 +150,6 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
     }
 
     downloadImage(): void {
-        // RESET CANVAS BEFORE DOWNLOAD
         this.setExportFilter();
         this.setImageUrl();
         const title = this.drawingTitle.length > 0 ? this.drawingTitle : 'image';
