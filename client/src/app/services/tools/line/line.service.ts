@@ -27,7 +27,7 @@ export class LineService extends Tool {
     }
 
     // Permet d'ajouter un point dans la ligne a chaque click
-    onMouseDown(event: MouseEvent): void {
+    onClick(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
         const mousePosition = this.getPositionFromMouse(event);
         // si il n'y a qu'un seul point on ne trace pas de ligne
