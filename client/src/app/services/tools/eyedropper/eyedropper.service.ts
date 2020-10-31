@@ -44,10 +44,12 @@ export class EyedropperService extends Tool {
     }
 
     onMouseUp(event: MouseEvent): Tool | undefined {
-        if (event.button === MouseButton.Left) {
-            this.colorPickerService.setPrimaryColor(this.currentColor);
-        } else if (event.button === MouseButton.Right) {
-            this.colorPickerService.setSecondaryColor(this.currentColor);
+        if (this.inCanvas) {
+            if (event.button === MouseButton.Left) {
+                this.colorPickerService.setPrimaryColor(this.currentColor);
+            } else if (event.button === MouseButton.Right) {
+                this.colorPickerService.setSecondaryColor(this.currentColor);
+            }
         }
 
         return undefined;
@@ -117,5 +119,10 @@ export class EyedropperService extends Tool {
         color.blue = rgbData[2];
         color.opacity = rgbData[CONSTANTS.IMAGE_DATA_OPACITY_INDEX] / CONSTANTS.MAX_COLOR_VALUE;
         return color.opacity ? color : new Color(CONSTANTS.WHITE);
+    }
+
+    resetContext(): void {
+        this.inCanvas = false;
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
     }
 }
