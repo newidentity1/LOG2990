@@ -86,7 +86,7 @@ export class SelectionService extends ShapeTool {
             this.mouseDown = false;
         }
 
-        return this;
+        return undefined;
     }
 
     onKeyDown(event: KeyboardEvent): void {
@@ -201,7 +201,8 @@ export class SelectionService extends ShapeTool {
     }
 
     redo(): void {
-        this.resetSelection();
         this.moveSelectionService.copySelection(this.positiveStartingPos, this.positiveWidth, this.positiveHeight, this.currentType);
+        this.isAreaSelected = true;
+        this.resetSelection();
     }
 }
