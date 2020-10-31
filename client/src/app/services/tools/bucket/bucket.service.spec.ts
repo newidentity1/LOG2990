@@ -49,7 +49,7 @@ describe('BucketService', () => {
 
     it('should be created', () => {
         const couleur: Color = new Color('RED');
-        service.setColors(couleur);
+        service.setColors(couleur, couleur);
         expect(drawServiceSpy.setColor).toHaveBeenCalled();
     });
 

@@ -61,7 +61,6 @@ export class BucketService extends Tool {
     }
 
     floodFillLeft(): void {
-        console.log(this.mouseLeft);
         this.clearList(this.openList);
         const start: Pixel = { x: this.mouseDownCoord.x, y: this.mouseDownCoord.y, status: 0 };
         this.openList.push(start);
@@ -72,7 +71,6 @@ export class BucketService extends Tool {
     }
 
     floodFillRight(): void {
-        console.log(this.mouseLeft);
         const targetColor: Color = this.colorPickerService.selectedColor.clone();
         for (let i = 0; i < this.image.data.length; i += CONSTANTS.OFFSET) {
             if (
