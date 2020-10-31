@@ -16,8 +16,9 @@ describe('MoveSelectionService', () => {
         TestBed.configureTestingModule({ providers: [{ provide: DrawingService, useValue: drawingServiceSpy }] });
         service = TestBed.inject(MoveSelectionService);
         drawingServiceSpy = TestBed.inject(DrawingService) as jasmine.SpyObj<DrawingService>;
-        drawingServiceSpy.canvas = canvasTestHelper.canvas;
-        drawingServiceSpy.baseCtx = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
+        const canvas = document.createElement('canvas');
+        drawingServiceSpy.canvas = canvas;
+        drawingServiceSpy.baseCtx = canvas.getContext('2d') as CanvasRenderingContext2D;
         drawingServiceSpy.previewCtx = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
 
         service.imgData = drawingServiceSpy.baseCtx.getImageData(0, 0, 1, 1);
@@ -205,6 +206,15 @@ describe('MoveSelectionService', () => {
         expect(drawingServiceSpy.previewCtx.canvas.height).toEqual(20);
         expect(drawingServiceSpy.previewCtx.canvas.style.left).toEqual('20px');
         expect(drawingServiceSpy.previewCtx.canvas.style.top).toEqual('20px');
+    });
+
+    it('copySelection should not change image data if image data does not contain transparent pixels', () => {
+        drawingServiceSpy.baseCtx.fillStyle = 'black';
+        drawingServiceSpy.baseCtx.fillRect(0, 0, drawingServiceSpy.canvas.width, drawingServiceSpy.canvas.height);
+        const expectedImageData = drawingServiceSpy.baseCtx.getImageData(0, 0, drawingServiceSpy.canvas.width, drawingServiceSpy.canvas.height);
+        service.copySelection({ x: 0, y: 0 }, drawingServiceSpy.canvas.width, drawingServiceSpy.canvas.height, SelectionType.RectangleSelection);
+        const imageData = drawingServiceSpy.previewCtx.getImageData(0, 0, drawingServiceSpy.canvas.width, drawingServiceSpy.canvas.height);
+        expect(imageData).toEqual(expectedImageData);
     });
 
     it('isPositionInEllipse should return true ', () => {
