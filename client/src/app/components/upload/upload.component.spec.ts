@@ -27,4 +27,9 @@ describe('UploadComponent', () => {
     it('should create', () => {
         expect(component).toBeTruthy();
     });
+
+    it('UploadImage should call fireBase uploadCanvas', () => {
+        component.uploadImage();
+        expect(fireBaseServiceSpy.uploadCanvas).toHaveBeenCalled();
+    });
 });
