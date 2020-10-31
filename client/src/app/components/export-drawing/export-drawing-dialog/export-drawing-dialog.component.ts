@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { PREVIEW_CANVAS_HEIGHT, PREVIEW_CANVAS_WIDTH, MAX_PREVIEW_SIZE } from '@app/constants/constants.ts';
+import { MAX_PREVIEW_SIZE } from '@app/constants/constants.ts';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
 @Component({
@@ -30,57 +30,27 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
         this.previewCtx = this.previewCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.exportCtx = this.exportCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
 
-        // Set Preview
+        // Set Preview Sizes
         this.setInitialCanvasSize();
+        // Draw first layer
+        this.whiteBackground(this.previewCtx);
+        this.whiteBackground(this.exportCtx);
+        // Draw filter on preview
         this.setPreviewFilter();
         this.setImageUrl();
     }
 
     setInitialCanvasSize(): void {
-        this.previewCanvas.nativeElement.width = PREVIEW_CANVAS_WIDTH; // will be reassigned by proportions, its a default value
-        this.previewCanvas.nativeElement.height = PREVIEW_CANVAS_HEIGHT; // will be reassigned by proportions, its a default value
-        this.setPreviewProportions();
+        this.setPreviewSize();
         this.exportCanvas.nativeElement.width = this.drawingService.canvas.width;
         this.exportCanvas.nativeElement.height = this.drawingService.canvas.height;
     }
 
-    whiteBackground(ctx: CanvasRenderingContext2D): void {
-        ctx.fillStyle = '#FFFFFF';
-        ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-        ctx.fillStyle = '#000000';
-    }
-
-    onFormatChange(): void {
-        this.setImageUrl();
-    }
-
-    // setPreviewProportions(): void {
-    //     let ratio: number;
-    //     ratio = this.drawingService.canvas.height / this.drawingService.canvas.width;
-
-    //     if (ratio < 0.6) {
-    //         this.previewCanvas.nativeElement.height = 400;
-    //         this.previewCanvas.nativeElement.width = 800;
-    //     } else if (ratio < 1.0) {
-    //         this.previewCanvas.nativeElement.height = 600;
-    //         this.previewCanvas.nativeElement.width = 800;
-    //     } else if (ratio < 1.2) {
-    //         this.previewCanvas.nativeElement.height = 600;
-    //         this.previewCanvas.nativeElement.width = 600;
-    //     } else if (ratio < 1.6) {
-    //         this.previewCanvas.nativeElement.height = 800;
-    //         this.previewCanvas.nativeElement.width = 600;
-    //     } else {
-    //         this.previewCanvas.nativeElement.height = 800;
-    //         this.previewCanvas.nativeElement.width = 400;
-    //     }
-    // }
-
-    setPreviewProportions(): void {
+    setPreviewSize(): void {
         let ratio: number;
         ratio = this.drawingService.canvas.height / this.drawingService.canvas.width;
 
-        // This logic will make sure the biggest possible size is 800
+        // This logic will make sure the biggest possible size is 800 (MAX_PREVIEW_SIZE)
 
         if (this.drawingService.canvas.height > MAX_PREVIEW_SIZE && this.drawingService.canvas.width > MAX_PREVIEW_SIZE) {
             // take the biggest one of both, set and scale according to that one
@@ -105,6 +75,33 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
         }
     }
 
+    setImageUrl(): void {
+        const format = 'image/' + this.selectedFormat;
+        const imageUrl = this.exportCanvas.nativeElement.toDataURL(format);
+        this.drawingImage.nativeElement.src = imageUrl;
+        this.drawingImageContainer.nativeElement.href = imageUrl;
+    }
+
+    onFormatChange(): void {
+        this.setImageUrl();
+    }
+
+    downloadImage(): void {
+        this.setExportFilter();
+        this.setImageUrl();
+        const title = this.drawingTitle.length > 0 ? this.drawingTitle : 'image';
+        this.drawingImageContainer.nativeElement.download = title + '.' + this.selectedFormat;
+        this.drawingImageContainer.nativeElement.click();
+        // Close export window, once everything is done
+        this.dialog.closeAll();
+    }
+
+    whiteBackground(ctx: CanvasRenderingContext2D): void {
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        ctx.fillStyle = '#000000';
+    }
+
     drawPreviewCanvas(): void {
         this.previewCtx.drawImage(
             this.drawingService.canvas,
@@ -117,21 +114,6 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
             this.previewCanvas.nativeElement.width,
             this.previewCanvas.nativeElement.height, // Stretches image to fit preview
         );
-    }
-
-    downloadImage(): void {
-        this.setExportFilter();
-        this.setImageUrl();
-        const title = this.drawingTitle.length > 0 ? this.drawingTitle : 'image';
-        this.drawingImageContainer.nativeElement.download = title + '.' + this.selectedFormat;
-        this.drawingImageContainer.nativeElement.click();
-    }
-
-    setImageUrl(): void {
-        const format = 'image/' + this.selectedFormat;
-        const imageUrl = this.exportCanvas.nativeElement.toDataURL(format);
-        this.drawingImage.nativeElement.src = imageUrl;
-        this.drawingImageContainer.nativeElement.href = imageUrl;
     }
 
     // Sets filters on the preview
