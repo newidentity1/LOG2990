@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Color } from '@app/classes/color/color';
 import { Tool } from '@app/classes/tool/tool';
 import { LineProperties } from '@app/classes/tools-properties/line-properties';
 import { Vec2 } from '@app/classes/vec2';
@@ -28,7 +27,7 @@ export class LineService extends Tool {
     }
 
     // Permet d'ajouter un point dans la ligne a chaque click
-    onClick(event: MouseEvent): void {
+    onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
         const mousePosition = this.getPositionFromMouse(event);
         // si il n'y a qu'un seul point on ne trace pas de ligne
@@ -57,7 +56,7 @@ export class LineService extends Tool {
                     mousePosition.x = this.pathData[this.pathData.length - 1].x;
                 }
             }
-            this.drawLine(this.drawingService.previewCtx, this.pathData);
+            this.draw(this.drawingService.previewCtx);
         }
         this.pathData.push(mousePosition);
     }
@@ -85,7 +84,7 @@ export class LineService extends Tool {
             if (this.pathData.length >= 2) {
                 this.pathData.pop();
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.drawLine(this.drawingService.previewCtx, this.pathData);
+                this.draw(this.drawingService.previewCtx);
             }
         }
         if (event.code === 'Escape') {
@@ -95,7 +94,8 @@ export class LineService extends Tool {
         }
     }
 
-    onDoubleClick(event: MouseEvent): void {
+    onDoubleClick(event: MouseEvent): Tool | undefined {
+        let toolClone: Tool | undefined;
         const mousePosition = this.getPositionFromMouse(event);
         if (mousePosition !== this.pathData[0] && this.pathData.length >= 1 && this.pathData.length > 2) {
             // calculer la distance entre la souris et le point de départ
@@ -111,13 +111,16 @@ export class LineService extends Tool {
 
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.pathData.push(this.pathData[0]);
-                this.drawLine(this.drawingService.baseCtx, this.pathData);
+                this.draw(this.drawingService.baseCtx);
+                toolClone = this.clone();
                 this.clearPath();
             } else {
-                this.drawLine(this.drawingService.baseCtx, this.pathData);
+                this.draw(this.drawingService.baseCtx);
+                toolClone = this.clone();
                 this.clearPath();
             }
         }
+        return toolClone;
     }
 
     onKeyUp(event: KeyboardEvent): void {
@@ -128,15 +131,9 @@ export class LineService extends Tool {
             // on suprime l'ancien segment et on définit le nouveau
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawLine(this.drawingService.previewCtx, this.pathData);
+            this.draw(this.drawingService.previewCtx);
             this.pathData.pop();
         }
-    }
-
-    setColors(primaryColor: Color): void {
-        this.drawingService.setColor(primaryColor.toStringRGBA());
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        this.drawLine(this.drawingService.previewCtx, this.pathData);
     }
 
     setPointeSize(value: number | null): void {
@@ -144,7 +141,7 @@ export class LineService extends Tool {
         value = value === null ? 1 : value;
         lineProperties.pointSize = value;
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        this.drawLine(this.drawingService.previewCtx, this.pathData);
+        this.draw(this.drawingService.previewCtx);
     }
 
     setThickness(value: number | null): void {
@@ -152,7 +149,7 @@ export class LineService extends Tool {
         this.toolProperties.thickness = value;
         this.drawingService.setThickness(value);
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        this.drawLine(this.drawingService.previewCtx, this.pathData);
+        this.draw(this.drawingService.previewCtx);
     }
 
     setTypeDrawing(value: string): void {
@@ -163,22 +160,22 @@ export class LineService extends Tool {
             lineProperties.withPoint = false;
         }
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        this.drawLine(this.drawingService.previewCtx, this.pathData);
+        this.draw(this.drawingService.previewCtx);
     }
 
-    private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+    draw(ctx: CanvasRenderingContext2D): void {
         const lineProperties = this.toolProperties as LineProperties;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
         ctx.miterLimit = 1;
         ctx.beginPath();
-        for (const point of path) {
+        for (const point of this.pathData) {
             ctx.lineTo(point.x, point.y);
         }
         ctx.stroke();
         if (lineProperties.withPoint) {
             ctx.beginPath();
-            for (const point of path) {
+            for (const point of this.pathData) {
                 ctx.beginPath();
                 ctx.arc(point.x, point.y, lineProperties.pointSize, 0, Math.PI * 2, false);
                 ctx.fill();
@@ -193,7 +190,7 @@ export class LineService extends Tool {
         // on suprime l'ancien segment et on définit le nouveau
         // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        this.drawLine(this.drawingService.previewCtx, this.pathData);
+        this.draw(this.drawingService.previewCtx);
         this.pathData.pop();
     }
 
@@ -278,5 +275,19 @@ export class LineService extends Tool {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.clearPath();
         this.setThickness(this.toolProperties.thickness);
+    }
+
+    copyLine(lineCopy: LineService): void {
+        this.copyTool(lineCopy);
+        const lineProperties = this.toolProperties as LineProperties;
+        const lineCopyProperties = lineCopy.toolProperties as LineProperties;
+        lineCopyProperties.pointSize = lineProperties.pointSize;
+        lineCopyProperties.withPoint = lineProperties.withPoint;
+    }
+
+    clone(): LineService {
+        const lineClone: LineService = new LineService(this.drawingService);
+        this.copyLine(lineClone);
+        return lineClone;
     }
 }

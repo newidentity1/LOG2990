@@ -141,7 +141,14 @@ export class ToolbarService {
     }
 
     onDoubleClick(event: MouseEvent): void {
-        this.currentTool.onDoubleClick(event);
+        let tool: Tool | undefined;
+        tool = this.currentTool.onDoubleClick(event);
+
+        if (tool !== undefined) {
+            this.undoIndex++;
+            this.drawings.length = this.undoIndex;
+            this.drawings.push(tool);
+        }
     }
 
     onClick(event: MouseEvent): void {
