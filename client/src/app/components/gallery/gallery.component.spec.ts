@@ -9,7 +9,9 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { FireBaseService } from '@app/services/fire/fire-base.service';
 import { Drawing } from '@common/communication/drawing';
 import { NgImageSliderComponent } from 'ng-image-slider';
+// import { Observable } from 'rxjs';
 import { GalleryComponent } from './gallery.component';
+// import { of } from 'rxjs';
 
 describe('GalleryComponent', () => {
     let component: GalleryComponent;
@@ -19,26 +21,27 @@ describe('GalleryComponent', () => {
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
     let slider: jasmine.SpyObj<NgImageSliderComponent>;
-    let fireBaseService: jasmine.SpyObj<FireBaseService>;
+    let fireBaseServiceSpy: jasmine.SpyObj<FireBaseService>;
     let fakeDrawing: Drawing;
 
     beforeEach(async(() => {
         drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
-        communicationSpy = jasmine.createSpyObj('CommunicationService', ['deleteDraw']);
+        fireBaseServiceSpy = jasmine.createSpyObj('fireBaseServiceSpy', ['deleteImage']);
+        communicationSpy = jasmine.createSpyObj('CommunicationService', ['deleteDraw', 'getDrawings']);
         slider = jasmine.createSpyObj('NgImageSliderComponent', ['setSliderImages']);
         TestBed.configureTestingModule({
             declarations: [GalleryComponent],
             imports: [HttpClientTestingModule, MatDialogModule, FormsModule, ReactiveFormsModule],
             providers: [
                 { provide: DrawingService, useValue: drawingServiceSpy },
-                { provide: FireBaseService, useValue: fireBaseService },
+                { provide: FireBaseService, useValue: fireBaseServiceSpy },
                 { provide: NgImageSliderComponent, useValue: slider },
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
         drawingServiceSpy = TestBed.inject(DrawingService) as jasmine.SpyObj<DrawingService>;
-        communicationSpy = TestBed.inject(CommunicationService) as jasmine.SpyObj<CommunicationService>;
-        fireBaseService = TestBed.inject(FireBaseService) as jasmine.SpyObj<FireBaseService>;
+        // communicationSpy = TestBed.inject(CommunicationService) as jasmine.SpyObj<CommunicationService>;
+        // fireBaseServiceSpy = TestBed.inject(FireBaseService) as jasmine.SpyObj<FireBaseService>;
         slider = TestBed.inject(NgImageSliderComponent) as jasmine.SpyObj<NgImageSliderComponent>;
 
         const drawingCanvas = document.createElement('canvas');
@@ -64,12 +67,17 @@ describe('GalleryComponent', () => {
     });
 
     it('deleteDraw should delete the current draw', () => {
-        component.slider = slider;
-        component['fireBaseService'] = fireBaseService;
         const fakeDrawing1: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
+        component.slider.visiableImageIndex = 0;
         component.drawings.push(fakeDrawing1);
         component.deleteDraw();
-        expect(communicationSpy.deleteDraw).toHaveBeenCalled();
+        expect(fireBaseServiceSpy.deleteImage).toHaveBeenCalled();
+        expect(communicationSpy.deleteDraw).not.toHaveBeenCalled();
+    });
+
+    it('getDrawing should get all the drawing present on the server', () => {
+        component.getDrawings();
+        expect(communicationSpy.getDrawings).toHaveBeenCalled();
     });
 
     it('continueDraw should add the choosing draw to the canvas', () => {
