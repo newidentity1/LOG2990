@@ -82,19 +82,24 @@ export class GalleryComponent implements OnInit, AfterViewInit {
         }
     }
 
-    getDrawings(): void {
+    getDrawings(): Observable<Drawing[]> {
         const obs: Observable<Drawing[]> = this.communicationService.getDrawings();
         obs.subscribe((data) => {
-            for (const draw of data) {
-                this.drawings.push(draw);
-            }
-            this.updateDrawings(this.drawings);
-            if (this.drawings.length > 0) {
-                this.isDrawing = true;
-            } else {
-                this.isDrawing = false;
-            }
+            this.transformData(data);
         });
+        return obs;
+    }
+
+    transformData(data: Drawing[]): void {
+        for (const draw of data) {
+            this.drawings.push(draw);
+        }
+        this.updateDrawings(this.drawings);
+        if (this.drawings.length > 0) {
+            this.isDrawing = true;
+        } else {
+            this.isDrawing = false;
+        }
     }
 
     addTag(tag: string): void {

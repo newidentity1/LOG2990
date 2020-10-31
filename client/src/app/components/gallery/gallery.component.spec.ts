@@ -1,6 +1,6 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
@@ -36,12 +36,11 @@ describe('GalleryComponent', () => {
                 { provide: DrawingService, useValue: drawingServiceSpy },
                 { provide: FireBaseService, useValue: fireBaseServiceSpy },
                 { provide: NgImageSliderComponent, useValue: slider },
+                CommunicationService,
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
         drawingServiceSpy = TestBed.inject(DrawingService) as jasmine.SpyObj<DrawingService>;
-        // communicationSpy = TestBed.inject(CommunicationService) as jasmine.SpyObj<CommunicationService>;
-        // fireBaseServiceSpy = TestBed.inject(FireBaseService) as jasmine.SpyObj<FireBaseService>;
         slider = TestBed.inject(NgImageSliderComponent) as jasmine.SpyObj<NgImageSliderComponent>;
 
         const drawingCanvas = document.createElement('canvas');
@@ -75,9 +74,31 @@ describe('GalleryComponent', () => {
         expect(communicationSpy.deleteDraw).not.toHaveBeenCalled();
     });
 
-    it('getDrawing should get all the drawing present on the server', () => {
+    it('getDrawing should get all the drawing present on the server', fakeAsync(() => {
+        const spy = spyOn(component, 'transformData');
         component.getDrawings();
-        expect(communicationSpy.getDrawings).toHaveBeenCalled();
+        tick();
+        expect(spy).toHaveBeenCalled();
+    }));
+
+    it('transformData should call updateDrawings and set isDrawing to true', () => {
+        const fakeDrawing1: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
+        const data: Drawing[] = [];
+        data.push(fakeDrawing1);
+        const spy = spyOn(component, 'updateDrawings');
+        // tslint:disable-next-line:no-string-literal
+        component['transformData'](data);
+        expect(spy).toHaveBeenCalled();
+        expect(component.isDrawing).toBeTrue();
+    });
+
+    it('transformData should call updateDrawings and set isDrawing to false', () => {
+        const data: Drawing[] = [];
+        const spy = spyOn(component, 'updateDrawings');
+        // tslint:disable-next-line:no-string-literal
+        component['transformData'](data);
+        expect(spy).toHaveBeenCalled();
+        expect(component.isDrawing).not.toBeTrue();
     });
 
     it('continueDraw should add the choosing draw to the canvas', () => {
