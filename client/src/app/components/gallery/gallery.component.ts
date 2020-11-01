@@ -47,7 +47,6 @@ export class GalleryComponent implements OnInit, AfterViewInit {
             };
             this.tab.push(obj);
         }
-        console.log(this.tab);
         this.slider.setSliderImages(this.tab);
         this.isDrawing = this.tab.length > 0;
     }
@@ -69,13 +68,11 @@ export class GalleryComponent implements OnInit, AfterViewInit {
         this.drawingService.canvas.height = image.height;
         ctx?.drawImage(image, 0, 0);
         this.dialog.closeAll();
-        console.log(event);
     }
 
     deleteDraw(): void {
         if (this.drawings.length !== 0) {
             const i = this.slider.visiableImageIndex;
-            console.log(i);
             const draw: Drawing = this.drawings[i];
             this.fireBaseService.deleteImage(draw._id);
             this.communicationService.deleteDraw(draw._id);
@@ -85,6 +82,8 @@ export class GalleryComponent implements OnInit, AfterViewInit {
     getDrawings(): Observable<Drawing[]> {
         const obs: Observable<Drawing[]> = this.communicationService.getDrawings();
         obs.subscribe((data) => {
+            console.log('data:  ');
+            console.log(data);
             this.transformData(data);
         });
         return obs;
@@ -96,7 +95,7 @@ export class GalleryComponent implements OnInit, AfterViewInit {
         }
         this.updateDrawings(this.drawings);
         if (this.drawings.length > 0) {
-            this.isDrawing = true;
+            this.isDrawing = true; // je vais test ca
         } else {
             this.isDrawing = false;
         }
