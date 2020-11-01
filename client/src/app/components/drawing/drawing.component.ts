@@ -76,7 +76,7 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit, OnDest
                 this.toolbarService.applyCurrentTool();
             }, 0);
         });
-        this.toolbarService.initializeColors();
+        this.toolbarService.initializeListeners();
         this.drawingService.setWhiteBackground();
     }
 

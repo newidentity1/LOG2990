@@ -255,7 +255,7 @@ describe('SelectionService', () => {
         drawingServiceSpy.previewCtx.canvas.height = 20;
         drawingServiceSpy.previewCtx.canvas.style.left = '20px';
         drawingServiceSpy.previewCtx.canvas.style.top = '20px';
-        service.resetSelection();
+        service.drawSelection();
 
         expect(drawingServiceSpy.previewCtx.canvas.width).toEqual(drawingServiceSpy.canvas.width);
         expect(drawingServiceSpy.previewCtx.canvas.height).toEqual(drawingServiceSpy.canvas.height);
@@ -270,7 +270,7 @@ describe('SelectionService', () => {
         drawingServiceSpy.previewCtx.canvas.height = 20;
         drawingServiceSpy.previewCtx.canvas.style.left = '20px';
         drawingServiceSpy.previewCtx.canvas.style.top = '20px';
-        service.resetSelection();
+        service.drawSelection();
 
         expect(drawingServiceSpy.previewCtx.canvas.width).toEqual(20);
         expect(drawingServiceSpy.previewCtx.canvas.height).toEqual(20);
