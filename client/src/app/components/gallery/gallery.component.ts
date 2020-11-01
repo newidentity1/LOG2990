@@ -62,11 +62,11 @@ export class GalleryComponent implements OnInit, AfterViewInit {
     continueDraw(event: number): void {
         const image = new Image();
         image.src = this.drawings[event].url;
-        const ctx = this.drawingService.canvas.getContext('2d');
+        const ctx = this.drawingService.canvas.getContext('2d') as CanvasRenderingContext2D;
         this.drawingService.clearCanvas(ctx as CanvasRenderingContext2D);
         this.drawingService.canvas.width = image.width;
         this.drawingService.canvas.height = image.height;
-        ctx?.drawImage(image, 0, 0);
+        ctx.drawImage(image, 0, 0);
         this.dialog.closeAll();
     }
 
@@ -81,6 +81,7 @@ export class GalleryComponent implements OnInit, AfterViewInit {
 
     getDrawings(): Observable<Drawing[]> {
         const obs: Observable<Drawing[]> = this.communicationService.getDrawings();
+        console.log(obs);
         obs.subscribe((data) => {
             console.log('data:  ');
             console.log(data);
