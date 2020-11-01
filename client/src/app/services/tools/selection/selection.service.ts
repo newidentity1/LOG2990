@@ -187,15 +187,18 @@ export class SelectionService extends ShapeTool {
     }
 
     copySelectionService(selectionService: SelectionService): void {
-        selectionService.positiveStartingPos = this.positiveStartingPos;
+        selectionService.positiveStartingPos = { x: this.positiveStartingPos.x, y: this.positiveStartingPos.y };
         selectionService.positiveWidth = this.positiveWidth;
         selectionService.positiveHeight = this.positiveHeight;
         selectionService.currentType = this.currentType;
-        selectionService.moveSelectionService.finalPosition = this.moveSelectionService.finalPosition;
+        selectionService.moveSelectionService.finalPosition = {
+            x: this.moveSelectionService.finalPosition.x,
+            y: this.moveSelectionService.finalPosition.y,
+        };
     }
 
     clone(): SelectionService {
-        const selectionClone: SelectionService = new SelectionService(this.drawingService, this.moveSelectionService);
+        const selectionClone: SelectionService = new SelectionService(this.drawingService, new MoveSelectionService(this.drawingService));
         this.copySelectionService(selectionClone);
         return selectionClone;
     }
