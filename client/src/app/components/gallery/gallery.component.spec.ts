@@ -1,6 +1,6 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
@@ -8,8 +8,8 @@ import { CommunicationService } from '@app/services/communication.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { FireBaseService } from '@app/services/fire/fire-base.service';
 import { Drawing } from '@common/communication/drawing';
-import { NgImageSliderComponent } from 'ng-image-slider';
-import { Observable } from 'rxjs';
+import { NgImageSliderComponent, NgImageSliderModule } from 'ng-image-slider';
+import { of } from 'rxjs';
 // import { Observable } from 'rxjs';
 import { GalleryComponent } from './gallery.component';
 // import { of } from 'rxjs';
@@ -21,7 +21,7 @@ describe('GalleryComponent', () => {
     let communicationSpy: jasmine.SpyObj<CommunicationService>;
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
-    let slider: jasmine.SpyObj<NgImageSliderComponent>;
+    let sliderSpy: jasmine.SpyObj<NgImageSliderComponent>;
     let fireBaseServiceSpy: jasmine.SpyObj<FireBaseService>;
     let fakeDrawing: Drawing;
 
@@ -29,21 +29,28 @@ describe('GalleryComponent', () => {
         drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
         fireBaseServiceSpy = jasmine.createSpyObj('fireBaseServiceSpy', ['deleteImage']);
         communicationSpy = jasmine.createSpyObj('CommunicationService', ['deleteDraw', 'getDrawings']);
-        slider = jasmine.createSpyObj('NgImageSliderComponent', ['setSliderImages']);
+        sliderSpy = jasmine.createSpyObj('NgImageSliderComponent', ['setSliderImages']);
         TestBed.configureTestingModule({
-            declarations: [GalleryComponent],
-            imports: [HttpClientTestingModule, MatDialogModule, FormsModule, ReactiveFormsModule],
+            declarations: [GalleryComponent, NgImageSliderComponent],
+            imports: [HttpClientTestingModule, MatDialogModule, FormsModule, ReactiveFormsModule, NgImageSliderModule],
             providers: [
                 { provide: DrawingService, useValue: drawingServiceSpy },
                 { provide: FireBaseService, useValue: fireBaseServiceSpy },
-                { provide: NgImageSliderComponent, useValue: slider },
-                CommunicationService,
+                { provide: CommunicationService, useValue: communicationSpy },
+                { provide: NgImageSliderComponent, useValue: sliderSpy },
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
         drawingServiceSpy = TestBed.inject(DrawingService) as jasmine.SpyObj<DrawingService>;
-        slider = TestBed.inject(NgImageSliderComponent) as jasmine.SpyObj<NgImageSliderComponent>;
+        sliderSpy = TestBed.inject(NgImageSliderComponent) as jasmine.SpyObj<NgImageSliderComponent>;
+        communicationSpy = TestBed.inject(CommunicationService) as jasmine.SpyObj<CommunicationService>;
 
+        const data: Drawing[] = [];
+        communicationSpy.getDrawings.and.returnValue(of(data));
+        sliderSpy.setSliderImages.and.callFake(() => {
+            return;
+        });
+        component.slider = sliderSpy;
         const drawingCanvas = document.createElement('canvas');
         drawingCanvas.width = canvasTestHelper.canvas.width;
         drawingCanvas.height = canvasTestHelper.canvas.height;
@@ -75,15 +82,11 @@ describe('GalleryComponent', () => {
         expect(communicationSpy.deleteDraw).not.toHaveBeenCalled();
     });
 
-    it('getDrawing should get all the drawing present on the server', fakeAsync(() => {
+    it('getDrawing should get all the drawing present on the server', () => {
         const spy = spyOn(component, 'transformData');
-        const obs: Observable<Drawing[]> = component.getDrawings();
-        obs.subscribe(() => {
-            expect(spy).toHaveBeenCalled();
-        });
-        tick();
-       // expect(spy).toHaveBeenCalled();
-    }));
+        component.getDrawings();
+        expect(spy).toHaveBeenCalledWith([]);
+    });
 
     it('transformData should call updateDrawings and set isDrawing to true', () => {
         const fakeDrawing1: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
@@ -106,7 +109,6 @@ describe('GalleryComponent', () => {
     });
 
     it('continueDraw should add the choosing draw to the canvas', () => {
-        component.slider = slider;
         const fakeDrawing1: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
         component.drawings.push(fakeDrawing1);
         component.continueDraw(0);
@@ -114,7 +116,6 @@ describe('GalleryComponent', () => {
     });
 
     it('updateDrawings should update drawings from the server', () => {
-        component.slider = slider;
         const totalDrawings: Drawing[] = [];
         const fakeDrawing1: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
         totalDrawings.push(fakeDrawing1);

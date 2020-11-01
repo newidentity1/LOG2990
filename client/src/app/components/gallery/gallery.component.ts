@@ -84,6 +84,7 @@ export class GalleryComponent implements OnInit, AfterViewInit {
 
     getDrawings(): Observable<Drawing[]> {
         const obs: Observable<Drawing[]> = this.communicationService.getDrawings();
+        console.log(obs);
         obs.subscribe((data) => {
             this.transformData(data);
         });
