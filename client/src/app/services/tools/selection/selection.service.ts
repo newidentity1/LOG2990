@@ -121,7 +121,12 @@ export class SelectionService extends ShapeTool {
 
     drawSelection(): void {
         if (this.isAreaSelected) {
-            this.executedCommand.emit(this.clone());
+            if (
+                this.positiveStartingPos.x !== this.moveSelectionService.finalPosition.x &&
+                this.positiveStartingPos.y !== this.moveSelectionService.finalPosition.y
+            )
+                this.executedCommand.emit(this.clone());
+
             this.resetSelection();
         }
     }
