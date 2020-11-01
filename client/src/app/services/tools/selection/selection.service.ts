@@ -202,7 +202,7 @@ export class SelectionService extends ShapeTool {
         return selectionClone;
     }
 
-    redo(): void {
+    execute(): void {
         this.moveSelectionService.copySelection(this.positiveStartingPos, this.positiveWidth, this.positiveHeight, this.currentType);
         this.resetSelection();
     }
