@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Color } from '@app/classes/color/color';
-import { Command } from '@app/classes/tool/command';
+import { Command } from '@app/classes/commands/command';
 import { Tool } from '@app/classes/tool/tool';
 import { KeyShortcut } from '@app/enums/key-shortcuts.enum';
 import { SelectionType } from '@app/enums/selection-type.enum';
