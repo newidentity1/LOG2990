@@ -102,7 +102,7 @@ describe('ToolbarService', () => {
     it('initializeColors should set primary and secondary colors ', () => {
         // tslint:disable-next-line:no-any / reason: spying on function
         const setColorsSpy = spyOn<any>(service, 'setColors').and.callThrough();
-        service.initializeColors();
+        service.initializeListeners();
         expect(setColorsSpy).toHaveBeenCalled();
         expect(service.primaryColor).toBeTruthy();
         expect(service.secondaryColor).toBeTruthy();
@@ -127,7 +127,7 @@ describe('ToolbarService', () => {
     it('initializeColors should set primary and secondary colors ', () => {
         // tslint:disable-next-line:no-any / reason: spying on function
         const setColorsSpy = spyOn<any>(service, 'setColors').and.callThrough();
-        service.initializeColors();
+        service.initializeListeners();
         expect(setColorsSpy).toHaveBeenCalled();
         expect(service.primaryColor).toBeTruthy();
         expect(service.secondaryColor).toBeTruthy();

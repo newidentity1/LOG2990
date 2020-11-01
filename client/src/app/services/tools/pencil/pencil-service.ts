@@ -28,15 +28,13 @@ export class PencilService extends Tool {
         }
     }
 
-    onMouseUp(event: MouseEvent): Tool | undefined {
-        let tool: Tool | undefined;
+    onMouseUp(event: MouseEvent): void {
         if (this.mouseDown) {
             this.draw(this.drawingService.baseCtx);
-            tool = this.clone();
+            this.executedCommand.emit(this.clone());
         }
         this.mouseDown = false;
         this.clearPath();
-        return tool;
     }
 
     onMouseMove(event: MouseEvent): void {

@@ -1,3 +1,4 @@
+import { EventEmitter } from '@angular/core';
 import { Color } from '@app/classes/color/color';
 import { BasicToolProperties } from '@app/classes/tools-properties/basic-tool-properties';
 import { Vec2 } from '@app/classes/vec2';
@@ -16,16 +17,17 @@ export abstract class Tool implements Command {
     toolProperties: BasicToolProperties;
     currentPrimaryColor: Color;
     currentSecondaryColor: Color;
+    executedCommand: EventEmitter<Command>;
 
-    constructor(protected drawingService: DrawingService) {}
+    constructor(protected drawingService: DrawingService) {
+        this.executedCommand = new EventEmitter<Command>();
+    }
 
     setTypeDrawing(value: string): void {}
 
     onMouseDown(event: MouseEvent): void {}
 
-    onMouseUp(event: MouseEvent): Tool | undefined {
-        return undefined;
-    }
+    onMouseUp(event: MouseEvent): void {}
 
     onMouseMove(event: MouseEvent): void {}
 
@@ -39,9 +41,7 @@ export abstract class Tool implements Command {
 
     onKeyUp(event: KeyboardEvent): void {}
 
-    onDoubleClick(event: MouseEvent): Tool | undefined {
-        return undefined;
-    }
+    onDoubleClick(event: MouseEvent): void {}
 
     onClick(event: MouseEvent): void {}
 

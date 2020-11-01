@@ -69,13 +69,18 @@ export class ToolbarService {
             .set(KeyShortcut.EllipseSelect, selectionService);
     }
 
-    initializeColors(): void {
+    initializeListeners(): void {
         this.colorPickerService.primaryColor.subscribe((color: Color) => {
             this.setColors(color, this.secondaryColor);
         });
 
         this.colorPickerService.secondaryColor.subscribe((color: Color) => {
             this.setColors(this.primaryColor, color);
+        });
+        this.tools.forEach((tool: Tool) => {
+            tool.executedCommand.subscribe((command: Command) => {
+                this.addCommand(command);
+            });
         });
     }
 
@@ -123,9 +128,7 @@ export class ToolbarService {
     }
 
     onMouseUp(event: MouseEvent): void {
-        let command: Command | undefined;
-        command = this.currentTool.onMouseUp(event);
-        this.addCommand(command);
+        this.currentTool.onMouseUp(event);
     }
 
     addCommand(command: Command | undefined): void {
@@ -145,9 +148,7 @@ export class ToolbarService {
     }
 
     onDoubleClick(event: MouseEvent): void {
-        let command: Command | undefined;
-        command = this.currentTool.onDoubleClick(event);
-        this.addCommand(command);
+        this.currentTool.onDoubleClick(event);
     }
 
     onClick(event: MouseEvent): void {
@@ -191,7 +192,7 @@ export class ToolbarService {
 
     resetSelection(): void {
         if (this.isAreaSelected()) {
-            this.addCommand(this.selectionService.resetSelection());
+            this.selectionService.drawSelection();
         }
     }
 
