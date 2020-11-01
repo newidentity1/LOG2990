@@ -79,6 +79,7 @@ export class SelectionService extends ShapeTool {
                     this.height
                 ) {
                     this.isAreaSelected = true;
+                    this.moveSelectionService.finalPosition = { x: this.positiveStartingPos.x, y: this.positiveStartingPos.y };
                     this.moveSelectionService.copySelection(this.positiveStartingPos, this.positiveWidth, this.positiveHeight, this.currentType);
                     this.drawSelectionBox({ x: 0, y: 0 }, this.positiveWidth, this.positiveHeight);
                 }
@@ -112,6 +113,8 @@ export class SelectionService extends ShapeTool {
         this.setSelectionType(SelectionType.RectangleSelection);
         this.positiveStartingPos.x = 0;
         this.positiveStartingPos.y = 0;
+        this.moveSelectionService.finalPosition.x = 0;
+        this.moveSelectionService.finalPosition.y = 0;
         this.positiveWidth = this.drawingService.canvas.width;
         this.positiveHeight = this.drawingService.canvas.height;
         this.isAreaSelected = true;
@@ -122,7 +125,7 @@ export class SelectionService extends ShapeTool {
     drawSelection(): void {
         if (this.isAreaSelected) {
             if (
-                this.positiveStartingPos.x !== this.moveSelectionService.finalPosition.x &&
+                this.positiveStartingPos.x !== this.moveSelectionService.finalPosition.x ||
                 this.positiveStartingPos.y !== this.moveSelectionService.finalPosition.y
             )
                 this.executedCommand.emit(this.clone());
