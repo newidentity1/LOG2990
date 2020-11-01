@@ -1,13 +1,12 @@
-import { EventEmitter } from '@angular/core';
 import { Color } from '@app/classes/color/color';
 import { BasicToolProperties } from '@app/classes/tools-properties/basic-tool-properties';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { Command } from './command';
+import { Command } from '../commands/command';
 
 // Ceci est justifié vu qu'on a des fonctions qui seront gérés par les classes enfant
 // tslint:disable:no-empty
-export abstract class Tool implements Command {
+export abstract class Tool extends Command {
     mouseDownCoord: Vec2;
     pathData: Vec2[];
     mouseDown: boolean = false;
@@ -17,10 +16,9 @@ export abstract class Tool implements Command {
     toolProperties: BasicToolProperties;
     currentPrimaryColor: Color;
     currentSecondaryColor: Color;
-    executedCommand: EventEmitter<Command>;
 
     constructor(protected drawingService: DrawingService) {
-        this.executedCommand = new EventEmitter<Command>();
+        super();
     }
 
     setTypeDrawing(value: string): void {}
