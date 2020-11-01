@@ -181,7 +181,6 @@ export class ToolbarService {
         setTimeout(() => {
             if (this.undoIndex >= 0) {
                 for (let i = 0; i <= this.undoIndex; i++) {
-                    console.log(this.undoIndex);
                     this.commands[i].applyCurrentSettings();
                     this.commands[i].execute();
                 }
