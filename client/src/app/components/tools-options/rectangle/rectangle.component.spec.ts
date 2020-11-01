@@ -48,12 +48,14 @@ describe('RectangleComponent', () => {
         matSliderEvent = { source: matSliderSource, value: MAXIMUM_THICKNESS / 2 };
         component.onThicknessChange(matSliderEvent);
         expect(rectangleServiceMock.setThickness).toHaveBeenCalled();
-        expect(rectangleServiceMock.setThickness).toHaveBeenCalledWith(MAXIMUM_THICKNESS / 2);
+        expect(rectangleServiceMock.setThickness).toHaveBeenCalledWith(matSliderEvent.value);
     });
 
     it('onThicknessChange should not call setThickness of rectangle service if value is outside scope', () => {
         matSliderEvent = { source: matSliderSource, value: MINIMUM_THICKNESS - 1 };
         component.onThicknessChange(matSliderEvent);
+        // constructor call
+        expect(rectangleServiceMock.setThickness).toHaveBeenCalled();
         expect(rectangleServiceMock.setThickness).not.toHaveBeenCalledWith(matSliderEvent.value);
     });
 
