@@ -77,6 +77,7 @@ export class ToolbarService {
         this.colorPickerService.secondaryColor.subscribe((color: Color) => {
             this.setColors(this.primaryColor, color);
         });
+
         this.tools.forEach((tool: Tool) => {
             tool.executedCommand.subscribe((command: Command) => {
                 this.addCommand(command);
