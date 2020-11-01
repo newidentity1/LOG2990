@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MAX_PREVIEW_SIZE } from '@app/constants/constants.ts';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -18,11 +19,20 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
     drawingTitle: string;
     previewCtx: CanvasRenderingContext2D;
     exportCtx: CanvasRenderingContext2D;
+    percentageForm: FormControl;
+    percentage: number;
 
     constructor(public dialog: MatDialog, public drawingService: DrawingService) {
         this.selectedFormat = 'jpeg';
         this.selectedFilter = '0';
         this.drawingTitle = '';
+    }
+
+    ngOnInit(): void {
+        // set initial filter strength to 100%
+        this.percentage = 1;
+        // set form
+        this.percentageForm = new FormControl(this.percentage, [Validators.required]);
     }
 
     ngAfterViewInit(): void {
@@ -38,6 +48,12 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
         // Draw filter on preview
         this.setPreviewFilter();
         this.setImageUrl();
+    }
+
+    setFilterStrength(value: number): void {
+        this.percentage = value;
+        this.percentageForm.setValue(this.percentage);
+        this.setPreviewFilter();
     }
 
     setInitialCanvasSize(): void {
@@ -125,31 +141,37 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
                 this.drawPreviewCanvas();
                 break;
             case '1':
-                this.previewCtx.filter = 'blur(7px)';
+                this.previewCtx.filter = 'blur(' + this.percentage * 10 + 'px)';
                 this.whiteBackground(this.previewCtx);
                 this.drawPreviewCanvas();
                 this.previewCtx.filter = 'none';
                 break;
             case '2':
-                this.previewCtx.filter = 'contrast(1.4) sepia(1)';
+                this.previewCtx.filter = 'contrast(1.4) sepia(' + this.percentage + ')';
                 this.whiteBackground(this.previewCtx);
                 this.drawPreviewCanvas();
                 this.previewCtx.filter = 'none';
                 break;
             case '3':
-                this.previewCtx.filter = 'brightness(50%)';
+                this.previewCtx.filter = 'brightness(' + this.percentage + ')';
                 this.whiteBackground(this.previewCtx);
                 this.drawPreviewCanvas();
                 this.previewCtx.filter = 'none';
                 break;
             case '4':
-                this.previewCtx.filter = 'saturate(50%)';
+                this.previewCtx.filter = 'saturate(' + this.percentage + ')';
                 this.whiteBackground(this.previewCtx);
                 this.drawPreviewCanvas();
                 this.previewCtx.filter = 'none';
                 break;
             case '5':
-                this.previewCtx.filter = 'dropshadow(50%)';
+                this.previewCtx.filter = 'invert(' + this.percentage + ')';
+                this.whiteBackground(this.previewCtx);
+                this.drawPreviewCanvas();
+                this.previewCtx.filter = 'none';
+                break;
+            case '6':
+                this.previewCtx.filter = 'hue-rotate(' + this.percentage * 360 + 'deg)';
                 this.whiteBackground(this.previewCtx);
                 this.drawPreviewCanvas();
                 this.previewCtx.filter = 'none';
