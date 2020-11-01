@@ -76,13 +76,14 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit, OnDest
                 this.toolbarService.applyCurrentTool();
             }, 0);
         });
-        this.toolbarService.initializeListeners();
         this.drawingService.setWhiteBackground();
+        this.toolbarService.initializeListeners();
     }
 
     ngOnDestroy(): void {
         this.subscribeCreateNewDrawing.unsubscribe();
         this.subscribeDimensionsUpdated.unsubscribe();
+        this.toolbarService.unsubscribeListeners();
     }
 
     onMouseMove(event: MouseEvent): void {

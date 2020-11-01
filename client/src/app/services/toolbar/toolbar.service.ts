@@ -16,6 +16,7 @@ import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { PolygonService } from '@app/services/tools/polygon/polygon.service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle.service';
 import { SelectionService } from '@app/services/tools/selection/selection.service';
+import { Subscription } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -23,11 +24,14 @@ import { SelectionService } from '@app/services/tools/selection/selection.servic
 export class ToolbarService {
     private tools: Tool[];
     private undoIndex: number = -1;
+    toolsSubscription: Subscription[] = [];
     commands: Command[] = [];
     currentTool: Tool;
     primaryColor: Color;
     secondaryColor: Color;
     keyShortcuts: Map<string, Tool> = new Map();
+    primaryColorSubscription: Subscription;
+    secondaryColorSubscription: Subscription;
 
     constructor(
         protected pencilService: PencilService,
@@ -69,19 +73,31 @@ export class ToolbarService {
             .set(KeyShortcut.EllipseSelect, selectionService);
     }
 
+    unsubscribeListeners(): void {
+        this.primaryColorSubscription.unsubscribe();
+
+        this.secondaryColorSubscription.unsubscribe();
+
+        this.toolsSubscription.forEach((toolSubscription: Subscription) => {
+            toolSubscription.unsubscribe();
+        });
+    }
+
     initializeListeners(): void {
-        this.colorPickerService.primaryColor.subscribe((color: Color) => {
+        this.primaryColorSubscription = this.colorPickerService.primaryColor.subscribe((color: Color) => {
             this.setColors(color, this.secondaryColor);
         });
 
-        this.colorPickerService.secondaryColor.subscribe((color: Color) => {
+        this.secondaryColorSubscription = this.colorPickerService.secondaryColor.subscribe((color: Color) => {
             this.setColors(this.primaryColor, color);
         });
 
         this.tools.forEach((tool: Tool) => {
-            tool.executedCommand.subscribe((command: Command) => {
-                this.addCommand(command);
-            });
+            this.toolsSubscription.push(
+                tool.executedCommand.subscribe((command: Command) => {
+                    this.addCommand(command);
+                }),
+            );
         });
     }
 
