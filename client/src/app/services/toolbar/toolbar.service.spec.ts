@@ -1,6 +1,9 @@
+import { EventEmitter } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Color } from '@app/classes/color/color';
+import { Command } from '@app/classes/tool/command';
+import { Tool } from '@app/classes/tool/tool';
 import { KeyShortcut } from '@app/enums/key-shortcuts.enum';
 import { SelectionType } from '@app/enums/selection-type.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -93,13 +96,17 @@ describe('ToolbarService', () => {
         drawingServiceSpy.canvas = canvasTestHelper.canvas;
         drawingServiceSpy.baseCtx = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         drawingServiceSpy.previewCtx = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
+
+        service.getTools().forEach((tool: Tool) => {
+            tool.executedCommand = new EventEmitter<Command>();
+        });
     });
 
     it('should be created', () => {
         expect(service).toBeTruthy();
     });
 
-    it('initializeColors should set primary and secondary colors ', () => {
+    it('initializeListeners should set primary and secondary colors ', () => {
         // tslint:disable-next-line:no-any / reason: spying on function
         const setColorsSpy = spyOn<any>(service, 'setColors').and.callThrough();
         service.initializeListeners();
@@ -124,7 +131,7 @@ describe('ToolbarService', () => {
         ]);
     });
 
-    it('initializeColors should set primary and secondary colors ', () => {
+    it('initializeListeners should set primary and secondary colors ', () => {
         // tslint:disable-next-line:no-any / reason: spying on function
         const setColorsSpy = spyOn<any>(service, 'setColors').and.callThrough();
         service.initializeListeners();
