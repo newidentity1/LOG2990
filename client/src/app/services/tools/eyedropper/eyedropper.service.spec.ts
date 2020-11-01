@@ -93,26 +93,36 @@ describe('EyedropperService', () => {
         expect(drawPreviewSpy).not.toHaveBeenCalled();
     });
 
-    it(' onMouseUp should call setPrimaryColor if left mouse button was released', () => {
+    it(' onMouseUp should call setPrimaryColor if left mouse button was released and mouse is in canvas', () => {
         mouseEvent = { offsetX: 25, offsetY: 25, button: MouseButton.Left } as MouseEvent;
+        service['inCanvas'] = true;
         service.onMouseUp(mouseEvent);
         expect(colorPickerServiceSpy.setPrimaryColor).toHaveBeenCalled();
     });
 
-    it(' onMouseUp should call setSecondaryColor if left mouse button was released', () => {
+    it(' onMouseUp should call setSecondaryColor if right mouse button was released and mouse is in canvas', () => {
         mouseEvent = { offsetX: 25, offsetY: 25, button: MouseButton.Right } as MouseEvent;
+        service['inCanvas'] = true;
         service.onMouseUp(mouseEvent);
         expect(colorPickerServiceSpy.setSecondaryColor).toHaveBeenCalled();
     });
 
     it(' onMouseUp should not call setPrimaryColor and setSecondaryColor if left or right mouse button were not released', () => {
         mouseEvent = { offsetX: 25, offsetY: 25, button: MouseButton.Middle } as MouseEvent;
+        service['inCanvas'] = true;
         service.onMouseUp(mouseEvent);
         expect(colorPickerServiceSpy.setPrimaryColor).not.toHaveBeenCalled();
         expect(colorPickerServiceSpy.setSecondaryColor).not.toHaveBeenCalled();
     });
 
-    // review
+    it(' onMouseUp should not call setPrimaryColor and setSecondaryColor if left or right mouse button were released outside the canvas', () => {
+        mouseEvent = { offsetX: 25, offsetY: 25, button: MouseButton.Left } as MouseEvent;
+        service['inCanvas'] = false;
+        service.onMouseUp(mouseEvent);
+        expect(colorPickerServiceSpy.setPrimaryColor).not.toHaveBeenCalled();
+        expect(colorPickerServiceSpy.setSecondaryColor).not.toHaveBeenCalled();
+    });
+
     it(' drawPreview should call drawScaledZone and drawCursor', () => {
         const drawScaledZoneSpy = spyOn<any>(service, 'drawScaledZone').and.callThrough();
         const drawCursorSpy = spyOn<any>(service, 'drawCursor').and.callThrough();
