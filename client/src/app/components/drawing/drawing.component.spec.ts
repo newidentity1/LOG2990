@@ -34,6 +34,7 @@ describe('DrawingComponent', () => {
             'initializeListeners',
             'isAreaSelected',
             'resetSelection',
+            'unsubscribeListeners',
         ]);
 
         TestBed.configureTestingModule({
