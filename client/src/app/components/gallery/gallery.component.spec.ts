@@ -1,6 +1,6 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { async, ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
@@ -37,11 +37,13 @@ describe('GalleryComponent', () => {
                 { provide: DrawingService, useValue: drawingServiceSpy },
                 { provide: FireBaseService, useValue: fireBaseServiceSpy },
                 { provide: NgImageSliderComponent, useValue: slider },
+                { provide: CommunicationService, useValue: communicationSpy },
                 CommunicationService,
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
         drawingServiceSpy = TestBed.inject(DrawingService) as jasmine.SpyObj<DrawingService>;
+        // communicationSpy = TestBed.inject(CommunicationService) as jasmine.SpyObj<CommunicationService>;
         slider = TestBed.inject(NgImageSliderComponent) as jasmine.SpyObj<NgImageSliderComponent>;
 
         const drawingCanvas = document.createElement('canvas');
@@ -72,17 +74,17 @@ describe('GalleryComponent', () => {
         component.drawings.push(fakeDrawing1);
         component.deleteDraw();
         expect(fireBaseServiceSpy.deleteImage).toHaveBeenCalled();
-        expect(communicationSpy.deleteDraw).not.toHaveBeenCalled();
+        // expect(communicationSpy.deleteDraw).not.toHaveBeenCalled();
     });
 
     it('getDrawing should get all the drawing present on the server', fakeAsync(() => {
-        const spy = spyOn(component, 'transformData');
+        // const spy = spyOn(component, 'transformData');
+        // const fakeDrawing1: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
+        // component.drawings.push(fakeDrawing1);
+        // component.getDrawings();
+        // expect(spy).toHaveBeenCalled();
         const obs: Observable<Drawing[]> = component.getDrawings();
-        obs.subscribe(() => {
-            expect(spy).toHaveBeenCalled();
-        });
-        tick();
-       // expect(spy).toHaveBeenCalled();
+        expect(communicationSpy.getDrawings).toHaveBeenCalled();
     }));
 
     it('transformData should call updateDrawings and set isDrawing to true', () => {
