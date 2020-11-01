@@ -64,6 +64,7 @@ export class PencilService extends Tool {
         if (this.mouseDown) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.draw(this.drawingService.baseCtx);
+            this.executedCommand.emit(this.clone());
             this.clearPath();
         } else {
             this.drawCursor(mousePosition);
