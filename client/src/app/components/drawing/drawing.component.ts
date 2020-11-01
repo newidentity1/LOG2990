@@ -47,6 +47,9 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
             this.drawingService.clearCanvas(this.drawingService.baseCtx);
             this.requestDrawingContainerDimensions.emit();
         });
+        this.subscribeResetCanvasSize = this.drawingService.resetCanvasSizeEventListener().subscribe(() => {
+            this.requestDrawingContainerDimensions.emit();
+        });
         this.subscribeDimensionsUpdated = this.dimensionsUpdatedEvent.subscribe((dimensions) => {
             this.drawingContainerWidth = dimensions[0];
             this.drawingContainerHeight = dimensions[1];
@@ -72,6 +75,7 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
     ngOnDestroy(): void {
         this.subscribeCreateNewDrawing.unsubscribe();
         this.subscribeDimensionsUpdated.unsubscribe();
+        this.subscribeResetCanvasSize.unsubscribe();
         this.toolbarService.unsubscribeListeners();
     }
 
