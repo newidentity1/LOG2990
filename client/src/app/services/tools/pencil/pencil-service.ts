@@ -9,6 +9,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
     providedIn: 'root',
 })
 export class PencilService extends Tool {
+    insideCanvas: boolean = false;
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.name = 'Crayon';
@@ -20,6 +21,7 @@ export class PencilService extends Tool {
 
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
+        this.insideCanvas = this.mouseDown;
         if (this.mouseDown) {
             this.clearPath();
 
@@ -29,11 +31,12 @@ export class PencilService extends Tool {
     }
 
     onMouseUp(event: MouseEvent): void {
-        if (this.mouseDown) {
+        if (this.mouseDown && this.insideCanvas) {
             this.draw(this.drawingService.baseCtx);
             this.executedCommand.emit(this.clone());
         }
         this.mouseDown = false;
+        this.insideCanvas = false;
         this.clearPath();
     }
 
@@ -50,6 +53,7 @@ export class PencilService extends Tool {
     }
 
     onMouseEnter(event: MouseEvent): void {
+        this.insideCanvas = this.mouseDown;
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
@@ -60,6 +64,7 @@ export class PencilService extends Tool {
 
     onMouseLeave(event: MouseEvent): void {
         const mousePosition = this.getPositionFromMouse(event);
+        this.insideCanvas = false;
         this.pathData.push(mousePosition);
         if (this.mouseDown) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
