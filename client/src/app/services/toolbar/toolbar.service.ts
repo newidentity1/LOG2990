@@ -23,7 +23,7 @@ import { Subscription } from 'rxjs';
 })
 export class ToolbarService {
     private tools: Tool[];
-    private undoIndex: number = -1;
+    undoIndex: number = -1;
     toolsSubscription: Subscription[] = [];
     commands: Command[] = [];
     currentTool: Tool;
@@ -177,15 +177,18 @@ export class ToolbarService {
         this.undoIndex--;
         this.drawingService.clearCanvas(this.drawingService.baseCtx);
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        this.drawingService.setWhiteBackground();
-        if (this.undoIndex >= 0) {
-            for (let i = 0; i <= this.undoIndex; i++) {
-                this.commands[i].applyCurrentSettings();
-                this.commands[i].execute();
+        this.drawingService.emitResetCanvasSizeEvent();
+        setTimeout(() => {
+            if (this.undoIndex >= 0) {
+                for (let i = 0; i <= this.undoIndex; i++) {
+                    console.log(this.undoIndex);
+                    this.commands[i].applyCurrentSettings();
+                    this.commands[i].execute();
+                }
             }
-        }
-        this.applyCurrentToolColor();
-        this.currentTool.setThickness(this.currentTool.toolProperties.thickness);
+            this.applyCurrentToolColor();
+            this.currentTool.setThickness(this.currentTool.toolProperties.thickness);
+        }, 0);
     }
 
     redo(): void {
