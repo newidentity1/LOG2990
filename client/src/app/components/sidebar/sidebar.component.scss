@@ -6,7 +6,7 @@ mat-sidenav-container {
 
 #tool-container {
     height: auto;
-    width: 80px;
+    width: 160px;
     min-height: 100vh;
     background-color: $primaryColor;
     overflow: hidden;
@@ -17,8 +17,8 @@ mat-sidenav-container {
     padding: 0px 0px 0px 5px;
 
     li {
-        padding: 2px 0px;
-
+        padding: 2px 5px;
+        display: inline-block;
         button {
             padding: 0;
             margin: 0;
@@ -43,10 +43,13 @@ mat-sidenav {
     background-color: #1a174f;
 }
 
-#undo-redo-container,
-#colors-container,
 #other-functionality-container {
-    padding-left: 5px;
+    width: 100%;
+}
+
+.other-functionality-button {
+    display: inline-block;
+    width: 50%;
 }
 
 .type-drawing-group {
