@@ -31,7 +31,7 @@ describe('DrawingComponent', () => {
             'setColors',
             'createNewDrawingEventListener',
             'applyCurrentTool',
-            'initializeColors',
+            'initializeListeners',
             'isAreaSelected',
             'resetSelection',
         ]);
