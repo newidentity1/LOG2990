@@ -82,7 +82,7 @@ export abstract class Tool implements Command {
         return this;
     }
 
-    redo(): void {
+    execute(): void {
         this.draw(this.drawingService.baseCtx);
     }
 }

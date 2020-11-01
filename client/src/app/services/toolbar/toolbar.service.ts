@@ -164,7 +164,7 @@ export class ToolbarService {
         if (this.undoIndex >= 0) {
             for (let i = 0; i <= this.undoIndex; i++) {
                 this.commands[i].applyCurrentSettings();
-                this.commands[i].redo();
+                this.commands[i].execute();
             }
         }
         this.applyCurrentToolColor();
@@ -175,7 +175,7 @@ export class ToolbarService {
         if (this.undoIndex === this.commands.length - 1 || this.commands.length === 0) return;
         this.undoIndex++;
         this.commands[this.undoIndex].applyCurrentSettings();
-        this.commands[this.undoIndex].redo();
+        this.commands[this.undoIndex].execute();
 
         this.applyCurrentToolColor();
         this.currentTool.setThickness(this.currentTool.toolProperties.thickness);
