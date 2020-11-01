@@ -13,7 +13,7 @@ describe('SelectionService', () => {
     let moveSelectionService: MoveSelectionService;
     // tslint:disable:no-any / reason: spying on function
     let drawPreviewSpy: jasmine.Spy<any>;
-    let resetSelectionSpy: jasmine.Spy<any>;
+    let drawSelectionSpy: jasmine.Spy<any>;
     let copySelectionSpy: jasmine.Spy<any>;
     let mouseEvent: MouseEvent;
 
@@ -43,7 +43,7 @@ describe('SelectionService', () => {
         drawingServiceSpy.previewCtx = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
 
         drawPreviewSpy = spyOn<any>(service, 'drawPreview').and.callThrough();
-        resetSelectionSpy = spyOn<any>(service, 'resetSelection').and.callThrough();
+        drawSelectionSpy = spyOn<any>(service, 'drawSelection').and.callThrough();
 
         moveSelectionService = TestBed.inject(MoveSelectionService);
         moveSelectionService.imgData = drawingServiceSpy.baseCtx.getImageData(0, 0, 1, 1);
@@ -66,14 +66,14 @@ describe('SelectionService', () => {
         service.currentType = SelectionType.EllipseSelection;
         service.setSelectionType(SelectionType.RectangleSelection);
         expect(service.currentType).toEqual(SelectionType.RectangleSelection);
-        expect(resetSelectionSpy).toHaveBeenCalled();
+        expect(drawSelectionSpy).toHaveBeenCalled();
     });
 
     it('setSelectionType should change selection type to ellipse if ellipse was selected and call resetSelection', () => {
         service.currentType = SelectionType.RectangleSelection;
         service.setSelectionType(SelectionType.EllipseSelection);
         expect(service.currentType).toEqual(SelectionType.EllipseSelection);
-        expect(resetSelectionSpy).toHaveBeenCalled();
+        expect(drawSelectionSpy).toHaveBeenCalled();
     });
 
     it('onMouseDown should set mouseDown to true if left mouse button was clicked', () => {
@@ -177,7 +177,7 @@ describe('SelectionService', () => {
         service.mouseDown = false;
         const keyboardEvent = new KeyboardEvent('keyDown', { key: 'Escape' });
         service.onKeyDown(keyboardEvent);
-        expect(resetSelectionSpy).toHaveBeenCalled();
+        expect(drawSelectionSpy).toHaveBeenCalled();
     });
 
     it('resetSelection should not be called if escape is pressed and mouse is not down and an area is not selected ', () => {
@@ -185,14 +185,14 @@ describe('SelectionService', () => {
         service.mouseDown = false;
         const keyboardEvent = new KeyboardEvent('keyDown', { key: 'Escape' });
         service.onKeyDown(keyboardEvent);
-        expect(resetSelectionSpy).not.toHaveBeenCalled();
+        expect(drawSelectionSpy).not.toHaveBeenCalled();
     });
 
     it('onKeyDown should not call resetSelection if mouse is down and escape is not pressed ', () => {
         service.mouseDown = true;
         const keyboardEvent = new KeyboardEvent('keyDown', { key: 'Shift' });
         service.onKeyDown(keyboardEvent);
-        expect(resetSelectionSpy).not.toHaveBeenCalled();
+        expect(drawSelectionSpy).not.toHaveBeenCalled();
     });
 
     it('onKeyDown should call checkArrowKeysPressed if an area is selected ', () => {
