@@ -17,27 +17,28 @@
             <mat-expansion-panel-header>
                 <mat-panel-title> Filtre </mat-panel-title>
             </mat-expansion-panel-header>
-            <mat-form-field>
+            <mat-form-field id="filter-names">
 		<mat-select [(value)]="selectedFilter" (selectionChange)="setPreviewFilter()">
                     <mat-option value="0">Aucun</mat-option>
                     <mat-option value="1">Brouillage</mat-option>
                     <mat-option value="2">Sepia</mat-option>
                     <mat-option value="3">Luminosité</mat-option>
                     <mat-option value="4">Saturation</mat-option>
-                    <mat-option value="5">Inversion</mat-option>
-		    <mat-option value="6">Rotation HUE</mat-option>
+		    <mat-option value="5">Rotation HUE</mat-option>
+                    <mat-option value="6">Inversion</mat-option>
 
                 </mat-select>
             </mat-form-field>
 
 	    <!-- filter slider -->
-	    <mat-slider min="0" max="1" step="0.01" [value]="percentage" (input)="setFilterStrength($event.value)"> </mat-slider>
+
+	    <mat-slider id="filterSlider" min="0" max="1" step="0.01" [disabled]="sliderDisabled" [value]="percentage" (input)="setFilterPercentage($event.value)"> </mat-slider>
 	    <input
                 #filterInput
                 id="filter-input"
                 type="text"
                 [value]="percentage"
-                (input)="setFilterStrength(filterInput.value)"
+                (input)="setFilterPercentage(filterInput.value)"
                 min="0"
                 max="1"
                 step="0.01"
@@ -46,12 +47,7 @@
                 matInput
                 matSuffix
             />
-	    <mat-slide-toggle class="toggleFilters" [checked]="checked" [disabled] = "disabled"> Activer/Désactiver </mat-slide-toggle>
-	    <section class = "tp-section">
-		<mat-checkbox class = "tp-margin" [(ngModel)] = "checked">Checked</mat-checkbox>
-		<mat-checkbox class = "tp-margin" [(ngModel)] = "disabled">Disabled</mat-checkbox>
-	    </section>
-	    
+
         </mat-expansion-panel>
     </mat-accordion>
     <form>

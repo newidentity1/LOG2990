@@ -19,8 +19,11 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
     drawingTitle: string;
     previewCtx: CanvasRenderingContext2D;
     exportCtx: CanvasRenderingContext2D;
+
+    // Slider
     percentageForm: FormControl;
     percentage: number;
+    sliderDisabled: boolean;
 
     constructor(public dialog: MatDialog, public drawingService: DrawingService) {
         this.selectedFormat = 'jpeg';
@@ -29,7 +32,7 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
     }
 
     ngOnInit(): void {
-        // set initial filter strength to 100%
+        // default filter 100%
         this.percentage = 1;
         // set form
         this.percentageForm = new FormControl(this.percentage, [Validators.required]);
@@ -48,12 +51,6 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
         // Draw filter on preview
         this.setPreviewFilter();
         this.setImageUrl();
-    }
-
-    setFilterStrength(value: number): void {
-        this.percentage = value;
-        this.percentageForm.setValue(this.percentage);
-        this.setPreviewFilter();
     }
 
     setInitialCanvasSize(): void {
@@ -132,8 +129,32 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
         );
     }
 
+    setFilterPercentage(value: number): void {
+        this.percentage = value;
+        this.percentageForm.setValue(this.percentage);
+        this.setPreviewFilter();
+    }
+
+    activeSlider(): void {
+        switch (this.selectedFilter) {
+            case '0':
+            case '6':
+                this.sliderDisabled = true;
+                break;
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+                this.sliderDisabled = false;
+                break;
+        }
+    }
+
     // Sets filters on the preview
     setPreviewFilter(): void {
+        this.activeSlider();
+
         switch (this.selectedFilter) {
             case '0':
                 this.previewCtx.filter = 'none';
@@ -165,13 +186,13 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
                 this.previewCtx.filter = 'none';
                 break;
             case '5':
-                this.previewCtx.filter = 'invert(' + this.percentage + ')';
+                this.previewCtx.filter = 'hue-rotate(' + this.percentage * 360 + 'deg)';
                 this.whiteBackground(this.previewCtx);
                 this.drawPreviewCanvas();
                 this.previewCtx.filter = 'none';
                 break;
             case '6':
-                this.previewCtx.filter = 'hue-rotate(' + this.percentage * 360 + 'deg)';
+                this.previewCtx.filter = 'invert(1)';
                 this.whiteBackground(this.previewCtx);
                 this.drawPreviewCanvas();
                 this.previewCtx.filter = 'none';
@@ -184,35 +205,41 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
         switch (this.selectedFilter) {
             case '0':
                 this.exportCtx.filter = 'none';
-                this.whiteBackground(this.previewCtx);
+                this.whiteBackground(this.exportCtx);
                 this.exportCtx.drawImage(this.drawingService.canvas, 0, 0);
                 break;
             case '1':
-                this.exportCtx.filter = 'blur(7px)';
+                this.exportCtx.filter = 'blur(' + this.percentage * 10 + 'px)';
                 this.whiteBackground(this.exportCtx);
                 this.exportCtx.drawImage(this.drawingService.canvas, 0, 0);
                 this.exportCtx.filter = 'none';
                 break;
             case '2':
-                this.exportCtx.filter = 'contrast(1.4) sepia(1)';
+                this.exportCtx.filter = 'contrast(1.4) sepia(' + this.percentage + ')';
                 this.whiteBackground(this.exportCtx);
                 this.exportCtx.drawImage(this.drawingService.canvas, 0, 0);
                 this.exportCtx.filter = 'none';
                 break;
             case '3':
-                this.exportCtx.filter = 'brightness(50%)';
+                this.exportCtx.filter = 'brightness(' + this.percentage + ')';
                 this.whiteBackground(this.exportCtx);
                 this.exportCtx.drawImage(this.drawingService.canvas, 0, 0);
                 this.exportCtx.filter = 'none';
                 break;
             case '4':
-                this.exportCtx.filter = 'saturate(50%)';
+                this.exportCtx.filter = 'saturate(' + this.percentage + ')';
                 this.whiteBackground(this.exportCtx);
                 this.exportCtx.drawImage(this.drawingService.canvas, 0, 0);
                 this.exportCtx.filter = 'none';
                 break;
             case '5':
-                this.exportCtx.filter = 'dropshadow(50%)';
+                this.exportCtx.filter = 'hue-rotate(' + this.percentage * 360 + 'deg)';
+                this.whiteBackground(this.exportCtx);
+                this.exportCtx.drawImage(this.drawingService.canvas, 0, 0);
+                this.exportCtx.filter = 'none';
+                break;
+            case '6':
+                this.exportCtx.filter = 'invert(1)';
                 this.whiteBackground(this.exportCtx);
                 this.exportCtx.drawImage(this.drawingService.canvas, 0, 0);
                 this.exportCtx.filter = 'none';
