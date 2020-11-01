@@ -15,6 +15,7 @@ export class ShapeToolTest extends ShapeTool {
 }
 
 // tslint:disable:no-any
+// tslint:disable:no-string-literal / reason : access private members
 describe('Class: ShapeTool', () => {
     let shapeTool: ShapeToolTest;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
@@ -108,8 +109,8 @@ describe('Class: ShapeTool', () => {
             offsetY: 30,
             button: 0,
         } as MouseEvent;
+        shapeTool.currentMousePosition = { x: 30, y: 30 };
         shapeTool.onMouseUp(newMouseEvent);
-
         expect(shapeTool.mouseDown).toBeFalse();
         expect(drawSpy).toHaveBeenCalled();
     });
@@ -352,6 +353,23 @@ describe('Class: ShapeTool', () => {
         shapeTool.setThickness(value);
 
         expect(shapeTool.adjustThickness()).toEqual(0);
+    });
+
+    it('copyShape should copy all attributes needed to draw shapes', () => {
+        const shapeToolCopy: ShapeTool = new ShapeToolTest(shapeTool['drawingService']);
+        shapeTool.copyShape(shapeToolCopy);
+        const shapeProperties = shapeTool.toolProperties as BasicShapeProperties;
+        const shapeCopyProperties = shapeToolCopy.toolProperties as BasicShapeProperties;
+        expect(shapeProperties.currentType).toEqual(shapeCopyProperties.currentType);
+        expect(shapeTool.mouseDownCoord).toEqual(shapeToolCopy.mouseDownCoord);
+        expect(shapeTool.toolProperties.thickness).toEqual(shapeToolCopy.toolProperties.thickness);
+        expect(shapeTool.currentPrimaryColor).toEqual(shapeToolCopy.currentPrimaryColor);
+        expect(shapeTool.currentSecondaryColor).toEqual(shapeToolCopy.currentSecondaryColor);
+        expect(shapeTool.pathData).toEqual(shapeToolCopy.pathData);
+        expect(shapeTool.width).toEqual(shapeToolCopy.width);
+        expect(shapeTool.height).toEqual(shapeToolCopy.height);
+        expect(shapeTool.mouseDownCoord).toEqual(shapeToolCopy.mouseDownCoord);
+        expect(shapeTool.currentMousePosition).toEqual(shapeToolCopy.currentMousePosition);
     });
     // tslint:disable-next-line: max-file-line-count / reason: its a test file
 });

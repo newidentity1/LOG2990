@@ -23,16 +23,16 @@ export class EraseService extends PencilService {
             this.pathData.push(mousePosition);
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawLine(this.drawingService.previewCtx, this.pathData);
+            this.draw(this.drawingService.previewCtx);
         }
         this.drawCursor(mousePosition);
     }
 
-    protected drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+    draw(ctx: CanvasRenderingContext2D): void {
         this.drawingService.setStrokeColor('white');
         ctx.miterLimit = 1;
         ctx.beginPath();
-        for (const point of path) {
+        for (const point of this.pathData) {
             ctx.lineTo(point.x, point.y);
         }
         ctx.stroke();
@@ -61,5 +61,11 @@ export class EraseService extends PencilService {
             this.toolProperties.thickness,
         );
         cursorCtx.lineWidth = this.toolProperties.thickness;
+    }
+
+    clone(): EraseService {
+        const eraserClone: EraseService = new EraseService(this.drawingService);
+        this.copyTool(eraserClone);
+        return eraserClone;
     }
 }

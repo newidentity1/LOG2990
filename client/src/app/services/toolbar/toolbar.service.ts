@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Color } from '@app/classes/color/color';
+import { Command } from '@app/classes/tool/command';
 import { Tool } from '@app/classes/tool/tool';
 import { KeyShortcut } from '@app/enums/key-shortcuts.enum';
 import { SelectionType } from '@app/enums/selection-type.enum';
@@ -21,8 +22,8 @@ import { SelectionService } from '@app/services/tools/selection/selection.servic
 })
 export class ToolbarService {
     private tools: Tool[];
-    private drawings: Tool[] = [];
     private undoIndex: number = -1;
+    commands: Command[] = [];
     currentTool: Tool;
     primaryColor: Color;
     secondaryColor: Color;
@@ -122,12 +123,16 @@ export class ToolbarService {
     }
 
     onMouseUp(event: MouseEvent): void {
-        let tool: Tool | undefined;
-        tool = this.currentTool.onMouseUp(event);
+        let command: Command | undefined;
+        command = this.currentTool.onMouseUp(event);
+        this.addCommand(command);
+    }
 
-        if (tool !== undefined) {
-            this.drawings.push(tool);
+    addCommand(command: Command | undefined): void {
+        if (command !== undefined) {
             this.undoIndex++;
+            this.commands.length = this.undoIndex;
+            this.commands.push(command);
         }
     }
 
@@ -140,7 +145,9 @@ export class ToolbarService {
     }
 
     onDoubleClick(event: MouseEvent): void {
-        this.currentTool.onDoubleClick(event);
+        let command: Command | undefined;
+        command = this.currentTool.onDoubleClick(event);
+        this.addCommand(command);
     }
 
     onClick(event: MouseEvent): void {
@@ -148,17 +155,29 @@ export class ToolbarService {
     }
 
     undo(): void {
+        if (this.undoIndex < 0) return;
         this.undoIndex--;
         this.drawingService.clearCanvas(this.drawingService.baseCtx);
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.drawingService.setWhiteBackground();
         if (this.undoIndex >= 0) {
             for (let i = 0; i <= this.undoIndex; i++) {
-                this.drawings[i].draw(this.drawingService.baseCtx);
+                this.commands[i].applyCurrentSettings();
+                this.commands[i].redo();
             }
         }
+        this.applyCurrentToolColor();
+        this.currentTool.setThickness(this.currentTool.toolProperties.thickness);
     }
 
     redo(): void {
-        // Todo
+        if (this.undoIndex === this.commands.length - 1 || this.commands.length === 0) return;
+        this.undoIndex++;
+        this.commands[this.undoIndex].applyCurrentSettings();
+        this.commands[this.undoIndex].redo();
+
+        this.applyCurrentToolColor();
+        this.currentTool.setThickness(this.currentTool.toolProperties.thickness);
     }
 
     triggerSelectAll(): void {
