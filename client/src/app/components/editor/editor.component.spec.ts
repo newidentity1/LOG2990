@@ -34,6 +34,8 @@ describe('EditorComponent', () => {
             'changeTool',
             'changeSelectionTool',
             'triggerSelectAll',
+            'undo',
+            'redo',
         ]);
 
         pencilServiceSpy = jasmine.createSpyObj('PencilService', ['resetContext']);
@@ -169,5 +171,17 @@ describe('EditorComponent', () => {
         const shortcutEvent = new KeyboardEvent('keydown', { key: 'control.a' });
         document.dispatchEvent(shortcutEvent);
         expect(toolbarServiceMock.triggerSelectAll).toHaveBeenCalled();
+    });
+
+    it('tool shortcut should call undo of toolbar service', () => {
+        const shortcutEvent = new KeyboardEvent('keydown', { key: 'control.z' });
+        document.dispatchEvent(shortcutEvent);
+        expect(toolbarServiceMock.undo).toHaveBeenCalled();
+    });
+
+    it('tool shortcut should call undo of toolbar service', () => {
+        const shortcutEvent = new KeyboardEvent('keydown', { key: 'control.shift.z' });
+        document.dispatchEvent(shortcutEvent);
+        expect(toolbarServiceMock.redo).toHaveBeenCalled();
     });
 });
