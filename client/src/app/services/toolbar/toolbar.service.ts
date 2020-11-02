@@ -173,7 +173,7 @@ export class ToolbarService {
     }
 
     undo(): void {
-        if (this.undoIndex < 0) return;
+        if (!this.canUndo()) return;
         this.undoIndex--;
         this.drawingService.clearCanvas(this.drawingService.baseCtx);
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
@@ -193,7 +193,7 @@ export class ToolbarService {
     }
 
     redo(): void {
-        if (this.undoIndex === this.commands.length - 1 || this.commands.length === 0) return;
+        if (!this.canRedo()) return;
         this.undoIndex++;
         this.commands[this.undoIndex].applyCurrentSettings();
         this.commands[this.undoIndex].execute();
@@ -202,6 +202,14 @@ export class ToolbarService {
         }, 0);
         this.applyCurrentToolColor();
         this.currentTool.setThickness(this.currentTool.toolProperties.thickness);
+    }
+
+    canUndo(): boolean {
+        return this.undoIndex > 0;
+    }
+
+    canRedo(): boolean {
+        return this.undoIndex < this.commands.length - 1 && this.commands.length > 0;
     }
 
     triggerSelectAll(): void {
