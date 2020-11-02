@@ -182,8 +182,10 @@ export class ToolbarService {
                 setTimeout(() => {
                     this.commands[i].applyCurrentSettings();
                     this.commands[i].execute();
-                    this.commands[i].drawImage();
                 }, 0);
+                setTimeout(() => {
+                    this.commands[i].drawImage();
+                }, 1);
             }
         }
         this.applyCurrentToolColor();
