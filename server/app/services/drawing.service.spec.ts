@@ -2,6 +2,7 @@ import { expect } from 'chai';
 import { describe } from 'mocha';
 import { Db, MongoClient } from 'mongodb';
 import { MongoMemoryServer } from 'mongodb-memory-server';
+import * as sinon from 'sinon';
 import { Drawing } from '../../../common/communication/drawing';
 import { testingContainer } from '../../test/test-utils';
 import { TYPES } from '../types';
@@ -38,7 +39,15 @@ describe('Drawing service', () => {
         await client.logout();
     });
 
-    // TODO comment tester le catch du constructeur
+    it('should end the process with 1', () => {
+        const connectStub = sinon.stub(MongoClient, 'connect').rejects();
+        // const processStub = sinon.stub(process, 'exit');
+        drawingService.start('');
+        expect(connectStub);
+        // connectStub.restore();
+
+        // done();
+    });
 
     it('should return a drawing when sending a valid id', (done: Mocha.Done) => {
         const expectedResult = drawing;
@@ -78,9 +87,11 @@ describe('Drawing service', () => {
         });
     });
 
-    it('should add a drawing', (done: Mocha.Done) => {
-        const newDrawing = drawing;
+    it('should add a drawing if its valid', (done: Mocha.Done) => {
+        const newDrawing = {} as Drawing;
         newDrawing._id = '123456789124';
+        newDrawing.name = 'valid title';
+        newDrawing.tags = ['validTag'];
         let isSucess = true;
         drawingService.addDrawing(newDrawing).catch(() => {
             isSucess = false;
@@ -94,6 +105,17 @@ describe('Drawing service', () => {
         await client.close();
         drawingService.addDrawing(newDrawing).catch((result) => {
             expect(result.message).to.equal("Le dessin n'a pas pu être ajouté!");
+        });
+    });
+
+    it('should throw an error when drawing isnt valid', async () => {
+        const newDrawing = {} as Drawing;
+        newDrawing._id = '123456789123';
+        newDrawing.name = '1invalid title';
+        newDrawing.tags = ['invalid!Tag'];
+        await client.close();
+        drawingService.addDrawing(newDrawing).catch((result) => {
+            expect(result.message).to.equal('Le dessin est invalide!');
         });
     });
 
@@ -111,5 +133,71 @@ describe('Drawing service', () => {
         drawingService.removeDrawing(drawing._id).catch((result) => {
             expect(result.message).to.equal("Le dessin n'a pas pu être supprimé!");
         });
+    });
+
+    it('validateDrawingTitle should return true when name is valid', () => {
+        const name = 'valid title';
+        // tslint:disable-next-line: no-string-literal / reason: private method
+        expect(drawingService['validateDrawingTitle'](name)).to.equal(true);
+    });
+
+    it('validateDrawingTitle should return false when name is not valid', () => {
+        const name = '1 invalid title';
+        // tslint:disable-next-line: no-string-literal / reason: private method
+        expect(drawingService['validateDrawingTitle'](name)).to.equal(false);
+    });
+
+    it('validateDrawingTitle should return false when name is not valid', () => {
+        const emptyName = '';
+        // tslint:disable-next-line: no-string-literal / reason: private method
+        expect(drawingService['validateDrawingTitle'](emptyName)).to.equal(false);
+    });
+
+    it('validateDrawingTitle should return false when name is not valid', () => {
+        const longName = '012345678901234567891';
+        // tslint:disable-next-line: no-string-literal / reason: private method
+        expect(drawingService['validateDrawingTitle'](longName)).to.equal(false);
+    });
+
+    it('validateDrawingTags should return true when tag is valid', () => {
+        const tags = ['validTag'];
+        // tslint:disable-next-line: no-string-literal / reason: private method
+        expect(drawingService['validateDrawingTags'](tags)).to.equal(true);
+    });
+
+    it('validateDrawingTags should return false when tag isnt valid', () => {
+        const tags = ['invalid Tag'];
+        // tslint:disable-next-line: no-string-literal / reason: private method
+        expect(drawingService['validateDrawingTags'](tags)).to.equal(false);
+    });
+
+    it('validateDrawingTags should return false when tag isnt valid', () => {
+        const tags = ['invalidTag!'];
+        // tslint:disable-next-line: no-string-literal / reason: private method
+        expect(drawingService['validateDrawingTags'](tags)).to.equal(false);
+    });
+
+    it('validateDrawingTags should return false when tag isnt valid', () => {
+        const tags = ['0123456789012345'];
+        // tslint:disable-next-line: no-string-literal / reason: private method
+        expect(drawingService['validateDrawingTags'](tags)).to.equal(false);
+    });
+
+    it('validateDrawing should return true when drawing is valid', () => {
+        const validDrawing: Drawing = { name: 'test1', tags: ['tagValid'] } as Drawing;
+        // tslint:disable-next-line: no-string-literal / reason: private method
+        expect(drawingService['validateDrawing'](validDrawing)).to.equal(true);
+    });
+
+    it('validateDrawing should return false when name isnt valid', () => {
+        const validDrawing: Drawing = { name: '1test', tags: ['tagValid'] } as Drawing;
+        // tslint:disable-next-line: no-string-literal / reason: private method
+        expect(drawingService['validateDrawing'](validDrawing)).to.equal(false);
+    });
+
+    it('validateDrawing should return false when tags isnt valid', () => {
+        const validDrawing: Drawing = { name: 'test1', tags: ['tagValid', '!invalidTag'] } as Drawing;
+        // tslint:disable-next-line: no-string-literal / reason: private method
+        expect(drawingService['validateDrawing'](validDrawing)).to.equal(false);
     });
 });
