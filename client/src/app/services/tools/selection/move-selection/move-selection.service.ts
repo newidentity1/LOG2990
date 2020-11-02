@@ -11,6 +11,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 export class MoveSelectionService {
     imgData: ImageData;
     canMoveSelection: boolean;
+    finalPosition: Vec2;
     private canMoveSelectionContiniously: boolean;
     private pressedKeys: number[];
 
@@ -18,6 +19,7 @@ export class MoveSelectionService {
         this.pressedKeys = [0, 0, 0, 0];
         this.canMoveSelection = false;
         this.canMoveSelectionContiniously = false;
+        this.finalPosition = { x: 0, y: 0 };
     }
 
     checkArrowKeysPressed(event: KeyboardEvent): boolean {
@@ -71,21 +73,21 @@ export class MoveSelectionService {
         const elementOffsetLeft = this.drawingService.previewCtx.canvas.offsetLeft;
         const elementOffsetTop = this.drawingService.previewCtx.canvas.offsetTop;
 
-        const newOffsetLeft = elementOffsetLeft - moveX;
-        const newOffsetTop = elementOffsetTop - moveY;
+        this.finalPosition.x = elementOffsetLeft - moveX;
+        this.finalPosition.y = elementOffsetTop - moveY;
 
-        this.drawingService.previewCtx.canvas.style.left = newOffsetLeft + 'px';
-        this.drawingService.previewCtx.canvas.style.top = newOffsetTop + 'px';
+        this.drawingService.previewCtx.canvas.style.left = this.finalPosition.x + 'px';
+        this.drawingService.previewCtx.canvas.style.top = this.finalPosition.y + 'px';
 
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.drawingService.previewCtx.putImageData(
             this.imgData,
             0,
             0,
-            newOffsetLeft >= 0 ? 0 : -newOffsetLeft,
-            newOffsetTop >= 0 ? 0 : -newOffsetTop,
-            this.drawingService.canvas.width - newOffsetLeft,
-            this.drawingService.canvas.height - newOffsetTop,
+            this.finalPosition.x >= 0 ? 0 : -this.finalPosition.x,
+            this.finalPosition.y >= 0 ? 0 : -this.finalPosition.y,
+            this.drawingService.canvas.width - this.finalPosition.x,
+            this.drawingService.canvas.height - this.finalPosition.y,
         );
     }
 

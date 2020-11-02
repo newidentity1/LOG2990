@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Color } from '@app/classes/color/color';
-import { Command } from '@app/classes/tool/command';
+import { Command } from '@app/classes/commands/command';
 import { Tool } from '@app/classes/tool/tool';
 import { KeyShortcut } from '@app/enums/key-shortcuts.enum';
 import { SelectionType } from '@app/enums/selection-type.enum';
@@ -16,18 +16,22 @@ import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { PolygonService } from '@app/services/tools/polygon/polygon.service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle.service';
 import { SelectionService } from '@app/services/tools/selection/selection.service';
+import { Subscription } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
 })
 export class ToolbarService {
     private tools: Tool[];
-    private undoIndex: number = -1;
+    undoIndex: number = -1;
+    toolsSubscription: Subscription[] = [];
     commands: Command[] = [];
     currentTool: Tool;
     primaryColor: Color;
     secondaryColor: Color;
     keyShortcuts: Map<string, Tool> = new Map();
+    primaryColorSubscription: Subscription;
+    secondaryColorSubscription: Subscription;
 
     constructor(
         protected pencilService: PencilService,
@@ -69,13 +73,31 @@ export class ToolbarService {
             .set(KeyShortcut.EllipseSelect, selectionService);
     }
 
-    initializeColors(): void {
-        this.colorPickerService.primaryColor.subscribe((color: Color) => {
+    unsubscribeListeners(): void {
+        this.primaryColorSubscription.unsubscribe();
+
+        this.secondaryColorSubscription.unsubscribe();
+
+        this.toolsSubscription.forEach((toolSubscription: Subscription) => {
+            toolSubscription.unsubscribe();
+        });
+    }
+
+    initializeListeners(): void {
+        this.primaryColorSubscription = this.colorPickerService.primaryColor.subscribe((color: Color) => {
             this.setColors(color, this.secondaryColor);
         });
 
-        this.colorPickerService.secondaryColor.subscribe((color: Color) => {
+        this.secondaryColorSubscription = this.colorPickerService.secondaryColor.subscribe((color: Color) => {
             this.setColors(this.primaryColor, color);
+        });
+
+        this.tools.forEach((tool: Tool) => {
+            this.toolsSubscription.push(
+                tool.executedCommand.subscribe((command: Command) => {
+                    this.addCommand(command);
+                }),
+            );
         });
     }
 
@@ -123,9 +145,7 @@ export class ToolbarService {
     }
 
     onMouseUp(event: MouseEvent): void {
-        let command: Command | undefined;
-        command = this.currentTool.onMouseUp(event);
-        this.addCommand(command);
+        this.currentTool.onMouseUp(event);
     }
 
     addCommand(command: Command | undefined): void {
@@ -145,9 +165,7 @@ export class ToolbarService {
     }
 
     onDoubleClick(event: MouseEvent): void {
-        let command: Command | undefined;
-        command = this.currentTool.onDoubleClick(event);
-        this.addCommand(command);
+        this.currentTool.onDoubleClick(event);
     }
 
     onClick(event: MouseEvent): void {
@@ -159,11 +177,15 @@ export class ToolbarService {
         this.undoIndex--;
         this.drawingService.clearCanvas(this.drawingService.baseCtx);
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        this.drawingService.setWhiteBackground();
         if (this.undoIndex >= 0) {
             for (let i = 0; i <= this.undoIndex; i++) {
-                this.commands[i].applyCurrentSettings();
-                this.commands[i].redo();
+                setTimeout(() => {
+                    this.commands[i].applyCurrentSettings();
+                    this.commands[i].execute();
+                }, 0);
+                setTimeout(() => {
+                    this.commands[i].drawImage();
+                }, 1);
             }
         }
         this.applyCurrentToolColor();
@@ -174,8 +196,10 @@ export class ToolbarService {
         if (this.undoIndex === this.commands.length - 1 || this.commands.length === 0) return;
         this.undoIndex++;
         this.commands[this.undoIndex].applyCurrentSettings();
-        this.commands[this.undoIndex].redo();
-
+        this.commands[this.undoIndex].execute();
+        setTimeout(() => {
+            this.commands[this.undoIndex].drawImage();
+        }, 0);
         this.applyCurrentToolColor();
         this.currentTool.setThickness(this.currentTool.toolProperties.thickness);
     }
@@ -191,7 +215,7 @@ export class ToolbarService {
 
     resetSelection(): void {
         if (this.isAreaSelected()) {
-            this.selectionService.resetSelection();
+            this.selectionService.drawSelection();
         }
     }
 

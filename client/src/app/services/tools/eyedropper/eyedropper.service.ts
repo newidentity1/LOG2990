@@ -43,7 +43,7 @@ export class EyedropperService extends Tool {
         }
     }
 
-    onMouseUp(event: MouseEvent): Tool | undefined {
+    onMouseUp(event: MouseEvent): void {
         if (this.inCanvas) {
             if (event.button === MouseButton.Left) {
                 this.colorPickerService.setPrimaryColor(this.currentColor);
@@ -51,8 +51,6 @@ export class EyedropperService extends Tool {
                 this.colorPickerService.setSecondaryColor(this.currentColor);
             }
         }
-
-        return undefined;
     }
 
     private drawPreview(event: MouseEvent): void {
