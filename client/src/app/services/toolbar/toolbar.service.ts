@@ -32,6 +32,7 @@ export class ToolbarService {
     keyShortcuts: Map<string, Tool> = new Map();
     primaryColorSubscription: Subscription;
     secondaryColorSubscription: Subscription;
+    mouseDown: boolean = false;
 
     constructor(
         protected pencilService: PencilService,
@@ -141,10 +142,12 @@ export class ToolbarService {
     }
 
     onMouseDown(event: MouseEvent): void {
+        this.mouseDown = true;
         this.currentTool.onMouseDown(event);
     }
 
     onMouseUp(event: MouseEvent): void {
+        this.mouseDown = false;
         this.currentTool.onMouseUp(event);
     }
 
@@ -205,11 +208,13 @@ export class ToolbarService {
     }
 
     canUndo(): boolean {
-        return this.undoIndex > 0;
+        const undoIndexCheck = this.undoIndex > 0;
+        return undoIndexCheck && !this.mouseDown && !this.isAreaSelected();
     }
 
     canRedo(): boolean {
-        return this.undoIndex < this.commands.length - 1 && this.commands.length > 0;
+        const undoIndexCheck = this.undoIndex < this.commands.length - 1 && this.commands.length > 0;
+        return undoIndexCheck && !this.mouseDown && !this.isAreaSelected();
     }
 
     triggerSelectAll(): void {
