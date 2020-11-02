@@ -179,10 +179,12 @@ export class ToolbarService {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         if (this.undoIndex >= 0) {
             for (let i = 0; i <= this.undoIndex; i++) {
-                setTimeout(() => {
-                    this.commands[i].applyCurrentSettings();
-                    this.commands[i].execute();
-                }, 0);
+                if (i > 0)
+                    setTimeout(() => {
+                        this.commands[i - 1].drawImage();
+                    }, 0);
+                this.commands[i].applyCurrentSettings();
+                this.commands[i].execute();
             }
         }
         this.applyCurrentToolColor();
@@ -195,7 +197,7 @@ export class ToolbarService {
         this.commands[this.undoIndex].applyCurrentSettings();
         this.commands[this.undoIndex].execute();
         setTimeout(() => {
-            this.commands[this.undoIndex].applyCurrentSettings();
+            this.commands[this.undoIndex].drawImage();
         }, 0);
         this.applyCurrentToolColor();
         this.currentTool.setThickness(this.currentTool.toolProperties.thickness);

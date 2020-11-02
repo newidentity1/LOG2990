@@ -9,4 +9,5 @@ export abstract class Command {
     }
     abstract execute(): void;
     applyCurrentSettings(): void {}
+    drawImage(): void {}
 }
