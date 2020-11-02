@@ -52,12 +52,11 @@ export class BucketService extends Tool {
         this.draw(this.drawingService.baseCtx);
     }
 
-    onMouseUp(event: MouseEvent): Tool | undefined {
+    onMouseUp(event: MouseEvent): void {
         if (this.mouseDown) {
             this.mouseDown = false;
-            return this.clone();
+            this.executedCommand.emit(this.clone());
         }
-        return undefined;
     }
 
     floodFillLeft(): void {

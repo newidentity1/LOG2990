@@ -43,18 +43,16 @@ export abstract class ShapeTool extends Tool {
         }
     }
 
-    onMouseUp(event: MouseEvent): Tool | undefined {
+    onMouseUp(event: MouseEvent): void {
         if (this.mouseDown) {
             this.mouseDown = false;
             this.computeDimensions();
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             if (this.currentMousePosition.x !== this.mouseDownCoord.x && this.currentMousePosition.y !== this.mouseDownCoord.y) {
                 this.draw(this.drawingService.baseCtx);
-                return this.clone();
+                this.executedCommand.emit(this.clone());
             }
         }
-
-        return undefined;
     }
 
     setTypeDrawing(value: string): void {
