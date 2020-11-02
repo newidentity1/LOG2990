@@ -151,12 +151,10 @@ export class ToolbarService {
         this.currentTool.onMouseUp(event);
     }
 
-    addCommand(command: Command | undefined): void {
-        if (command !== undefined) {
-            this.undoIndex++;
-            this.commands.length = this.undoIndex;
-            this.commands.push(command);
-        }
+    addCommand(command: Command): void {
+        this.undoIndex++;
+        this.commands.length = this.undoIndex;
+        this.commands.push(command);
     }
 
     onMouseEnter(event: MouseEvent): void {
@@ -191,8 +189,10 @@ export class ToolbarService {
                 }, 1);
             }
         }
-        this.applyCurrentToolColor();
-        this.currentTool.setThickness(this.currentTool.toolProperties.thickness);
+        setTimeout(() => {
+            this.applyCurrentToolColor();
+            this.currentTool.setThickness(this.currentTool.toolProperties.thickness);
+        }, 1);
     }
 
     redo(): void {
