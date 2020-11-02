@@ -1,6 +1,9 @@
+import { EventEmitter } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Color } from '@app/classes/color/color';
+import { Command } from '@app/classes/commands/command';
+import { Tool } from '@app/classes/tool/tool';
 import { KeyShortcut } from '@app/enums/key-shortcuts.enum';
 import { SelectionType } from '@app/enums/selection-type.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -25,8 +28,8 @@ describe('ToolbarService', () => {
     let ellipseServiceSpy: jasmine.SpyObj<EllipseService>;
     let lineServiceSpy: jasmine.SpyObj<LineService>;
     let eraseServiceSpy: jasmine.SpyObj<EraseService>;
-    let eyedropperService: jasmine.SpyObj<EyedropperService>;
-    let selectionService: jasmine.SpyObj<SelectionService>;
+    let eyedropperServiceSpy: jasmine.SpyObj<EyedropperService>;
+    let selectionServiceSpy: jasmine.SpyObj<SelectionService>;
     let bucketServiceSpy: jasmine.SpyObj<BucketService>;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
 
@@ -52,13 +55,13 @@ describe('ToolbarService', () => {
         ellipseServiceSpy = jasmine.createSpyObj('EllipseService', ['setTypeDrawing']);
         lineServiceSpy = jasmine.createSpyObj('LineService', ['onKeyDown']);
         eraseServiceSpy = jasmine.createSpyObj('LineService', ['onKeyDown']);
-        eyedropperService = jasmine.createSpyObj('EyedropperService', ['onKeyDown']);
-        selectionService = jasmine.createSpyObj('SelectionService', ['selectAll', 'resetSelection', 'setSelectionType']);
+        eyedropperServiceSpy = jasmine.createSpyObj('EyedropperService', ['onKeyDown']);
+        selectionServiceSpy = jasmine.createSpyObj('SelectionService', ['selectAll', 'resetSelection', 'setSelectionType']);
         drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setStrokeColor']);
         bucketServiceSpy = jasmine.createSpyObj('BucketService', ['onMouseDown']);
         drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setStrokeColor']);
 
-        selectionService = jasmine.createSpyObj('SelectionService', ['selectAll', 'resetSelection', 'setSelectionType']);
+        selectionServiceSpy = jasmine.createSpyObj('SelectionService', ['selectAll', 'resetSelection', 'setSelectionType']);
         drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setStrokeColor']);
         bucketServiceSpy = jasmine.createSpyObj('BucketService', ['onMouseDown']);
         drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setStrokeColor']);
@@ -73,7 +76,7 @@ describe('ToolbarService', () => {
                 { provide: LineService, useValue: lineServiceSpy },
                 { provide: EraseService, useValue: eraseServiceSpy },
                 { provide: PolygonService, useValue: polygonServiceSpy },
-                { provide: EyedropperService, useValue: eyedropperService },
+                { provide: EyedropperService, useValue: eyedropperServiceSpy },
                 { provide: BucketService, useValue: bucketServiceSpy },
                 { provide: DrawingService, useValue: drawingServiceSpy },
             ],
@@ -86,23 +89,27 @@ describe('ToolbarService', () => {
         ellipseServiceSpy = TestBed.inject(EllipseService) as jasmine.SpyObj<EllipseService>;
         lineServiceSpy = TestBed.inject(LineService) as jasmine.SpyObj<LineService>;
         eraseServiceSpy = TestBed.inject(EraseService) as jasmine.SpyObj<EraseService>;
-        eyedropperService = TestBed.inject(EyedropperService) as jasmine.SpyObj<EyedropperService>;
-        selectionService = TestBed.inject(SelectionService) as jasmine.SpyObj<SelectionService>;
+        eyedropperServiceSpy = TestBed.inject(EyedropperService) as jasmine.SpyObj<EyedropperService>;
+        selectionServiceSpy = TestBed.inject(SelectionService) as jasmine.SpyObj<SelectionService>;
         drawingServiceSpy = TestBed.inject(DrawingService) as jasmine.SpyObj<DrawingService>;
         bucketServiceSpy = TestBed.inject(BucketService) as jasmine.SpyObj<BucketService>;
         drawingServiceSpy.canvas = canvasTestHelper.canvas;
         drawingServiceSpy.baseCtx = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         drawingServiceSpy.previewCtx = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
+
+        service.getTools().forEach((tool: Tool) => {
+            tool.executedCommand = new EventEmitter<Command>();
+        });
     });
 
     it('should be created', () => {
         expect(service).toBeTruthy();
     });
 
-    it('initializeColors should set primary and secondary colors ', () => {
+    it('initializeListeners should set primary and secondary colors ', () => {
         // tslint:disable-next-line:no-any / reason: spying on function
         const setColorsSpy = spyOn<any>(service, 'setColors').and.callThrough();
-        service.initializeColors();
+        service.initializeListeners();
         expect(setColorsSpy).toHaveBeenCalled();
         expect(service.primaryColor).toBeTruthy();
         expect(service.secondaryColor).toBeTruthy();
@@ -112,22 +119,22 @@ describe('ToolbarService', () => {
         const tools = service.getTools();
         expect(tools).toEqual([
             pencilServiceSpy,
-            polygonServiceSpy,
             brushServiceSpy,
+            eraseServiceSpy,
+            polygonServiceSpy,
             rectangleServiceSpy,
             ellipseServiceSpy,
             lineServiceSpy,
-            eraseServiceSpy,
-            eyedropperService,
-            selectionService,
+            selectionServiceSpy,
+            eyedropperServiceSpy,
             bucketServiceSpy,
         ]);
     });
 
-    it('initializeColors should set primary and secondary colors ', () => {
+    it('initializeListeners should set primary and secondary colors ', () => {
         // tslint:disable-next-line:no-any / reason: spying on function
         const setColorsSpy = spyOn<any>(service, 'setColors').and.callThrough();
-        service.initializeColors();
+        service.initializeListeners();
         expect(setColorsSpy).toHaveBeenCalled();
         expect(service.primaryColor).toBeTruthy();
         expect(service.secondaryColor).toBeTruthy();
@@ -284,13 +291,13 @@ describe('ToolbarService', () => {
     // });
 
     it('isAreaSelected should return true if an area is selected', () => {
-        selectionService.isAreaSelected = true;
+        selectionServiceSpy.isAreaSelected = true;
         const result = service.isAreaSelected();
         expect(result).toBeTrue();
     });
 
     it('isAreaSelected should return false if an area is not selected', () => {
-        selectionService.isAreaSelected = false;
+        selectionServiceSpy.isAreaSelected = false;
         const result = service.isAreaSelected();
         expect(result).toBeFalse();
     });
@@ -313,7 +320,7 @@ describe('ToolbarService', () => {
 
     it('changeSelectionTool should call the onClick of the currentTool', () => {
         // tslint:disable-next-line:no-any / reason : spying on function
-        const setSelectionTypeSpy = spyOn<any>(selectionService, 'setSelectionType').and.callThrough();
+        const setSelectionTypeSpy = spyOn<any>(selectionServiceSpy, 'setSelectionType').and.callThrough();
         const expectedType = SelectionType.EllipseSelection;
         service.changeSelectionTool(expectedType);
         expect(setSelectionTypeSpy).toHaveBeenCalledWith(expectedType);
