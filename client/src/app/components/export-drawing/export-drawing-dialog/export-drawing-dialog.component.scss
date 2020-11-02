@@ -13,4 +13,17 @@
 
 #exportCanvas {
     display: none;
+    float: right;
+}
+
+#filter-names{
+    display: block;
+}
+#filter-input{
+    text-align: left;
+    width: 40%
+}
+
+#toggleFilterButton{
+    display: block;
 }
