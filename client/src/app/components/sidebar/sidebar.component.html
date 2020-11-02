@@ -22,22 +22,25 @@
                     </button>
                 </li>
             </ul>
+            <hr />
+            <div id="undo-redo-contaner">
+                <app-undo-redo></app-undo-redo>
+            </div>
+            <hr />
             <div id="colors-container">
                 <app-recent-colors></app-recent-colors>
                 <app-color-tool></app-color-tool>
             </div>
             <hr />
-            <div id="undo-redo-container">
-                <app-undo-redo></app-undo-redo>
-            </div>
-            <hr />
             <div id="other-functionality-container">
-                <button matTooltip="Accueil" matTooltipPosition="right" mat-button id="returnMainPage" routerLink="/">
-                    <mat-icon>home</mat-icon>
-                </button>
-                <app-create-new-drawing></app-create-new-drawing>
-                <app-export-drawing></app-export-drawing>
-                <app-open-guide [inMenu]="false"></app-open-guide>
+                <div class="other-functionality-button">
+                    <button matTooltip="Accueil" matTooltipPosition="right" mat-button routerLink="/">
+                        <mat-icon>home</mat-icon>
+                    </button>
+                </div>
+                <app-create-new-drawing class="other-functionality-button"></app-create-new-drawing>
+                <app-export-drawing class="other-functionality-button"></app-export-drawing>
+                <app-open-guide class="other-functionality-button" [inMenu]="false"></app-open-guide>
             </div>
         </div>
     </mat-sidenav-content>
