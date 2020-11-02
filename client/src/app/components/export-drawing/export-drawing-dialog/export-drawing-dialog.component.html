@@ -21,32 +21,43 @@
 		<mat-select [(value)]="selectedFilter" (selectionChange)="setPreviewFilter()">
                     <mat-option value="0">Aucun</mat-option>
                     <mat-option value="1">Brouillage</mat-option>
-                    <mat-option value="2">Sepia</mat-option>
-                    <mat-option value="3">Luminosité</mat-option>
-                    <mat-option value="4">Saturation</mat-option>
-		    <mat-option value="5">Rotation HUE</mat-option>
-                    <mat-option value="6">Inversion</mat-option>
+                    <mat-option value="2">Luminosité</mat-option>
+                    <mat-option value="3">Saturation</mat-option>
+		    <mat-option value="4">Rotation HUE</mat-option>
+                    <mat-option value="5">Sepia</mat-option>
+                    <mat-option value="6">Inversion (sans arrière-plan)</mat-option>
+		    <mat-option value="7">Inversion</mat-option>
 
                 </mat-select>
             </mat-form-field>
 
 	    <!-- filter slider -->
 
-	    <mat-slider id="filterSlider" min="0" max="1" step="0.01" [disabled]="sliderDisabled" [value]="percentage" (input)="setFilterPercentage($event.value)"> </mat-slider>
-	    <input
-                #filterInput
-                id="filter-input"
-                type="text"
-                [value]="percentage"
-                (input)="setFilterPercentage(filterInput.value)"
-                min="0"
-                max="1"
-                step="0.01"
-                maxlength="4"
-                [formControl]="percentageForm"
-                matInput
-                matSuffix
-            />
+	    <div id="slider-container" [style.display]="sliderIsVisible ? 'block' : 'none'">
+		<mat-slider
+		    id="filterSlider"
+			min="0"
+			max="1"
+			step="0.01"
+			[disabled]="sliderIsDisabled"
+			[value]="percentage"
+			(input)="setFilterPercentage($event.value)">
+		</mat-slider>
+		<input
+                    #filterInput
+                    id="filter-input"
+                    type="text"
+                    [value]="percentage"
+                    (input)="setFilterPercentage(filterInput.value)"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    maxlength="4"
+                    [formControl]="percentageForm"
+                    matInput
+                    matSuffix
+		/>
+	    </div>
 
         </mat-expansion-panel>
     </mat-accordion>
@@ -62,15 +73,14 @@
     <!-- default width and height  -->
     <canvas id="previewCanvas" #previewCanvas width="250" height="250"></canvas>
 
-    <!-- <canvas id="cloneCanvas" #cloneCanvas [attr.width]="width" [attr.height]="height"></canvas> -->
-
     <!-- disabled in css -->
     <canvas id="exportCanvas" #exportCanvas width="250" height="250"></canvas>
     <img width="600" height="400" id="drawingImage" #drawingImage src="" />
-    <br />
 
-
-
+    <div>
     <button class="buttons" id="downloadButton" mat-raised-button (click)="downloadImage()">Télécharger</button>
     <button class="buttons" id="cancelButton" mat-raised-button mat-dialog-close>Annuler</button>
+
+    <h3 id="canvas-size-string"> Taille de l'image: {{drawingService.canvas.width}} x {{drawingService.canvas.height}} px </h3>
+    </div>
 </div>
