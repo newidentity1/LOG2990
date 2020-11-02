@@ -28,7 +28,7 @@ export const DEFAULT_HEIGHT = 800;
 
 export const CANVAS_MIN_WIDTH = 250;
 export const CANVAS_MIN_HEIGHT = 250;
-export const CANVAS_MARGIN_LEFT = 280;
+export const CANVAS_MARGIN_LEFT = 20;
 export const CANVAS_MARGIN_TOP = 20;
 
 export const MAX_COLOR_VALUE = 255;
