@@ -19,6 +19,7 @@ import { PolygonService } from '@app/services/tools/polygon/polygon.service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle.service';
 import { SelectionService } from '@app/services/tools/selection/selection.service';
 
+// tslint:disable:no-string-literal
 describe('ToolbarService', () => {
     let service: ToolbarService;
     let pencilServiceSpy: jasmine.SpyObj<PencilService>;
@@ -48,6 +49,7 @@ describe('ToolbarService', () => {
             'onClick',
             'setColors',
             'resetContext',
+            'clone',
         ]);
 
         brushServiceSpy = jasmine.createSpyObj('BrushService', ['onKeyDown', 'resetContext', 'setColors']);
@@ -335,4 +337,28 @@ describe('ToolbarService', () => {
         service['applyCurrentToolColor']();
         expect(service.currentTool.setColors).toHaveBeenCalled();
     });
+
+    it('addCommand should correctly set the undoIndex', () => {
+        const tools = service.getTools();
+        const undoDefault = -1;
+        service.commands = [];
+        service.undoIndex = undoDefault;
+        service.addCommand(tools[0].clone());
+        expect(service.undoIndex).toEqual(0);
+    });
+
+    // it('undo should call clearCanvas twice for preview and base', () => {
+    //     const tools = service.getTools();
+    //     const undoDefault = -1;
+    //     service.mouseDown = false;
+    //     service['selectionService'].isAreaSelected = false;
+    //     service.commands = [];
+    //     service.undoIndex = undoDefault;
+    //     service.addCommand(tools[0].clone());
+    //     service.addCommand(tools[0].clone());
+    //     service.undo();
+    //     // expect(drawingServiceSpy.clearCanvas).toHaveBeenCalledTimes(2);
+    //     expect(service.undoIndex).toEqual(0);
+    // });
+    // tslint:disable-next-line: max-file-line-count / reason: its a test file
 });
