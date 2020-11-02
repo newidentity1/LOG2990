@@ -177,12 +177,13 @@ export class ToolbarService {
         this.undoIndex--;
         this.drawingService.clearCanvas(this.drawingService.baseCtx);
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        this.drawingService.emitResetCanvasSizeEvent();
         setTimeout(() => {
             if (this.undoIndex >= 0) {
                 for (let i = 0; i <= this.undoIndex; i++) {
-                    this.commands[i].applyCurrentSettings();
-                    this.commands[i].execute();
+                    setTimeout(() => {
+                        this.commands[i].applyCurrentSettings();
+                        this.commands[i].execute();
+                    }, 0);
                 }
             }
             this.applyCurrentToolColor();
@@ -191,13 +192,15 @@ export class ToolbarService {
     }
 
     redo(): void {
+        console.log('aslkdjhf');
         if (this.undoIndex === this.commands.length - 1 || this.commands.length === 0) return;
         this.undoIndex++;
-        this.commands[this.undoIndex].applyCurrentSettings();
-        this.commands[this.undoIndex].execute();
-
-        this.applyCurrentToolColor();
-        this.currentTool.setThickness(this.currentTool.toolProperties.thickness);
+        setTimeout(() => {
+            this.commands[this.undoIndex].applyCurrentSettings();
+            this.commands[this.undoIndex].execute();
+            this.applyCurrentToolColor();
+            this.currentTool.setThickness(this.currentTool.toolProperties.thickness);
+        }, 0);
     }
 
     triggerSelectAll(): void {
