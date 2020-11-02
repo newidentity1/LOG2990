@@ -17,6 +17,7 @@ export class BucketService extends Tool {
     private image: ImageData;
     private width: number = 0;
     private height: number = 0;
+    mouseLeft: boolean = true;
 
     private startPixelColor: Uint8ClampedArray;
     protected tolerance: number = 1;
@@ -39,24 +40,28 @@ export class BucketService extends Tool {
             this.matrice.push(line);
         }
     }
+
     onMouseDown(event: MouseEvent): void {
         this.width = this.drawingService.canvas.width;
         this.height = this.drawingService.canvas.height;
         this.image = this.drawingService.baseCtx.getImageData(0, 0, this.width, this.height);
-        const mousePosition = this.getPositionFromMouse(event);
-        this.startPixelColor = this.drawingService.baseCtx.getImageData(mousePosition.x, mousePosition.y, 1, 1).data;
-        if (event.button === MouseButton.Left) {
-            this.generateMatrice();
-            this.floodFillLeft(event);
-        } else {
-            this.floodFillRight(event);
+        this.mouseDownCoord = this.getPositionFromMouse(event);
+        this.startPixelColor = this.drawingService.baseCtx.getImageData(this.mouseDownCoord.x, this.mouseDownCoord.y, 1, 1).data;
+        this.mouseDown = true;
+        this.mouseLeft = event.button === MouseButton.Left;
+        this.draw(this.drawingService.baseCtx);
+    }
+
+    onMouseUp(event: MouseEvent): void {
+        if (this.mouseDown) {
+            this.mouseDown = false;
+            this.executedCommand.emit(this.clone());
         }
     }
 
-    floodFillLeft(event: MouseEvent): void {
+    floodFillLeft(): void {
         this.clearList(this.openList);
-        const mousePosition = this.getPositionFromMouse(event);
-        const start: Pixel = { x: mousePosition.x, y: mousePosition.y, status: 0 };
+        const start: Pixel = { x: this.mouseDownCoord.x, y: this.mouseDownCoord.y, status: 0 };
         this.openList.push(start);
         while (this.openList.length !== 0) {
             this.addNeighbours(this.openList);
@@ -64,10 +69,9 @@ export class BucketService extends Tool {
         this.resetMatrice();
     }
 
-    floodFillRight(event: MouseEvent): void {
+    floodFillRight(): void {
         const targetColor: Color = this.colorPickerService.selectedColor.clone();
-        // tslint:disable-next-line:no-magic-numbers
-        for (let i = 0; i < this.image.data.length; i += 4) {
+        for (let i = 0; i < this.image.data.length; i += CONSTANTS.OFFSET) {
             if (
                 this.image.data[i + 0] >= this.startPixelColor[0] - this.tolerance &&
                 this.image.data[i + 0] < this.startPixelColor[0] + this.tolerance &&
@@ -75,28 +79,20 @@ export class BucketService extends Tool {
                 this.image.data[i + 1] < this.startPixelColor[1] + this.tolerance &&
                 this.image.data[i + 2] >= this.startPixelColor[2] - this.tolerance &&
                 this.image.data[i + 2] < this.startPixelColor[2] + this.tolerance &&
-                // tslint:disable-next-line:no-magic-numbers
-                this.image.data[i + 3] >= this.startPixelColor[CONSTANTS.INDEX_3] - this.tolerance &&
-                // tslint:disable-next-line:no-magic-numbers
-                this.image.data[i + 3] < this.startPixelColor[CONSTANTS.INDEX_3] + this.tolerance
+                this.image.data[i + CONSTANTS.IMAGE_DATA_OPACITY_INDEX] >= this.startPixelColor[CONSTANTS.INDEX_3] - this.tolerance &&
+                this.image.data[i + CONSTANTS.IMAGE_DATA_OPACITY_INDEX] < this.startPixelColor[CONSTANTS.INDEX_3] + this.tolerance
             ) {
                 this.image.data[i] = targetColor.getRed;
                 this.image.data[i + 1] = targetColor.getGreen;
                 this.image.data[i + 2] = targetColor.getBlue;
-                // tslint:disable-next-line:no-magic-numbers
-                this.image.data[i + 3] = targetColor.getOpacity * 255;
+                this.image.data[i + CONSTANTS.IMAGE_DATA_OPACITY_INDEX] = targetColor.getOpacity * CONSTANTS.MAX_COLOR_VALUE;
             }
         }
-        this.drawingService.baseCtx.putImageData(this.image, 0, 0);
     }
 
     setTolerance(tolerance: number | null): void {
         tolerance = tolerance === null ? 1 : tolerance;
         this.tolerance = CONSTANTS.MAX_COLOR_VALUE * (tolerance / CONSTANTS.POURCENTAGE);
-    }
-
-    setColors(primaryColor: Color): void {
-        this.drawingService.setColor(primaryColor.toStringRGBA());
     }
 
     resetContext(): void {
@@ -106,11 +102,7 @@ export class BucketService extends Tool {
     }
 
     private clearList(list: Pixel[]): void {
-        if (list.length !== 0) {
-            while (list.length !== 0) {
-                list.pop();
-            }
-        }
+        list.length = 0;
     }
 
     private resetMatrice(): void {
@@ -122,12 +114,7 @@ export class BucketService extends Tool {
     }
 
     private copyList(list: Pixel[]): Pixel[] {
-        const newList: Pixel[] = [];
-        for (const point of list) {
-            const newPoint: Pixel = { x: point.x, y: point.y, status: point.status };
-            newList.push(newPoint);
-        }
-        return newList;
+        return list.slice();
     }
 
     private addNeighbours(pixels: Pixel[]): void {
@@ -175,8 +162,7 @@ export class BucketService extends Tool {
     }
 
     private checkColor(point: Pixel): boolean {
-        // tslint:disable-next-line:no-magic-numbers
-        const offset = (point.y * this.width + point.x) * 4;
+        const offset = (point.y * this.width + point.x) * CONSTANTS.OFFSET;
         if (
             this.image.data[offset + 0] >= this.startPixelColor[0] - this.tolerance &&
             this.image.data[offset + 0] < this.startPixelColor[0] + this.tolerance &&
@@ -184,10 +170,8 @@ export class BucketService extends Tool {
             this.image.data[offset + 1] < this.startPixelColor[1] + this.tolerance &&
             this.image.data[offset + 2] >= this.startPixelColor[2] - this.tolerance &&
             this.image.data[offset + 2] < this.startPixelColor[2] + this.tolerance &&
-            // tslint:disable-next-line:no-magic-numbers
-            this.image.data[offset + 3] >= this.startPixelColor[CONSTANTS.INDEX_3] - this.tolerance &&
-            // tslint:disable-next-line:no-magic-numbers
-            this.image.data[offset + 3] < this.startPixelColor[CONSTANTS.INDEX_3] + this.tolerance
+            this.image.data[offset + CONSTANTS.IMAGE_DATA_OPACITY_INDEX] >= this.startPixelColor[CONSTANTS.INDEX_3] - this.tolerance &&
+            this.image.data[offset + CONSTANTS.IMAGE_DATA_OPACITY_INDEX] < this.startPixelColor[CONSTANTS.INDEX_3] + this.tolerance
         ) {
             return true;
         }
@@ -195,6 +179,37 @@ export class BucketService extends Tool {
     }
 
     private colorPixel(pixel: Pixel): void {
+        const targetColor: Color = this.colorPickerService.selectedColor.clone();
+        const offset = (pixel.y * this.width + pixel.x) * CONSTANTS.OFFSET;
         this.drawingService.baseCtx.fillRect(pixel.x, pixel.y, 1, 1);
+        this.image.data[offset] = targetColor.getRed;
+        this.image.data[offset + 1] = targetColor.getGreen;
+        this.image.data[offset + 2] = targetColor.getBlue;
+        this.image.data[offset + CONSTANTS.IMAGE_DATA_OPACITY_INDEX] = targetColor.getOpacity * CONSTANTS.MAX_COLOR_VALUE;
+    }
+
+    copyBucket(bucket: BucketService): void {
+        this.copyTool(bucket);
+        bucket.width = this.width;
+        bucket.height = this.height;
+        bucket.image = this.image;
+        bucket.startPixelColor = this.startPixelColor;
+        bucket.mouseLeft = this.mouseLeft;
+    }
+
+    clone(): BucketService {
+        const bucketClone: BucketService = new BucketService(this.drawingService, this.colorPickerService);
+        this.copyBucket(bucketClone);
+        return bucketClone;
+    }
+
+    draw(ctx: CanvasRenderingContext2D): void {
+        if (this.mouseLeft) {
+            this.generateMatrice();
+            this.floodFillLeft();
+        } else {
+            this.floodFillRight();
+        }
+        ctx.putImageData(this.image, 0, 0);
     }
 }

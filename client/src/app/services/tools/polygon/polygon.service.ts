@@ -9,8 +9,6 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 @Injectable({
     providedIn: 'root',
 })
-
-/** @todo Maybe extend EllipseService */
 export class PolygonService extends ShapeTool {
     constructor(drawingService: DrawingService) {
         super(drawingService);
@@ -41,9 +39,6 @@ export class PolygonService extends ShapeTool {
 
     draw(ctx: CanvasRenderingContext2D): void {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        if (this.escapeDown) {
-            return;
-        }
 
         const radiusX = Math.abs(this.width / 2);
         const radiusY = Math.abs(this.height / 2);
@@ -98,8 +93,8 @@ export class PolygonService extends ShapeTool {
     }
 
     drawBoxGuide(): void {
-        const ctx = this.drawingService.previewCtx;
         if (this.mouseDown) {
+            const ctx = this.drawingService.previewCtx;
             ctx.save();
 
             ctx.lineWidth = SELECTION_BOX_THICKNESS;
@@ -117,8 +112,8 @@ export class PolygonService extends ShapeTool {
             ctx.rect(
                 this.mouseDownCoord.x,
                 this.mouseDownCoord.y,
-                this.currentMousePosition.x - this.pathStart.x,
-                this.currentMousePosition.y - this.pathStart.y,
+                this.currentMousePosition.x - this.mouseDownCoord.x,
+                this.currentMousePosition.y - this.mouseDownCoord.y,
             );
             ctx.setLineDash([]);
             ctx.strokeStyle = 'white';
@@ -128,5 +123,14 @@ export class PolygonService extends ShapeTool {
             ctx.stroke();
             ctx.restore();
         }
+    }
+
+    clone(): ShapeTool {
+        const polygonClone: PolygonService = new PolygonService(this.drawingService);
+        this.copyShape(polygonClone);
+        const polygonCloneProperties = polygonClone.toolProperties as PolygonProperties;
+        const polygonProperties = this.toolProperties as PolygonProperties;
+        polygonCloneProperties.numberOfSides = polygonProperties.numberOfSides;
+        return polygonClone;
     }
 }
