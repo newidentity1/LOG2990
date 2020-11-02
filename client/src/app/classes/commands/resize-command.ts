@@ -43,8 +43,6 @@ export class ResizeCommand extends Command {
     }
 
     drawImage(): void {
-        setTimeout(() => {
-            this.baseCtx.putImageData(this.imgData, 0, 0);
-        }, 0);
+        this.baseCtx.putImageData(this.imgData, 0, 0);
     }
 }
