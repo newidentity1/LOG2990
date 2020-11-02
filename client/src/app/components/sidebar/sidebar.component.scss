@@ -6,7 +6,7 @@ mat-sidenav-container {
 
 #tool-container {
     height: auto;
-    width: 80px;
+    width: 160px;
     min-height: 100vh;
     background-color: $primaryColor;
     overflow: hidden;
@@ -15,10 +15,11 @@ mat-sidenav-container {
 #tools {
     list-style-type: none;
     padding: 0px 0px 0px 5px;
+    margin-bottom: 235px;
 
     li {
-        padding: 2px 0px;
-
+        padding: 2px 5px;
+        display: inline-block;
         button {
             padding: 0;
             margin: 0;
@@ -43,10 +44,14 @@ mat-sidenav {
     background-color: #1a174f;
 }
 
-#undo-redo-container,
-#colors-container,
 #other-functionality-container {
-    padding-left: 5px;
+    width: 100%;
+}
+
+.other-functionality-button {
+    display: inline-block;
+    width: 100%;
+    text-align: center;
 }
 
 .type-drawing-group {
@@ -73,4 +78,9 @@ mat-sidenav {
     .type-drawing-group  > mat-radio-button {
         padding-top: 5px;
     }
+}
+
+hr {
+    margin-top: 15px;
+    margin-bottom: 15px;
 }

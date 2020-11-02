@@ -49,14 +49,14 @@ export class ToolbarService {
     ) {
         this.tools = [
             pencilService,
-            polygonService,
             brushService,
+            eraseService,
+            polygonService,
             rectangleService,
             ellipseService,
             lineService,
-            eraseService,
-            eyedropperService,
             selectionService,
+            eyedropperService,
             bucketService,
         ];
         this.currentTool = this.tools[0];
