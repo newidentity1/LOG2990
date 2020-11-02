@@ -16,4 +16,12 @@ export class UndoRedoComponent {
     redo(): void {
         this.toolbarService.redo();
     }
+
+    canUndo(): boolean {
+        return this.toolbarService.canUndo();
+    }
+
+    canRedo(): boolean {
+        return this.toolbarService.canRedo();
+    }
 }
