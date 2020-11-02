@@ -94,8 +94,7 @@ export class LineService extends Tool {
         }
     }
 
-    onDoubleClick(event: MouseEvent): Tool | undefined {
-        let toolClone: Tool | undefined;
+    onDoubleClick(event: MouseEvent): void {
         const mousePosition = this.getPositionFromMouse(event);
         if (mousePosition !== this.pathData[0] && this.pathData.length >= 1 && this.pathData.length > 2) {
             // calculer la distance entre la souris et le point de départ
@@ -109,19 +108,13 @@ export class LineService extends Tool {
                 this.pathData.pop();
                 this.pathData.pop();
 
-                this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.pathData.push(this.pathData[0]);
-                this.draw(this.drawingService.baseCtx);
-                toolClone = this.clone();
-                this.clearPath();
-            } else {
-                this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.draw(this.drawingService.baseCtx);
-                toolClone = this.clone();
-                this.clearPath();
             }
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.draw(this.drawingService.baseCtx);
+            this.executedCommand.emit(this.clone());
+            this.clearPath();
         }
-        return toolClone;
     }
 
     onKeyUp(event: KeyboardEvent): void {

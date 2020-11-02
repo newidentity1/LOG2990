@@ -1,12 +1,12 @@
 import { Color } from '@app/classes/color/color';
+import { Command } from '@app/classes/commands/command';
 import { BasicToolProperties } from '@app/classes/tools-properties/basic-tool-properties';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { Command } from './command';
 
 // Ceci est justifié vu qu'on a des fonctions qui seront gérés par les classes enfant
 // tslint:disable:no-empty
-export abstract class Tool implements Command {
+export abstract class Tool extends Command {
     mouseDownCoord: Vec2;
     pathData: Vec2[];
     mouseDown: boolean = false;
@@ -17,15 +17,15 @@ export abstract class Tool implements Command {
     currentPrimaryColor: Color;
     currentSecondaryColor: Color;
 
-    constructor(protected drawingService: DrawingService) {}
+    constructor(protected drawingService: DrawingService) {
+        super();
+    }
 
     setTypeDrawing(value: string): void {}
 
     onMouseDown(event: MouseEvent): void {}
 
-    onMouseUp(event: MouseEvent): Tool | undefined {
-        return undefined;
-    }
+    onMouseUp(event: MouseEvent): void {}
 
     onMouseMove(event: MouseEvent): void {}
 
@@ -39,9 +39,7 @@ export abstract class Tool implements Command {
 
     onKeyUp(event: KeyboardEvent): void {}
 
-    onDoubleClick(event: MouseEvent): Tool | undefined {
-        return undefined;
-    }
+    onDoubleClick(event: MouseEvent): void {}
 
     onClick(event: MouseEvent): void {}
 
@@ -82,7 +80,7 @@ export abstract class Tool implements Command {
         return this;
     }
 
-    redo(): void {
+    execute(): void {
         this.draw(this.drawingService.baseCtx);
     }
 }

@@ -1,15 +1,8 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { Command } from '@app/classes/commands/command';
+import { ResizeCommand } from '@app/classes/commands/resize-command';
 import { ResizerProperties } from '@app/classes/resizer-properties';
-import { Vec2 } from '@app/classes/vec2';
-import {
-    CANVAS_MARGIN_LEFT,
-    CANVAS_MARGIN_TOP,
-    CANVAS_MIN_HEIGHT,
-    CANVAS_MIN_WIDTH,
-    DEFAULT_HEIGHT,
-    DEFAULT_WIDTH,
-    SELECTION_CONTROL_POINT_SIZE,
-} from '@app/constants/constants';
+import { CANVAS_MARGIN_LEFT, CANVAS_MARGIN_TOP, CANVAS_MIN_HEIGHT, CANVAS_MIN_WIDTH, SELECTION_CONTROL_POINT_SIZE } from '@app/constants/constants';
 import { MouseButton } from '@app/enums/mouse-button.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
@@ -31,13 +24,14 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
 
     @Output() requestDrawingContainerDimensions: EventEmitter<void> = new EventEmitter();
 
-    private baseCtx: CanvasRenderingContext2D;
     previewCtx: CanvasRenderingContext2D;
-    private canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
     private subscribeCreateNewDrawing: Subscription;
+    private subscribeResetCanvasSize: Subscription;
     private subscribeDimensionsUpdated: Subscription;
+    private subscribeExecutedCommand: Subscription;
     isResizingWidth: boolean = false;
     isResizingHeight: boolean = false;
+    resizeCommand: ResizeCommand = new ResizeCommand(this.drawingService);
 
     constructor(private drawingService: DrawingService, private toolbarService: ToolbarService) {}
 
@@ -45,6 +39,9 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
         this.subscribeCreateNewDrawing = this.drawingService.createNewDrawingEventListener().subscribe(() => {
             this.toolbarService.resetSelection();
             this.drawingService.clearCanvas(this.drawingService.baseCtx);
+            this.requestDrawingContainerDimensions.emit();
+        });
+        this.subscribeResetCanvasSize = this.drawingService.resetCanvasSizeEventListener().subscribe(() => {
             this.requestDrawingContainerDimensions.emit();
         });
         this.subscribeDimensionsUpdated = this.dimensionsUpdatedEvent.subscribe((dimensions) => {
@@ -56,22 +53,28 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.drawingService.setWhiteBackground();
             }, 0);
         });
+        this.subscribeExecutedCommand = this.resizeCommand.executedCommand.subscribe((command: Command) => {
+            this.toolbarService.addCommand(command);
+        });
     }
 
     ngAfterViewInit(): void {
-        this.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.resizeCommand.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.previewCtx = this.previewCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        this.drawingService.baseCtx = this.baseCtx;
+        this.drawingService.baseCtx = this.resizeCommand.baseCtx;
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
 
-        this.toolbarService.initializeColors();
         this.drawingService.setWhiteBackground();
+        this.toolbarService.initializeListeners();
     }
 
     ngOnDestroy(): void {
         this.subscribeCreateNewDrawing.unsubscribe();
         this.subscribeDimensionsUpdated.unsubscribe();
+        this.subscribeResetCanvasSize.unsubscribe();
+        this.toolbarService.unsubscribeListeners();
+        this.subscribeExecutedCommand.unsubscribe();
     }
 
     onMouseMove(event: MouseEvent): void {
@@ -94,13 +97,11 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
             const newWidth = this.isResizingWidth ? this.previewCanvas.nativeElement.width : this.width;
             const newHeight = this.isResizingHeight ? this.previewCanvas.nativeElement.height : this.height;
 
-            const imgData = this.baseCtx.getImageData(0, 0, newWidth, newHeight);
-            this.canvasSize.x = newWidth;
-            this.canvasSize.y = newHeight;
+            this.resizeCommand.resize(newWidth, newHeight);
+
             setTimeout(() => {
-                this.baseCtx.putImageData(imgData, 0, 0);
                 this.toolbarService.applyCurrentTool();
-                this.drawingService.setWhiteBackground();
+                this.resizeCommand.drawImage();
             }, 0);
             this.isResizingWidth = false;
             this.isResizingHeight = false;
@@ -177,8 +178,9 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
         const newWidth = this.drawingContainerWidth / 2;
         const newHeight = this.drawingContainerHeight / 2;
 
-        this.canvasSize.x = newWidth >= CANVAS_MIN_WIDTH ? newWidth : CANVAS_MIN_WIDTH;
-        this.canvasSize.y = newHeight >= CANVAS_MIN_HEIGHT ? newHeight : CANVAS_MIN_HEIGHT;
+        const width = newWidth >= CANVAS_MIN_WIDTH ? newWidth : CANVAS_MIN_WIDTH;
+        const height = newHeight >= CANVAS_MIN_HEIGHT ? newHeight : CANVAS_MIN_HEIGHT;
+        this.resizeCommand.resize(width, height);
     }
 
     isAreaSelected(): boolean {
@@ -186,11 +188,11 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     get width(): number {
-        return this.canvasSize.x;
+        return this.resizeCommand.canvasSize.x;
     }
 
     get height(): number {
-        return this.canvasSize.y;
+        return this.resizeCommand.canvasSize.y;
     }
 
     onBaseCanvasMouseDown(event: MouseEvent): void {
