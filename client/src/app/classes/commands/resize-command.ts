@@ -41,7 +41,7 @@ export class ResizeCommand extends Command {
         return resizeCommandClone;
     }
 
-    applyCurrentSettings(): void {
+    drawImage(): void {
         this.baseCtx.putImageData(this.imgData, 0, 0);
         this.drawingService.setWhiteBackground();
     }

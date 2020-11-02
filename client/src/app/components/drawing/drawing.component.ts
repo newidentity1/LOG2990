@@ -101,7 +101,7 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
 
             setTimeout(() => {
                 this.toolbarService.applyCurrentTool();
-                this.resizeCommand.applyCurrentSettings();
+                this.resizeCommand.drawImage();
             }, 0);
             this.isResizingWidth = false;
             this.isResizingHeight = false;
