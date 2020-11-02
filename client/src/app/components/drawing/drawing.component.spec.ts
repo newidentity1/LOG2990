@@ -436,7 +436,8 @@ describe('DrawingComponent', () => {
     // it('calculateResizerStyle should use default width and height to calculate control points positions if preview canvas is not yet set', () => {
     //     // tslint:disable-next-line:no-any / reason: set typed object to null
     //     component.previewCanvas = null as any;
-    //     const expectedPosition: ResizerProperties = { top: `${-SELECTION_CONTROL_POINT_SIZE / 2}px`, left: `${-SELECTION_CONTROL_POINT_SIZE / 2}px` };
+    /*     const expectedPosition: ResizerProperties =
+    { top: `${-SELECTION_CONTROL_POINT_SIZE / 2}px`, left: `${-SELECTION_CONTROL_POINT_SIZE / 2}px` }; */
     //     const result = component.calculateResizerStyle(0, 0);
     //     expect(result).toEqual(expectedPosition);
     // });
