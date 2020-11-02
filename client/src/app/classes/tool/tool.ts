@@ -1,8 +1,8 @@
 import { Color } from '@app/classes/color/color';
+import { Command } from '@app/classes/commands/command';
 import { BasicToolProperties } from '@app/classes/tools-properties/basic-tool-properties';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { Command } from '../commands/command';
 
 // Ceci est justifié vu qu'on a des fonctions qui seront gérés par les classes enfant
 // tslint:disable:no-empty

@@ -65,15 +65,16 @@ describe('PencilService', () => {
         expect(service.mouseDown).toEqual(false);
     });
 
-    it(' onMouseUp should call drawLine if mouse was already down', () => {
+    it(' onMouseUp should call draw if mouse was already down and inside canvas', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = true;
+        service.insideCanvas = true;
 
         service.onMouseUp(mouseEvent);
         expect(drawSpy).toHaveBeenCalled();
     });
 
-    it(' onMouseUp should not call drawLine if mouse was not already down', () => {
+    it(' onMouseUp should not call draw if mouse was not already down', () => {
         service.mouseDown = false;
         service.mouseDownCoord = { x: 0, y: 0 };
 

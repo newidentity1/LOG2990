@@ -15,7 +15,6 @@ export class ResizeCommand extends Command {
     }
 
     resize(newWidth: number, newHeight: number): void {
-        console.log('resizing');
         this.newWidth = newWidth;
         this.newHeight = newHeight;
         this.imgData = this.baseCtx.getImageData(0, 0, newWidth, newHeight);
