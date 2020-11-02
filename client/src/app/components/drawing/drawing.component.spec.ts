@@ -55,7 +55,6 @@ describe('DrawingComponent', () => {
         toolbarServiceSpy = TestBed.inject(ToolbarService) as jasmine.SpyObj<ToolbarService>;
 
         drawingServiceStub.baseCtx = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
-        component.resizeCommand = new ResizeCommand(drawingServiceStub);
         // tslint:disable-next-line:no-empty / reason: mocking mouse event
         mouseEvent = { preventDefault: () => {} } as MouseEvent;
     }));
@@ -63,6 +62,7 @@ describe('DrawingComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(DrawingComponent);
         component = fixture.componentInstance;
+        component.resizeCommand = new ResizeCommand(drawingServiceStub);
         component.dimensionsUpdatedEvent = dimensionsUpdatedSubjectStub.asObservable();
         component.requestDrawingContainerDimensions = new EventEmitter();
         fixture.detectChanges();
