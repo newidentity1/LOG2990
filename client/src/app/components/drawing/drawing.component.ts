@@ -31,11 +31,9 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
     private subscribeExecutedCommand: Subscription;
     isResizingWidth: boolean = false;
     isResizingHeight: boolean = false;
-    resizeCommand: ResizeCommand;
+    resizeCommand: ResizeCommand = new ResizeCommand(this.drawingService);
 
-    constructor(private drawingService: DrawingService, private toolbarService: ToolbarService) {
-        this.resizeCommand = new ResizeCommand(this.drawingService);
-    }
+    constructor(private drawingService: DrawingService, private toolbarService: ToolbarService) {}
 
     ngOnInit(): void {
         this.subscribeCreateNewDrawing = this.drawingService.createNewDrawingEventListener().subscribe(() => {
