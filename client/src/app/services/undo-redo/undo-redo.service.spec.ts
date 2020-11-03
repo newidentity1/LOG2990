@@ -34,37 +34,35 @@ describe('UndoRedoService', () => {
         expect(service).toBeTruthy();
     });
 
-    it('canUndo should return false if mouse is down or area is selected', () => {
+    it('canUndo should return false if isDrawing is true', () => {
         service.undoIndex = 1;
-        expect(service.canUndo(true, false)).toEqual(false);
-        expect(service.canUndo(false, true)).toEqual(false);
+        expect(service.canUndo(true)).toEqual(false);
     });
 
-    it('canUndo should return true if index > 0 and mouse is not down and area is not selected', () => {
+    it('canUndo should return true if index > 0 and isDrawing is false', () => {
         service.undoIndex = 1;
-        expect(service.canUndo(false, false)).toEqual(true);
+        expect(service.canUndo(false)).toEqual(true);
     });
 
     it('canUndo should return false if index <= 0', () => {
         service.undoIndex = 0;
-        expect(service.canUndo(false, false)).toEqual(false);
+        expect(service.canUndo(false)).toEqual(false);
     });
 
-    it('canRedo should return false if mouse is down or area is selected', () => {
+    it('canRedo should return false if isDrawing is true', () => {
         service.undoIndex = 1;
-        expect(service.canRedo(true, false)).toEqual(false);
-        expect(service.canRedo(false, true)).toEqual(false);
+        expect(service.canRedo(true)).toEqual(false);
     });
 
-    it('canRedo should return true if there is a command and undoIndex is less than commands.length - 1 and mouse is not down and area is not selected', () => {
+    it('canRedo should return true if there is a command and undoIndex is less than commands.length - 1 isDrawing is false', () => {
         service.addCommand(pencilServiceStub);
         service.addCommand(pencilServiceStub);
         service.undoIndex = 0;
-        expect(service.canRedo(false, false)).toEqual(true);
+        expect(service.canRedo(false)).toEqual(true);
     });
 
     it('canRedo should return false if undoIndex >= commands.length', () => {
-        expect(service.canRedo(false, false)).toEqual(false);
+        expect(service.canRedo(false)).toEqual(false);
     });
 
     it('addCommand should add a command to its commands array', () => {
@@ -74,7 +72,7 @@ describe('UndoRedoService', () => {
     });
 
     it('undo should do nothing if cannot undo', () => {
-        service.undo(false, false);
+        service.undo(false);
         const undoDefaultIndexValue = -1;
         expect(service.undoIndex).toEqual(undoDefaultIndexValue);
     });
@@ -82,7 +80,7 @@ describe('UndoRedoService', () => {
     it('undo should call clearCanvas twice for baseCtx and previewCtx and decrement undoIndex when canUndo is true', () => {
         service.addCommand(pencilServiceStub);
         service.addCommand(pencilServiceStub);
-        service.undo(false, false);
+        service.undo(false);
 
         expect(service.undoIndex).toEqual(0);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalledWith(drawServiceSpy.baseCtx);
@@ -101,7 +99,7 @@ describe('UndoRedoService', () => {
         const drawSpy = spyOn<any>(pencilServiceStub, 'drawImage');
         const delay = 1000;
         jasmine.clock().install();
-        service.undo(false, false);
+        service.undo(false);
         jasmine.clock().tick(delay);
 
         expect(applyCurrentSettingsSpy).toHaveBeenCalled();
@@ -121,7 +119,7 @@ describe('UndoRedoService', () => {
         const drawSpy = spyOn<any>(pencilServiceStub, 'drawImage');
         const delay = 1000;
         jasmine.clock().install();
-        service.undo(false, false);
+        service.undo(false);
         jasmine.clock().tick(delay);
 
         expect(applyCurrentSettingsSpy).not.toHaveBeenCalled();
@@ -131,7 +129,7 @@ describe('UndoRedoService', () => {
     });
 
     it('redo should do nothing if cannot redo', () => {
-        service.redo(false, false);
+        service.redo(false);
         const undoDefaultIndexValue = -1;
         expect(service.undoIndex).toEqual(undoDefaultIndexValue);
     });
@@ -149,7 +147,7 @@ describe('UndoRedoService', () => {
         const drawSpy = spyOn<any>(pencilServiceStub, 'drawImage');
         const delay = 1000;
         jasmine.clock().install();
-        service.redo(false, false);
+        service.redo(false);
         jasmine.clock().tick(delay);
 
         expect(applyCurrentSettingsSpy).toHaveBeenCalled();
