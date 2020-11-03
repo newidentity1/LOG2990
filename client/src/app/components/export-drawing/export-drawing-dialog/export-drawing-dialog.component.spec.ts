@@ -1,5 +1,6 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -17,6 +18,7 @@ describe('ExportDrawingDialogComponent', () => {
         drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setStrokeColor']);
         TestBed.configureTestingModule({
             declarations: [ExportDrawingDialogComponent],
+            imports: [FormsModule],
             providers: [
                 { provide: MatDialog, useValue: mockDialog },
                 { provide: MAT_DIALOG_DATA, useValue: [] },

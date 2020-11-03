@@ -1,26 +1,28 @@
+@import '../../style/color.scss';
+
 ul {
     display: flex;
     flex-wrap: wrap-reverse;
-    order: 3;
+    order: 2;
     padding: 0;
-    width: 500px;
     margin: 20px auto;
 }
-
+#window {
+    align-items: center;
+    width: 630px;
+    height: 200px;
+}
+#buttons {
+    align-items: center;
+}
 li {
     padding: 10px;
     display: flex;
 }
 
-#delete {
-    background-color: #971010;
-}
-
-#open {
-    background-color: #4caf50;
-}
-
-button {
+#openButton,
+#deleteButton {
+    align-items: center;
     opacity: 0.6;
     border-radius: 8px;
     border: none;
@@ -30,8 +32,21 @@ button {
     text-decoration: none;
     display: inline-block;
     font-size: 16px;
+    margin-left: 5px;
+    background-color: $primaryColor;
 }
 
-button:hover {
+#openButton:hover,
+#deleteButton:hover {
     opacity: 1;
+}
+
+#addTagButton,
+#deleteDrawingButton {
+    background-color: $primaryColor;
+    margin-left: 5px;
+}
+
+.row {
+    margin-top: 10px;
 }
