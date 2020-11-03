@@ -338,27 +338,35 @@ describe('ToolbarService', () => {
         expect(service.currentTool.setColors).toHaveBeenCalled();
     });
 
-    it('addCommand should correctly set the undoIndex', () => {
-        const tools = service.getTools();
-        const undoDefault = -1;
-        service.commands = [];
-        service.undoIndex = undoDefault;
-        service.addCommand(tools[0].clone());
-        expect(service.undoIndex).toEqual(0);
+    it('addCommand should call addCommand from undoRedoService', () => {
+        // tslint:disable-next-line:no-any / reason : spying on function
+        const addCommandSpy = spyOn<any>(service['undoRedoService'], 'addCommand');
+        service.addCommand(service.getTools()[0].clone());
+        expect(addCommandSpy).toHaveBeenCalled();
     });
 
-    // it('undo should call clearCanvas twice for preview and base', () => {
-    //     const tools = service.getTools();
-    //     const undoDefault = -1;
-    //     service.mouseDown = false;
-    //     service['selectionService'].isAreaSelected = false;
-    //     service.commands = [];
-    //     service.undoIndex = undoDefault;
-    //     service.addCommand(tools[0].clone());
-    //     service.addCommand(tools[0].clone());
-    //     service.undo();
-    //     // expect(drawingServiceSpy.clearCanvas).toHaveBeenCalledTimes(2);
-    //     expect(service.undoIndex).toEqual(0);
-    // });
+    it('undo should call undo from undoRedoService', () => {
+        // tslint:disable-next-line:no-any / reason : spying on function
+        const undoSpy = spyOn<any>(service['undoRedoService'], 'undo');
+        // tslint:disable-next-line:no-any / reason : spying on function
+        const applyCurrentToolSpy = spyOn<any>(service, 'applyCurrentTool');
+        const delay = 1000;
+        jasmine.clock().install();
+        service.undo();
+        jasmine.clock().tick(delay);
+        expect(undoSpy).toHaveBeenCalled();
+        expect(applyCurrentToolSpy).toHaveBeenCalled();
+        jasmine.clock().uninstall();
+    });
+
+    it('redo should call redo from undoRedoService', () => {
+        // tslint:disable-next-line:no-any / reason : spying on function
+        const redoSpy = spyOn<any>(service['undoRedoService'], 'redo');
+        // tslint:disable-next-line:no-any / reason : spying on function
+        const applyCurrentToolSpy = spyOn<any>(service, 'applyCurrentTool');
+        service.redo();
+        expect(redoSpy).toHaveBeenCalled();
+        expect(applyCurrentToolSpy).toHaveBeenCalled();
+    });
     // tslint:disable-next-line: max-file-line-count / reason: its a test file
 });
