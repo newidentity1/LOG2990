@@ -61,13 +61,18 @@ export class GalleryComponent implements OnInit, AfterViewInit {
 
     continueDraw(event: number): void {
         const image = new Image();
+        image.crossOrigin = '';
         image.src = this.drawings[event].url;
-        const ctx = this.drawingService.canvas.getContext('2d') as CanvasRenderingContext2D;
-        this.drawingService.clearCanvas(ctx as CanvasRenderingContext2D);
-        this.drawingService.canvas.width = image.width;
-        this.drawingService.canvas.height = image.height;
-        ctx.drawImage(image, 0, 0);
-        this.dialog.closeAll();
+        image.onload = () => {
+            const ctx = this.drawingService.canvas.getContext('2d') as CanvasRenderingContext2D;
+            this.drawingService.clearCanvas(ctx as CanvasRenderingContext2D);
+            this.drawingService.baseCtx.canvas.width = image.width;
+            this.drawingService.baseCtx.canvas.height = image.height;
+            this.drawingService.previewCtx.canvas.width = image.width;
+            this.drawingService.previewCtx.canvas.height = image.height;
+            ctx.drawImage(image, 0, 0);
+            this.dialog.closeAll();
+        };
     }
 
     deleteDraw(): void {
@@ -91,6 +96,7 @@ export class GalleryComponent implements OnInit, AfterViewInit {
         for (const draw of data) {
             this.drawings.push(draw);
         }
+        console.log(this.drawings);
         this.updateDrawings(this.drawings);
         if (this.drawings.length > 0) {
             this.isDrawing = true; // je vais test ca
