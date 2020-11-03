@@ -1,4 +1,4 @@
-import { DATABASE_COLLECTION, DATABASE_NAME, DATABASE_URL } from '@app/constants';
+import { DATABASE_COLLECTION, DATABASE_NAME } from '@app/constants';
 import { Drawing } from '@common/communication/drawing.ts';
 import { injectable } from 'inversify';
 import { Collection, MongoClient, MongoClientOptions } from 'mongodb';
@@ -13,8 +13,8 @@ export class DrawingService {
         useUnifiedTopology: true,
     };
 
-    constructor() {
-        MongoClient.connect(DATABASE_URL, this.options)
+    start(databaseUrl: string): void {
+        MongoClient.connect(databaseUrl, this.options)
             .then((client: MongoClient) => {
                 this.collection = client.db(DATABASE_NAME).collection(DATABASE_COLLECTION);
             })
@@ -51,15 +51,39 @@ export class DrawingService {
     }
 
     async addDrawing(drawing: Drawing): Promise<void> {
-        // TODO ajouter de la validation
-        this.collection.insertOne(drawing).catch(() => {
-            throw new Error("Le dessin n'a pas pu être ajouté!");
-        });
+        if (this.validateDrawing(drawing)) {
+            this.collection.insertOne(drawing).catch(() => {
+                throw new Error("Le dessin n'a pas pu être ajouté!");
+            });
+        } else {
+            throw new Error('Le dessin est invalide!');
+        }
     }
 
     async removeDrawing(id: string): Promise<void> {
         this.collection.findOneAndDelete({ _id: id }).catch(() => {
             throw new Error("Le dessin n'a pas pu être supprimé!");
         });
+    }
+
+    private validateDrawingTitle(title: string): boolean {
+        const regexTitle = new RegExp('^[a-zA-ZÀ-ÿ](\\d|[a-zA-ZÀ-ÿ ]){0,20}$');
+        return regexTitle.test(title);
+    }
+
+    private validateDrawingTags(tags: string[]): boolean {
+        let isValid = true;
+        const regexTag = new RegExp('^(\\d|[a-zA-ZÀ-ÿ]){0,15}$');
+        for (const tag of tags) {
+            if (!regexTag.test(tag)) {
+                isValid = false;
+                break;
+            }
+        }
+        return isValid;
+    }
+
+    private validateDrawing(drawing: Drawing): boolean {
+        return this.validateDrawingTitle(drawing.name) && this.validateDrawingTags(drawing.tags);
     }
 }
