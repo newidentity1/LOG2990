@@ -23,7 +23,9 @@
                 </mat-select>
             </mat-form-field>
 
+            <!-- filter slider -->
             <div id="slider-container" [style.display]="sliderIsVisible ? 'block' : 'none'">
+                <label> Intensité du filtre: </label>
                 <mat-slider id="filterSlider" min="0" max="1" step="0.01" [value]="percentage" (input)="setFilterPercentage($event.value)">
                 </mat-slider>
                 <input
@@ -44,12 +46,12 @@
     </mat-accordion>
     <form>
         <mat-form-field>
-            <mat-label>Titre du dessin</mat-label>
+            <mat-label>Titre de l'image </mat-label>
             <input matInput [(ngModel)]="drawingTitle" name="drawingTitle" />
         </mat-form-field>
     </form>
 
-    <h3>Prévisualisation du dessin</h3>
+    <h3>Prévisualisation de l'image</h3>
     <a #drawingImageContainer href="" download=""> </a>
     <!-- default width and height  -->
     <canvas id="previewCanvas" #previewCanvas width="250" height="250"></canvas>
