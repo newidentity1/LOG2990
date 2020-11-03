@@ -28,7 +28,7 @@ export const DEFAULT_HEIGHT = 800;
 
 export const CANVAS_MIN_WIDTH = 250;
 export const CANVAS_MIN_HEIGHT = 250;
-export const CANVAS_MARGIN_LEFT = 15;
+export const CANVAS_MARGIN_LEFT = 280;
 export const CANVAS_MARGIN_TOP = 20;
 
 export const MAX_COLOR_VALUE = 255;
@@ -52,7 +52,7 @@ export const SELECTION_CONTROL_POINT_SIZE = 8;
 export const SELECTION_CONTROL_COLUMNS = 3;
 export const SELECTION_BOX_THICKNESS = 2;
 export const SELECTION_MOVE_STEP = 3;
-export const SELECTION_MOVE_START_DELAY = 1000;
+export const SELECTION_MOVE_START_DELAY = 500;
 export const SELECTION_MOVE_DELAY = 100;
 
 export const POURCENTAGE = 100;

@@ -18,7 +18,7 @@ describe('LineService', () => {
 
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
-    let drawLineSpy: jasmine.Spy<any>;
+    let drawSpy: jasmine.Spy<any>;
     let clearLockSpy: jasmine.Spy<any>;
     let ajustementAngleSpy: jasmine.Spy<any>;
     let afficherSegementPreviewSpy: jasmine.Spy<any>;
@@ -34,7 +34,7 @@ describe('LineService', () => {
             providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
         });
         service = TestBed.inject(LineService);
-        drawLineSpy = spyOn<any>(service, 'drawLine').and.callThrough();
+        drawSpy = spyOn<any>(service, 'draw').and.callThrough();
         clearLockSpy = spyOn<any>(service, 'clearlock').and.callThrough();
         ajustementAngleSpy = spyOn<any>(service, 'ajustementAngle').and.callThrough();
         afficherSegementPreviewSpy = spyOn<any>(service, 'afficherSegementPreview').and.callThrough();
@@ -101,7 +101,6 @@ describe('LineService', () => {
         service.pathData.push(service.mouseDownCoord);
         service.onKeyDown(keyboardEventShift);
         mouseEventclick1 = { offsetX: 175, offsetY: -175, button: 0 } as MouseEvent;
-        service.onMouseMove(mouseEventclick1);
         service.onClick(mouseEventclick1);
         const yy: number =
             // tslint:disable-next-line:no-magic-numbers
@@ -135,7 +134,7 @@ describe('LineService', () => {
     });
 
     it(' setColors should call setColors of drawing Service', () => {
-        service.setColors(new Color());
+        service.setColors(new Color(), new Color());
         expect(drawServiceSpy.setColor).toHaveBeenCalled();
     });
 
@@ -159,7 +158,7 @@ describe('LineService', () => {
 
     it(' onClick should not call drawLine  if the number of click < 2', () => {
         service.onClick(mouseEventclick1);
-        expect(drawLineSpy).not.toHaveBeenCalled();
+        expect(drawSpy).not.toHaveBeenCalled();
     });
 
     it(' onClick should call drawLine if the number of click > 1', () => {
@@ -168,7 +167,7 @@ describe('LineService', () => {
         service.mouseDownCoord = { x: 50, y: 50 };
         service.pathData.push(service.mouseDownCoord);
         service.onClick(mouseEventclick1);
-        expect(drawLineSpy).toHaveBeenCalled();
+        expect(drawSpy).toHaveBeenCalled();
     });
 
     it('shift is press should set shift to true', () => {
@@ -185,7 +184,7 @@ describe('LineService', () => {
         service.onKeyUp(keyboardEventShiftUP);
         expect(service.shift).toEqual(false);
         expect(clearLockSpy).toHaveBeenCalled();
-        expect(drawLineSpy).toHaveBeenCalled();
+        expect(drawSpy).toHaveBeenCalled();
         expect(service.pathData[service.pathData.length - 1]).toEqual(service.mouseDownCoord);
     });
 
@@ -273,7 +272,7 @@ describe('LineService', () => {
         service.mouseDownCoord = { x: 100, y: 100 };
         service.pathData.push(service.mouseDownCoord);
         service.onDoubleClick(mouseEventclick1);
-        expect(drawLineSpy).toHaveBeenCalled();
+        expect(drawSpy).toHaveBeenCalled();
         expect(service.pathData[service.pathData.length - 1]).toEqual(service.pathData[0]);
     });
 
@@ -285,7 +284,7 @@ describe('LineService', () => {
         service.mouseDownCoord = { x: 100, y: 100 };
         service.pathData.push(service.mouseDownCoord);
         service.onDoubleClick(mouseEventclick1);
-        expect(drawLineSpy).toHaveBeenCalled();
+        expect(drawSpy).toHaveBeenCalled();
     });
 
     it(' onDoubleClick should do nothing if there is no point', () => {
