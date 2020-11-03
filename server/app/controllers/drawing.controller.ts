@@ -1,4 +1,4 @@
-import { HTTP_STATUS_BAD_REQUEST, HTTP_STATUS_CREATED, HTTP_STATUS_NOT_FOUND, HTTP_STATUS_NO_CONTENT } from '@app/constants';
+import { DATABASE_URL, HTTP_STATUS_BAD_REQUEST, HTTP_STATUS_CREATED, HTTP_STATUS_NOT_FOUND, HTTP_STATUS_NO_CONTENT } from '@app/constants';
 import { DrawingService } from '@app/services/drawing.service';
 import { Drawing } from '@common/communication/drawing';
 import { NextFunction, Request, Response, Router } from 'express';
@@ -10,6 +10,7 @@ export class DrawingController {
     router: Router;
 
     constructor(@inject(TYPES.DrawingService) private drawingService: DrawingService) {
+        this.drawingService.start(DATABASE_URL);
         this.configureRouter();
     }
 
@@ -42,7 +43,7 @@ export class DrawingController {
             this.drawingService
                 .addDrawing(req.body)
                 .then(() => {
-                    res.sendStatus(HTTP_STATUS_CREATED).send();
+                    res.sendStatus(HTTP_STATUS_CREATED);
                 })
                 .catch((error) => {
                     res.sendStatus(HTTP_STATUS_BAD_REQUEST).send(error.message);
@@ -53,7 +54,7 @@ export class DrawingController {
             this.drawingService
                 .removeDrawing(req.params.drawingId)
                 .then(() => {
-                    res.sendStatus(HTTP_STATUS_NO_CONTENT).send();
+                    res.sendStatus(HTTP_STATUS_NO_CONTENT);
                 })
                 .catch((error) => {
                     res.status(HTTP_STATUS_NOT_FOUND).send(error.message);
