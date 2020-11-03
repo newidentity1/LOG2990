@@ -1,6 +1,6 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { FireBaseService } from '@app/services/fire/fire-base.service';
+import { FireBaseService } from '@app/services/firebase/fire-base.service';
 import { UploadComponent } from './upload.component';
 
 describe('UploadComponent', () => {

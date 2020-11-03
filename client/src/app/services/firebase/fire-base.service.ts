@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { AngularFireStorage, AngularFireStorageReference, AngularFireUploadTask } from '@angular/fire/storage';
-import { CommunicationService } from '@app/services/communication.service';
+import { CommunicationService } from '@app/services/communication/communication.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { Drawing } from '@common/communication/drawing';
-// import { Drawing } from '@common/communication/drawing';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -35,12 +34,11 @@ export class FireBaseService {
 
     // permet de recuperer l'URL de retour envoye par fireBase
     downloadCanvasURL(): void {
-        const obs: Observable<Blob[]> = this.ref.getDownloadURL();
-        obs.subscribe((data) => {
-            for (const letter of data) {
+        const downloadURLObservable: Observable<Blob[]> = this.ref.getDownloadURL();
+        downloadURLObservable.subscribe((imageURL) => {
+            for (const letter of imageURL) {
                 this.url = this.url + letter;
             }
-            console.log(this.url);
             this.postDraw();
             this.reset();
         });
@@ -48,8 +46,8 @@ export class FireBaseService {
 
     // envois un objet de type dessin avec l'url de fireBase au serveur
     postDraw(): void {
-        const draw: Drawing = { _id: this.id, name: this.id, tags: [], url: this.url };
-        this.communicationService.postDraw(draw);
+        const drawing: Drawing = { _id: this.id, name: this.id, tags: [], url: this.url };
+        this.communicationService.postDraw(drawing);
     }
 
     deleteImage(id: string): void {

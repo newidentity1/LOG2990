@@ -4,9 +4,9 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
-import { CommunicationService } from '@app/services/communication.service';
+import { CommunicationService } from '@app/services/communication/communication.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { FireBaseService } from '@app/services/fire/fire-base.service';
+import { FireBaseService } from '@app/services/firebase/fire-base.service';
 import { Drawing } from '@common/communication/drawing';
 import { NgImageSliderComponent, NgImageSliderModule } from 'ng-image-slider';
 import { of } from 'rxjs';
@@ -42,7 +42,6 @@ describe('GalleryComponent', () => {
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
         drawingServiceSpy = TestBed.inject(DrawingService) as jasmine.SpyObj<DrawingService>;
-        // sliderSpy = TestBed.inject(NgImageSliderComponent) as jasmine.SpyObj<NgImageSliderComponent>;
         communicationSpy = TestBed.inject(CommunicationService) as jasmine.SpyObj<CommunicationService>;
 
         const data: Drawing[] = [];
@@ -79,14 +78,12 @@ describe('GalleryComponent', () => {
         component.drawings.push(fakeDrawing1);
         component.deleteDraw();
         expect(fireBaseServiceSpy.deleteImage).toHaveBeenCalled();
-        // expect(communicationSpy.deleteDraw).not.toHaveBeenCalled();
     });
 
     it('deleteDraw should delete the current draw', () => {
         component.drawings.length = 0;
         component.deleteDraw();
         expect(fireBaseServiceSpy.deleteImage).not.toHaveBeenCalled();
-        // expect(communicationSpy.deleteDraw).not.toHaveBeenCalled();
     });
 
     it('getDrawing should get all the drawing present on the server', () => {
