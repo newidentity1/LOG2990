@@ -2,14 +2,6 @@ button {
     width: 50%;
 }
 
-.disabled {
-    pointer-events: none;
-    cursor: not-allowed;
-    opacity: 0.25;
-    filter: alpha(opacity=65);
-    box-shadow: none;
-}
-
 #undo-redo-container {
     padding: 5px;
 }
