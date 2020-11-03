@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { BLUR_CONVERSION, HUE_CONVERSION, MAX_PREVIEW_SIZE } from '@app/constants/constants.ts';
 import { ExportFilterType } from '@app/enums/export-filter.enum';
@@ -9,7 +9,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
     templateUrl: './export-drawing-dialog.component.html',
     styleUrls: ['./export-drawing-dialog.component.scss'],
 })
-export class ExportDrawingDialogComponent implements AfterViewInit, OnInit {
+export class ExportDrawingDialogComponent implements AfterViewInit {
     @ViewChild('drawingImageContainer') drawingImageContainer: ElementRef;
     @ViewChild('previewCanvas') previewCanvas: ElementRef<HTMLCanvasElement>; // Visualisation canvas with filters
     @ViewChild('exportCanvas') exportCanvas: ElementRef<HTMLCanvasElement>; // Exported canvas, copy of real canvas with filters
@@ -31,9 +31,6 @@ export class ExportDrawingDialogComponent implements AfterViewInit, OnInit {
         this.drawingTitle = '';
         this.sliderIsVisible = false;
         this.exportFilter = 'none';
-    }
-
-    ngOnInit(): void {
         this.percentage = 1;
     }
 
