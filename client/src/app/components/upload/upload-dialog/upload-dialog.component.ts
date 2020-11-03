@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { FireBaseService } from '@app/services/firebase/fire-base.service';
 import { FormControl, Validators } from '@angular/forms';
 import { Drawing } from '@common/communication/drawing';
-import { CommunicationService } from '@app/services/communication/communication.service';
+// import { CommunicationService } from '@app/services/communication/communication.service';
 
 @Component({
     selector: 'app-upload-dialog',
