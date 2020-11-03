@@ -122,42 +122,42 @@ describe('ExportDrawingDialogComponent', () => {
     it('setPreviewFilter should set exportFilter to blur if selected filter is blur and slider should not be disabled', () => {
         component.selectedFilter = ExportFilterType.Blur;
         component.setPreviewFilter();
-        expect(component.sliderIsDisabled).toBeFalse();
+        expect(component.sliderIsVisible).toBeTrue();
         expect(component['exportFilter']).toContain('blur');
     });
 
     it('setPreviewFilter should set exportFilter to brightness if selected filter is brightness and slider should not be disabled', () => {
         component.selectedFilter = ExportFilterType.Brightness;
         component.setPreviewFilter();
-        expect(component.sliderIsDisabled).toBeFalse();
+        expect(component.sliderIsVisible).toBeTrue();
         expect(component['exportFilter']).toContain('brightness');
     });
 
     it('setPreviewFilter should set exportFilter to saturation if selected filter is saturation and slider should not be disabled', () => {
         component.selectedFilter = ExportFilterType.Saturation;
         component.setPreviewFilter();
-        expect(component.sliderIsDisabled).toBeFalse();
+        expect(component.sliderIsVisible).toBeTrue();
         expect(component['exportFilter']).toContain('saturate');
     });
 
     it('setPreviewFilter should set exportFilter to hue-rotate if selected filter is hue and slider should not be disabled', () => {
         component.selectedFilter = ExportFilterType.Hue;
         component.setPreviewFilter();
-        expect(component.sliderIsDisabled).toBeFalse();
+        expect(component.sliderIsVisible).toBeTrue();
         expect(component['exportFilter']).toContain('hue-rotate');
     });
 
     it('setPreviewFilter should set exportFilter to sepia if selected filter is sepia and slider should be disabled', () => {
         component.selectedFilter = ExportFilterType.Sepia;
         component.setPreviewFilter();
-        expect(component.sliderIsDisabled).toBeTrue();
+        expect(component.sliderIsVisible).toBeFalse();
         expect(component['exportFilter']).toContain('sepia');
     });
 
     it('setPreviewFilter should set exportFilter to invert if selected filter is invert and slider should be disabled', () => {
         component.selectedFilter = ExportFilterType.Invert;
         component.setPreviewFilter();
-        expect(component.sliderIsDisabled).toBeTrue();
+        expect(component.sliderIsVisible).toBeFalse();
         expect(component['exportFilter']).toContain('invert');
     });
 

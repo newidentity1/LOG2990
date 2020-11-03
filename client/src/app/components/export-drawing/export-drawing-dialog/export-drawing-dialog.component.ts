@@ -169,8 +169,7 @@ export class ExportDrawingDialogComponent implements AfterViewInit, OnInit {
         this.exportCtx.filter = 'none';
 
         this.setImageUrl();
-        const title = this.drawingTitle.length > 0 ? this.drawingTitle : 'image';
-        this.drawingImageContainer.nativeElement.download = title + '.' + this.selectedFormat;
+        this.drawingImageContainer.nativeElement.download = this.drawingTitle + '.' + this.selectedFormat;
         this.drawingImageContainer.nativeElement.click();
         this.dialogRef.close();
     }
