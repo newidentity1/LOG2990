@@ -16,16 +16,14 @@ export class UndoRedoService {
         this.undoIndex--;
         this.drawingService.clearCanvas(this.drawingService.baseCtx);
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        if (this.undoIndex >= 0) {
-            for (let i = 0; i <= this.undoIndex; i++) {
-                setTimeout(() => {
-                    this.commands[i].applyCurrentSettings();
-                    this.commands[i].execute();
-                }, 0);
-                setTimeout(() => {
-                    this.commands[i].drawImage();
-                }, 1);
-            }
+        for (let i = 0; i <= this.undoIndex; i++) {
+            setTimeout(() => {
+                this.commands[i].applyCurrentSettings();
+                this.commands[i].execute();
+            }, 0);
+            setTimeout(() => {
+                this.commands[i].drawImage();
+            }, 1);
         }
     }
 
@@ -45,7 +43,7 @@ export class UndoRedoService {
     }
 
     canRedo(mouseDown: boolean, isAreaSelected: boolean): boolean {
-        const undoIndexCheck = this.undoIndex < this.commands.length - 1 && this.commands.length > 0;
+        const undoIndexCheck = this.undoIndex < this.commands.length - 1;
         return undoIndexCheck && !mouseDown && !isAreaSelected;
     }
 
