@@ -49,13 +49,13 @@ describe('FireBaseService', () => {
     //     expect(spy).toHaveBeenCalled();
     // });
 
-    // it('DeleteImage should delete the image on the fireBase data', () => {
-    //     // tslint:disable-next-line:no-any
-    //     const spy = spyOn<any>(service, 'reset');
-    //     service.uploadCanvas();
-    //     service.deleteImage(service.id);
-    //     expect(spy).toHaveBeenCalled();
-    // });
+    it('DeleteImage should delete the image on the fireBase data', () => {
+        // tslint:disable-next-line:no-any
+        const spy = spyOn<any>(service, 'reset');
+        service.uploadCanvas();
+        service.deleteImage(service.id);
+        expect(spy).toHaveBeenCalled();
+    });
 
     it('Reset should reset the url and the id ', () => {
         service.reset();

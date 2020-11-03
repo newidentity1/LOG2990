@@ -52,11 +52,11 @@ export class FireBaseService {
         this.communicationService.postDraw(draw);
     }
 
-    deleteImage(id: string): void {
-        this.ref = this.afStorage.ref(id);
-        this.ref.delete();
-        this.reset();
-    }
+    // deleteImage(id: string): void {
+    //     this.ref = this.afStorage.ref(id);
+    //     this.ref.delete();
+    //     this.reset();
+    // }
     reset(): void {
         this.id = '';
         this.url = '';
