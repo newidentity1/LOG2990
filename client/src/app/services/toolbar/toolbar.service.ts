@@ -165,16 +165,18 @@ export class ToolbarService {
     }
 
     onDoubleClick(event: MouseEvent): void {
+        this.mouseDown = false;
         this.currentTool.onDoubleClick(event);
     }
 
     onClick(event: MouseEvent): void {
+        this.mouseDown = this.currentTool === this.lineService;
         this.currentTool.onClick(event);
     }
 
     undo(): void {
         this.undoRedoService.undo(this.mouseDown, this.isAreaSelected());
-        if (!this.isAreaSelected())
+        if (!this.isAreaSelected() && !this.mouseDown)
             setTimeout(() => {
                 this.applyCurrentTool();
             }, 1);
@@ -182,7 +184,7 @@ export class ToolbarService {
 
     redo(): void {
         this.undoRedoService.redo(this.mouseDown, this.isAreaSelected());
-        if (!this.isAreaSelected()) this.applyCurrentTool();
+        if (!this.isAreaSelected() && !this.mouseDown) this.applyCurrentTool();
     }
 
     canUndo(): boolean {
