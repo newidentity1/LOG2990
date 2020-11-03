@@ -48,13 +48,24 @@ describe('BucketService', () => {
     });
 
     it('should be created', () => {
+        expect(service).toBeTruthy();
+    });
+
+    it('should be created', () => {
         const couleur: Color = new Color('RED');
         service.setColors(couleur, couleur);
         expect(drawServiceSpy.setColor).toHaveBeenCalled();
     });
 
-    it('setColor should call drawing service.setColor()', () => {
-        expect(service).toBeTruthy();
+    it('onMouseUp should set mouse Down to false)', () => {
+        service.onMouseUp(mouseEventclickLeft);
+        expect(service.mouseDown).toBeFalse();
+    });
+
+    it('onMouseUp should set mouse Down to false)', () => {
+        service.mouseDown = true;
+        service.onMouseUp(mouseEventclickLeft);
+        expect(service.mouseDown).toBeFalse();
     });
 
     it('checkColor should return false if pixel is out ', () => {
@@ -127,7 +138,6 @@ describe('BucketService', () => {
 
     it('ResetMatrice should reset all pixel Status to 0', () => {
         service.onMouseDown(mouseEventclickLeft);
-        service['resetMatrice']();
         expect(service['matrice'][0][0].status).toEqual(0);
     });
 
@@ -222,6 +232,14 @@ describe('BucketService', () => {
         const colorPixelSpy = spyOn<any>(service, 'colorPixel').and.callThrough();
         service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(2, 2, 1, 1).data;
         service['generateMatrice']();
+        const p1: Pixel = { x: 2, y: 2, status: 0 };
+        service['checkPixel'](p1);
+        expect(colorPixelSpy).toHaveBeenCalled();
+    });
+
+    it('checkPixel should call colorPixel if the pixel status = 0', () => {
+        const colorPixelSpy = spyOn<any>(service, 'colorPixel').and.callThrough();
+        service.onMouseDown(mouseEventclickRight);
         const p1: Pixel = { x: 2, y: 2, status: 0 };
         service['checkPixel'](p1);
         expect(colorPixelSpy).toHaveBeenCalled();

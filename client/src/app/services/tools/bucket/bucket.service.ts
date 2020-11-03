@@ -46,6 +46,7 @@ export class BucketService extends Tool {
         this.height = this.drawingService.canvas.height;
         this.image = this.drawingService.baseCtx.getImageData(0, 0, this.width, this.height);
         this.mouseDownCoord = this.getPositionFromMouse(event);
+        console.log(this.mouseDownCoord.x, this.mouseDownCoord.y);
         this.startPixelColor = this.drawingService.baseCtx.getImageData(this.mouseDownCoord.x, this.mouseDownCoord.y, 1, 1).data;
         this.mouseDown = true;
         this.mouseLeft = event.button === MouseButton.Left;
@@ -66,7 +67,6 @@ export class BucketService extends Tool {
         while (this.openList.length !== 0) {
             this.addNeighbours(this.openList);
         }
-        this.resetMatrice();
     }
 
     floodFillRight(): void {
@@ -103,14 +103,6 @@ export class BucketService extends Tool {
 
     private clearList(list: Pixel[]): void {
         list.length = 0;
-    }
-
-    private resetMatrice(): void {
-        for (const line of this.matrice) {
-            for (const pixel of line) {
-                pixel.status = 0;
-            }
-        }
     }
 
     private copyList(list: Pixel[]): Pixel[] {
@@ -205,7 +197,9 @@ export class BucketService extends Tool {
 
     draw(ctx: CanvasRenderingContext2D): void {
         if (this.mouseLeft) {
+            this.matrice.length = 0;
             this.generateMatrice();
+            console.log(this.matrice.length);
             this.floodFillLeft();
         } else {
             this.floodFillRight();
