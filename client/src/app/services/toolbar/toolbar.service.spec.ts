@@ -365,25 +365,73 @@ describe('ToolbarService', () => {
     it('undo should call undo from undoRedoService', () => {
         // tslint:disable-next-line:no-any / reason : spying on function
         const undoSpy = spyOn<any>(service['undoRedoService'], 'undo');
-        // tslint:disable-next-line:no-any / reason : spying on function
-        const applyCurrentToolSpy = spyOn<any>(service, 'applyCurrentTool');
-        const delay = 1000;
-        jasmine.clock().install();
         service.undo();
-        jasmine.clock().tick(delay);
         expect(undoSpy).toHaveBeenCalled();
-        expect(applyCurrentToolSpy).toHaveBeenCalled();
         jasmine.clock().uninstall();
     });
 
     it('redo should call redo from undoRedoService', () => {
         // tslint:disable-next-line:no-any / reason : spying on function
         const redoSpy = spyOn<any>(service['undoRedoService'], 'redo');
+        service.redo();
+        expect(redoSpy).toHaveBeenCalled();
+    });
+
+    it('undo should call isAreaSelected and applyCurrentTool if an area is not selected', () => {
+        // tslint:disable-next-line:no-any / reason : spying on function
+        const isAreaSelectedSpy = spyOn<any>(service, 'isAreaSelected').and.callFake(() => {
+            return false;
+        });
+        // tslint:disable-next-line:no-any / reason : spying on function
+        const applyCurrentToolSpy = spyOn<any>(service, 'applyCurrentTool');
+        const delay = 1000;
+        jasmine.clock().install();
+        service.undo();
+        jasmine.clock().tick(delay);
+        expect(isAreaSelectedSpy).toHaveBeenCalled();
+        expect(applyCurrentToolSpy).toHaveBeenCalled();
+        jasmine.clock().uninstall();
+    });
+
+    it('redo should call isAreaSelected and applyCurrentTool if an area is not selected', () => {
+        // tslint:disable-next-line:no-any / reason : spying on function
+        const isAreaSelected = spyOn<any>(service, 'isAreaSelected').and.callFake(() => {
+            return false;
+        });
         // tslint:disable-next-line:no-any / reason : spying on function
         const applyCurrentToolSpy = spyOn<any>(service, 'applyCurrentTool');
         service.redo();
-        expect(redoSpy).toHaveBeenCalled();
+        expect(isAreaSelected).toHaveBeenCalled();
         expect(applyCurrentToolSpy).toHaveBeenCalled();
     });
+
+    it('undo should call isAreaSelected and not applyCurrentTool if an area is selected', () => {
+        // tslint:disable-next-line:no-any / reason : spying on function
+        const isAreaSelected = spyOn<any>(service, 'isAreaSelected').and.callFake(() => {
+            return true;
+        });
+        // tslint:disable-next-line:no-any / reason : spying on function
+        const applyCurrentToolSpy = spyOn<any>(service, 'applyCurrentTool');
+        const delay = 1000;
+        jasmine.clock().install();
+        service.undo();
+        jasmine.clock().tick(delay);
+        expect(isAreaSelected).toHaveBeenCalled();
+        expect(applyCurrentToolSpy).not.toHaveBeenCalled();
+        jasmine.clock().uninstall();
+    });
+
+    it('redo should call isAreaSelected and should not call applyCurrentTool if an area is selected', () => {
+        // tslint:disable-next-line:no-any / reason : spying on function
+        const isAreaSelected = spyOn<any>(service, 'isAreaSelected').and.callFake(() => {
+            return true;
+        });
+        // tslint:disable-next-line:no-any / reason : spying on function
+        const applyCurrentToolSpy = spyOn<any>(service, 'applyCurrentTool');
+        service.redo();
+        expect(isAreaSelected).toHaveBeenCalled();
+        expect(applyCurrentToolSpy).not.toHaveBeenCalled();
+    });
+
     // tslint:disable-next-line: max-file-line-count / reason: its a test file
 });

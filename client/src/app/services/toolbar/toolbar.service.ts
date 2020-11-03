@@ -174,14 +174,15 @@ export class ToolbarService {
 
     undo(): void {
         this.undoRedoService.undo(this.mouseDown, this.isAreaSelected());
-        setTimeout(() => {
-            this.applyCurrentTool();
-        }, 1);
+        if (!this.isAreaSelected())
+            setTimeout(() => {
+                this.applyCurrentTool();
+            }, 1);
     }
 
     redo(): void {
         this.undoRedoService.redo(this.mouseDown, this.isAreaSelected());
-        this.applyCurrentTool();
+        if (!this.isAreaSelected()) this.applyCurrentTool();
     }
 
     canUndo(): boolean {
