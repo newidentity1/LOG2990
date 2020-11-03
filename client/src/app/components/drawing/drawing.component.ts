@@ -77,9 +77,12 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
         this.subscribeExecutedCommand.unsubscribe();
     }
 
+    @HostListener('window:mousemove', ['$event'])
     onMouseMove(event: MouseEvent): void {
         if (!this.isResizingWidth && !this.isResizingHeight) {
             this.toolbarService.onMouseMove(event);
+        } else {
+            this.onResize(event);
         }
     }
 
@@ -130,7 +133,7 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
         return false;
     }
 
-    @HostListener('window:mousemove', ['$event'])
+    // @HostListener('window:mousemove', ['$event'])
     onResize(event: MouseEvent): void {
         if (this.isResizingWidth) {
             event.preventDefault();
