@@ -2,7 +2,6 @@ import { expect } from 'chai';
 import { describe } from 'mocha';
 import { Db, MongoClient } from 'mongodb';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import * as sinon from 'sinon';
 import { Drawing } from '../../../common/communication/drawing';
 import { testingContainer } from '../../test/test-utils';
 import { TYPES } from '../types';
@@ -37,16 +36,6 @@ describe('Drawing service', () => {
     after(async () => {
         await mongoServer.stop();
         await client.logout();
-    });
-
-    it('should end the process with 1', () => {
-        const connectStub = sinon.stub(MongoClient, 'connect').rejects();
-        // const processStub = sinon.stub(process, 'exit');
-        drawingService.start('');
-        expect(connectStub);
-        // connectStub.restore();
-
-        // done();
     });
 
     it('should return a drawing when sending a valid id', (done: Mocha.Done) => {
