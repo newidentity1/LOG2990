@@ -43,6 +43,5 @@ export class ResizeCommand extends Command {
 
     drawImage(): void {
         this.baseCtx.putImageData(this.imgData, 0, 0);
-        this.drawingService.setWhiteBackground();
     }
 }
