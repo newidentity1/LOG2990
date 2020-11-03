@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Drawing } from '@common/communication/drawing';
-// import { Drawing } from '@common/communication/drawing';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -12,21 +11,20 @@ export class CommunicationService {
     constructor(private http: HttpClient) {}
 
     deleteDraw(id: string): Observable<Drawing> {
-        const obs: Observable<Drawing> = this.http.delete<Drawing>(this.drawingUrl + id);
-        obs.subscribe((data) => {
+        const deleteDrawing: Observable<Drawing> = this.http.delete<Drawing>(this.drawingUrl + id);
+        deleteDrawing.subscribe(() => {
             this.getDrawings();
         });
-        return obs;
+        return deleteDrawing;
     }
 
     getDrawings(): Observable<Drawing[]> {
-        const obs: Observable<Drawing[]> = this.http.get<Drawing[]>(this.drawingUrl);
-        return obs;
+        return this.http.get<Drawing[]>(this.drawingUrl);
     }
 
     postDraw(draw: Drawing): void {
-        const obs: Observable<string> = this.http.post(this.drawingUrl, draw, { responseType: 'text' });
-        obs.subscribe({
+        const postDrawing: Observable<string> = this.http.post(this.drawingUrl, draw, { responseType: 'text' });
+        postDrawing.subscribe({
             // tslint:disable-next-line: no-any
             next: (data: any) => {
                 console.log(data);

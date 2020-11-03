@@ -1,9 +1,9 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { CommunicationService } from '@app/services/communication.service';
+import { CommunicationService } from '@app/services/communication/communication.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { FireBaseService } from '@app/services/fire/fire-base.service';
+import { FireBaseService } from '@app/services/firebase/fire-base.service';
 import { Drawing } from '@common/communication/drawing';
 import { NgImageSliderComponent } from 'ng-image-slider';
 import { Observable } from 'rxjs';
@@ -81,10 +81,7 @@ export class GalleryComponent implements OnInit, AfterViewInit {
 
     getDrawings(): Observable<Drawing[]> {
         const obs: Observable<Drawing[]> = this.communicationService.getDrawings();
-        console.log(obs);
         obs.subscribe((data) => {
-            console.log('data:  ');
-            console.log(data);
             this.transformData(data);
         });
         return obs;
