@@ -1,17 +1,12 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
-<<<<<<< HEAD
-import { MatSliderModule } from '@angular/material/slider';
-=======
-import { MatRadioChange, MatRadioModule, _MatRadioButtonBase } from '@angular/material/radio';
+import { MatRadioChange, _MatRadioButtonBase } from '@angular/material/radio';
 import { MatSlider, MatSliderChange, MatSliderModule } from '@angular/material/slider';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
-import { ThicknessSliderComponent } from '@app/components/tools-options/thickness-slider/thickness-slider.component';
 import { MAXIMUM_SIDES, MAXIMUM_THICKNESS, MINIMUM_SIDES, MINIMUM_THICKNESS } from '@app/constants/constants';
 import { DrawingType } from '@app/enums/drawing-type.enum';
 import { PolygonService } from '@app/services/tools/polygon/polygon.service';
->>>>>>> dev
 import { PolygonComponent } from './polygon.component';
 
 describe('PolygonComponent', () => {
@@ -29,14 +24,8 @@ describe('PolygonComponent', () => {
     beforeEach(async(() => {
         polygonServiceMock = jasmine.createSpyObj('PolygonService', ['setThickness', 'setTypeDrawing', 'setNumberOfSides']);
         TestBed.configureTestingModule({
-<<<<<<< HEAD
             declarations: [PolygonComponent],
             imports: [MatSliderModule, FormsModule],
-=======
-            declarations: [PolygonComponent, ThicknessSliderComponent],
-            imports: [MatSliderModule, MatRadioModule, FormsModule],
-            providers: [{ provide: PolygonService, useValue: polygonServiceMock }],
->>>>>>> dev
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
         polygonServiceMock = TestBed.inject(PolygonService) as jasmine.SpyObj<PolygonService>;
