@@ -31,6 +31,9 @@ export class SidebarComponent {
         } else {
             this.sidenavProperties.toggle();
         }
+        if (tool.name === 'Eyedropper') {
+            this.sidenavProperties.close();
+        }
     }
 
     createNewDrawing(): void {
