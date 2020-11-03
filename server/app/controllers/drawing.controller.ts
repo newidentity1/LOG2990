@@ -42,7 +42,7 @@ export class DrawingController {
             this.drawingService
                 .addDrawing(req.body)
                 .then(() => {
-                    res.sendStatus(HTTP_STATUS_CREATED).send();
+                    res.sendStatus(HTTP_STATUS_CREATED);
                 })
                 .catch((error) => {
                     res.sendStatus(HTTP_STATUS_BAD_REQUEST).send(error.message);
@@ -53,7 +53,7 @@ export class DrawingController {
             this.drawingService
                 .removeDrawing(req.params.drawingId)
                 .then(() => {
-                    res.sendStatus(HTTP_STATUS_NO_CONTENT).send();
+                    res.sendStatus(HTTP_STATUS_NO_CONTENT);
                 })
                 .catch((error) => {
                     res.status(HTTP_STATUS_NOT_FOUND).send(error.message);
