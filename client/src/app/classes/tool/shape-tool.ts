@@ -173,4 +173,26 @@ export abstract class ShapeTool extends Tool {
     clone(): ShapeTool {
         return this;
     }
+
+    getPositionFromMouse(event: MouseEvent): Vec2 {
+        return this.capMousePositionInCanvas(event);
+    }
+
+    private capMousePositionInCanvas(event: MouseEvent): Vec2 {
+        const canvasBoundingRect = this.drawingService.canvas.getBoundingClientRect();
+        const cappedPosition = { x: event.clientX - canvasBoundingRect.x, y: event.clientY - canvasBoundingRect.y };
+
+        if (cappedPosition.x < 0) {
+            cappedPosition.x = 0;
+        } else if (cappedPosition.x >= canvasBoundingRect.width) {
+            cappedPosition.x = canvasBoundingRect.width;
+        }
+
+        if (cappedPosition.y < 0) {
+            cappedPosition.y = 0;
+        } else if (cappedPosition.y >= canvasBoundingRect.height) {
+            cappedPosition.y = canvasBoundingRect.height;
+        }
+        return cappedPosition;
+    }
 }
