@@ -55,6 +55,7 @@ export class FireBaseService {
     deleteImage(id: string): void {
         this.ref = this.afStorage.ref(id);
         this.ref.delete();
+        this.reset();
     }
     reset(): void {
         this.id = '';
