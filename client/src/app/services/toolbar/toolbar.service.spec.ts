@@ -108,13 +108,35 @@ describe('ToolbarService', () => {
         expect(service).toBeTruthy();
     });
 
-    it('initializeListeners should set primary and secondary colors ', () => {
+    it('initializeListeners should set primary and secondary colors and subscribe to each tool', () => {
         // tslint:disable-next-line:no-any / reason: spying on function
         const setColorsSpy = spyOn<any>(service, 'setColors').and.callThrough();
+        // tslint:disable-next-line:no-any no-empty / reason: spying on function
+        const addCommandSpy = spyOn<any>(service, 'addCommand').and.callFake(() => {});
         service.initializeListeners();
+        const pencilService = service.getTools()[0];
+        pencilService.executedCommand.emit(pencilService.clone());
         expect(setColorsSpy).toHaveBeenCalled();
+        expect(addCommandSpy).toHaveBeenCalled();
         expect(service.primaryColor).toBeTruthy();
         expect(service.secondaryColor).toBeTruthy();
+    });
+
+    it('unsubscribeListeners should unsubscribe to each subscription', () => {
+        service.initializeListeners();
+
+        // tslint:disable-next-line:no-any / reason: spying on function
+        const primaryColorSpy = spyOn<any>(service['primaryColorSubscription'], 'unsubscribe');
+        // tslint:disable-next-line:no-any / reason: spying on function
+        const secondaryColorSpy = spyOn<any>(service['secondaryColorSubscription'], 'unsubscribe');
+        // tslint:disable-next-line:no-any / reason: spying on function
+        const toolSpy = spyOn<any>(service.toolsSubscription[0], 'unsubscribe');
+
+        service.unsubscribeListeners();
+
+        expect(toolSpy).toHaveBeenCalled();
+        expect(primaryColorSpy).toHaveBeenCalled();
+        expect(secondaryColorSpy).toHaveBeenCalled();
     });
 
     it('getTools should return an array of tool services ', () => {
