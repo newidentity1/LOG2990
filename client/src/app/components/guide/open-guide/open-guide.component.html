@@ -1,0 +1,5 @@
+<button class="menu" *ngIf="inMenu" mat-button (click)="openDialog()">Afficher le Guide d'utilisation</button>
+
+<button *ngIf="!inMenu" matTooltip="Guide" matTooltipPosition="right" mat-button (click)="openDialog()">
+    <mat-icon> help </mat-icon>
+</button>

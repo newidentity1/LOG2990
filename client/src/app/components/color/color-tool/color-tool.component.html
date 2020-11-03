@@ -1,0 +1,21 @@
+<div>
+    <div id="colors-container">
+        <button
+            class="color-picker-button"
+            id="primary-color-picker-button"
+            (click)="openPrimaryColorPicker()"
+            [ngStyle]="{ backgroundColor: getPrimaryColor() }"
+        ></button>
+        <button
+            class="color-picker-button"
+            id="secondary-color-picker-button"
+            (click)="openSecondaryColorPicker()"
+            [ngStyle]="{ backgroundColor: getSecondaryColor() }"
+        ></button>
+    </div>
+    <div id="other">
+        <button id="swap-color-button" (click)="onSwapColors()" mat-mini-fab>
+            <mat-icon>swap_horiz</mat-icon>
+        </button>
+    </div>
+</div>

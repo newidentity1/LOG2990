@@ -19,7 +19,7 @@ describe('SidebarComponent', () => {
     let pencilToolMock: jasmine.SpyObj<PencilService>;
 
     beforeEach(async(() => {
-        toolbarServiceMock = jasmine.createSpyObj('ToolbarService', ['getTools', 'applyCurrentTool']);
+        toolbarServiceMock = jasmine.createSpyObj('ToolbarService', ['getTools', 'applyCurrentTool', 'initializeColors', 'changeTool']);
         pencilToolMock = jasmine.createSpyObj('PencilService', ['resetContext']);
 
         TestBed.configureTestingModule({
@@ -66,8 +66,7 @@ describe('SidebarComponent', () => {
         toolbarServiceMock.currentTool = pencilToolMock;
         const spySideNav = spyOn(component.sidenavProperties, 'open');
         component.onToolChanged(anotherTool);
-        expect(toolbarServiceMock.applyCurrentTool).toHaveBeenCalled();
-        expect(toolbarServiceMock.currentTool).toEqual(anotherTool);
+        expect(toolbarServiceMock.changeTool).toHaveBeenCalled();
         expect(spySideNav).toHaveBeenCalled();
     });
 
@@ -86,15 +85,16 @@ describe('SidebarComponent', () => {
         expect(spyNewDrawingChild.createNewDrawing).toHaveBeenCalled();
     });
 
+    it('exportDrawing should call the exportDrawing of the ExportDrawingComponent child', () => {
+        const spyExportDrawingChild = jasmine.createSpyObj('ExportDrawingComponent', ['exportDrawing']);
+        component.exportRef = spyExportDrawingChild;
+        component.exportDrawing();
+        expect(spyExportDrawingChild.exportDrawing).toHaveBeenCalled();
+    });
+
     it('get currentTool should return the current tool of toolbarService', () => {
         toolbarServiceMock.currentTool = pencilToolMock;
         const currentTool = toolbarServiceMock.currentTool;
         expect(component.currentTool).toEqual(currentTool);
-    });
-
-    it('set currentTool should set the current tool of toolbarService', () => {
-        const currentTool = pencilToolMock;
-        component.currentTool = currentTool;
-        expect(toolbarServiceMock.currentTool).toEqual(currentTool);
     });
 });

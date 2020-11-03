@@ -1,18 +1,10 @@
 import { Injectable } from '@angular/core';
+import { Tool } from '@app/classes/tool/tool';
 import { BrushProperties } from '@app/classes/tools-properties/brush-properties';
 import { Vec2 } from '@app/classes/vec2';
 import { BrushType } from '@app/enums/brush-filters.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
-
-// TODO : Déplacer ça dans un fichier séparé accessible par tous
-export enum MouseButton {
-    Left = 0,
-    Middle = 1,
-    Right = 2,
-    Back = 3,
-    Forward = 4,
-}
 
 // Ceci est une implémentation de base de l'outil Crayon pour aider à débuter le projet
 // L'implémentation ici ne couvre pas tous les critères d'accepetation du projet
@@ -22,8 +14,6 @@ export enum MouseButton {
     providedIn: 'root',
 })
 export class BrushService extends PencilService {
-    protected pathData: Vec2[];
-
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.name = 'Brush';
@@ -44,7 +34,7 @@ export class BrushService extends PencilService {
         cursorCtx.filter = 'none';
     }
 
-    protected drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+    draw(ctx: CanvasRenderingContext2D): void {
         ctx.beginPath();
 
         ctx.lineCap = 'round';
@@ -52,7 +42,7 @@ export class BrushService extends PencilService {
 
         this.switchFilter(ctx);
 
-        for (const point of path) {
+        for (const point of this.pathData) {
             ctx.lineTo(point.x, point.y);
         }
         ctx.stroke();
@@ -86,5 +76,14 @@ export class BrushService extends PencilService {
                 ctx.filter = 'url(#Cloud)';
                 break;
         }
+    }
+
+    clone(): Tool {
+        const brushClone: BrushService = new BrushService(this.drawingService);
+        this.copyTool(brushClone);
+        const brushCloneProperties = brushClone.toolProperties as BrushProperties;
+        const brushProperties = this.toolProperties as BrushProperties;
+        brushCloneProperties.currentFilter = brushProperties.currentFilter;
+        return brushClone;
     }
 }

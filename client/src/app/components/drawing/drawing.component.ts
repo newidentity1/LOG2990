@@ -1,27 +1,19 @@
-import { AfterContentInit, AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild } from '@angular/core';
-import { Color } from '@app/classes/color/color';
-import { Vec2 } from '@app/classes/vec2';
-import {
-    BLACK,
-    CANVAS_MARGIN_LEFT,
-    CANVAS_MARGIN_TOP,
-    CANVAS_MIN_HEIGHT,
-    CANVAS_MIN_WIDTH,
-    DEFAULT_HEIGHT,
-    DEFAULT_WIDTH,
-    WHITE,
-} from '@app/constants/constants';
+import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { Command } from '@app/classes/commands/command';
+import { ResizeCommand } from '@app/classes/commands/resize-command';
+import { ResizerProperties } from '@app/classes/resizer-properties';
+import { CANVAS_MARGIN_LEFT, CANVAS_MARGIN_TOP, CANVAS_MIN_HEIGHT, CANVAS_MIN_WIDTH, SELECTION_CONTROL_POINT_SIZE } from '@app/constants/constants';
 import { MouseButton } from '@app/enums/mouse-button.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-drawing',
     templateUrl: './drawing.component.html',
     styleUrls: ['./drawing.component.scss'],
 })
-export class DrawingComponent implements AfterViewInit, AfterContentInit {
+export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('baseCanvas', { static: false }) baseCanvas: ElementRef<HTMLCanvasElement>;
     // On utilise ce canvas pour dessiner sans affecter le dessin final
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
@@ -32,35 +24,57 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit {
 
     @Output() requestDrawingContainerDimensions: EventEmitter<void> = new EventEmitter();
 
-    private baseCtx: CanvasRenderingContext2D;
-    private previewCtx: CanvasRenderingContext2D;
-    private canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
-
+    previewCtx: CanvasRenderingContext2D;
+    private subscribeCreateNewDrawing: Subscription;
+    private subscribeResetCanvasSize: Subscription;
+    private subscribeDimensionsUpdated: Subscription;
+    private subscribeExecutedCommand: Subscription;
     isResizingWidth: boolean = false;
     isResizingHeight: boolean = false;
+    resizeCommand: ResizeCommand = new ResizeCommand(this.drawingService);
 
     constructor(private drawingService: DrawingService, private toolbarService: ToolbarService) {}
 
-    ngAfterContentInit(): void {
-        this.newCanvasSetSize();
+    ngOnInit(): void {
+        this.subscribeCreateNewDrawing = this.drawingService.createNewDrawingEventListener().subscribe(() => {
+            this.toolbarService.resetSelection();
+            this.drawingService.clearCanvas(this.drawingService.baseCtx);
+            this.requestDrawingContainerDimensions.emit();
+        });
+        this.subscribeResetCanvasSize = this.drawingService.resetCanvasSizeEventListener().subscribe(() => {
+            this.requestDrawingContainerDimensions.emit();
+        });
+        this.subscribeDimensionsUpdated = this.dimensionsUpdatedEvent.subscribe((dimensions) => {
+            this.drawingContainerWidth = dimensions[0];
+            this.drawingContainerHeight = dimensions[1];
+            if (!!dimensions[2]) this.newCanvasSetSize();
+            setTimeout(() => {
+                this.toolbarService.applyCurrentTool();
+                this.drawingService.setWhiteBackground();
+            }, 0);
+        });
+        this.subscribeExecutedCommand = this.resizeCommand.executedCommand.subscribe((command: Command) => {
+            this.toolbarService.addCommand(command);
+        });
     }
 
     ngAfterViewInit(): void {
-        this.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.resizeCommand.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.previewCtx = this.previewCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        this.drawingService.baseCtx = this.baseCtx;
+        this.drawingService.baseCtx = this.resizeCommand.baseCtx;
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
-        this.toolbarService.setColors(new Color(BLACK), new Color(WHITE));
 
-        this.drawingService.createNewDrawingEventListener().subscribe(() => {
-            this.requestDrawingContainerDimensions.emit();
-        });
-        this.dimensionsUpdatedEvent.subscribe((dimensions) => {
-            this.drawingContainerWidth = dimensions[0];
-            this.drawingContainerHeight = dimensions[1];
-            this.newCanvasSetSize();
-        });
+        this.drawingService.setWhiteBackground();
+        this.toolbarService.initializeListeners();
+    }
+
+    ngOnDestroy(): void {
+        this.subscribeCreateNewDrawing.unsubscribe();
+        this.subscribeDimensionsUpdated.unsubscribe();
+        this.subscribeResetCanvasSize.unsubscribe();
+        this.toolbarService.unsubscribeListeners();
+        this.subscribeExecutedCommand.unsubscribe();
     }
 
     onMouseMove(event: MouseEvent): void {
@@ -70,6 +84,7 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit {
     }
 
     onMouseDown(event: MouseEvent): void {
+        event.preventDefault();
         if (!this.isResizingWidth && !this.isResizingHeight) {
             this.toolbarService.onMouseDown(event);
         }
@@ -77,16 +92,16 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit {
 
     @HostListener('window:mouseup', ['$event'])
     onMouseUp(event: MouseEvent): void {
+        event.preventDefault();
         if (this.isResizingWidth || this.isResizingHeight) {
             const newWidth = this.isResizingWidth ? this.previewCanvas.nativeElement.width : this.width;
             const newHeight = this.isResizingHeight ? this.previewCanvas.nativeElement.height : this.height;
 
-            const imgData = this.baseCtx.getImageData(0, 0, newWidth, newHeight);
-            this.canvasSize.x = newWidth;
-            this.canvasSize.y = newHeight;
+            this.resizeCommand.resize(newWidth, newHeight);
+
             setTimeout(() => {
-                this.baseCtx.putImageData(imgData, 0, 0);
                 this.toolbarService.applyCurrentTool();
+                this.resizeCommand.drawImage();
             }, 0);
             this.isResizingWidth = false;
             this.isResizingHeight = false;
@@ -111,25 +126,34 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit {
         this.toolbarService.onClick(event);
     }
 
+    onContextMenu(): boolean {
+        return false;
+    }
+
     @HostListener('window:mousemove', ['$event'])
     onResize(event: MouseEvent): void {
         if (this.isResizingWidth) {
             event.preventDefault();
-            const newWidth = event.clientX - this.baseCanvas.nativeElement.getBoundingClientRect().x;
-
+            let newWidth = event.clientX - this.baseCanvas.nativeElement.getBoundingClientRect().x;
             const widthLimit = this.drawingContainerWidth - CANVAS_MARGIN_LEFT;
-            if (newWidth >= CANVAS_MIN_WIDTH && newWidth <= widthLimit) {
-                this.previewCanvas.nativeElement.width = newWidth;
+            if (newWidth < CANVAS_MIN_WIDTH) {
+                newWidth = CANVAS_MIN_WIDTH;
+            } else if (newWidth > widthLimit) {
+                newWidth = widthLimit;
             }
+            this.previewCanvas.nativeElement.width = newWidth;
         }
 
         if (this.isResizingHeight) {
             event.preventDefault();
-            const newHeight = event.clientY - this.baseCanvas.nativeElement.getBoundingClientRect().y;
+            let newHeight = event.clientY - this.baseCanvas.nativeElement.getBoundingClientRect().y;
             const heightLimit = this.drawingContainerHeight - CANVAS_MARGIN_TOP;
-            if (newHeight >= CANVAS_MIN_HEIGHT && newHeight <= heightLimit) {
-                this.previewCanvas.nativeElement.height = newHeight;
+            if (newHeight < CANVAS_MIN_HEIGHT) {
+                newHeight = CANVAS_MIN_HEIGHT;
+            } else if (newHeight > heightLimit) {
+                newHeight = heightLimit;
             }
+            this.previewCanvas.nativeElement.height = newHeight;
         }
     }
 
@@ -154,15 +178,48 @@ export class DrawingComponent implements AfterViewInit, AfterContentInit {
         const newWidth = this.drawingContainerWidth / 2;
         const newHeight = this.drawingContainerHeight / 2;
 
-        this.canvasSize.x = newWidth >= CANVAS_MIN_WIDTH ? newWidth : CANVAS_MIN_WIDTH;
-        this.canvasSize.y = newHeight >= CANVAS_MIN_HEIGHT ? newHeight : CANVAS_MIN_HEIGHT;
+        const width = newWidth >= CANVAS_MIN_WIDTH ? newWidth : CANVAS_MIN_WIDTH;
+        const height = newHeight >= CANVAS_MIN_HEIGHT ? newHeight : CANVAS_MIN_HEIGHT;
+        this.resizeCommand.resize(width, height);
+    }
+
+    isAreaSelected(): boolean {
+        return this.toolbarService.isAreaSelected();
     }
 
     get width(): number {
-        return this.canvasSize.x;
+        return this.resizeCommand.canvasSize.x;
     }
 
     get height(): number {
-        return this.canvasSize.y;
+        return this.resizeCommand.canvasSize.y;
+    }
+
+    onBaseCanvasMouseDown(event: MouseEvent): void {
+        if (this.isAreaSelected()) {
+            this.toolbarService.resetSelection();
+            this.onMouseDown(event);
+        }
+    }
+
+    calculateResizerStyle(rowPosition: number, columnPosition: number): ResizerProperties {
+        let resizerPosition: ResizerProperties;
+
+        if (this.previewCanvas) {
+            const previewCanvasElement = this.previewCanvas.nativeElement;
+            const canvasTopOffset = previewCanvasElement.offsetTop;
+            const canvasLeftOffset = previewCanvasElement.offsetLeft;
+
+            resizerPosition = {
+                top: canvasTopOffset + (previewCanvasElement.height * rowPosition) / 2 - SELECTION_CONTROL_POINT_SIZE / 2 + 'px',
+                left: canvasLeftOffset + (previewCanvasElement.width * columnPosition) / 2 - SELECTION_CONTROL_POINT_SIZE / 2 + 'px',
+            };
+        } else {
+            resizerPosition = {
+                top: (this.height * rowPosition) / 2 - SELECTION_CONTROL_POINT_SIZE / 2 + 'px',
+                left: (this.width * columnPosition) / 2 - SELECTION_CONTROL_POINT_SIZE / 2 + 'px',
+            };
+        }
+        return resizerPosition;
     }
 }

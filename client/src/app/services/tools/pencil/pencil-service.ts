@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Color } from '@app/classes/color/color';
-import { Tool } from '@app/classes/tool';
+import { Tool } from '@app/classes/tool/tool';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 import { Vec2 } from '@app/classes/vec2';
 import { MouseButton } from '@app/enums/mouse-button.enum';
@@ -10,8 +9,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
     providedIn: 'root',
 })
 export class PencilService extends Tool {
-    protected pathData: Vec2[];
-
+    insideCanvas: boolean = false;
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.name = 'Crayon';
@@ -23,6 +21,7 @@ export class PencilService extends Tool {
 
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
+        this.insideCanvas = this.mouseDown;
         if (this.mouseDown) {
             this.clearPath();
 
@@ -32,12 +31,12 @@ export class PencilService extends Tool {
     }
 
     onMouseUp(event: MouseEvent): void {
-        if (this.mouseDown) {
-            const mousePosition = this.getPositionFromMouse(event);
-            this.pathData.push(mousePosition);
-            this.drawLine(this.drawingService.baseCtx, this.pathData);
+        if (this.mouseDown && this.insideCanvas) {
+            this.draw(this.drawingService.baseCtx);
+            this.executedCommand.emit(this.clone());
         }
         this.mouseDown = false;
+        this.insideCanvas = false;
         this.clearPath();
     }
 
@@ -47,38 +46,41 @@ export class PencilService extends Tool {
             this.pathData.push(mousePosition);
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawLine(this.drawingService.previewCtx, this.pathData);
+            this.draw(this.drawingService.previewCtx);
         } else {
             this.drawCursor(mousePosition);
         }
     }
 
     onMouseEnter(event: MouseEvent): void {
+        this.insideCanvas = this.mouseDown;
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
-            this.drawLine(this.drawingService.previewCtx, this.pathData);
+            this.draw(this.drawingService.previewCtx);
             this.clearPath();
         }
     }
 
     onMouseLeave(event: MouseEvent): void {
         const mousePosition = this.getPositionFromMouse(event);
+        this.insideCanvas = false;
         this.pathData.push(mousePosition);
         if (this.mouseDown) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawLine(this.drawingService.baseCtx, this.pathData);
+            this.draw(this.drawingService.baseCtx);
+            this.executedCommand.emit(this.clone());
             this.clearPath();
         } else {
             this.drawCursor(mousePosition);
         }
     }
 
-    protected drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+    draw(ctx: CanvasRenderingContext2D): void {
         ctx.beginPath();
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
-        for (const point of path) {
+        for (const point of this.pathData) {
             ctx.lineTo(point.x, point.y);
         }
         ctx.stroke();
@@ -90,10 +92,6 @@ export class PencilService extends Tool {
         cursorCtx.beginPath();
         cursorCtx.arc(position.x, position.y, this.toolProperties.thickness / 2, 0, Math.PI * 2);
         cursorCtx.fill();
-    }
-
-    setColors(primaryColor: Color, secondaryColor: Color): void {
-        this.drawingService.setColor(primaryColor.toStringRGBA());
     }
 
     protected clearPath(): void {
@@ -108,5 +106,11 @@ export class PencilService extends Tool {
         this.mouseDown = false;
         this.setThickness(this.toolProperties.thickness);
         this.drawingService.clearCanvas(previewCtx);
+    }
+
+    clone(): Tool {
+        const pencilClone: PencilService = new PencilService(this.drawingService);
+        this.copyTool(pencilClone);
+        return pencilClone;
     }
 }

@@ -9,13 +9,30 @@ export class DrawingService {
     previewCtx: CanvasRenderingContext2D;
     canvas: HTMLCanvasElement;
     createNewDrawingSubject: Subject<void> = new Subject<void>();
+    resetCanvasSizeSubject: Subject<void> = new Subject<void>();
+
+    setWhiteBackground(): void {
+        this.baseCtx.globalCompositeOperation = 'destination-over';
+        this.baseCtx.fillStyle = '#FFFFFF';
+        this.baseCtx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        this.baseCtx.fillStyle = '#000000';
+        this.baseCtx.globalCompositeOperation = 'source-over';
+    }
 
     emitCreateNewDrawingEvent(): void {
         this.createNewDrawingSubject.next();
     }
 
+    emitResetCanvasSizeEvent(): void {
+        this.resetCanvasSizeSubject.next();
+    }
+
     createNewDrawingEventListener(): Observable<void> {
         return this.createNewDrawingSubject.asObservable();
+    }
+
+    resetCanvasSizeEventListener(): Observable<void> {
+        return this.resetCanvasSizeSubject.asObservable();
     }
 
     clearCanvas(context: CanvasRenderingContext2D): void {

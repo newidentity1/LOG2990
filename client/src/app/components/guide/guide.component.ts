@@ -5,7 +5,4 @@ import { Component } from '@angular/core';
     templateUrl: './guide.component.html',
     styleUrls: ['./guide.component.scss'],
 })
-export class GuideComponent {
-    // constructor() {}
-    // ngOnInit(): void {}
-}
+export class GuideComponent {}

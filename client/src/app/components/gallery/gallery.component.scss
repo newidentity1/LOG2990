@@ -1,0 +1,55 @@
+@import '../../style/color.scss';
+
+ul {
+    display: flex;
+    flex-wrap: wrap-reverse;
+    order: 2;
+    padding: 0;
+    margin: 20px auto;
+}
+#window {
+    align-items: center;
+    width: 630px;
+    height: 200px;
+}
+#buttons {
+    align-items: center;
+}
+li {
+    padding: 10px;
+    display: flex;
+}
+
+#openButton,
+#deleteButton {
+    align-items: center;
+    opacity: 0.6;
+    border-radius: 8px;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin-left: 5px;
+    background-color: $primaryColor;
+}
+
+#openButton:hover,
+#deleteButton:hover {
+    opacity: 1;
+}
+
+#addTagButton,
+#deleteDrawingButton {
+    background-color: $primaryColor;
+    margin-left: 5px;
+}
+
+.row {
+    margin-top: 10px;
+}
+
+
+
