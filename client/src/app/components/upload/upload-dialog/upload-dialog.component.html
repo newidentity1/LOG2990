@@ -1,0 +1,19 @@
+<form>
+    <mat-form-field>
+	<mat-label>Titre du dessin</mat-label>
+	<input matInput [(ngModel)]="drawingTitle" name="drawingTitle" />
+    </mat-form-field>
+</form>
+    <br>
+<form>
+    <mat-form-field>
+	<mat-label>Ajouter une étiquette</mat-label>
+	<!-- <mat-error>étiquette non valide</mat-error> -->
+
+	<input matInput type="text" [(ngModel)]="tagToAdd" [formControl]="tagForm" maxlength="15" />
+    </mat-form-field>
+    <button id="addTagButton" mat-stroked-button [disabled]="!validateTag(tagToAdd)" (click)="addTag(tagToAdd); tagToAdd = ''">Ajouter</button>
+</form>
+
+<button class="buttons" id="upload-button" mat-raised-button (click)="uploadImage()"> Sauvegarder </button>
+<button class="buttons" id="cancel-button" mat-raised-button mat-dialog-close> Annuler </button>

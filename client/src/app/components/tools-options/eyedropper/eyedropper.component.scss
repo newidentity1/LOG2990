@@ -1,0 +1,26 @@
+#grid-container {
+    display: grid;
+}
+
+#grid-container > * {
+    grid-column-start: 1;
+    grid-row-start: 1;
+    margin: auto;
+}
+
+#preview-circle-canvas {
+    z-index: 0;
+    background-color: white;
+    border-radius: 100%;
+    border: 2px solid black;
+}
+
+#cursor-canvas {
+    z-index: 1;
+    filter: invert(1);
+    border-radius: 100%;
+}
+
+.hidePreview > * {
+    display: none;
+}

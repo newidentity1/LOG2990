@@ -1,17 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatRadioChange } from '@angular/material/radio';
 import { MatSliderChange } from '@angular/material/slider';
 import { LineProperties } from '@app/classes/tools-properties/line-properties';
-import { LinePointType } from '@app/enums/linepoint-type.enum';
+import { LinePointType } from '@app/enums/line-point-type.enum';
 import { LineService } from '@app/services/tools/line/line.service';
 @Component({
     selector: 'app-line-option',
     templateUrl: './line.component.html',
     styleUrls: ['../../sidebar/sidebar.component.scss'],
 })
-export class LineComponent implements OnInit {
+export class LineComponent {
     typesDrawing: typeof LinePointType = LinePointType;
-    currentType: string = this.typesDrawing.sansPoint;
+    currentType: string = this.typesDrawing.SansPoint;
     currentThickness: number;
     pointSize: number;
 
@@ -32,8 +32,5 @@ export class LineComponent implements OnInit {
 
     onSizeChange(event: MatSliderChange): void {
         this.lineService.setPointeSize(event.value);
-    }
-    ngOnInit(): void {
-        // TODO
     }
 }

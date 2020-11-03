@@ -12,7 +12,7 @@ describe('EraseService', () => {
 
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
-    let drawLineSpy: jasmine.Spy<any>;
+    let drawSpy: jasmine.Spy<any>;
     let drawCursorSpy: jasmine.Spy<any>;
 
     beforeEach(() => {
@@ -24,7 +24,7 @@ describe('EraseService', () => {
             providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
         });
         service = TestBed.inject(EraseService);
-        drawLineSpy = spyOn<any>(service, 'drawLine').and.callThrough();
+        drawSpy = spyOn<any>(service, 'draw').and.callThrough();
         drawCursorSpy = spyOn<any>(service, 'drawCursor').and.callThrough();
 
         // Configuration du spy du service
@@ -55,13 +55,15 @@ describe('EraseService', () => {
         service.onMouseDown(mouseEventclick);
         service.onMouseMove(mouseEvent);
         service.mouseDown = true;
-        expect(drawLineSpy).toHaveBeenCalled();
+        expect(drawSpy).toHaveBeenCalled();
         expect(drawCursorSpy).toHaveBeenCalled();
     });
 
     it('onMouseMove should draw cursor and connect point if mouse down', () => {
         service.onMouseMove(mouseEvent);
-        expect(drawLineSpy).not.toHaveBeenCalled();
+        expect(drawSpy).not.toHaveBeenCalled();
         expect(drawCursorSpy).toHaveBeenCalled();
     });
+
+    // Todo rajouter test
 });
