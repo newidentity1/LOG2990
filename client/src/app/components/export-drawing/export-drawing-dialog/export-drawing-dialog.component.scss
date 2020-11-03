@@ -7,24 +7,20 @@
     background-color: red;
 }
 
-#drawingImage {
-    display: none;
-}
-
 #exportCanvas {
     display: none;
     float: right;
 }
 
-#filter-names{
+#filter-names {
     display: block;
 }
-#filter-input{
+#filter-input {
     text-align: left;
-    width: 40%
+    width: 40%;
 }
 
-#toggleFilterButton{
+#toggleFilterButton {
     display: block;
 }
 
