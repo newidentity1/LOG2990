@@ -16,6 +16,8 @@ describe('FireBaseService', () => {
             providers: [{ provide: AngularFireStorage, useValue: angularFirestoreStub }],
         });
         service = TestBed.inject(FireBaseService);
+        const drawingCanvas = document.createElement('canvas');
+        service.drawingService.canvas = drawingCanvas;
     });
 
     it('should be created', () => {
@@ -31,23 +33,28 @@ describe('FireBaseService', () => {
     //     expect(spy).not.toHaveBeenCalled();
     // });
 
-    // it('UploadCanvas should upload the current canvas', () => {
-    //     service.uploadCanvas();
-    //     expect(canvasSpy.toDataURL).not.toHaveBeenCalled();
-    // });
+    it('UploadCanvas should upload the current canvas', () => {
+        // tslint:disable-next-line: no-any
+        const spy = spyOn<any>(service, 'downloadCanvasURL');
+        service.uploadCanvas();
+        expect(spy).not.toHaveBeenCalled();
+    });
 
     // it('DownloadURL should get the back URL from firebase', () => {
     //     // tslint:disable-next-line:quotemark
-    //     const ref: AngularFireStorageReference = service[`afStorage`].ref('t');
-    //     service.ref = ref;
-    //     const spy = spyOn(service.ref.getDownloadURL(), 'subscribe');
+    //     const spy = spyOn(service, 'reset');
+    //     // tslint:disable-next-line: no-string-literal
+    //     service.ref = service['afStorage'].ref('test');
     //     service.downloadCanvasURL();
     //     expect(spy).toHaveBeenCalled();
     // });
 
     // it('DeleteImage should delete the image on the fireBase data', () => {
-    //     service.deleteImage('test');
-    //     expect(service.id).toEqual('');
+    //     // tslint:disable-next-line:no-any
+    //     const spy = spyOn<any>(service, 'reset');
+    //     service.uploadCanvas();
+    //     service.deleteImage(service.id);
+    //     expect(spy).toHaveBeenCalled();
     // });
 
     it('Reset should reset the url and the id ', () => {
