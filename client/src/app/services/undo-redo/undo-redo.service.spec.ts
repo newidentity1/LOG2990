@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
-import { PencilService } from '../tools/pencil/pencil-service';
 
 describe('UndoRedoService', () => {
     let service: UndoRedoService;
