@@ -9,7 +9,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { FireBaseService } from '@app/services/firebase/fire-base.service';
 import { Drawing } from '@common/communication/drawing';
 import { NgImageSliderComponent, NgImageSliderModule } from 'ng-image-slider';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 // import { Observable } from 'rxjs';
 import { GalleryComponent } from './gallery.component';
 // import { of } from 'rxjs';
@@ -73,11 +73,13 @@ describe('GalleryComponent', () => {
     });
 
     it('deleteDraw should delete the current draw', () => {
+        communicationSpy.deleteDraw.and.returnValue(new Observable());
         const fakeDrawing1: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
         component.slider.visiableImageIndex = 0;
         component.drawings.push(fakeDrawing1);
-        component.deleteDraw();
+        of(component.deleteDraw());
         expect(fireBaseServiceSpy.deleteImage).toHaveBeenCalled();
+        expect(communicationSpy.deleteDraw).toHaveBeenCalled();
     });
 
     it('deleteDraw should delete the current draw', () => {
@@ -116,7 +118,7 @@ describe('GalleryComponent', () => {
         const fakeDrawing1: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
         component.drawings.push(fakeDrawing1);
         component.continueDraw(0);
-        expect(drawingServiceSpy.clearCanvas).toHaveBeenCalled();
+        expect(drawingServiceSpy.clearCanvas).not.toHaveBeenCalled();
     });
 
     it('updateDrawings should update drawings from the server', () => {
