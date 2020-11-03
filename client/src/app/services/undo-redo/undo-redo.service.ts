@@ -11,8 +11,8 @@ export class UndoRedoService {
 
     constructor(private drawingService: DrawingService) {}
 
-    undo(mouseDown: boolean, isAreaSelected: boolean): void {
-        if (!this.canUndo(mouseDown, isAreaSelected)) return;
+    undo(isDrawing: boolean): void {
+        if (!this.canUndo(isDrawing)) return;
         this.undoIndex--;
         this.drawingService.clearCanvas(this.drawingService.baseCtx);
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
@@ -27,8 +27,8 @@ export class UndoRedoService {
         }
     }
 
-    redo(mouseDown: boolean, isAreaSelected: boolean): void {
-        if (!this.canRedo(mouseDown, isAreaSelected)) return;
+    redo(isDrawing: boolean): void {
+        if (!this.canRedo(isDrawing)) return;
         this.undoIndex++;
         this.commands[this.undoIndex].applyCurrentSettings();
         this.commands[this.undoIndex].execute();
@@ -37,14 +37,14 @@ export class UndoRedoService {
         }, 0);
     }
 
-    canUndo(mouseDown: boolean, isAreaSelected: boolean): boolean {
+    canUndo(isDrawing: boolean): boolean {
         const undoIndexCheck = this.undoIndex > 0;
-        return undoIndexCheck && !mouseDown && !isAreaSelected;
+        return undoIndexCheck && !isDrawing;
     }
 
-    canRedo(mouseDown: boolean, isAreaSelected: boolean): boolean {
+    canRedo(isDrawing: boolean): boolean {
         const undoIndexCheck = this.undoIndex < this.commands.length - 1;
-        return undoIndexCheck && !mouseDown && !isAreaSelected;
+        return undoIndexCheck && !isDrawing;
     }
 
     addCommand(command: Command): void {

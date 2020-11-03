@@ -175,29 +175,34 @@ export class ToolbarService {
     }
 
     undo(): void {
-        this.undoRedoService.undo(this.mouseDown, this.isAreaSelected());
-        if (!this.isAreaSelected() && !this.mouseDown)
+        this.undoRedoService.undo(this.isDrawing());
+
+        if (!this.isDrawing())
             setTimeout(() => {
                 this.applyCurrentTool();
             }, 1);
     }
 
     redo(): void {
-        this.undoRedoService.redo(this.mouseDown, this.isAreaSelected());
-        if (!this.isAreaSelected() && !this.mouseDown) this.applyCurrentTool();
+        this.undoRedoService.redo(this.isDrawing());
+        if (!this.isDrawing()) this.applyCurrentTool();
     }
 
     canUndo(): boolean {
-        return this.undoRedoService.canUndo(this.mouseDown, this.isAreaSelected());
+        return this.undoRedoService.canUndo(this.isDrawing());
     }
 
     canRedo(): boolean {
-        return this.undoRedoService.canRedo(this.mouseDown, this.isAreaSelected());
+        return this.undoRedoService.canRedo(this.isDrawing());
     }
 
     triggerSelectAll(): void {
         this.currentTool = this.selectionService;
         this.selectionService.selectAll();
+    }
+
+    isDrawing(): boolean {
+        return this.mouseDown || this.isAreaSelected();
     }
 
     isAreaSelected(): boolean {
