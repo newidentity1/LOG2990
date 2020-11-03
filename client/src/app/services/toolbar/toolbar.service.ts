@@ -16,6 +16,7 @@ import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { PolygonService } from '@app/services/tools/polygon/polygon.service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle.service';
 import { SelectionService } from '@app/services/tools/selection/selection.service';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Subscription } from 'rxjs';
 
 @Injectable({
@@ -23,9 +24,7 @@ import { Subscription } from 'rxjs';
 })
 export class ToolbarService {
     private tools: Tool[];
-    undoIndex: number = -1;
     toolsSubscription: Subscription[] = [];
-    commands: Command[] = [];
     currentTool: Tool;
     primaryColor: Color;
     secondaryColor: Color;
@@ -47,6 +46,7 @@ export class ToolbarService {
         protected drawingService: DrawingService,
         protected colorPickerService: ColorPickerService,
         protected bucketService: BucketService,
+        protected undoRedoService: UndoRedoService,
     ) {
         this.tools = [
             pencilService,
@@ -72,6 +72,7 @@ export class ToolbarService {
             .set(KeyShortcut.Eyedropper, eyedropperService)
             .set(KeyShortcut.RectangleSelect, selectionService)
             .set(KeyShortcut.EllipseSelect, selectionService);
+        this.undoRedoService = new UndoRedoService(this.drawingService);
     }
 
     unsubscribeListeners(): void {
@@ -152,9 +153,7 @@ export class ToolbarService {
     }
 
     addCommand(command: Command): void {
-        this.undoIndex++;
-        this.commands.length = this.undoIndex;
-        this.commands.push(command);
+        this.undoRedoService.addCommand(command);
     }
 
     onMouseEnter(event: MouseEvent): void {
@@ -174,47 +173,23 @@ export class ToolbarService {
     }
 
     undo(): void {
-        if (!this.canUndo()) return;
-        this.undoIndex--;
-        this.drawingService.clearCanvas(this.drawingService.baseCtx);
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        if (this.undoIndex >= 0) {
-            for (let i = 0; i <= this.undoIndex; i++) {
-                setTimeout(() => {
-                    this.commands[i].applyCurrentSettings();
-                    this.commands[i].execute();
-                }, 0);
-                setTimeout(() => {
-                    this.commands[i].drawImage();
-                }, 1);
-            }
-        }
+        this.undoRedoService.undo(this.mouseDown, this.isAreaSelected());
         setTimeout(() => {
-            this.applyCurrentToolColor();
-            this.currentTool.setThickness(this.currentTool.toolProperties.thickness);
+            this.applyCurrentTool();
         }, 1);
     }
 
     redo(): void {
-        if (!this.canRedo()) return;
-        this.undoIndex++;
-        this.commands[this.undoIndex].applyCurrentSettings();
-        this.commands[this.undoIndex].execute();
-        setTimeout(() => {
-            this.commands[this.undoIndex].drawImage();
-        }, 0);
-        this.applyCurrentToolColor();
-        this.currentTool.setThickness(this.currentTool.toolProperties.thickness);
+        this.undoRedoService.redo(this.mouseDown, this.isAreaSelected());
+        this.applyCurrentTool();
     }
 
     canUndo(): boolean {
-        const undoIndexCheck = this.undoIndex > 0;
-        return undoIndexCheck && !this.mouseDown && !this.isAreaSelected();
+        return this.undoRedoService.canUndo(this.mouseDown, this.isAreaSelected());
     }
 
     canRedo(): boolean {
-        const undoIndexCheck = this.undoIndex < this.commands.length - 1 && this.commands.length > 0;
-        return undoIndexCheck && !this.mouseDown && !this.isAreaSelected();
+        return this.undoRedoService.canRedo(this.mouseDown, this.isAreaSelected());
     }
 
     triggerSelectAll(): void {
