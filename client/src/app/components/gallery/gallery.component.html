@@ -15,7 +15,7 @@
     </mat-chip-list>
 
     <div id="imageSliderWrapper" class="row" [hidden]="!isDrawing">
-        <ng-image-slider #imageSlider [images]="this.tab" (imageClick)="continueDraw($event)" [imagePopup]="false" [infinite]="true">
+        <ng-image-slider id="image-slider" #imageSlider [images]="this.tab" (imageClick)="continueDraw($event)" [imagePopup]="false" [infinite]="true">
         </ng-image-slider>
     </div>
     <div class="row" *ngIf="!isDrawing">
