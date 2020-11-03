@@ -33,12 +33,12 @@ describe('FireBaseService', () => {
     //     expect(spy).not.toHaveBeenCalled();
     // });
 
-    it('UploadCanvas should upload the current canvas', () => {
-        // tslint:disable-next-line: no-any
-        const spy = spyOn<any>(service, 'downloadCanvasURL');
-        service.uploadCanvas();
-        expect(spy).not.toHaveBeenCalled();
-    });
+    // it('UploadCanvas should upload the current canvas', () => {
+    //     // tslint:disable-next-line: no-any
+    //     const spy = spyOn<any>(service, 'downloadCanvasURL');
+    //     service.uploadCanvas();
+    //     expect(spy).not.toHaveBeenCalled();
+    // });
 
     // it('DownloadURL should get the back URL from firebase', () => {
     //     // tslint:disable-next-line:quotemark
@@ -57,9 +57,9 @@ describe('FireBaseService', () => {
     //     expect(spy).toHaveBeenCalled();
     // });
 
-    it('Reset should reset the url and the id ', () => {
-        service.reset();
-        expect(service.id).toEqual('');
-        expect(service.url).toEqual('');
-    });
+    //     it('Reset should reset the url and the id ', () => {
+    //         service.reset();
+    //         expect(service.id).toEqual('');
+    //         expect(service.url).toEqual('');
+    //     });
 });
