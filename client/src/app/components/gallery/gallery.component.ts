@@ -20,7 +20,7 @@ export class GalleryComponent implements OnInit, AfterViewInit {
     tagToAdd: string = '';
     isDrawing: boolean = false;
     tagForm: FormControl;
-
+    isCanvasEmpty: boolean = true;
     constructor(
         private drawingService: DrawingService,
         private dialog: MatDialog,
@@ -61,6 +61,8 @@ export class GalleryComponent implements OnInit, AfterViewInit {
     }
 
     continueDraw(event: number): void {
+        // const isCanvasEmpty = this.drawingService.canvasEmpty(this.drawingService.baseCtx, this.drawingService.canvas);
+        // if (isCanvasEmpty) {
         const image = new Image();
         image.crossOrigin = '';
         image.src = this.drawings[event].url;
@@ -74,8 +76,14 @@ export class GalleryComponent implements OnInit, AfterViewInit {
             ctx.drawImage(image, 0, 0);
             this.dialog.closeAll();
         };
+        // } else {
+        //     this.warningCanvas();
+        // }
     }
 
+    // warningCanvas(): void {
+    //     this.dialog.open(WarningDialogComponent);
+    // }
     deleteDraw(): void {
         if (this.drawings.length !== 0) {
             const i = this.slider.visiableImageIndex;
