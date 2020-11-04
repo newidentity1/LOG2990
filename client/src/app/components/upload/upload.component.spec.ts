@@ -1,21 +1,25 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { FireBaseService } from '@app/services/firebase/fire-base.service';
+import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UploadComponent } from './upload.component';
 
 describe('UploadComponent', () => {
     let component: UploadComponent;
     let fixture: ComponentFixture<UploadComponent>;
-    let fireBaseServiceSpy: jasmine.SpyObj<FireBaseService>;
+
+    const mockDialog = {
+        close: jasmine.createSpy('close'),
+    };
 
     beforeEach(async(() => {
-        fireBaseServiceSpy = jasmine.createSpyObj('FireBaseService', ['uploadCanvas']);
         TestBed.configureTestingModule({
             declarations: [UploadComponent],
-            providers: [{ provide: FireBaseService, useValue: fireBaseServiceSpy }],
+            providers: [
+                { provide: MatDialog, useValue: mockDialog },
+                { provide: MAT_DIALOG_DATA, useValue: [] },
+            ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
-        fireBaseServiceSpy = TestBed.inject(FireBaseService) as jasmine.SpyObj<FireBaseService>;
     }));
 
     beforeEach(() => {
@@ -26,10 +30,5 @@ describe('UploadComponent', () => {
 
     it('should create', () => {
         expect(component).toBeTruthy();
-    });
-
-    it('UploadImage should call fireBase uploadCanvas', () => {
-        component.uploadImage();
-        expect(fireBaseServiceSpy.uploadCanvas).toHaveBeenCalled();
     });
 });

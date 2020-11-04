@@ -19,6 +19,8 @@ export abstract class Tool extends Command {
 
     constructor(protected drawingService: DrawingService) {
         super();
+        this.currentPrimaryColor = new Color();
+        this.currentSecondaryColor = new Color();
     }
 
     setTypeDrawing(value: string): void {}

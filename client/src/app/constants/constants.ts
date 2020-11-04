@@ -25,10 +25,11 @@ export const MAXIMUM_SIDES = 12;
 
 export const DEFAULT_WIDTH = 1000;
 export const DEFAULT_HEIGHT = 800;
+export const MAX_PREVIEW_SIZE = 600;
 
 export const CANVAS_MIN_WIDTH = 250;
 export const CANVAS_MIN_HEIGHT = 250;
-export const CANVAS_MARGIN_LEFT = 280;
+export const CANVAS_MARGIN_LEFT = 20;
 export const CANVAS_MARGIN_TOP = 20;
 
 export const MAX_COLOR_VALUE = 255;
@@ -61,4 +62,8 @@ export const BUCKET_PIXEL_3X3 = 3;
 export const INDEX_3 = 3;
 export const OFFSET = 4;
 export const TEST_IMAGE_SIZE = 100;
+
+export const BLUR_CONVERSION = 10;
+export const HUE_CONVERSION = 360;
+
 export const TEST_TOLERENCE = 20;
