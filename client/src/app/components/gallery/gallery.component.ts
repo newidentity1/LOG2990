@@ -39,7 +39,6 @@ export class GalleryComponent implements OnInit, AfterViewInit {
     updateDrawings(totalDrawings: Drawing[]): void {
         this.tab = [];
         this.slider.images.length = 0;
-        console.log(this.tab);
         for (const image of totalDrawings) {
             const obj = {
                 image: image.url,
@@ -49,7 +48,6 @@ export class GalleryComponent implements OnInit, AfterViewInit {
             };
             this.tab.push(obj);
         }
-        console.log(this.tab);
         this.slider.setSliderImages(this.tab);
         this.isDrawing = this.tab.length > 0;
     }
@@ -80,7 +78,6 @@ export class GalleryComponent implements OnInit, AfterViewInit {
 
     deleteDraw(): void {
         if (this.drawings.length !== 0) {
-            console.log('ici delete');
             const i = this.slider.visiableImageIndex;
             const draw: Drawing = this.drawings[i];
             this.fireBaseService.deleteImage(draw._id);
