@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Tool } from '@app/classes/tool/tool';
 import { BrushProperties } from '@app/classes/tools-properties/brush-properties';
 import { Vec2 } from '@app/classes/vec2';
 import { BrushType } from '@app/enums/brush-filters.enum';
@@ -78,7 +77,7 @@ export class BrushService extends PencilService {
         }
     }
 
-    clone(): Tool {
+    clone(): BrushService {
         const brushClone: BrushService = new BrushService(this.drawingService);
         this.copyTool(brushClone);
         const brushCloneProperties = brushClone.toolProperties as BrushProperties;

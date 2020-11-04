@@ -31,6 +31,7 @@ export class SelectionService extends ShapeTool {
     }
 
     setSelectionType(type: SelectionType): void {
+        this.drawSelection();
         switch (type) {
             case SelectionType.RectangleSelection:
                 this.currentType = SelectionType.RectangleSelection;
@@ -39,7 +40,6 @@ export class SelectionService extends ShapeTool {
                 this.currentType = SelectionType.EllipseSelection;
                 break;
         }
-        this.drawSelection();
     }
 
     onMouseDown(event: MouseEvent): void {
