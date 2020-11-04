@@ -3,6 +3,7 @@ import { MatSidenav } from '@angular/material/sidenav';
 import { Tool } from '@app/classes/tool/tool';
 import { CreateNewDrawingComponent } from '@app/components/create-new-drawing/create-new-drawing.component';
 import { ExportDrawingComponent } from '@app/components/export-drawing/export-drawing.component';
+import { UploadComponent } from '@app/components/upload/upload.component';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 
 @Component({
@@ -15,6 +16,7 @@ export class SidebarComponent {
     @ViewChild('toolProperties') sidenavProperties: MatSidenav;
     @ViewChild(CreateNewDrawingComponent) newDrawingRef: CreateNewDrawingComponent;
     @ViewChild(ExportDrawingComponent) exportRef: ExportDrawingComponent;
+    @ViewChild(UploadComponent) uploadRef: UploadComponent;
 
     constructor(protected toolbarService: ToolbarService) {
         this.tools = toolbarService.getTools();
@@ -31,6 +33,9 @@ export class SidebarComponent {
         } else {
             this.sidenavProperties.toggle();
         }
+        if (tool.name === 'Eyedropper') {
+            this.sidenavProperties.close();
+        }
     }
 
     createNewDrawing(): void {
@@ -39,6 +44,10 @@ export class SidebarComponent {
 
     exportDrawing(): void {
         this.exportRef.exportDrawing();
+    }
+
+    uploadImage(): void {
+        this.uploadRef.uploadImage();
     }
 
     get currentTool(): Tool {
