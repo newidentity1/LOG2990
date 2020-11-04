@@ -16,6 +16,7 @@ describe('DrawingController', () => {
         drawing = { _id: '123', name: 'test', tags: ['test', 'first'], url: '/' };
         const [container, sandbox] = await testingContainer();
         container.rebind(TYPES.DrawingService).toConstantValue({
+            start: sandbox.stub().resolves(),
             getDrawing: sandbox.stub().resolves(drawing),
             getDrawings: sandbox.stub().resolves([drawing]),
             addDrawing: sandbox.stub().resolves(),
@@ -26,45 +27,59 @@ describe('DrawingController', () => {
     });
 
     it('should return drawing from drawing service on valid get request with id ', async () => {
-        return supertest(app)
-            .get('/api/drawings/' + drawing._id)
-            .expect(HTTP_STATUS_OK)
-            .then((response: any) => {
-                expect(response.body).to.deep.equal(drawing);
-            });
+        return (
+            supertest(app)
+                .get('/api/drawings/' + drawing._id)
+                .expect(HTTP_STATUS_OK)
+                // tslint:disable-next-line: no-any // reason:response
+                .then((response: any) => {
+                    expect(response.body).to.deep.equal(drawing);
+                })
+        );
     });
 
     it('should return an error from drawing service on invalid get request with id', async () => {
         drawingService.getDrawing.rejects();
-        return supertest(app)
-            .get('/api/drawings/1234')
-            .then((response: any) => {
-                expect(response.statusCode).to.equal(HTTP_STATUS_NOT_FOUND);
-            })
-            .catch((error: any) => {
-                expect(error);
-            });
+        return (
+            supertest(app)
+                .get('/api/drawings/1234')
+                // tslint:disable-next-line: no-any // reason:response
+                .then((response: any) => {
+                    expect(response.statusCode).to.equal(HTTP_STATUS_NOT_FOUND);
+                })
+                // tslint:disable-next-line: no-any // reason:response
+                .catch((error: any) => {
+                    expect(error);
+                })
+        );
     });
 
     it('should return all drawings from drawing service on valid get request to root', async () => {
-        return supertest(app)
-            .get('/api/drawings')
-            .then((response: any) => {
-                expect(response.statusCode).to.equal(HTTP_STATUS_OK);
-                expect(response.body).to.deep.equal([drawing]);
-            });
+        return (
+            supertest(app)
+                .get('/api/drawings')
+                // tslint:disable-next-line: no-any // reason:response
+                .then((response: any) => {
+                    expect(response.statusCode).to.equal(HTTP_STATUS_OK);
+                    expect(response.body).to.deep.equal([drawing]);
+                })
+        );
     });
 
     it('should return an error from drawing service on invalid get request ', async () => {
         drawingService.getDrawings.rejects();
-        return supertest(app)
-            .get('/api/drawings/')
-            .then((response: any) => {
-                expect(response.statusCode).to.equal(HTTP_STATUS_NOT_FOUND);
-            })
-            .catch((error: any) => {
-                expect(error);
-            });
+        return (
+            supertest(app)
+                .get('/api/drawings/')
+                // tslint:disable-next-line: no-any // reason:response
+                .then((response: any) => {
+                    expect(response.statusCode).to.equal(HTTP_STATUS_NOT_FOUND);
+                })
+                // tslint:disable-next-line: no-any // reason:response
+                .catch((error: any) => {
+                    expect(error);
+                })
+        );
     });
 
     it('should add a drawing in the database on valid post request to root with a drawing', async () => {
@@ -76,15 +91,19 @@ describe('DrawingController', () => {
     it('should return an error on invalid post request to root with a drawing', async () => {
         const newDrawing: Drawing = {} as Drawing;
         drawingService.addDrawing.rejects();
-        return supertest(app)
-            .post('/api/drawings/')
-            .send(newDrawing)
-            .then((response: any) => {
-                expect(response.statusCode).to.equal(HTTP_STATUS_BAD_REQUEST);
-            })
-            .catch((error: any) => {
-                expect(error);
-            });
+        return (
+            supertest(app)
+                .post('/api/drawings/')
+                .send(newDrawing)
+                // tslint:disable-next-line: no-any // reason:response
+                .then((response: any) => {
+                    expect(response.statusCode).to.equal(HTTP_STATUS_BAD_REQUEST);
+                })
+                // tslint:disable-next-line: no-any // reason:response
+                .catch((error: any) => {
+                    expect(error);
+                })
+        );
     });
 
     it('should remove a drawing in the database on valid delete request to root with id', async () => {
@@ -97,13 +116,17 @@ describe('DrawingController', () => {
 
     it('should return an error on invalid post request to root with a drawing', async () => {
         drawingService.removeDrawing.rejects();
-        return supertest(app)
-            .delete('/api/drawings/124')
-            .then((response: any) => {
-                expect(response.statusCode).to.equal(HTTP_STATUS_BAD_REQUEST);
-            })
-            .catch((error: any) => {
-                expect(error);
-            });
+        return (
+            supertest(app)
+                .delete('/api/drawings/124')
+                // tslint:disable-next-line: no-any // reason:response
+                .then((response: any) => {
+                    expect(response.statusCode).to.equal(HTTP_STATUS_BAD_REQUEST);
+                })
+                // tslint:disable-next-line: no-any // reason:response
+                .catch((error: any) => {
+                    expect(error);
+                })
+        );
     });
 });
