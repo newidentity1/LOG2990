@@ -6,8 +6,8 @@ import { CANVAS_MARGIN_LEFT, CANVAS_MARGIN_TOP, CANVAS_MIN_HEIGHT, CANVAS_MIN_WI
 import { MouseButton } from '@app/enums/mouse-button.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
-import { Observable, Subscription } from 'rxjs';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
+import { Observable, Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-drawing',

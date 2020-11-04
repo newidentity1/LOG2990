@@ -1,16 +1,16 @@
-import { AfterViewInit, Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Command } from '@app/classes/commands/command';
+import { ResizeCommand } from '@app/classes/commands/resize-command';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { FireBaseService } from '@app/services/firebase/fire-base.service';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Drawing } from '@common/communication/drawing';
 import { NgImageSliderComponent } from 'ng-image-slider';
 import { Observable, Subscription } from 'rxjs';
 import { WarningDialogComponent } from './warning/warning-dialog.component';
-import { ResizeCommand } from '@app/classes/commands/resize-command';
-import { Command } from '@app/classes/commands/command';
-import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 @Component({
     selector: 'app-gallery',
     styleUrls: ['./gallery.component.scss'],
