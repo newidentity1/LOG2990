@@ -33,6 +33,9 @@ describe('FireBaseService', () => {
     });
 
     it('UploadCanvas should upload the current canvas', () => {
+        const refMock: AngularFireStorageReference = jasmine.createSpyObj('AngularFireStorageReference', ['delete']);
+        angularFireStorageSpy.ref.and.returnValue(refMock);
+
         // tslint:disable-next-line: no-any
         const spy = spyOn<any>(service, 'downloadCanvasURL');
         service.uploadCanvas();
