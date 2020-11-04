@@ -15,7 +15,6 @@ export class FireBaseService {
     id: string = '';
     constructor(public drawingService: DrawingService, private afStorage: AngularFireStorage, private communicationService: CommunicationService) {}
 
-    // met le canvas sous forme d'image dans la fireBase
     uploadCanvas(): void {
         this.id = Math.random() + 'test';
         const baseImage = new Image();
@@ -24,7 +23,6 @@ export class FireBaseService {
             this.ref = this.afStorage.ref(this.id);
             this.task = this.ref.put(blob);
             this.task.snapshotChanges().subscribe((event) => {
-                // ajouter ici le telechargement des donnees si besoin
                 if (event?.state === 'success') {
                     this.downloadCanvasURL();
                 }
@@ -32,7 +30,6 @@ export class FireBaseService {
         });
     }
 
-    // permet de recuperer l'URL de retour envoye par fireBase
     downloadCanvasURL(): void {
         const downloadURLObservable: Observable<Blob[]> = this.ref.getDownloadURL();
         downloadURLObservable.subscribe((imageURL) => {
@@ -43,8 +40,6 @@ export class FireBaseService {
             this.reset();
         });
     }
-
-    // envois un objet de type dessin avec l'url de fireBase au serveur
     postDraw(): void {
         const drawing: Drawing = { _id: this.id, name: this.id, tags: [], url: this.url };
         this.communicationService.postDraw(drawing);
