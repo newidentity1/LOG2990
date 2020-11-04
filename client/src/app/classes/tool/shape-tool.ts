@@ -169,8 +169,4 @@ export abstract class ShapeTool extends Tool {
         const shapeProperties = this.toolProperties as BasicShapeProperties;
         shape.setTypeDrawing(shapeProperties.currentType);
     }
-
-    clone(): ShapeTool {
-        return this;
-    }
 }
