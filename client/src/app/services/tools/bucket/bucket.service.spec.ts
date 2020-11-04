@@ -136,11 +136,6 @@ describe('BucketService', () => {
         expect(list.length).toEqual(0);
     });
 
-    it('ResetMatrice should reset all pixel Status to 0', () => {
-        service.onMouseDown(mouseEventclickLeft);
-        expect(service['matrice'][0][0].status).toEqual(0);
-    });
-
     it('copyList should copy a list', () => {
         const p1: Pixel = { x: 0, y: 0, status: 0 };
         const p2: Pixel = { x: 1, y: 1, status: 0 };
