@@ -6,6 +6,7 @@ import { CANVAS_MARGIN_LEFT, CANVAS_MARGIN_TOP, CANVAS_MIN_HEIGHT, CANVAS_MIN_WI
 import { MouseButton } from '@app/enums/mouse-button.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Observable, Subscription } from 'rxjs';
 
 @Component({
@@ -33,12 +34,15 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
     isResizingHeight: boolean = false;
     resizeCommand: ResizeCommand = new ResizeCommand(this.drawingService);
 
-    constructor(private drawingService: DrawingService, private toolbarService: ToolbarService) {}
+    constructor(private drawingService: DrawingService, private toolbarService: ToolbarService, private undoRedoService: UndoRedoService) {
+        this.undoRedoService.resetUndoRedo();
+    }
 
     ngOnInit(): void {
         this.subscribeCreateNewDrawing = this.drawingService.createNewDrawingEventListener().subscribe(() => {
             this.toolbarService.resetSelection();
             this.drawingService.clearCanvas(this.drawingService.baseCtx);
+            this.undoRedoService.resetUndoRedo();
             this.requestDrawingContainerDimensions.emit();
         });
         this.subscribeResetCanvasSize = this.drawingService.resetCanvasSizeEventListener().subscribe(() => {

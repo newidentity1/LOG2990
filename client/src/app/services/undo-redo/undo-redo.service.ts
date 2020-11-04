@@ -52,4 +52,10 @@ export class UndoRedoService {
         this.commands.length = this.undoIndex;
         this.commands.push(command);
     }
+
+    resetUndoRedo(): void {
+        this.commands = [];
+        const defaultIndex = -1;
+        this.undoIndex = defaultIndex;
+    }
 }
