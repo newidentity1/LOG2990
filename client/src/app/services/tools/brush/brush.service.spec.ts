@@ -26,6 +26,7 @@ describe('BrushService', () => {
 
         // Configuration du spy du service
         // tslint:disable:no-string-literal
+        service['drawingService'].canvas = canvasTestHelper.canvas;
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
         service['drawingService'].previewCtx = previewCtxStub;
         service['drawingService'].canvas = canvasTestHelper.canvas;
@@ -33,8 +34,8 @@ describe('BrushService', () => {
         path.push(point2);
 
         mouseEvent = {
-            offsetX: 25,
-            offsetY: 25,
+            clientX: 25,
+            clientY: 25,
             button: 0,
         } as MouseEvent;
     });
