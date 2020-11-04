@@ -19,6 +19,7 @@ import { PolygonService } from '@app/services/tools/polygon/polygon.service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle.service';
 import { SelectionService } from '@app/services/tools/selection/selection.service';
 
+// tslint:disable:no-string-literal
 describe('ToolbarService', () => {
     let service: ToolbarService;
     let pencilServiceSpy: jasmine.SpyObj<PencilService>;
@@ -48,6 +49,7 @@ describe('ToolbarService', () => {
             'onClick',
             'setColors',
             'resetContext',
+            'clone',
         ]);
 
         brushServiceSpy = jasmine.createSpyObj('BrushService', ['onKeyDown', 'resetContext', 'setColors']);
@@ -56,15 +58,9 @@ describe('ToolbarService', () => {
         lineServiceSpy = jasmine.createSpyObj('LineService', ['onKeyDown']);
         eraseServiceSpy = jasmine.createSpyObj('LineService', ['onKeyDown']);
         eyedropperServiceSpy = jasmine.createSpyObj('EyedropperService', ['onKeyDown']);
-        selectionServiceSpy = jasmine.createSpyObj('SelectionService', ['selectAll', 'resetSelection', 'setSelectionType']);
-        drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setStrokeColor']);
+        selectionServiceSpy = jasmine.createSpyObj('SelectionService', ['selectAll', 'resetSelection', 'setSelectionType', 'setThickness']);
         bucketServiceSpy = jasmine.createSpyObj('BucketService', ['onMouseDown']);
-        drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setStrokeColor']);
-
-        selectionServiceSpy = jasmine.createSpyObj('SelectionService', ['selectAll', 'resetSelection', 'setSelectionType']);
-        drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setStrokeColor']);
-        bucketServiceSpy = jasmine.createSpyObj('BucketService', ['onMouseDown']);
-        drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setStrokeColor']);
+        drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setStrokeColor', 'setThickness']);
         polygonServiceSpy = jasmine.createSpyObj('PolygonService', ['onKeyDown']);
 
         TestBed.configureTestingModule({
@@ -106,13 +102,35 @@ describe('ToolbarService', () => {
         expect(service).toBeTruthy();
     });
 
-    it('initializeListeners should set primary and secondary colors ', () => {
+    it('initializeListeners should set primary and secondary colors and subscribe to each tool', () => {
         // tslint:disable-next-line:no-any / reason: spying on function
         const setColorsSpy = spyOn<any>(service, 'setColors').and.callThrough();
+        // tslint:disable-next-line:no-any no-empty / reason: spying on function
+        const addCommandSpy = spyOn<any>(service, 'addCommand').and.callFake(() => {});
         service.initializeListeners();
+        const pencilService = service.getTools()[0];
+        pencilService.executedCommand.emit(pencilService.clone());
         expect(setColorsSpy).toHaveBeenCalled();
+        expect(addCommandSpy).toHaveBeenCalled();
         expect(service.primaryColor).toBeTruthy();
         expect(service.secondaryColor).toBeTruthy();
+    });
+
+    it('unsubscribeListeners should unsubscribe to each subscription', () => {
+        service.initializeListeners();
+
+        // tslint:disable-next-line:no-any / reason: spying on function
+        const primaryColorSpy = spyOn<any>(service['primaryColorSubscription'], 'unsubscribe');
+        // tslint:disable-next-line:no-any / reason: spying on function
+        const secondaryColorSpy = spyOn<any>(service['secondaryColorSubscription'], 'unsubscribe');
+        // tslint:disable-next-line:no-any / reason: spying on function
+        const toolSpy = spyOn<any>(service.toolsSubscription[0], 'unsubscribe');
+
+        service.unsubscribeListeners();
+
+        expect(toolSpy).toHaveBeenCalled();
+        expect(primaryColorSpy).toHaveBeenCalled();
+        expect(secondaryColorSpy).toHaveBeenCalled();
     });
 
     it('getTools should return an array of tool services ', () => {
@@ -269,26 +287,23 @@ describe('ToolbarService', () => {
         expect(service.currentTool.onClick).toHaveBeenCalledWith(mouseEvent);
     });
 
-    // it('triggerSelectAll should change current tool to selection tool', () => {
-    //     // tslint:disable-next-line: no-any / reason: spying on function
-    //     const applyColorSpy = spyOn<any>(service, 'applyCurrentToolColor').and.callFake(() => {
-    //         return;
-    //     });
+    it('triggerSelectAll should change current tool to selection tool', () => {
+        service.currentTool = pencilServiceSpy;
+        service.triggerSelectAll();
 
-    //     service.currentTool = pencilServiceSpy;
-    //     service.triggerSelectAll();
+        expect(service.currentTool).toEqual(selectionServiceSpy);
+    });
 
-    //     expect(service.currentTool).toEqual(selectionService);
-    //     expect(applyColorSpy).toHaveBeenCalled();
-    // });
+    it('triggerSelectAll should call selectAll of selectionService', () => {
+        // tslint:disable-next-line: no-any / reason: spying on function
+        const selectAllSpy = spyOn<any>(selectionServiceSpy, 'selectAll').and.callFake(() => {
+            return;
+        });
+        service.currentTool = pencilServiceSpy;
+        service.triggerSelectAll();
 
-    // it('triggerSelectAll should call selectAll of selectionService', () => {
-    //     // tslint:disable-next-line:no-any / reason : spying on function
-    //     const selectAllSpy = spyOn<any>(selectionService, 'selectAll').and.callThrough();
-    //     service.currentTool = pencilServiceSpy;
-    //     service.triggerSelectAll();
-    //     expect(selectAllSpy).toHaveBeenCalled();
-    // });
+        expect(selectAllSpy).toHaveBeenCalled();
+    });
 
     it('isAreaSelected should return true if an area is selected', () => {
         selectionServiceSpy.isAreaSelected = true;
@@ -302,21 +317,25 @@ describe('ToolbarService', () => {
         expect(result).toBeFalse();
     });
 
-    // it('resetSelection should call resetSelection of selection service if area is selected', () => {
-    //     // tslint:disable-next-line:no-any / reason : spying on function
-    //     const resetSelectionSpy = spyOn<any>(selectionService, 'resetSelection').and.callThrough();
-    //     selectionService.isAreaSelected = true;
-    //     service.resetSelection();
-    //     expect(resetSelectionSpy).toHaveBeenCalled();
-    // });
+    it('resetSelection should call resetSelection of selection service if area is selected', () => {
+        // tslint:disable-next-line:no-any / reason : spying on function
+        const resetSelectionSpy = spyOn<any>(selectionServiceSpy, 'resetSelection').and.callFake(() => {
+            return;
+        });
+        selectionServiceSpy.isAreaSelected = true;
+        service.resetSelection();
+        expect(resetSelectionSpy).toHaveBeenCalled();
+    });
 
-    // it('resetSelection should not call resetSelection of selection service if area is not selected', () => {
-    //     // tslint:disable-next-line:no-any / reason : spying on function
-    //     const resetSelectionSpy = spyOn<any>(selectionService, 'resetSelection').and.callThrough();
-    //     selectionService.isAreaSelected = false;
-    //     service.resetSelection();
-    //     expect(resetSelectionSpy).not.toHaveBeenCalled();
-    // });
+    it('resetSelection should not call resetSelection of selection service if area is not selected', () => {
+        // tslint:disable-next-line:no-any / reason : spying on function
+        const resetSelectionSpy = spyOn<any>(selectionServiceSpy, 'resetSelection').and.callFake(() => {
+            return;
+        });
+        selectionServiceSpy.isAreaSelected = false;
+        service.resetSelection();
+        expect(resetSelectionSpy).not.toHaveBeenCalled();
+    });
 
     it('changeSelectionTool should call the onClick of the currentTool', () => {
         // tslint:disable-next-line:no-any / reason : spying on function
@@ -335,4 +354,103 @@ describe('ToolbarService', () => {
         service['applyCurrentToolColor']();
         expect(service.currentTool.setColors).toHaveBeenCalled();
     });
+
+    it('addCommand should call addCommand from undoRedoService', () => {
+        // tslint:disable-next-line:no-any / reason : spying on function
+        const addCommandSpy = spyOn<any>(service['undoRedoService'], 'addCommand');
+        service.addCommand(service.getTools()[0].clone());
+        expect(addCommandSpy).toHaveBeenCalled();
+    });
+
+    it('undo should call undo from undoRedoService', () => {
+        // tslint:disable-next-line:no-any / reason : spying on function
+        const undoSpy = spyOn<any>(service['undoRedoService'], 'undo');
+        service.undo();
+        expect(undoSpy).toHaveBeenCalled();
+        jasmine.clock().uninstall();
+    });
+
+    it('redo should call redo from undoRedoService', () => {
+        // tslint:disable-next-line:no-any / reason : spying on function
+        const redoSpy = spyOn<any>(service['undoRedoService'], 'redo');
+        service.redo();
+        expect(redoSpy).toHaveBeenCalled();
+    });
+
+    it('undo should call isDrawing and applyCurrentTool if isDrawing is false', () => {
+        // tslint:disable-next-line:no-any / reason : spying on function
+        const isDrawingSpy = spyOn<any>(service, 'isDrawing').and.callFake(() => {
+            return false;
+        });
+        // tslint:disable-next-line:no-any / reason : spying on function
+        const applyCurrentToolSpy = spyOn<any>(service, 'applyCurrentTool');
+        const delay = 1000;
+        jasmine.clock().install();
+        service.undo();
+        jasmine.clock().tick(delay);
+        expect(isDrawingSpy).toHaveBeenCalled();
+        expect(applyCurrentToolSpy).toHaveBeenCalled();
+        jasmine.clock().uninstall();
+    });
+
+    it('redo should call isDrawing and applyCurrentTool if isDrawing is false', () => {
+        // tslint:disable-next-line:no-any / reason : spying on function
+        const isDrawing = spyOn<any>(service, 'isDrawing').and.callFake(() => {
+            return false;
+        });
+        // tslint:disable-next-line:no-any / reason : spying on function
+        const applyCurrentToolSpy = spyOn<any>(service, 'applyCurrentTool');
+        service.redo();
+        expect(isDrawing).toHaveBeenCalled();
+        expect(applyCurrentToolSpy).toHaveBeenCalled();
+    });
+
+    it('undo should call isDrawing and not applyCurrentTool isDrawing is true', () => {
+        // tslint:disable-next-line:no-any / reason : spying on function
+        const isDrawing = spyOn<any>(service, 'isDrawing').and.callFake(() => {
+            return true;
+        });
+        // tslint:disable-next-line:no-any / reason : spying on function
+        const applyCurrentToolSpy = spyOn<any>(service, 'applyCurrentTool');
+        const delay = 1000;
+        jasmine.clock().install();
+        service.undo();
+        jasmine.clock().tick(delay);
+        expect(isDrawing).toHaveBeenCalled();
+        expect(applyCurrentToolSpy).not.toHaveBeenCalled();
+        jasmine.clock().uninstall();
+    });
+
+    it('redo should call isDrawing and should not call applyCurrentTool if isDrawing is true', () => {
+        // tslint:disable-next-line:no-any / reason : spying on function
+        const isDrawing = spyOn<any>(service, 'isDrawing').and.callFake(() => {
+            return true;
+        });
+        // tslint:disable-next-line:no-any / reason : spying on function
+        const applyCurrentToolSpy = spyOn<any>(service, 'applyCurrentTool');
+        service.redo();
+        expect(isDrawing).toHaveBeenCalled();
+        expect(applyCurrentToolSpy).not.toHaveBeenCalled();
+    });
+
+    it('isDrawing should call isAreaSelected() and return true an area is selected', () => {
+        // tslint:disable-next-line:no-any / reason : spying on function
+        const isAreaSelectedSpy = spyOn<any>(service, 'isAreaSelected').and.callFake(() => {
+            return true;
+        });
+
+        service.mouseDown = false;
+        const isDrawing = service.isDrawing();
+        expect(isAreaSelectedSpy).toHaveBeenCalled();
+        expect(isDrawing).toEqual(true);
+    });
+
+    it('isDrawing should return true if mouse is Down', () => {
+        // tslint:disable-next-line:no-any / reason : spying on function
+        selectionServiceSpy.isAreaSelected = false;
+        service.mouseDown = true;
+        const isDrawing = service.isDrawing();
+        expect(isDrawing).toEqual(true);
+    });
+    // tslint:disable-next-line: max-file-line-count / reason: its a test file
 });

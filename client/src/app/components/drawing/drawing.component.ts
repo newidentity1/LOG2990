@@ -50,7 +50,6 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
             if (!!dimensions[2]) this.newCanvasSetSize();
             setTimeout(() => {
                 this.toolbarService.applyCurrentTool();
-                this.drawingService.setWhiteBackground();
             }, 0);
         });
         this.subscribeExecutedCommand = this.resizeCommand.executedCommand.subscribe((command: Command) => {
@@ -65,7 +64,6 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
 
-        this.drawingService.setWhiteBackground();
         this.toolbarService.initializeListeners();
     }
 
@@ -94,6 +92,7 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
     onMouseUp(event: MouseEvent): void {
         event.preventDefault();
         if (this.isResizingWidth || this.isResizingHeight) {
+            this.toolbarService.mouseDown = false;
             const newWidth = this.isResizingWidth ? this.previewCanvas.nativeElement.width : this.width;
             const newHeight = this.isResizingHeight ? this.previewCanvas.nativeElement.height : this.height;
 
@@ -170,6 +169,7 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     onResizeBothStart(event: MouseEvent): void {
+        this.toolbarService.mouseDown = true;
         this.onResizeWidthStart(event);
         this.onResizeHeightStart(event);
     }

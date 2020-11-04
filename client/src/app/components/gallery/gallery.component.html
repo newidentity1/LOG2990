@@ -1,11 +1,27 @@
-<h2>Carrousel de dessins</h2>
-<div class="row">
-    <ul id="list">
-        <li *ngFor="let image of list">
-            <p>{{ image.name }}</p>
-            <img alt="" src="../../../assets/screenshots/Sans titre.png" width="200" height="125" />
-        </li>
-    </ul>
+<div id="window">
+    <h2>Carrousel de dessins</h2>
+    <h4>Recherche par étiquette:</h4>
+    <mat-form-field>
+        <mat-label>Ajouter une étiquette</mat-label>
+        <mat-error>étiquette non valide</mat-error>
+        <input matInput type="text" [(ngModel)]="tagToAdd" [formControl]="tagForm" maxlength="15" />
+    </mat-form-field>
+    <button id="addTagButton" mat-stroked-button [disabled]="!validateTag(tagToAdd)" (click)="addTag(tagToAdd); tagToAdd = ''">Ajouter</button>
+    <mat-chip-list #tags>
+        <mat-chip *ngFor="let tag of drawingTags" [removable]="true" (removed)="deleteTag(tag)">
+            {{ tag }}
+            <mat-icon matChipRemove>cancel</mat-icon>
+        </mat-chip>
+    </mat-chip-list>
+
+    <div id="imageSliderWrapper" class="row" [hidden]="!isDrawing">
+        <ng-image-slider id="image-slider" #imageSlider [images]="this.tab" (imageClick)="continueDraw($event)" [imagePopup]="false" [infinite]="true">
+        </ng-image-slider>
+    </div>
+    <div class="row" *ngIf="!isDrawing">
+        <h1>Aucun dessin</h1>
+    </div>
+    <div id="buttons">
+        <button mat-stroked-button id="deleteDrawingButton" (click)="deleteDraw()">Supprimer</button>
+    </div>
 </div>
-<button id="open">Ouvrir</button>
-<button id="delete">Supprimer</button>
