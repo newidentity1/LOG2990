@@ -45,6 +45,7 @@ describe('GalleryComponent', () => {
         communicationSpy = TestBed.inject(CommunicationService) as jasmine.SpyObj<CommunicationService>;
 
         const data: Drawing[] = [];
+        communicationSpy.deleteDraw.and.returnValue(new Observable());
         communicationSpy.getDrawings.and.returnValue(of(data));
         sliderSpy.setSliderImages.and.callFake(() => {
             return;
@@ -73,7 +74,6 @@ describe('GalleryComponent', () => {
     });
 
     it('deleteDraw should delete the current draw', () => {
-        communicationSpy.deleteDraw.and.returnValue(new Observable());
         const fakeDrawing1: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
         component.slider.visiableImageIndex = 0;
         component.drawings.push(fakeDrawing1);
