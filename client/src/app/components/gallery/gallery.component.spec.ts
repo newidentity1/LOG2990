@@ -120,7 +120,7 @@ describe('GalleryComponent', () => {
     //     component.isCanvasEmpty = true;
     //     const fakeDrawing1: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
     //     component.drawings.push(fakeDrawing1);
-    //     component.continueDraw(0);
+    //     component.continueDrawing(0);
     //     expect(drawingServiceSpy.clearCanvas).not.toHaveBeenCalled();
     // });
 

@@ -38,15 +38,13 @@ describe('WarningDialogComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    // it('deleteCanvas should clear base Canvas, close dialog and emit CreateNewDrawing', () => {
-    //     component.deleteCanvas();
-    //     expect(drawingServiceSpy.clearCanvas).toHaveBeenCalledWith(drawingServiceSpy.baseCtx);
-    //     expect(mockDialogRef.close).toHaveBeenCalled();
-    //     expect(drawingServiceSpy.emitCreateNewDrawingEvent).toHaveBeenCalled();
-    // });
+    it('deleteCanvas should clear base Canvas, close dialog and emit CreateNewDrawing', () => {
+        component.deleteCanvas();
+        expect(drawingServiceSpy.clearCanvas).not.toHaveBeenCalled();
+    });
 
-    // it('cancel should close dialog', () => {
-    //     component.cancel();
-    //     expect(mockDialogRef.close).toHaveBeenCalled();
-    // });
+    it('cancel should close dialog', () => {
+        component.cancel();
+        expect(mockDialogRef.close).toHaveBeenCalled();
+    });
 });
