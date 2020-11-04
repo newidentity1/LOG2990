@@ -71,16 +71,6 @@ export class PencilService extends Tool {
         this.pathData = [];
     }
 
-    resetContext(): void {
-        const previewCtx = this.drawingService.previewCtx;
-        const baseCtx = this.drawingService.baseCtx;
-        previewCtx.lineCap = baseCtx.lineCap = 'butt';
-        previewCtx.lineJoin = baseCtx.lineJoin = 'miter';
-        this.mouseDown = false;
-        this.setThickness(this.toolProperties.thickness);
-        this.drawingService.clearCanvas(previewCtx);
-    }
-
     clone(): Tool {
         const pencilClone: PencilService = new PencilService(this.drawingService);
         this.copyTool(pencilClone);
