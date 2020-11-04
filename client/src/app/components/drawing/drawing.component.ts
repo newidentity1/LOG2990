@@ -92,6 +92,7 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
     onMouseUp(event: MouseEvent): void {
         event.preventDefault();
         if (this.isResizingWidth || this.isResizingHeight) {
+            this.toolbarService.mouseDown = false;
             const newWidth = this.isResizingWidth ? this.previewCanvas.nativeElement.width : this.width;
             const newHeight = this.isResizingHeight ? this.previewCanvas.nativeElement.height : this.height;
 
@@ -168,6 +169,7 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     onResizeBothStart(event: MouseEvent): void {
+        this.toolbarService.mouseDown = true;
         this.onResizeWidthStart(event);
         this.onResizeHeightStart(event);
     }
