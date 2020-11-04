@@ -52,7 +52,7 @@ export class GalleryComponent implements OnInit, AfterViewInit {
             const obj = {
                 image: image.url,
                 thumbImage: image.url,
-                title: image.name + '\ntags: ' + this.getDrawingTagsToString(image),
+                title: image.name + '\nétiquette: ' + this.getDrawingTagsToString(image),
                 alt: image.name,
             };
             this.tab.push(obj);
