@@ -13,7 +13,6 @@ export class CommunicationService {
     deleteDraw(id: string): Observable<Drawing> {
         const deleteDrawing: Observable<Drawing> = this.http.delete<Drawing>(this.drawingUrl + id);
         deleteDrawing.subscribe(() => {
-            console.log('TEST GET DRAWINGS');
             this.getDrawings();
         });
         return deleteDrawing;
