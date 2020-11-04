@@ -25,7 +25,7 @@ export class BucketService extends Tool {
     constructor(drawingService: DrawingService, private colorPickerService: ColorPickerService) {
         super(drawingService);
         this.name = 'Bucket';
-        this.tooltip = 'Bucket(1)';
+        this.tooltip = 'Bucket(b)';
         this.iconName = 'format_paint';
         this.toolProperties = new BasicShapeProperties();
     }
@@ -69,7 +69,7 @@ export class BucketService extends Tool {
     }
 
     floodFillRight(): void {
-        const targetColor: Color = this.colorPickerService.selectedColor.clone();
+        const targetColor: Color = this.colorPickerService.primaryColor.getValue().clone();
         for (let i = 0; i < this.image.data.length; i += CONSTANTS.IMAGE_DATA_OPACITY_INDEX + 1) {
             if (
                 this.image.data[i] >= this.startPixelColor[0] - this.tolerance &&
@@ -172,7 +172,7 @@ export class BucketService extends Tool {
     }
 
     private colorPixel(pixel: Pixel): void {
-        const targetColor: Color = this.colorPickerService.selectedColor.clone();
+        const targetColor: Color = this.colorPickerService.primaryColor.getValue().clone();
         const offset = (pixel.y * this.width + pixel.x) * (CONSTANTS.IMAGE_DATA_OPACITY_INDEX + 1);
         this.drawingService.baseCtx.fillRect(pixel.x, pixel.y, 1, 1);
         this.image.data[offset] = targetColor.getRed;
