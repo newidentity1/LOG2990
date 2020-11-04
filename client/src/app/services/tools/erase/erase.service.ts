@@ -28,9 +28,30 @@ export class EraseService extends PencilService {
         this.drawCursor(mousePosition);
     }
 
+    onMouseUp(event: MouseEvent): void {
+        const mouseUpPosition = this.getPositionFromMouse(event);
+        if (this.mouseDown) {
+            if (this.pathData.length === 1 && mouseUpPosition.x === this.mouseDownCoord.x && mouseUpPosition.y === this.mouseDownCoord.y) {
+                this.drawingService.baseCtx.clearRect(
+                    mouseUpPosition.x - this.toolProperties.thickness / 2,
+                    mouseUpPosition.y - this.toolProperties.thickness / 2,
+                    this.toolProperties.thickness,
+                    this.toolProperties.thickness,
+                );
+            } else {
+                this.draw(this.drawingService.baseCtx);
+            }
+            this.executedCommand.emit(this.clone());
+        }
+        this.mouseDown = false;
+        this.clearPath();
+    }
+
     draw(ctx: CanvasRenderingContext2D): void {
         this.drawingService.setStrokeColor('white');
         ctx.miterLimit = 1;
+        ctx.lineCap = 'butt';
+        ctx.lineJoin = 'miter';
         ctx.beginPath();
         for (const point of this.pathData) {
             ctx.lineTo(point.x, point.y);
