@@ -73,7 +73,7 @@ describe('GalleryComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('deleteDraw should delete the current draw', () => {
+    it('deleteDrawing should delete the current draw', () => {
         const fakeDrawing1: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
         component.slider.visiableImageIndex = 0;
         component.drawings.push(fakeDrawing1);
@@ -82,7 +82,7 @@ describe('GalleryComponent', () => {
         expect(communicationSpy.deleteDrawing).toHaveBeenCalled();
     });
 
-    it('deleteDraw should delete the current draw', () => {
+    it('deleteDrawing should delete the current draw', () => {
         component.drawings.length = 0;
         component.deleteDrawing();
         expect(fireBaseServiceSpy.deleteImage).not.toHaveBeenCalled();
