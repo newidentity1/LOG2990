@@ -52,8 +52,6 @@ describe('SelectionService', () => {
         mouseEvent = {
             clientX: 25,
             clientY: 25,
-            offsetX: 25,
-            offsetY: 25,
             button: MouseButton.Left,
         } as MouseEvent;
     });
@@ -84,8 +82,8 @@ describe('SelectionService', () => {
 
     it('onMouseDown should not set mouseDown to true if right mouse button was clicked', () => {
         const rightMouseEvent = {
-            offsetX: 25,
-            offsetY: 25,
+            clientX: 25,
+            clientY: 25,
             button: MouseButton.Right,
         } as MouseEvent;
         service.mouseDown = false;
@@ -149,8 +147,6 @@ describe('SelectionService', () => {
         const event = {
             clientX: 0,
             clientY: 0,
-            offsetX: 0,
-            offsetY: 0,
             button: MouseButton.Left,
         } as MouseEvent;
         service.onMouseMove(event);

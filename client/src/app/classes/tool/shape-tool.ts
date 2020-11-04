@@ -31,7 +31,6 @@ export abstract class ShapeTool extends Tool {
         this.mouseDown = event.button === MouseButton.Left;
         if (this.mouseDown) {
             this.mouseDownCoord = this.getPositionFromMouse(event);
-            this.mouseDownCoord = this.getPositionFromMouse(event);
             this.currentMousePosition = this.getPositionFromMouse(event);
         }
     }
@@ -184,14 +183,14 @@ export abstract class ShapeTool extends Tool {
 
         if (cappedPosition.x < 0) {
             cappedPosition.x = 0;
-        } else if (cappedPosition.x >= canvasBoundingRect.width) {
-            cappedPosition.x = canvasBoundingRect.width;
+        } else if (cappedPosition.x >= this.drawingService.canvas.width) {
+            cappedPosition.x = this.drawingService.canvas.width;
         }
 
         if (cappedPosition.y < 0) {
             cappedPosition.y = 0;
-        } else if (cappedPosition.y >= canvasBoundingRect.height) {
-            cappedPosition.y = canvasBoundingRect.height;
+        } else if (cappedPosition.y >= this.drawingService.canvas.height) {
+            cappedPosition.y = this.drawingService.canvas.height;
         }
         return cappedPosition;
     }
