@@ -12,6 +12,7 @@ export class ResizeCommand extends Command {
 
     constructor(private drawingService: DrawingService) {
         super();
+        this.baseCtx = drawingService.baseCtx;
     }
 
     resize(newWidth: number, newHeight: number): void {
@@ -43,6 +44,5 @@ export class ResizeCommand extends Command {
 
     drawImage(): void {
         this.baseCtx.putImageData(this.imgData, 0, 0);
-        this.drawingService.setWhiteBackground();
     }
 }

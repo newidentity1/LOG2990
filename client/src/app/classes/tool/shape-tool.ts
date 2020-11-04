@@ -31,7 +31,6 @@ export abstract class ShapeTool extends Tool {
         this.mouseDown = event.button === MouseButton.Left;
         if (this.mouseDown) {
             this.mouseDownCoord = this.getPositionFromMouse(event);
-            this.mouseDownCoord = this.getPositionFromMouse(event);
             this.currentMousePosition = this.getPositionFromMouse(event);
         }
     }
@@ -106,11 +105,7 @@ export abstract class ShapeTool extends Tool {
         this.mouseDown = false;
         this.shiftDown = false;
         this.escapeDown = false;
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
-    }
-
-    signOf(num: number): number {
-        return Math.abs(num) / num;
+        this.applyCurrentSettings();
     }
 
     adjustThickness(): number {
@@ -170,7 +165,25 @@ export abstract class ShapeTool extends Tool {
         shape.setTypeDrawing(shapeProperties.currentType);
     }
 
-    clone(): ShapeTool {
-        return this;
+    getPositionFromMouse(event: MouseEvent): Vec2 {
+        return this.capMousePositionInCanvas(event);
+    }
+
+    private capMousePositionInCanvas(event: MouseEvent): Vec2 {
+        const canvasBoundingRect = this.drawingService.canvas.getBoundingClientRect();
+        const cappedPosition = { x: event.clientX - canvasBoundingRect.x, y: event.clientY - canvasBoundingRect.y };
+
+        if (cappedPosition.x < 0) {
+            cappedPosition.x = 0;
+        } else if (cappedPosition.x >= this.drawingService.canvas.width) {
+            cappedPosition.x = this.drawingService.canvas.width;
+        }
+
+        if (cappedPosition.y < 0) {
+            cappedPosition.y = 0;
+        } else if (cappedPosition.y >= this.drawingService.canvas.height) {
+            cappedPosition.y = this.drawingService.canvas.height;
+        }
+        return cappedPosition;
     }
 }

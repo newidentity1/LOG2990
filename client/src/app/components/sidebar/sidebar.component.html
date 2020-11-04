@@ -1,5 +1,5 @@
-<mat-sidenav-container>
-    <mat-sidenav #toolProperties mode="side" position="end" [disableClose]="true">
+<mat-sidenav-container [hasBackdrop]="false">
+    <mat-sidenav #toolProperties mode="over" [disableClose]="true">
         <div *ngIf="currentTool" [ngSwitch]="currentTool.name">
             <app-pencil-options class="tool-options" *ngSwitchCase="'Crayon'"></app-pencil-options>
             <app-brush-options class="tool-options" *ngSwitchCase="'Brush'"></app-brush-options>
@@ -8,7 +8,6 @@
             <app-line-option class="tool-options" *ngSwitchCase="'Line'"></app-line-option>
             <app-erase-option class="tool-options" *ngSwitchCase="'Eraser'"></app-erase-option>
             <app-polygon-option class="tool-options" *ngSwitchCase="'Polygon'"></app-polygon-option>
-            <app-eyedropper-option class="tool-options" *ngSwitchCase="'Eyedropper'"></app-eyedropper-option>
             <app-selection-option class="tool-options" *ngSwitchCase="'Selection'"></app-selection-option>
             <app-bucket-option class="tool-options" *ngSwitchCase="'Bucket'"></app-bucket-option>
         </div>
@@ -22,24 +21,28 @@
                     </button>
                 </li>
             </ul>
-            <hr />
-            <div id="undo-redo-contaner">
-                <app-undo-redo></app-undo-redo>
-            </div>
-            <hr />
-            <div id="colors-container">
-                <app-recent-colors></app-recent-colors>
-                <app-color-tool></app-color-tool>
-            </div>
-            <hr />
-            <div id="other-functionality-container">
-                <button matTooltip="Accueil" matTooltipPosition="right" mat-button id="returnMainPage" routerLink="/">
-                    <mat-icon>home</mat-icon>
-                </button>
-                <app-create-new-drawing></app-create-new-drawing>
-                <app-export-drawing></app-export-drawing>
-                <app-open-guide [inMenu]="false"></app-open-guide>
-                <app-upload></app-upload>
+            <app-eyedropper-option></app-eyedropper-option>
+            <div id="other-tools">
+                <hr />
+                <div id="undo-redo-contaner">
+                    <app-undo-redo></app-undo-redo>
+                </div>
+                <hr />
+                <div id="colors-container">
+                    <app-recent-colors></app-recent-colors>
+                    <app-color-tool></app-color-tool>
+                </div>
+                <hr />
+                <div id="other-functionality-container">
+                    <div class="other-functionality-button">
+                        <button matTooltip="Accueil" matTooltipPosition="right" mat-button routerLink="/">
+                            <mat-icon>home</mat-icon>
+                        </button>
+                    </div>
+                    <app-create-new-drawing class="other-functionality-button"></app-create-new-drawing>
+                    <app-export-drawing class="other-functionality-button"></app-export-drawing>
+                    <app-open-guide class="other-functionality-button" [inMenu]="false"></app-open-guide>
+                </div>
             </div>
         </div>
     </mat-sidenav-content>
