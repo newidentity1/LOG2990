@@ -1,65 +1,124 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { AngularFireStorage } from '@angular/fire/storage';
+import { AngularFireStorage, AngularFireStorageReference, AngularFireUploadTask } from '@angular/fire/storage';
+import { canvasTestHelper } from '@app/classes/canvas-test-helper';
+import { CommunicationService } from '@app/services/communication/communication.service';
+import { of } from 'rxjs';
 import { FireBaseService } from './fire-base.service';
 
 describe('FireBaseService', () => {
     let service: FireBaseService;
-    const angularFirestoreStub = {
-        ref: (id: string) => {
-            // return mocked collection here
-        },
-    };
+    let angularFireStorageSpy: jasmine.SpyObj<AngularFireStorage>;
+    let communicationServiceSpy: jasmine.SpyObj<CommunicationService>;
+    let refMock: jasmine.SpyObj<AngularFireStorageReference>;
+
     beforeEach(() => {
+        angularFireStorageSpy = jasmine.createSpyObj('AngularFireStorage', ['ref']);
+        communicationServiceSpy = jasmine.createSpyObj('CommunicationService', ['postDrawing']);
         TestBed.configureTestingModule({
             imports: [HttpClientTestingModule],
-            providers: [{ provide: AngularFireStorage, useValue: angularFirestoreStub }],
+            providers: [
+                { provide: AngularFireStorage, useValue: angularFireStorageSpy },
+                { provide: CommunicationService, useValue: communicationServiceSpy },
+            ],
         });
         service = TestBed.inject(FireBaseService);
-        const drawingCanvas = document.createElement('canvas');
-        service.drawingService.canvas = drawingCanvas;
+        angularFireStorageSpy = TestBed.inject(AngularFireStorage) as jasmine.SpyObj<AngularFireStorage>;
+        communicationServiceSpy = TestBed.inject(CommunicationService) as jasmine.SpyObj<CommunicationService>;
+
+        service.drawingService.canvas = canvasTestHelper.canvas;
+        refMock = jasmine.createSpyObj('AngularFireStorageReference', ['delete', 'put', 'getDownloadURL']);
+        angularFireStorageSpy.ref.and.returnValue(refMock);
+        communicationServiceSpy.postDrawing.and.returnValue(of(''));
     });
 
     it('should be created', () => {
         expect(service).toBeTruthy();
     });
 
-    // it('postDraw should add new draw to the MongoDB', () => {
-    //     service.id = 'test';
-    //     service.url = 'test';
-    //     service.postDraw();
-    //     // tslint:disable-next-line:no-string-literal
-    //     const spy = spyOn(service['communicationService'], 'postDraw');
-    //     expect(spy).not.toHaveBeenCalled();
-    // });
+    it('postDrawing should add new draw to the MongoDB', () => {
+        service.id = 'test';
+        const url = 'test';
+        service.postDrawing(url);
+        expect(communicationServiceSpy.postDrawing).toHaveBeenCalled();
+    });
 
-    // it('UploadCanvas should upload the current canvas', () => {
-    //     // tslint:disable-next-line: no-any
-    //     const spy = spyOn<any>(service, 'downloadCanvasURL');
-    //     service.uploadCanvas();
-    //     expect(spy).not.toHaveBeenCalled();
-    // });
+    it('UploadCanvas should upload the current canvas', () => {
+        const spyToBlob = spyOn(service.drawingService.canvas, 'toBlob').and.callFake(() => {
+            return;
+        });
 
-    // it('DownloadURL should get the back URL from firebase', () => {
-    //     // tslint:disable-next-line:quotemark
-    //     const spy = spyOn(service, 'reset');
-    //     // tslint:disable-next-line: no-string-literal
-    //     service.ref = service['afStorage'].ref('test');
-    //     service.downloadCanvasURL();
-    //     expect(spy).toHaveBeenCalled();
-    // });
+        service.uploadCanvas();
+        expect(spyToBlob).toHaveBeenCalledWith(service.uploadBlob);
+    });
 
-    // it('DeleteImage should delete the image on the fireBase data', () => {
-    //     // tslint:disable-next-line:no-any
-    //     const spy = spyOn<any>(service, 'reset');
-    //     service.uploadCanvas();
-    //     //service.deleteImage(service.id);
-    //     expect(spy).toHaveBeenCalled();
-    // });
+    it('uploadBlob should upload the current canvas and call downloadCanvasURL', () => {
+        const taskMock: jasmine.SpyObj<AngularFireUploadTask> = jasmine.createSpyObj('AngularFireUploadTask', ['snapshotChanges']);
 
-    //     it('Reset should reset the url and the id ', () => {
-    //         service.reset();
-    //         expect(service.id).toEqual('');
-    //         expect(service.url).toEqual('');
-    //     });
+        angularFireStorageSpy.ref.and.returnValue(refMock);
+        refMock.put.and.returnValue(taskMock);
+
+        const eventMock: jasmine.SpyObj<firebase.storage.UploadTaskSnapshot> = jasmine.createSpyObj('firebase.storage.UploadTaskSnapshot', ['']);
+        eventMock.state = 'success';
+        taskMock.snapshotChanges.and.returnValue(of(eventMock));
+
+        const spyDownloadCanvasURL = spyOn(service, 'downloadCanvasURL').and.callFake(() => {
+            return;
+        });
+
+        service.uploadBlob(null);
+        expect(angularFireStorageSpy.ref).toHaveBeenCalled();
+        expect(refMock.put).toHaveBeenCalled();
+        expect(taskMock.snapshotChanges).toHaveBeenCalled();
+        expect(spyDownloadCanvasURL).toHaveBeenCalled();
+    });
+
+    it('uploadBlob should upload the current canvas and not call downloadCanvasURL', () => {
+        const taskMock: jasmine.SpyObj<AngularFireUploadTask> = jasmine.createSpyObj('AngularFireUploadTask', ['snapshotChanges']);
+
+        angularFireStorageSpy.ref.and.returnValue(refMock);
+        refMock.put.and.returnValue(taskMock);
+
+        const eventMock: jasmine.SpyObj<firebase.storage.UploadTaskSnapshot> = jasmine.createSpyObj('firebase.storage.UploadTaskSnapshot', ['']);
+        taskMock.snapshotChanges.and.returnValue(of(eventMock));
+
+        const spyDownloadCanvasURL = spyOn(service, 'downloadCanvasURL').and.callFake(() => {
+            return;
+        });
+
+        service.uploadBlob(null);
+        expect(angularFireStorageSpy.ref).toHaveBeenCalled();
+        expect(refMock.put).toHaveBeenCalled();
+        expect(taskMock.snapshotChanges).toHaveBeenCalled();
+        expect(spyDownloadCanvasURL).not.toHaveBeenCalled();
+    });
+
+    it('DownloadURL should get the back URL from firebase', () => {
+        const url = 'testURL';
+        refMock.getDownloadURL.and.returnValue(of(url));
+        const spyPostDraw = spyOn(service, 'postDrawing').and.callFake(() => {
+            return;
+        });
+        const spyReset = spyOn(service, 'reset').and.callThrough();
+
+        service.ref = refMock;
+        service.downloadCanvasURL();
+        expect(refMock.getDownloadURL).toHaveBeenCalled();
+        expect(spyPostDraw).toHaveBeenCalledWith(url);
+        expect(spyReset).toHaveBeenCalled();
+    });
+
+    it('DeleteImage should delete the image on the fireBase data', () => {
+        const spyReset = spyOn(service, 'reset');
+
+        service.deleteImage('0');
+        expect(service.ref).toBeDefined();
+        expect(refMock.delete).toHaveBeenCalled();
+        expect(spyReset).toHaveBeenCalled();
+    });
+
+    it('Reset should reset the url and the id ', () => {
+        service.reset();
+        expect(service.id).toEqual('');
+    });
 });
