@@ -41,6 +41,7 @@ export const ANGLE_180 = 180;
 export const MINIMAL_DISTANCE = 20;
 
 export const DEFAULT_LINE_POINT_SIZE = 20;
+export const DEFAULT_MITER_LIMIT = 10;
 
 export const EYEDROPPER_PREVIEW_CANVAS_WIDTH = 150;
 export const EYEDROPPER_PREVIEW_CANVAS_HEIGHT = 150;

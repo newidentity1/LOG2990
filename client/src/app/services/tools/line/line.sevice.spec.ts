@@ -18,12 +18,6 @@ describe('LineService', () => {
 
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
-    let drawSpy: jasmine.Spy<any>;
-    let clearLockSpy: jasmine.Spy<any>;
-    let ajustementAngleSpy: jasmine.Spy<any>;
-    let afficherSegementPreviewSpy: jasmine.Spy<any>;
-    let lockAngleSpy: jasmine.Spy<any>;
-    let arcSpy: jasmine.Spy<any>;
 
     beforeEach(() => {
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
@@ -34,21 +28,16 @@ describe('LineService', () => {
             providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
         });
         service = TestBed.inject(LineService);
-        drawSpy = spyOn<any>(service, 'draw').and.callThrough();
-        clearLockSpy = spyOn<any>(service, 'clearlock').and.callThrough();
-        ajustementAngleSpy = spyOn<any>(service, 'ajustementAngle').and.callThrough();
-        afficherSegementPreviewSpy = spyOn<any>(service, 'afficherSegementPreview').and.callThrough();
-        lockAngleSpy = spyOn<any>(service, 'lockAngle').and.callThrough();
-        arcSpy = spyOn<any>(previewCtxStub, 'arc').and.callThrough();
 
         // Configuration du spy du service
         // tslint:disable:no-string-literal
+        service['drawingService'].canvas = canvasTestHelper.canvas;
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
         service['drawingService'].previewCtx = previewCtxStub;
 
         mouseEventclick1 = {
-            offsetX: 25,
-            offsetY: 25,
+            clientX: 25,
+            clientY: 25,
             button: 0,
         } as MouseEvent;
 
@@ -100,7 +89,7 @@ describe('LineService', () => {
         service.mouseDownCoord = { x: 50, y: 50 };
         service.pathData.push(service.mouseDownCoord);
         service.onKeyDown(keyboardEventShift);
-        mouseEventclick1 = { offsetX: 175, offsetY: -175, button: 0 } as MouseEvent;
+        mouseEventclick1 = { clientX: 175, clientY: -175, button: 0 } as MouseEvent;
         service.onClick(mouseEventclick1);
         const yy: number =
             // tslint:disable-next-line:no-magic-numbers
@@ -115,7 +104,7 @@ describe('LineService', () => {
         service.mouseDownCoord = { x: 200, y: 200 };
         service.pathData.push(service.mouseDownCoord);
         service.onKeyDown(keyboardEventShift);
-        mouseEventclick1 = { offsetX: 50, offsetY: 203, button: 0 } as MouseEvent;
+        mouseEventclick1 = { clientX: 50, clientY: 203, button: 0 } as MouseEvent;
         service.onMouseMove(mouseEventclick1);
         service.onClick(mouseEventclick1);
         expect(service.lock180).toEqual(true);
@@ -127,7 +116,7 @@ describe('LineService', () => {
         service.mouseDownCoord = { x: 200, y: 200 };
         service.pathData.push(service.mouseDownCoord);
         service.onKeyDown(keyboardEventShift);
-        mouseEventclick1 = { offsetX: 203, offsetY: 50, button: 0 } as MouseEvent;
+        mouseEventclick1 = { clientX: 203, clientY: 50, button: 0 } as MouseEvent;
         service.onMouseMove(mouseEventclick1);
         service.onClick(mouseEventclick1);
         expect(service.lock90).toEqual(true);
@@ -157,11 +146,13 @@ describe('LineService', () => {
     });
 
     it(' onClick should not call drawLine  if the number of click < 2', () => {
+        const drawSpy = spyOn<any>(service, 'draw').and.callThrough();
         service.onClick(mouseEventclick1);
         expect(drawSpy).not.toHaveBeenCalled();
     });
 
     it(' onClick should call drawLine if the number of click > 1', () => {
+        const drawSpy = spyOn<any>(service, 'draw').and.callThrough();
         service.mouseDownCoord = { x: 0, y: 0 };
         service.pathData.push(service.mouseDownCoord);
         service.mouseDownCoord = { x: 50, y: 50 };
@@ -176,6 +167,8 @@ describe('LineService', () => {
     });
 
     it('shift is unpress should set shift to false', () => {
+        const drawSpy = spyOn<any>(service, 'draw').and.callThrough();
+        const clearLockSpy = spyOn<any>(service, 'clearlock').and.callThrough();
         service.mouseDownCoord = { x: 50, y: 50 };
         service.pathData.push(service.mouseDownCoord);
         service.mouseDownCoord = { x: 50, y: 50 };
@@ -195,6 +188,7 @@ describe('LineService', () => {
         service.pathData.push(service.mouseDownCoord);
         service.mouseDownCoord = { x: 100, y: 100 };
         service.pathData.push(service.mouseDownCoord);
+        service['mouse'] = { x: 100, y: 100 };
         service.onKeyDown(keyboardEventBackSpace);
         const expectedResult: Vec2 = { x: 50, y: 50 };
         expect(service.pathData[service.pathData.length - 1]).toEqual(expectedResult);
@@ -253,6 +247,7 @@ describe('LineService', () => {
 
     it('Withpoint propriety should put point', () => {
         const lineProperties = service.toolProperties as LineProperties;
+        const arcSpy = spyOn<any>(previewCtxStub, 'arc').and.callThrough();
         lineProperties.withPoint = true;
         service.mouseDownCoord = { x: 20, y: 20 };
         service.pathData.push(service.mouseDownCoord);
@@ -265,6 +260,7 @@ describe('LineService', () => {
     });
 
     it(' onDoubleClick should call drawLine and close loop', () => {
+        const drawSpy = spyOn<any>(service, 'draw').and.callThrough();
         service.mouseDownCoord = { x: 20, y: 20 };
         service.pathData.push(service.mouseDownCoord);
         service.mouseDownCoord = { x: 50, y: 50 };
@@ -277,6 +273,7 @@ describe('LineService', () => {
     });
 
     it(' onDoubleClick should call drawLine and not close loop', () => {
+        const drawSpy = spyOn<any>(service, 'draw').and.callThrough();
         service.mouseDownCoord = { x: 200, y: 200 };
         service.pathData.push(service.mouseDownCoord);
         service.mouseDownCoord = { x: 50, y: 50 };
@@ -314,6 +311,9 @@ describe('LineService', () => {
     });
 
     it(' onMouseMove should drawLine if mouse was not already down', () => {
+        const clearLockSpy = spyOn<any>(service, 'clearlock').and.callThrough();
+        const ajustementAngleSpy = spyOn<any>(service, 'ajustementAngle').and.callThrough();
+        const afficherSegementPreviewSpy = spyOn<any>(service, 'afficherSegementPreview').and.callThrough();
         service.mouseDownCoord = { x: 200, y: 200 };
         service.pathData.push(service.mouseDownCoord);
         service.mouseDownCoord = { x: 50, y: 50 };
@@ -326,12 +326,14 @@ describe('LineService', () => {
     });
 
     it('onMouseMove should not use lock angle if pathdata is empty', () => {
+        const lockAngleSpy = spyOn<any>(service, 'lockAngle').and.callThrough();
         service.onMouseMove(mouseEventclick1);
         expect(lockAngleSpy).not.toHaveBeenCalled();
     });
 
     it('resetContext should reset all the current changes that the tool made', () => {
         const clearPathSpy = spyOn<any>(service, 'clearPath').and.callThrough();
+        const clearLockSpy = spyOn<any>(service, 'clearlock').and.callThrough();
         service.mouseDown = true;
         service.shift = false;
         baseCtxStub.lineCap = previewCtxStub.lineCap = 'round';
@@ -342,6 +344,13 @@ describe('LineService', () => {
         expect(clearLockSpy).toHaveBeenCalled();
         expect(clearPathSpy).toHaveBeenCalled();
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalledWith(previewCtxStub);
+    });
+
+    it('clone should return a clone of the tool', () => {
+        const spyCopyShape = spyOn(LineService.prototype, 'copyTool');
+        const clone = service.clone();
+        expect(spyCopyShape).toHaveBeenCalled();
+        expect(clone).toEqual(service);
     });
     // tslint:disable-next-line: max-file-line-count
 });
