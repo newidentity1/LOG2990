@@ -69,7 +69,7 @@ export class GalleryComponent implements OnInit, AfterViewInit {
         return tags.length > 0 ? tags.substring(0, tags.length - 1) : tags;
     }
 
-    continueDraw(event: number): void {
+    continueDrawing(event: number): void {
         const isCanvasEmpty = this.drawingService.canvasEmpty(this.drawingService.baseCtx, this.drawingService.canvas);
         if (isCanvasEmpty) {
             const image = new Image();
@@ -94,12 +94,12 @@ export class GalleryComponent implements OnInit, AfterViewInit {
         WarningDialogComponent.drawing = d;
         this.dialog.open(WarningDialogComponent);
     }
-    deleteDraw(): void {
+    deleteDrawing(): void {
         if (this.drawings.length !== 0) {
             const i = this.slider.visiableImageIndex;
             const draw: Drawing = this.drawings[i];
             this.fireBaseService.deleteImage(draw._id);
-            this.communicationService.deleteDraw(draw._id).subscribe(() => {
+            this.communicationService.deleteDrawing(draw._id).subscribe(() => {
                 this.getDrawings();
             });
         }
