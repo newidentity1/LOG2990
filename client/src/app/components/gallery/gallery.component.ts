@@ -1,12 +1,13 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { FireBaseService } from '@app/services/firebase/fire-base.service';
 import { Drawing } from '@common/communication/drawing';
 import { NgImageSliderComponent } from 'ng-image-slider';
 import { Observable } from 'rxjs';
+import { WarningDialogComponent } from './warning/warning-dialog.component';
 @Component({
     selector: 'app-gallery',
     styleUrls: ['./gallery.component.scss'],
@@ -26,6 +27,7 @@ export class GalleryComponent implements OnInit, AfterViewInit {
         private dialog: MatDialog,
         private fireBaseService: FireBaseService,
         private communicationService: CommunicationService,
+        public dialogRef: MatDialogRef<WarningDialogComponent>,
     ) {}
 
     ngOnInit(): void {
@@ -34,6 +36,13 @@ export class GalleryComponent implements OnInit, AfterViewInit {
 
     ngAfterViewInit(): void {
         this.getDrawings();
+    }
+
+    openDialog(): void {
+        console.log('etape 3');
+        this.dialog.open(GalleryComponent, {
+            height: '55%',
+        });
     }
 
     updateDrawings(totalDrawings: Drawing[]): void {
@@ -61,29 +70,30 @@ export class GalleryComponent implements OnInit, AfterViewInit {
     }
 
     continueDraw(event: number): void {
-        // const isCanvasEmpty = this.drawingService.canvasEmpty(this.drawingService.baseCtx, this.drawingService.canvas);
-        // if (isCanvasEmpty) {
-        const image = new Image();
-        image.crossOrigin = '';
-        image.src = this.drawings[event].url;
-        image.onload = () => {
-            const ctx = this.drawingService.canvas.getContext('2d') as CanvasRenderingContext2D;
-            this.drawingService.clearCanvas(ctx as CanvasRenderingContext2D);
-            this.drawingService.baseCtx.canvas.width = image.width;
-            this.drawingService.baseCtx.canvas.height = image.height;
-            this.drawingService.previewCtx.canvas.width = image.width;
-            this.drawingService.previewCtx.canvas.height = image.height;
-            ctx.drawImage(image, 0, 0);
-            this.dialog.closeAll();
-        };
-        // } else {
-        //     this.warningCanvas();
-        // }
+        const isCanvasEmpty = this.drawingService.canvasEmpty(this.drawingService.baseCtx, this.drawingService.canvas);
+        if (isCanvasEmpty) {
+            const image = new Image();
+            image.crossOrigin = '';
+            image.src = this.drawings[event].url;
+            image.onload = () => {
+                const ctx = this.drawingService.canvas.getContext('2d') as CanvasRenderingContext2D;
+                this.drawingService.clearCanvas(ctx as CanvasRenderingContext2D);
+                this.drawingService.baseCtx.canvas.width = image.width;
+                this.drawingService.baseCtx.canvas.height = image.height;
+                this.drawingService.previewCtx.canvas.width = image.width;
+                this.drawingService.previewCtx.canvas.height = image.height;
+                ctx.drawImage(image, 0, 0);
+                this.dialog.closeAll();
+            };
+        } else {
+            this.warningCanvas(this.drawings[event]);
+        }
     }
 
-    // warningCanvas(): void {
-    //     this.dialog.open(WarningDialogComponent);
-    // }
+    warningCanvas(d: Drawing): void {
+        WarningDialogComponent.drawing = d;
+        this.dialog.open(WarningDialogComponent);
+    }
     deleteDraw(): void {
         if (this.drawings.length !== 0) {
             const i = this.slider.visiableImageIndex;
