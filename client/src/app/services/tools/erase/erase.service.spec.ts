@@ -12,8 +12,6 @@ describe('EraseService', () => {
 
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
-    let drawSpy: jasmine.Spy<any>;
-    let drawCursorSpy: jasmine.Spy<any>;
 
     beforeEach(() => {
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
@@ -24,8 +22,6 @@ describe('EraseService', () => {
             providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
         });
         service = TestBed.inject(EraseService);
-        drawSpy = spyOn<any>(service, 'draw').and.callThrough();
-        drawCursorSpy = spyOn<any>(service, 'drawCursor').and.callThrough();
 
         // Configuration du spy du service
         // tslint:disable:no-string-literal
@@ -52,6 +48,8 @@ describe('EraseService', () => {
     });
 
     it('onMouseMove should draw cursor and connect point if mouse down', () => {
+        const drawSpy = spyOn<any>(service, 'draw').and.callThrough();
+        const drawCursorSpy = spyOn<any>(service, 'drawCursor').and.callThrough();
         service.onMouseDown(mouseEventclick);
         service.onMouseMove(mouseEvent);
         service.mouseDown = true;
@@ -60,10 +58,18 @@ describe('EraseService', () => {
     });
 
     it('onMouseMove should draw cursor and connect point if mouse down', () => {
+        const drawSpy = spyOn<any>(service, 'draw').and.callThrough();
+        const drawCursorSpy = spyOn<any>(service, 'drawCursor').and.callThrough();
         service.onMouseMove(mouseEvent);
         expect(drawSpy).not.toHaveBeenCalled();
         expect(drawCursorSpy).toHaveBeenCalled();
     });
 
+    it('clone should return a clone of the tool', () => {
+        const spyCopyShape = spyOn(EraseService.prototype, 'copyTool');
+        const clone = service.clone();
+        expect(spyCopyShape).toHaveBeenCalled();
+        expect(clone).toEqual(service);
+    });
     // Todo rajouter test
 });
