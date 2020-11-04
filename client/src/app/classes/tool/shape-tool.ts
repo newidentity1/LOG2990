@@ -1,7 +1,7 @@
 import { Color } from '@app/classes/color/color';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 import { Vec2 } from '@app/classes/vec2';
-import { DASHED_SEGMENTS, SELECTION_BOX_THICKNESS } from '@app/constants/constants';
+import { DASHED_SEGMENTS, SELECTION_BOX_THICKNESS, DEFAULT_MITER_LIMIT } from '@app/constants/constants';
 import { DrawingType } from '@app/enums/drawing-type.enum';
 import { MouseButton } from '@app/enums/mouse-button.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -106,7 +106,7 @@ export abstract class ShapeTool extends Tool {
         this.mouseDown = false;
         this.shiftDown = false;
         this.escapeDown = false;
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.applyCurrentSettings();
     }
 
     signOf(num: number): number {
