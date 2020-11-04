@@ -50,7 +50,6 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
             if (!!dimensions[2]) this.newCanvasSetSize();
             setTimeout(() => {
                 this.toolbarService.applyCurrentTool();
-                this.drawingService.setWhiteBackground();
             }, 0);
         });
         this.subscribeExecutedCommand = this.resizeCommand.executedCommand.subscribe((command: Command) => {
@@ -65,7 +64,6 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
 
-        this.drawingService.setWhiteBackground();
         this.toolbarService.initializeListeners();
     }
 

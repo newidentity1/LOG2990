@@ -51,6 +51,7 @@ import { RectangleComponent } from './components/tools-options/rectangle/rectang
 import { SelectionComponent } from './components/tools-options/selection/selection.component';
 import { ThicknessSliderComponent } from './components/tools-options/thickness-slider/thickness-slider.component';
 import { UndoRedoComponent } from './components/undo-redo/undo-redo.component';
+import { UploadDialogComponent } from './components/upload/upload-dialog/upload-dialog.component';
 import { UploadComponent } from './components/upload/upload.component';
 @NgModule({
     declarations: [
@@ -85,6 +86,7 @@ import { UploadComponent } from './components/upload/upload.component';
         OpenGalleryComponent,
         GalleryComponent,
         UploadComponent,
+        UploadDialogComponent,
     ],
     imports: [
         NgImageSliderModule,
