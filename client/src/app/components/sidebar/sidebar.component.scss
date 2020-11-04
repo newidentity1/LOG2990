@@ -2,6 +2,7 @@
 
 mat-sidenav-container {
     z-index: 100;
+    overflow: visible;
 }
 
 #tool-container {
@@ -15,7 +16,6 @@ mat-sidenav-container {
 #tools {
     list-style-type: none;
     padding: 0px 0px 0px 5px;
-    margin-bottom: 235px;
 
     li {
         padding: 2px 5px;
@@ -38,10 +38,19 @@ mat-sidenav-container {
     border: 1px solid black !important;
 }
 
+#other-tools {
+    position: absolute;
+    bottom: 1px;
+}
+
 mat-sidenav {
-    margin-left: 80px;
+    margin-left: 160px;
     width: 250px;
     background-color: #1a174f;
+}
+
+mat-sidenav-content {
+    z-index: 101;
 }
 
 #other-functionality-container {
