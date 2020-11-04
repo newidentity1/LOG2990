@@ -13,10 +13,11 @@ export class FireBaseService {
     task: AngularFireUploadTask;
     url: string = '';
     id: string = '';
+    name: string = '';
     constructor(public drawingService: DrawingService, private afStorage: AngularFireStorage, private communicationService: CommunicationService) {}
 
     uploadCanvas(): void {
-        this.id = Math.random() + 'test';
+        this.id = Math.random() + this.name;
         const baseImage = new Image();
         baseImage.src = this.drawingService.canvas.toDataURL('image/png');
         this.drawingService.canvas.toBlob((blob) => {
@@ -41,7 +42,7 @@ export class FireBaseService {
         });
     }
     postDraw(): void {
-        const drawing: Drawing = { _id: this.id, name: this.id, tags: [], url: this.url };
+        const drawing: Drawing = { _id: this.id, name: this.name, tags: [], url: this.url };
         this.communicationService.postDraw(drawing);
     }
 
