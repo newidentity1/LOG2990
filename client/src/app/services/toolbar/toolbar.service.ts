@@ -72,7 +72,6 @@ export class ToolbarService {
             .set(KeyShortcut.Eyedropper, eyedropperService)
             .set(KeyShortcut.RectangleSelect, selectionService)
             .set(KeyShortcut.EllipseSelect, selectionService);
-        this.undoRedoService = new UndoRedoService(this.drawingService);
     }
 
     unsubscribeListeners(): void {
