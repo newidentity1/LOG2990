@@ -5,7 +5,6 @@ import { Observable, Subject } from 'rxjs';
     providedIn: 'root',
 })
 export class DrawingService {
-    fakeCtx: CanvasRenderingContext2D;
     baseCtx: CanvasRenderingContext2D;
     previewCtx: CanvasRenderingContext2D;
     canvas: HTMLCanvasElement;
