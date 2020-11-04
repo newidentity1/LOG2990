@@ -109,10 +109,6 @@ export abstract class ShapeTool extends Tool {
         this.applyCurrentSettings();
     }
 
-    signOf(num: number): number {
-        return Math.abs(num) / num;
-    }
-
     adjustThickness(): number {
         const shapeProperties = this.toolProperties as BasicShapeProperties;
         this.radius = { x: this.width / 2, y: this.height / 2 };

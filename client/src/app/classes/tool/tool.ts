@@ -72,6 +72,10 @@ export abstract class Tool extends Command {
         this.drawingService.setColor(primaryColor.toStringRGBA());
     }
 
+    signOf(num: number): number {
+        return num ? Math.abs(num) / num : 0;
+    }
+
     applyCurrentSettings(): void {
         const previewCtx = this.drawingService.previewCtx;
         const baseCtx = this.drawingService.baseCtx;
