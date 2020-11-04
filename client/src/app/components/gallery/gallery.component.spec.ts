@@ -28,7 +28,7 @@ describe('GalleryComponent', () => {
     beforeEach(async(() => {
         drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
         fireBaseServiceSpy = jasmine.createSpyObj('fireBaseServiceSpy', ['deleteImage']);
-        communicationSpy = jasmine.createSpyObj('CommunicationService', ['deleteDraw', 'getDrawings']);
+        communicationSpy = jasmine.createSpyObj('CommunicationService', ['deleteDrawing', 'getDrawings']);
         sliderSpy = jasmine.createSpyObj('NgImageSliderComponent', ['setSliderImages']);
         TestBed.configureTestingModule({
             declarations: [GalleryComponent, NgImageSliderComponent],
@@ -45,7 +45,7 @@ describe('GalleryComponent', () => {
         communicationSpy = TestBed.inject(CommunicationService) as jasmine.SpyObj<CommunicationService>;
 
         const data: Drawing[] = [];
-        communicationSpy.deleteDraw.and.returnValue(new Observable());
+        communicationSpy.deleteDrawing.and.returnValue(new Observable());
         communicationSpy.getDrawings.and.returnValue(of(data));
         sliderSpy.setSliderImages.and.callFake(() => {
             return;
@@ -77,14 +77,14 @@ describe('GalleryComponent', () => {
         const fakeDrawing1: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
         component.slider.visiableImageIndex = 0;
         component.drawings.push(fakeDrawing1);
-        of(component.deleteDraw());
+        of(component.deleteDrawing());
         expect(fireBaseServiceSpy.deleteImage).toHaveBeenCalled();
-        expect(communicationSpy.deleteDraw).toHaveBeenCalled();
+        expect(communicationSpy.deleteDrawing).toHaveBeenCalled();
     });
 
     it('deleteDraw should delete the current draw', () => {
         component.drawings.length = 0;
-        component.deleteDraw();
+        component.deleteDrawing();
         expect(fireBaseServiceSpy.deleteImage).not.toHaveBeenCalled();
     });
 
@@ -117,7 +117,7 @@ describe('GalleryComponent', () => {
     it('continueDraw should add the choosing draw to the canvas', () => {
         const fakeDrawing1: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
         component.drawings.push(fakeDrawing1);
-        component.continueDraw(0);
+        component.continueDrawing(0);
         expect(drawingServiceSpy.clearCanvas).not.toHaveBeenCalled();
     });
 

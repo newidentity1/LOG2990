@@ -11,30 +11,15 @@ export class CommunicationService {
 
     constructor(private http: HttpClient) {}
 
-    deleteDraw(id: string): Observable<Drawing> {
-        const deleteDrawing: Observable<Drawing> = this.http.delete<Drawing>(this.drawingUrl + id);
-        deleteDrawing.subscribe(() => {
-            this.getDrawings();
-        });
-        return deleteDrawing;
+    deleteDrawing(id: string): Observable<string> {
+        return this.http.delete<string>(this.drawingUrl + id);
     }
 
     getDrawings(): Observable<Drawing[]> {
         return this.http.get<Drawing[]>(this.drawingUrl);
     }
 
-    postDraw(draw: Drawing): Observable<string> {
-        const postDrawing: Observable<string> = this.http.post(this.drawingUrl, draw, { responseType: 'text' });
-        postDrawing.subscribe({
-            // tslint:disable-next-line: no-any
-            next: (data: any) => {
-                console.log(data);
-            },
-            // tslint:disable-next-line: no-any
-            error: (error: any) => {
-                console.log(error);
-            },
-        });
-        return postDrawing;
+    postDrawing(drawing: Drawing): Observable<string> {
+        return this.http.post(this.drawingUrl, drawing, { responseType: 'text' });
     }
 }

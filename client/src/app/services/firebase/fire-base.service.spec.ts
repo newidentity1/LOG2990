@@ -14,7 +14,7 @@ describe('FireBaseService', () => {
 
     beforeEach(() => {
         angularFireStorageSpy = jasmine.createSpyObj('AngularFireStorage', ['ref']);
-        communicationServiceSpy = jasmine.createSpyObj('CommunicationService', ['postDraw']);
+        communicationServiceSpy = jasmine.createSpyObj('CommunicationService', ['postDrawing']);
         TestBed.configureTestingModule({
             imports: [HttpClientTestingModule],
             providers: [
@@ -29,6 +29,7 @@ describe('FireBaseService', () => {
         service.drawingService.canvas = canvasTestHelper.canvas;
         refMock = jasmine.createSpyObj('AngularFireStorageReference', ['delete', 'put', 'getDownloadURL']);
         angularFireStorageSpy.ref.and.returnValue(refMock);
+        communicationServiceSpy.postDrawing.and.returnValue(of(''));
     });
 
     it('should be created', () => {
@@ -39,7 +40,7 @@ describe('FireBaseService', () => {
         service.id = 'test';
         const url = 'test';
         service.postDraw(url);
-        expect(communicationServiceSpy.postDraw).toHaveBeenCalled();
+        expect(communicationServiceSpy.postDrawing).toHaveBeenCalled();
     });
 
     it('UploadCanvas should upload the current canvas', () => {

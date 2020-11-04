@@ -39,7 +39,7 @@ export class FireBaseService {
     }
     postDraw(drawingURL: string): void {
         const drawing: Drawing = { _id: this.id, name: this.name, tags: [], url: drawingURL };
-        this.communicationService.postDraw(drawing);
+        this.communicationService.postDrawing(drawing);
     }
 
     deleteImage(id: string): void {
