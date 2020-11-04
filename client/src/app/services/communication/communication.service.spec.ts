@@ -23,21 +23,31 @@ describe('CommunicationService', () => {
     });
 
     it('DeleteDrawing should delete the specific drawing (ID) on the server', () => {
-        service.deleteDraw('test');
-        const requests = httpMock.match(url + 'test');
-        expect(requests.length).toBe(1);
+        service.deleteDrawing('test').subscribe((result) => {
+            expect(result).toEqual('deleted');
+        });
+        const request = httpMock.expectOne(url + 'test');
+        expect(request.request.method).toEqual('DELETE');
+        request.flush('deleted');
     });
 
     it('getDrawings should receive all the drawings present on the server', () => {
-        service.getDrawings();
-        const requests = httpMock.match(url);
-        expect(requests.length).toBe(0);
+        const fakeDrawing: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
+        service.getDrawings().subscribe((result) => {
+            expect(result[0]).toEqual(fakeDrawing);
+        });
+        const request = httpMock.expectOne(url);
+        expect(request.request.method).toEqual('GET');
+        request.flush([fakeDrawing]);
     });
 
-    it('PostDraw should send drawing to the server', () => {
-        const fakeDrawing1: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
-        service.postDraw(fakeDrawing1);
-        const requests = httpMock.match(url);
-        expect(requests.length).toBe(1);
+    it('postDrawing should send drawing to the server', () => {
+        const fakeDrawing: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
+        service.postDrawing(fakeDrawing).subscribe((result) => {
+            expect(result).toEqual('Created');
+        });
+        const request = httpMock.expectOne(url);
+        expect(request.request.method).toEqual('POST');
+        request.flush('Created');
     });
 });

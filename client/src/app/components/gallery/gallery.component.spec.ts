@@ -29,7 +29,7 @@ describe('GalleryComponent', () => {
     beforeEach(async(() => {
         drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'canvasEmpty']);
         fireBaseServiceSpy = jasmine.createSpyObj('fireBaseServiceSpy', ['deleteImage']);
-        communicationSpy = jasmine.createSpyObj('CommunicationService', ['deleteDraw', 'getDrawings']);
+        communicationSpy = jasmine.createSpyObj('CommunicationService', ['deleteDrawing', 'getDrawings']);
         sliderSpy = jasmine.createSpyObj('NgImageSliderComponent', ['setSliderImages']);
         TestBed.configureTestingModule({
             declarations: [GalleryComponent, NgImageSliderComponent],
@@ -47,7 +47,7 @@ describe('GalleryComponent', () => {
         communicationSpy = TestBed.inject(CommunicationService) as jasmine.SpyObj<CommunicationService>;
 
         const data: Drawing[] = [];
-        communicationSpy.deleteDraw.and.returnValue(new Observable());
+        communicationSpy.deleteDrawing.and.returnValue(new Observable());
         communicationSpy.getDrawings.and.returnValue(of(data));
         sliderSpy.setSliderImages.and.callFake(() => {
             return;
@@ -75,18 +75,18 @@ describe('GalleryComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('deleteDraw should delete the current draw', () => {
+    it('deleteDrawing should delete the current draw', () => {
         const fakeDrawing1: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
         component.slider.visiableImageIndex = 0;
         component.drawings.push(fakeDrawing1);
-        of(component.deleteDraw());
+        of(component.deleteDrawing());
         expect(fireBaseServiceSpy.deleteImage).toHaveBeenCalled();
-        expect(communicationSpy.deleteDraw).toHaveBeenCalled();
+        expect(communicationSpy.deleteDrawing).toHaveBeenCalled();
     });
 
-    it('deleteDraw should delete the current draw', () => {
+    it('deleteDrawing should delete the current draw', () => {
         component.drawings.length = 0;
-        component.deleteDraw();
+        component.deleteDrawing();
         expect(fireBaseServiceSpy.deleteImage).not.toHaveBeenCalled();
     });
 

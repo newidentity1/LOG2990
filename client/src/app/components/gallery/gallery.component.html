@@ -15,13 +15,13 @@
     </mat-chip-list>
 
     <div id="imageSliderWrapper" class="row" [hidden]="!isDrawing">
-        <ng-image-slider #imageSlider [images]="this.tab" (imageClick)="continueDraw($event)" [imagePopup]="false" [infinite]="false">
+        <ng-image-slider #imageSlider [images]="this.tab" (imageClick)="continueDrawing($event)" [imagePopup]="false" [infinite]="false">
         </ng-image-slider>
     </div>
     <div class="row" *ngIf="!isDrawing">
         <h1>Aucun dessin</h1>
     </div>
     <div id="buttons">
-        <button mat-stroked-button id="deleteDrawingButton" (click)="deleteDraw()">Supprimer</button>
+        <button mat-stroked-button id="deleteDrawingButton" (click)="deleteDrawing()">Supprimer</button>
     </div>
 </div>
