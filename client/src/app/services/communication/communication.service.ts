@@ -13,6 +13,7 @@ export class CommunicationService {
     deleteDraw(id: string): Observable<Drawing> {
         const deleteDrawing: Observable<Drawing> = this.http.delete<Drawing>(this.drawingUrl + id);
         deleteDrawing.subscribe(() => {
+            console.log('TEST GET DRAWINGS');
             this.getDrawings();
         });
         return deleteDrawing;
@@ -22,7 +23,7 @@ export class CommunicationService {
         return this.http.get<Drawing[]>(this.drawingUrl);
     }
 
-    postDraw(draw: Drawing): void {
+    postDraw(draw: Drawing): Observable<string> {
         const postDrawing: Observable<string> = this.http.post(this.drawingUrl, draw, { responseType: 'text' });
         postDrawing.subscribe({
             // tslint:disable-next-line: no-any
@@ -34,5 +35,6 @@ export class CommunicationService {
                 console.log(error);
             },
         });
+        return postDrawing;
     }
 }
