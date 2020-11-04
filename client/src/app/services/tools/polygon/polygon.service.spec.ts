@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
+import { ShapeTool } from '@app/classes/tool/shape-tool';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 import { PolygonProperties } from '@app/classes/tools-properties/polygon-properties';
 import { Vec2 } from '@app/classes/vec2';
@@ -164,5 +165,12 @@ describe('PolygonService', () => {
         service.drawBoxGuide();
         expect(spyStroke).not.toHaveBeenCalled();
         expect(spyLineDash).not.toHaveBeenCalled();
+    });
+
+    it('clone should return a clone of the tool', () => {
+        const spyCopyShape = spyOn(ShapeTool.prototype, 'copyShape');
+        const clone = service.clone();
+        expect(spyCopyShape).toHaveBeenCalled();
+        expect(clone).toEqual(service);
     });
 });

@@ -33,14 +33,14 @@ describe('BucketService', () => {
         service['drawingService'].canvas = drawingCanvas;
 
         mouseEventclickLeft = {
-            offsetX: 25,
-            offsetY: 25,
+            clientX: 25,
+            clientY: 25,
             button: 0,
         } as MouseEvent;
 
         mouseEventclickRight = {
-            offsetX: 25,
-            offsetY: 25,
+            clientX: 25,
+            clientY: 25,
             button: 2,
         } as MouseEvent;
         service['width'] = CONSTANTS.TEST_IMAGE_SIZE;
@@ -244,5 +244,40 @@ describe('BucketService', () => {
         service['generateMatrice']();
         const p1: Pixel = { x: 2, y: 2, status: 1 };
         expect(service['checkColor'](p1)).toBeTrue();
+    });
+
+    it('clone should return a clone of the tool', () => {
+        const bucket: BucketService = new BucketService(drawServiceSpy, service['colorPickerService']);
+        const spyCopyBucket = spyOn(BucketService.prototype, 'copyBucket');
+        const clone = bucket.clone();
+        expect(spyCopyBucket).toHaveBeenCalled();
+        expect(clone).toEqual(bucket);
+    });
+
+    it('copyBucket should copy the bucketService', () => {
+        const bucket: BucketService = new BucketService(drawServiceSpy, service['colorPickerService']);
+        bucket['startPixelColor'] = service['drawingService'].baseCtx.getImageData(2, 2, 1, 1).data;
+        bucket['image'] = service['drawingService'].baseCtx.getImageData(0, 0, service['width'], service['height']);
+        const bucketCopy: BucketService = new BucketService(drawServiceSpy, service['colorPickerService']);
+        const spyCopyTool = spyOn(BucketService.prototype, 'copyTool');
+        bucket.copyBucket(bucketCopy);
+        expect(spyCopyTool).toHaveBeenCalled();
+        expect(bucket).toEqual(bucketCopy);
+    });
+
+    it('onMouseUp should set mouseDown to false and emit a command', () => {
+        const emitSpy = spyOn(service.executedCommand, 'emit');
+        service.mouseDown = true;
+        service.onMouseUp(mouseEventclickLeft);
+        expect(emitSpy).toHaveBeenCalled();
+        expect(service.mouseDown).toEqual(false);
+    });
+
+    it('onMouseUp should do nothing if mouseDown was false', () => {
+        const emitSpy = spyOn(service.executedCommand, 'emit');
+        service.mouseDown = false;
+        service.onMouseUp(mouseEventclickLeft);
+        expect(emitSpy).not.toHaveBeenCalled();
+        expect(service.mouseDown).toEqual(false);
     });
 });

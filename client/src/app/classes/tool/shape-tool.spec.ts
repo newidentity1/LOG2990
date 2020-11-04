@@ -27,9 +27,11 @@ describe('Class: ShapeTool', () => {
     let drawSpy: jasmine.Spy<any>;
     let transformToEqualSidesSpy: jasmine.Spy<any>;
     let baseCtxStub: CanvasRenderingContext2D;
+    let previewCtxStub: CanvasRenderingContext2D;
 
     beforeEach(() => {
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
+        previewCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
 
         drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setColor', 'setFillColor', 'setStrokeColor', 'setThickness']);
 
@@ -37,6 +39,9 @@ describe('Class: ShapeTool', () => {
             providers: [{ provide: DrawingService, useValue: drawingServiceSpy }],
         });
         drawingServiceSpy = TestBed.inject(DrawingService) as jasmine.SpyObj<DrawingService>;
+        drawingServiceSpy.canvas = canvasTestHelper.canvas;
+        drawingServiceSpy.baseCtx = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
+        drawingServiceSpy.previewCtx = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
         shapeTool = new ShapeToolTest(drawingServiceSpy);
         drawPreviewSpy = spyOn<any>(shapeTool, 'drawPreview').and.callThrough();
         computeDimensionsSpy = spyOn<any>(shapeTool, 'computeDimensions').and.callThrough();
@@ -47,11 +52,13 @@ describe('Class: ShapeTool', () => {
         secondColor = new Color(BLACK);
 
         mouseEvent = {
-            offsetX: 25,
-            offsetY: 25,
+            clientX: 25,
+            clientY: 25,
             button: 0,
         } as MouseEvent;
 
+        drawingServiceSpy.baseCtx = baseCtxStub;
+        drawingServiceSpy.previewCtx = previewCtxStub;
         shapeTool.currentMousePosition = { x: mouseEvent.x, y: mouseEvent.y };
         shapeTool.mouseDownCoord = { x: mouseEvent.x, y: mouseEvent.y };
     });
@@ -73,8 +80,8 @@ describe('Class: ShapeTool', () => {
 
     it(' mouseDown should set mouseDown property to false on right click', () => {
         const mouseEventRClick = {
-            offsetX: 25,
-            offsetY: 25,
+            clientX: 25,
+            clientY: 25,
             button: 1,
         } as MouseEvent;
         shapeTool.onMouseDown(mouseEventRClick);
@@ -105,8 +112,8 @@ describe('Class: ShapeTool', () => {
     it(' onMouseUp should call drawif mouse was already down and position of mouse changed from initial', () => {
         shapeTool.mouseDown = true;
         const newMouseEvent = {
-            offsetX: 30,
-            offsetY: 30,
+            clientX: 30,
+            clientY: 30,
             button: 0,
         } as MouseEvent;
         shapeTool.currentMousePosition = { x: 30, y: 30 };
@@ -293,15 +300,6 @@ describe('Class: ShapeTool', () => {
         expect(result).toEqual(-1);
     });
 
-    it('resetContext should reset all the current changes that the tool made', () => {
-        shapeTool.mouseDown = true;
-        shapeTool.shiftDown = true;
-        shapeTool.resetContext();
-        expect(shapeTool.mouseDown).toEqual(false);
-        expect(shapeTool.shiftDown).toEqual(false);
-        expect(drawingServiceSpy.clearCanvas).toHaveBeenCalledWith(drawingServiceSpy.previewCtx);
-    });
-
     it('drawBoxGuide should call stroke and setLineDash if mouse was down', () => {
         shapeTool.mouseDown = true;
         const spyStroke = spyOn(baseCtxStub, 'stroke');
@@ -370,6 +368,18 @@ describe('Class: ShapeTool', () => {
         expect(shapeTool.height).toEqual(shapeToolCopy.height);
         expect(shapeTool.mouseDownCoord).toEqual(shapeToolCopy.mouseDownCoord);
         expect(shapeTool.currentMousePosition).toEqual(shapeToolCopy.currentMousePosition);
+    });
+
+    it('resetContext should reset all the current changes that the tool made', () => {
+        shapeTool.mouseDown = true;
+        shapeTool.shiftDown = true;
+        shapeTool.escapeDown = true;
+        const spyApplyCurrentSettings = spyOn(shapeTool, 'applyCurrentSettings');
+        shapeTool.resetContext();
+        expect(shapeTool.mouseDown).toEqual(false);
+        expect(shapeTool.shiftDown).toEqual(false);
+        expect(shapeTool.escapeDown).toEqual(false);
+        expect(spyApplyCurrentSettings).toHaveBeenCalled();
     });
     // tslint:disable-next-line: max-file-line-count / reason: its a test file
 });

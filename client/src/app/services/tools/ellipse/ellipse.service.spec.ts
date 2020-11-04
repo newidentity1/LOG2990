@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
+import { ShapeTool } from '@app/classes/tool/shape-tool';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 import { Vec2 } from '@app/classes/vec2';
 import { DASHED_SEGMENTS } from '@app/constants/constants';
@@ -118,14 +119,10 @@ describe('EllipseService', () => {
         expect(spyStroke).not.toHaveBeenCalled();
     });
 
-    it('resetContext should reset all the current changes that the tool made', () => {
-        service.mouseDown = true;
-        service.shiftDown = true;
-        service.escapeDown = true;
-        service.resetContext();
-        expect(service.mouseDown).toEqual(false);
-        expect(service.shiftDown).toEqual(false);
-        expect(service.escapeDown).toEqual(false);
-        expect(drawServiceSpy.clearCanvas).toHaveBeenCalledWith(drawServiceSpy.previewCtx);
+    it('clone should return a clone of the tool', () => {
+        const spyCopyShape = spyOn(ShapeTool.prototype, 'copyShape');
+        const clone = service.clone();
+        expect(spyCopyShape).toHaveBeenCalled();
+        expect(clone).toEqual(service);
     });
 });

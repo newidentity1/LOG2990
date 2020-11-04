@@ -52,8 +52,6 @@ describe('SelectionService', () => {
         mouseEvent = {
             clientX: 25,
             clientY: 25,
-            offsetX: 25,
-            offsetY: 25,
             button: MouseButton.Left,
         } as MouseEvent;
     });
@@ -84,8 +82,8 @@ describe('SelectionService', () => {
 
     it('onMouseDown should not set mouseDown to true if right mouse button was clicked', () => {
         const rightMouseEvent = {
-            offsetX: 25,
-            offsetY: 25,
+            clientX: 25,
+            clientY: 25,
             button: MouseButton.Right,
         } as MouseEvent;
         service.mouseDown = false;
@@ -149,8 +147,6 @@ describe('SelectionService', () => {
         const event = {
             clientX: 0,
             clientY: 0,
-            offsetX: 0,
-            offsetY: 0,
             button: MouseButton.Left,
         } as MouseEvent;
         service.onMouseMove(event);
@@ -343,4 +339,38 @@ describe('SelectionService', () => {
         expect(service['positiveStartingPos']).toEqual({ x: 0, y: 0 });
         expect(drawingServiceSpy.clearCanvas).toHaveBeenCalledWith(drawingServiceSpy.previewCtx);
     });
+
+    it('drawSelection should emit a command if an area is selected and the starting position is different from the final position', () => {
+        const emitSpy = spyOn(service.executedCommand, 'emit');
+        service.isAreaSelected = true;
+        service.positiveStartingPos = { x: 0, y: 0 };
+        service['moveSelectionService'].finalPosition = { x: 10, y: 10 };
+        service.drawSelection();
+        expect(emitSpy).toHaveBeenCalled();
+    });
+
+    it('drawSelection should call resetSelection if an area is selected', () => {
+        const resetSelectionSpy = spyOn(service, 'resetSelection');
+        service.isAreaSelected = true;
+        service.drawSelection();
+        expect(resetSelectionSpy).toHaveBeenCalled();
+    });
+
+    it('drawSelection should do nothing if an area is not selected', () => {
+        const resetSelectionSpy = spyOn(service, 'resetSelection');
+        service.isAreaSelected = false;
+        service.drawSelection();
+        expect(resetSelectionSpy).not.toHaveBeenCalled();
+    });
+
+    it('execute should call copySelection and resetSelection', () => {
+        const resetSelectionSpy = spyOn(service, 'resetSelection');
+        service.positiveStartingPos = { x: 0, y: 0 };
+        service.positiveHeight = 10;
+        service.positiveWidth = 10;
+        service.execute();
+        expect(copySelectionSpy).toHaveBeenCalled();
+        expect(resetSelectionSpy).toHaveBeenCalled();
+    });
+    // tslint:disable-next-line: max-file-line-count / reason: its a test file
 });

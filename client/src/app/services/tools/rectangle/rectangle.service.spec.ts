@@ -69,4 +69,11 @@ describe('RectangleService', () => {
         expect(spyFill).toHaveBeenCalled();
         expect(spyStroke).toHaveBeenCalled();
     });
+
+    it('clone should return a clone of the tool', () => {
+        const spyCopyShape = spyOn(ShapeTool.prototype, 'copyShape');
+        const clone = service.clone();
+        expect(spyCopyShape).toHaveBeenCalled();
+        expect(clone).toEqual(service);
+    });
 });

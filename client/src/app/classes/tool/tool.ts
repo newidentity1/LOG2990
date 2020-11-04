@@ -2,6 +2,7 @@ import { Color } from '@app/classes/color/color';
 import { Command } from '@app/classes/commands/command';
 import { BasicToolProperties } from '@app/classes/tools-properties/basic-tool-properties';
 import { Vec2 } from '@app/classes/vec2';
+import { BLACK, DEFAULT_MITER_LIMIT, WHITE } from '@app/constants/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
 // Ceci est justifié vu qu'on a des fonctions qui seront gérés par les classes enfant
@@ -19,8 +20,8 @@ export abstract class Tool extends Command {
 
     constructor(protected drawingService: DrawingService) {
         super();
-        this.currentPrimaryColor = new Color();
-        this.currentSecondaryColor = new Color();
+        this.currentPrimaryColor = new Color(BLACK);
+        this.currentSecondaryColor = new Color(WHITE);
     }
 
     setTypeDrawing(value: string): void {}
@@ -56,7 +57,8 @@ export abstract class Tool extends Command {
     }
 
     getPositionFromMouse(event: MouseEvent): Vec2 {
-        return { x: event.offsetX, y: event.offsetY };
+        const canvasBoundingRect = this.drawingService.canvas.getBoundingClientRect();
+        return { x: event.clientX - canvasBoundingRect.x, y: event.clientY - canvasBoundingRect.y };
     }
 
     setThickness(value: number | null): void {
@@ -71,12 +73,27 @@ export abstract class Tool extends Command {
         this.drawingService.setColor(primaryColor.toStringRGBA());
     }
 
-    applyCurrentSettings(): void {
-        this.setColors(this.currentPrimaryColor, this.currentSecondaryColor);
-        this.setThickness(this.toolProperties.thickness);
+    signOf(num: number): number {
+        return num ? Math.abs(num) / num : 0;
     }
 
-    resetContext(): void {}
+    applyCurrentSettings(): void {
+        const previewCtx = this.drawingService.previewCtx;
+        const baseCtx = this.drawingService.baseCtx;
+
+        previewCtx.lineCap = baseCtx.lineCap = 'butt';
+        previewCtx.lineJoin = baseCtx.lineJoin = 'miter';
+        previewCtx.miterLimit = baseCtx.miterLimit = DEFAULT_MITER_LIMIT;
+
+        this.drawingService.clearCanvas(previewCtx);
+        this.setThickness(this.toolProperties.thickness);
+        this.setColors(this.currentPrimaryColor, this.currentSecondaryColor);
+    }
+
+    resetContext(): void {
+        this.mouseDown = false;
+        this.applyCurrentSettings();
+    }
 
     clone(): Tool {
         return this;
