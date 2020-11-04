@@ -37,6 +37,9 @@ describe('Class: ShapeTool', () => {
             providers: [{ provide: DrawingService, useValue: drawingServiceSpy }],
         });
         drawingServiceSpy = TestBed.inject(DrawingService) as jasmine.SpyObj<DrawingService>;
+        drawingServiceSpy.canvas = canvasTestHelper.canvas;
+        drawingServiceSpy.baseCtx = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
+        drawingServiceSpy.previewCtx = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
         shapeTool = new ShapeToolTest(drawingServiceSpy);
         drawPreviewSpy = spyOn<any>(shapeTool, 'drawPreview').and.callThrough();
         computeDimensionsSpy = spyOn<any>(shapeTool, 'computeDimensions').and.callThrough();
@@ -47,8 +50,8 @@ describe('Class: ShapeTool', () => {
         secondColor = new Color(BLACK);
 
         mouseEvent = {
-            offsetX: 25,
-            offsetY: 25,
+            clientX: 25,
+            clientY: 25,
             button: 0,
         } as MouseEvent;
 
@@ -73,8 +76,8 @@ describe('Class: ShapeTool', () => {
 
     it(' mouseDown should set mouseDown property to false on right click', () => {
         const mouseEventRClick = {
-            offsetX: 25,
-            offsetY: 25,
+            clientX: 25,
+            clientY: 25,
             button: 1,
         } as MouseEvent;
         shapeTool.onMouseDown(mouseEventRClick);
@@ -105,8 +108,8 @@ describe('Class: ShapeTool', () => {
     it(' onMouseUp should call drawif mouse was already down and position of mouse changed from initial', () => {
         shapeTool.mouseDown = true;
         const newMouseEvent = {
-            offsetX: 30,
-            offsetY: 30,
+            clientX: 30,
+            clientY: 30,
             button: 0,
         } as MouseEvent;
         shapeTool.currentMousePosition = { x: 30, y: 30 };

@@ -33,14 +33,14 @@ describe('BucketService', () => {
         service['drawingService'].canvas = drawingCanvas;
 
         mouseEventclickLeft = {
-            offsetX: 25,
-            offsetY: 25,
+            clientX: 25,
+            clientY: 25,
             button: 0,
         } as MouseEvent;
 
         mouseEventclickRight = {
-            offsetX: 25,
-            offsetY: 25,
+            clientX: 25,
+            clientY: 25,
             button: 2,
         } as MouseEvent;
         service['width'] = CONSTANTS.TEST_IMAGE_SIZE;
