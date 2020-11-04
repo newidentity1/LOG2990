@@ -1,6 +1,10 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
 import { MAX_COLOR_VALUE, MAX_PREVIEW_SIZE } from '@app/constants/constants';
 import { ExportFilterType } from '@app/enums/export-filter.enum';
@@ -20,6 +24,7 @@ describe('ExportDrawingDialogComponent', () => {
         drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setStrokeColor']);
         TestBed.configureTestingModule({
             declarations: [ExportDrawingDialogComponent],
+            imports: [ReactiveFormsModule, FormsModule, MatFormFieldModule, MatInputModule, BrowserAnimationsModule],
             providers: [
                 { provide: MatDialogRef, useValue: mockDialogRef },
                 { provide: MAT_DIALOG_DATA, useValue: [] },
