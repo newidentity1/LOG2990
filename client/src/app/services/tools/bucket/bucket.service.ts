@@ -46,7 +46,6 @@ export class BucketService extends Tool {
         this.height = this.drawingService.canvas.height;
         this.image = this.drawingService.baseCtx.getImageData(0, 0, this.width, this.height);
         this.mouseDownCoord = this.getPositionFromMouse(event);
-        console.log(this.mouseDownCoord.x, this.mouseDownCoord.y);
         this.startPixelColor = this.drawingService.baseCtx.getImageData(this.mouseDownCoord.x, this.mouseDownCoord.y, 1, 1).data;
         this.mouseDown = true;
         this.mouseLeft = event.button === MouseButton.Left;
@@ -199,7 +198,6 @@ export class BucketService extends Tool {
         if (this.mouseLeft) {
             this.matrice.length = 0;
             this.generateMatrice();
-            console.log(this.matrice.length);
             this.floodFillLeft();
         } else {
             this.floodFillRight();
