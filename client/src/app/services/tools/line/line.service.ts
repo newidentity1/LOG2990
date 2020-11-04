@@ -41,16 +41,11 @@ export class LineService extends Tool {
                 } else if (this.lock45) {
                     const dx = mousePosition.x - this.pathData[this.pathData.length - 1].x;
                     const dy = mousePosition.y - this.pathData[this.pathData.length - 1].y;
+                    const sign = this.signOf(dx) * this.signOf(dy);
                     // point s'aligne avec droite y = x ou y = -x
-                    if ((dx > 0 && dy > 0) || (dx < 0 && dy < 0)) {
-                        mousePosition.y =
-                            Math.tan(CONSTANTS.ANGLE_45) * (mousePosition.x - this.pathData[this.pathData.length - 1].x) +
-                            this.pathData[this.pathData.length - 1].y;
-                    } else {
-                        mousePosition.y =
-                            -Math.tan(CONSTANTS.ANGLE_45) * (mousePosition.x - this.pathData[this.pathData.length - 1].x) +
-                            this.pathData[this.pathData.length - 1].y;
-                    }
+                    mousePosition.y =
+                        sign * Math.tan(CONSTANTS.ANGLE_45) * (mousePosition.x - this.pathData[this.pathData.length - 1].x) +
+                        this.pathData[this.pathData.length - 1].y;
                 } else if (this.lock90) {
                     // point s'aligne avec axe y
                     mousePosition.x = this.pathData[this.pathData.length - 1].x;
@@ -228,17 +223,12 @@ export class LineService extends Tool {
             case CONSTANTS.ANGLE_45:
                 const dx = mousePosition.x - this.pathData[this.pathData.length - 1].x;
                 const dy = mousePosition.y - this.pathData[this.pathData.length - 1].y;
+                const sign = this.signOf(dy) * this.signOf(dx);
                 this.lock45 = true;
-                if ((dx > 0 && dy > 0) || (dx < 0 && dy < 0)) {
-                    point.y =
-                        Math.tan(CONSTANTS.ANGLE_45) * (point.x - this.pathData[this.pathData.length - 1].x) +
-                        this.pathData[this.pathData.length - 1].y;
-                }
-                if ((dx > 0 && dy < 0) || (dx < 0 && dy > 0)) {
-                    point.y =
-                        -Math.tan(CONSTANTS.ANGLE_45) * (point.x - this.pathData[this.pathData.length - 1].x) +
-                        this.pathData[this.pathData.length - 1].y;
-                }
+                point.y =
+                    +!sign * mousePosition.y +
+                    sign * Math.tan(CONSTANTS.ANGLE_45) * (point.x - this.pathData[this.pathData.length - 1].x) +
+                    this.pathData[this.pathData.length - 1].y;
                 break;
             case CONSTANTS.ANGLE_90:
                 point.x = this.pathData[this.pathData.length - 1].x;

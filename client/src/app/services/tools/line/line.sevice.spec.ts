@@ -18,12 +18,6 @@ describe('LineService', () => {
 
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
-    let drawSpy: jasmine.Spy<any>;
-    let clearLockSpy: jasmine.Spy<any>;
-    let ajustementAngleSpy: jasmine.Spy<any>;
-    let afficherSegementPreviewSpy: jasmine.Spy<any>;
-    let lockAngleSpy: jasmine.Spy<any>;
-    let arcSpy: jasmine.Spy<any>;
 
     beforeEach(() => {
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
@@ -34,12 +28,6 @@ describe('LineService', () => {
             providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
         });
         service = TestBed.inject(LineService);
-        drawSpy = spyOn<any>(service, 'draw').and.callThrough();
-        clearLockSpy = spyOn<any>(service, 'clearlock').and.callThrough();
-        ajustementAngleSpy = spyOn<any>(service, 'ajustementAngle').and.callThrough();
-        afficherSegementPreviewSpy = spyOn<any>(service, 'afficherSegementPreview').and.callThrough();
-        lockAngleSpy = spyOn<any>(service, 'lockAngle').and.callThrough();
-        arcSpy = spyOn<any>(previewCtxStub, 'arc').and.callThrough();
 
         // Configuration du spy du service
         // tslint:disable:no-string-literal
@@ -157,11 +145,13 @@ describe('LineService', () => {
     });
 
     it(' onClick should not call drawLine  if the number of click < 2', () => {
+        const drawSpy = spyOn<any>(service, 'draw').and.callThrough();
         service.onClick(mouseEventclick1);
         expect(drawSpy).not.toHaveBeenCalled();
     });
 
     it(' onClick should call drawLine if the number of click > 1', () => {
+        const drawSpy = spyOn<any>(service, 'draw').and.callThrough();
         service.mouseDownCoord = { x: 0, y: 0 };
         service.pathData.push(service.mouseDownCoord);
         service.mouseDownCoord = { x: 50, y: 50 };
@@ -176,6 +166,8 @@ describe('LineService', () => {
     });
 
     it('shift is unpress should set shift to false', () => {
+        const drawSpy = spyOn<any>(service, 'draw').and.callThrough();
+        const clearLockSpy = spyOn<any>(service, 'clearlock').and.callThrough();
         service.mouseDownCoord = { x: 50, y: 50 };
         service.pathData.push(service.mouseDownCoord);
         service.mouseDownCoord = { x: 50, y: 50 };
@@ -253,6 +245,7 @@ describe('LineService', () => {
 
     it('Withpoint propriety should put point', () => {
         const lineProperties = service.toolProperties as LineProperties;
+        const arcSpy = spyOn<any>(previewCtxStub, 'arc').and.callThrough();
         lineProperties.withPoint = true;
         service.mouseDownCoord = { x: 20, y: 20 };
         service.pathData.push(service.mouseDownCoord);
@@ -265,6 +258,7 @@ describe('LineService', () => {
     });
 
     it(' onDoubleClick should call drawLine and close loop', () => {
+        const drawSpy = spyOn<any>(service, 'draw').and.callThrough();
         service.mouseDownCoord = { x: 20, y: 20 };
         service.pathData.push(service.mouseDownCoord);
         service.mouseDownCoord = { x: 50, y: 50 };
@@ -277,6 +271,7 @@ describe('LineService', () => {
     });
 
     it(' onDoubleClick should call drawLine and not close loop', () => {
+        const drawSpy = spyOn<any>(service, 'draw').and.callThrough();
         service.mouseDownCoord = { x: 200, y: 200 };
         service.pathData.push(service.mouseDownCoord);
         service.mouseDownCoord = { x: 50, y: 50 };
@@ -314,6 +309,9 @@ describe('LineService', () => {
     });
 
     it(' onMouseMove should drawLine if mouse was not already down', () => {
+        const clearLockSpy = spyOn<any>(service, 'clearlock').and.callThrough();
+        const ajustementAngleSpy = spyOn<any>(service, 'ajustementAngle').and.callThrough();
+        const afficherSegementPreviewSpy = spyOn<any>(service, 'afficherSegementPreview').and.callThrough();
         service.mouseDownCoord = { x: 200, y: 200 };
         service.pathData.push(service.mouseDownCoord);
         service.mouseDownCoord = { x: 50, y: 50 };
@@ -326,12 +324,14 @@ describe('LineService', () => {
     });
 
     it('onMouseMove should not use lock angle if pathdata is empty', () => {
+        const lockAngleSpy = spyOn<any>(service, 'lockAngle').and.callThrough();
         service.onMouseMove(mouseEventclick1);
         expect(lockAngleSpy).not.toHaveBeenCalled();
     });
 
     it('resetContext should reset all the current changes that the tool made', () => {
         const clearPathSpy = spyOn<any>(service, 'clearPath').and.callThrough();
+        const clearLockSpy = spyOn<any>(service, 'clearlock').and.callThrough();
         service.mouseDown = true;
         service.shift = false;
         baseCtxStub.lineCap = previewCtxStub.lineCap = 'round';
@@ -342,6 +342,13 @@ describe('LineService', () => {
         expect(clearLockSpy).toHaveBeenCalled();
         expect(clearPathSpy).toHaveBeenCalled();
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalledWith(previewCtxStub);
+    });
+
+    it('clone should return a clone of the tool', () => {
+        const spyCopyShape = spyOn(LineService.prototype, 'copyTool');
+        const clone = service.clone();
+        expect(spyCopyShape).toHaveBeenCalled();
+        expect(clone).toEqual(service);
     });
     // tslint:disable-next-line: max-file-line-count
 });
