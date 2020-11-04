@@ -197,9 +197,7 @@ describe('LineService', () => {
         service.mouseDownCoord = { x: 100, y: 100 };
         service.pathData.push(service.mouseDownCoord);
         service['mouse'] = { x: 100, y: 100 };
-        console.log('check');
         service.onKeyDown(keyboardEventBackSpace);
-        console.log('stop');
         const expectedResult: Vec2 = { x: 50, y: 50 };
         expect(service.pathData[service.pathData.length - 1]).toEqual(expectedResult);
     });

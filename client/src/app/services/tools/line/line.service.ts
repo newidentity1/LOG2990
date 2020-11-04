@@ -179,7 +179,6 @@ export class LineService extends Tool {
 
     //// affiche le segment de previsualisation selon la position de la souris et un angle
     private afficherSegementPreview(point: Vec2): void {
-        console.log(point);
         // si on a pas encore commencer de ligne
         this.pathData.push(point);
         // on suprime l'ancien segment et on définit le nouveau
