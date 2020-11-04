@@ -57,7 +57,8 @@ export abstract class Tool extends Command {
     }
 
     getPositionFromMouse(event: MouseEvent): Vec2 {
-        return { x: event.offsetX, y: event.offsetY };
+        const canvasBoundingRect = this.drawingService.canvas.getBoundingClientRect();
+        return { x: event.clientX - canvasBoundingRect.x, y: event.clientY - canvasBoundingRect.y };
     }
 
     setThickness(value: number | null): void {
