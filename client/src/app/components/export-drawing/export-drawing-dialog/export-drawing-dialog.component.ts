@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { FormControl, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { BLUR_CONVERSION, HUE_CONVERSION, MAX_PREVIEW_SIZE } from '@app/constants/constants.ts';
 import { ExportFilterType } from '@app/enums/export-filter.enum';
@@ -24,6 +25,7 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
     // Slider
     percentage: number;
     sliderIsVisible: boolean;
+    titleForm: FormControl;
 
     constructor(public dialogRef: MatDialogRef<ExportDrawingDialogComponent>, public drawingService: DrawingService) {
         this.selectedFormat = 'jpeg';
@@ -32,6 +34,8 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
         this.sliderIsVisible = false;
         this.exportFilter = 'none';
         this.percentage = 1;
+        this.titleForm = new FormControl('', Validators.required);
+        this.titleForm.markAsDirty();
     }
 
     ngAfterViewInit(): void {
