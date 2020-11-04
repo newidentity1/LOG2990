@@ -6,6 +6,7 @@ import { DASHED_SEGMENTS } from '@app/constants/constants';
 import { DrawingType } from '@app/enums/drawing-type.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { EllipseService } from './ellipse.service';
+import { ShapeTool } from '@app/classes/tool/shape-tool';
 
 // tslint:disable:no-any
 describe('EllipseService', () => {
@@ -118,14 +119,10 @@ describe('EllipseService', () => {
         expect(spyStroke).not.toHaveBeenCalled();
     });
 
-    it('resetContext should reset all the current changes that the tool made', () => {
-        service.mouseDown = true;
-        service.shiftDown = true;
-        service.escapeDown = true;
-        service.resetContext();
-        expect(service.mouseDown).toEqual(false);
-        expect(service.shiftDown).toEqual(false);
-        expect(service.escapeDown).toEqual(false);
-        expect(drawServiceSpy.clearCanvas).toHaveBeenCalledWith(drawServiceSpy.previewCtx);
+    it('clone should return a clone of the tool', () => {
+        const spyCopyShape = spyOn(ShapeTool.prototype, 'copyShape');
+        const clone = service.clone();
+        expect(spyCopyShape).toHaveBeenCalled();
+        expect(clone).toEqual(service);
     });
 });
