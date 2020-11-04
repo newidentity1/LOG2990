@@ -374,5 +374,52 @@ describe('Class: ShapeTool', () => {
         expect(shapeTool.mouseDownCoord).toEqual(shapeToolCopy.mouseDownCoord);
         expect(shapeTool.currentMousePosition).toEqual(shapeToolCopy.currentMousePosition);
     });
+
+    it('getPositionFromMouse should call capMousePositionInCanvas', () => {
+        const capMousePositionInCanvasSpy = spyOn<any>(shapeTool, 'capMousePositionInCanvas').and.callThrough();
+        shapeTool.getPositionFromMouse(mouseEvent);
+        expect(capMousePositionInCanvasSpy).toHaveBeenCalledWith(mouseEvent);
+    });
+
+    it('capMousePositionInCanvas should not cap positon if mouse is in canvas', () => {
+        const canvasBoundingRect = drawingServiceSpy.canvas.getBoundingClientRect();
+        const mousePos = { x: drawingServiceSpy.canvas.width / 2, y: drawingServiceSpy.canvas.height / 2 };
+        const event = { clientX: mousePos.x, clientY: mousePos.y } as MouseEvent;
+        const returnedPosition = shapeTool['capMousePositionInCanvas'](event);
+        expect(returnedPosition).toEqual({ x: mousePos.x - canvasBoundingRect.x, y: mousePos.y - canvasBoundingRect.y });
+    });
+
+    it('capMousePositionInCanvas should cap positon in x if mouse horizontal coordinate is not in canvas', () => {
+        const canvasBoundingRect = drawingServiceSpy.canvas.getBoundingClientRect();
+        const mousePos = { x: -1, y: drawingServiceSpy.canvas.height / 2 };
+        const event = { clientX: mousePos.x, clientY: mousePos.y } as MouseEvent;
+        const returnedPosition = shapeTool['capMousePositionInCanvas'](event);
+        expect(returnedPosition).toEqual({ x: 0, y: mousePos.y - canvasBoundingRect.y });
+    });
+
+    it('capMousePositionInCanvas should cap positon in x if mouse horizontal coordinate is not in canvas', () => {
+        const canvasBoundingRect = drawingServiceSpy.canvas.getBoundingClientRect();
+        const mousePos = { x: drawingServiceSpy.canvas.width + 1, y: drawingServiceSpy.canvas.height / 2 };
+        const event = { clientX: mousePos.x, clientY: mousePos.y } as MouseEvent;
+        const returnedPosition = shapeTool['capMousePositionInCanvas'](event);
+        expect(returnedPosition).toEqual({ x: drawingServiceSpy.canvas.width, y: mousePos.y - canvasBoundingRect.y });
+    });
+
+    it('capMousePositionInCanvas should cap positon in y if mouse vertical coordinate is not in canvas', () => {
+        const canvasBoundingRect = drawingServiceSpy.canvas.getBoundingClientRect();
+        const mousePos = { x: drawingServiceSpy.canvas.width / 2, y: -1 };
+        const event = { clientX: mousePos.x, clientY: mousePos.y } as MouseEvent;
+        const returnedPosition = shapeTool['capMousePositionInCanvas'](event);
+        expect(returnedPosition).toEqual({ x: mousePos.x - canvasBoundingRect.x, y: 0 });
+    });
+
+    it('capMousePositionInCanvas should cap positon in y if mouse vertical coordinate is not in canvas', () => {
+        const canvasBoundingRect = drawingServiceSpy.canvas.getBoundingClientRect();
+        const mousePos = { x: drawingServiceSpy.canvas.width / 2, y: drawingServiceSpy.canvas.height + 1 };
+        const event = { clientX: mousePos.x, clientY: mousePos.y } as MouseEvent;
+        const returnedPosition = shapeTool['capMousePositionInCanvas'](event);
+        expect(returnedPosition).toEqual({ x: mousePos.x - canvasBoundingRect.x, y: drawingServiceSpy.canvas.height });
+    });
+
     // tslint:disable-next-line: max-file-line-count / reason: its a test file
 });
