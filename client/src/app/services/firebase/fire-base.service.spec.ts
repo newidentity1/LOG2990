@@ -36,10 +36,10 @@ describe('FireBaseService', () => {
         expect(service).toBeTruthy();
     });
 
-    it('postDraw should add new draw to the MongoDB', () => {
+    it('postDrawing should add new draw to the MongoDB', () => {
         service.id = 'test';
         const url = 'test';
-        service.postDraw(url);
+        service.postDrawing(url);
         expect(communicationServiceSpy.postDrawing).toHaveBeenCalled();
     });
 
@@ -96,7 +96,7 @@ describe('FireBaseService', () => {
     it('DownloadURL should get the back URL from firebase', () => {
         const url = 'testURL';
         refMock.getDownloadURL.and.returnValue(of(url));
-        const spyPostDraw = spyOn(service, 'postDraw').and.callFake(() => {
+        const spyPostDraw = spyOn(service, 'postDrawing').and.callFake(() => {
             return;
         });
         const spyReset = spyOn(service, 'reset').and.callThrough();

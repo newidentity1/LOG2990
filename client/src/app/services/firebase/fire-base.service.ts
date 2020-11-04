@@ -33,11 +33,11 @@ export class FireBaseService {
     downloadCanvasURL(): void {
         const downloadURLObservable: Observable<string> = this.ref.getDownloadURL();
         downloadURLObservable.subscribe((imageURL) => {
-            this.postDraw(imageURL);
+            this.postDrawing(imageURL);
             this.reset();
         });
     }
-    postDraw(drawingURL: string): void {
+    postDrawing(drawingURL: string): void {
         const drawing: Drawing = { _id: this.id, name: this.name, tags: [], url: drawingURL };
         this.communicationService.postDrawing(drawing);
     }
