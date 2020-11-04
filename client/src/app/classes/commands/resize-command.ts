@@ -26,6 +26,10 @@ export class ResizeCommand extends Command {
     execute(): void {
         this.canvasSize.x = this.newWidth;
         this.canvasSize.y = this.newHeight;
+        this.drawingService.baseCtx.canvas.width = this.newWidth;
+        this.drawingService.baseCtx.canvas.height = this.newHeight;
+        this.drawingService.previewCtx.canvas.width = this.newWidth;
+        this.drawingService.previewCtx.canvas.height = this.newHeight;
     }
 
     copy(resizeCommand: ResizeCommand): void {

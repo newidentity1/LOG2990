@@ -52,8 +52,10 @@ describe('DrawingComponent', () => {
                 { provide: ToolbarService, useValue: toolbarServiceSpy },
             ],
         }).compileComponents();
-        toolbarServiceSpy = TestBed.inject(ToolbarService) as jasmine.SpyObj<ToolbarService>;
 
+        toolbarServiceSpy = TestBed.inject(ToolbarService) as jasmine.SpyObj<ToolbarService>;
+        drawingServiceStub.canvas = canvasTestHelper.canvas;
+        drawingServiceStub.previewCtx = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
         drawingServiceStub.baseCtx = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         // tslint:disable-next-line:no-empty / reason: mocking mouse event
         mouseEvent = { preventDefault: () => {} } as MouseEvent;
