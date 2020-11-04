@@ -181,6 +181,8 @@ describe('ExportDrawingDialogComponent', () => {
     it('downloadImage should call drawImage and setWhiteBackground on exportCtx', () => {
         const setWhiteBackgroundSpy = spyOn<any>(component, 'setWhiteBackground').and.callThrough();
         const drawImageSpy = spyOn<any>(component.exportCtx, 'drawImage').and.callThrough();
+        // tslint:disable-next-line:no-empty / reason: calling fake function to avoid automatic image download
+        spyOn<any>(component.drawingImageContainer.nativeElement, 'click').and.callFake(() => {});
         component['downloadImage']();
         expect(setWhiteBackgroundSpy).toHaveBeenCalledWith(component.exportCtx);
         expect(drawImageSpy).toHaveBeenCalled();
@@ -188,9 +190,9 @@ describe('ExportDrawingDialogComponent', () => {
 
     it('downloadImage should set image url and download image', () => {
         const setImageUrlSpy = spyOn<any>(component, 'setImageUrl').and.callThrough();
-        const clickSpy = spyOn<any>(component.drawingImageContainer.nativeElement, 'click').and.callThrough();
+        // tslint:disable-next-line:no-empty / reason: calling fake function to avoid automatic image download
+        const clickSpy = spyOn<any>(component.drawingImageContainer.nativeElement, 'click').and.callFake(() => {});
         component['downloadImage']();
-
         expect(setImageUrlSpy).toHaveBeenCalled();
         expect(clickSpy).toHaveBeenCalled();
         expect(mockDialogRef.close).toHaveBeenCalled();
