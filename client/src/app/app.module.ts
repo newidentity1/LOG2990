@@ -34,6 +34,7 @@ import { ExportDrawingDialogComponent } from './components/export-drawing/export
 import { ExportDrawingComponent } from './components/export-drawing/export-drawing.component';
 import { GalleryComponent } from './components/gallery/gallery.component';
 import { OpenGalleryComponent } from './components/gallery/open-gallery/open-gallery.component';
+import { WarningDialogComponent } from './components/gallery/warning/warning-dialog.component';
 import { GuideComponent } from './components/guide/guide.component';
 import { OpenGuideComponent } from './components/guide/open-guide/open-guide.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
@@ -87,6 +88,7 @@ import { UploadComponent } from './components/upload/upload.component';
         GalleryComponent,
         UploadComponent,
         UploadDialogComponent,
+        WarningDialogComponent,
     ],
     imports: [
         NgImageSliderModule,
