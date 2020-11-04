@@ -49,7 +49,6 @@ export class SidebarComponent {
     }
 
     openGallery(): void {
-        console.log('etape 2');
         this.galleryRef.openDialog();
     }
 
