@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
+import { ShapeTool } from '@app/classes/tool/shape-tool';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 import { Vec2 } from '@app/classes/vec2';
 import { DASHED_SEGMENTS } from '@app/constants/constants';
 import { DrawingType } from '@app/enums/drawing-type.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { EllipseService } from './ellipse.service';
-import { ShapeTool } from '@app/classes/tool/shape-tool';
 
 // tslint:disable:no-any
 describe('EllipseService', () => {
