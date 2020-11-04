@@ -105,11 +105,7 @@ export abstract class ShapeTool extends Tool {
         this.mouseDown = false;
         this.shiftDown = false;
         this.escapeDown = false;
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
-    }
-
-    signOf(num: number): number {
-        return Math.abs(num) / num;
+        this.applyCurrentSettings();
     }
 
     adjustThickness(): number {
@@ -167,10 +163,6 @@ export abstract class ShapeTool extends Tool {
         shape.currentMousePosition = this.currentMousePosition;
         const shapeProperties = this.toolProperties as BasicShapeProperties;
         shape.setTypeDrawing(shapeProperties.currentType);
-    }
-
-    clone(): ShapeTool {
-        return this;
     }
 
     getPositionFromMouse(event: MouseEvent): Vec2 {

@@ -190,4 +190,12 @@ describe('EyedropperService', () => {
         const returnedColor: Color = service['getColorFromPosition'](position);
         expect(returnedColor).toEqual(expectedColor);
     });
+
+    it(' resetContext should set inCanvas to false and call clearCanvas', () => {
+        const clearCanvasSpy = spyOn(service['drawingService'], 'clearCanvas');
+        service['inCanvas'] = true;
+        service.resetContext();
+        expect(clearCanvasSpy).toHaveBeenCalled();
+        expect(service['inCanvas']).toEqual(false);
+    });
 });
