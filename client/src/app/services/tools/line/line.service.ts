@@ -84,7 +84,7 @@ export class LineService extends Tool {
             if (this.pathData.length >= 2) {
                 this.pathData.pop();
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.draw(this.drawingService.previewCtx);
+                this.afficherSegementPreview(this.mouse);
             }
         }
         if (event.code === 'Escape') {
