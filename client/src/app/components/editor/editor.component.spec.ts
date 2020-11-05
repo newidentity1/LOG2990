@@ -157,6 +157,26 @@ describe('EditorComponent', () => {
         expect(createNewDrawingSpy).toHaveBeenCalled();
     });
 
+    it('tool shortcut should call createNewDrawing of SidebarComponent', () => {
+        // tslint:disable-next-line:no-empty / reason: creating mock component
+        component.toolbarRef = { openGallery: () => {} } as SidebarComponent;
+        // tslint:disable-next-line:no-any / reason: spying on mock component function
+        const openGallerySpy = spyOn<any>(component.toolbarRef, 'openGallery').and.callThrough();
+        const shortcutEvent = new KeyboardEvent('keydown', { key: 'control.g' });
+        document.dispatchEvent(shortcutEvent);
+        expect(openGallerySpy).toHaveBeenCalled();
+    });
+
+    it('tool shortcut should call createNewDrawing of SidebarComponent', () => {
+        // tslint:disable-next-line:no-empty / reason: creating mock component
+        component.toolbarRef = { uploadImage: () => {} } as SidebarComponent;
+        // tslint:disable-next-line:no-any / reason: spying on mock component function
+        const uploadImageSpy = spyOn<any>(component.toolbarRef, 'uploadImage').and.callThrough();
+        const shortcutEvent = new KeyboardEvent('keydown', { key: 'control.s' });
+        document.dispatchEvent(shortcutEvent);
+        expect(uploadImageSpy).toHaveBeenCalled();
+    });
+
     it('tool shortcut should call exportDrawing of SidebarComponent', () => {
         // tslint:disable-next-line:no-empty / reason: creating mock component
         component.toolbarRef = { exportDrawing: () => {} } as SidebarComponent;
