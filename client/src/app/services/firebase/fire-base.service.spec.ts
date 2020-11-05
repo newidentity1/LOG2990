@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { AngularFireStorage, AngularFireStorageReference, AngularFireUploadTask } from '@angular/fire/storage';
@@ -57,11 +58,12 @@ describe('FireBaseService', () => {
         expect(spyEmitSaveDrawingSubjectEvent.calls.mostRecent().args[0].isSuccess).toEqual(true);
     });
 
-    it('postDrawing should emit an error', () => {
+    it('postDrawing should emit an error with status 0 ', () => {
         service.id = 'test';
         const url = 'test';
+        const errorMessage = 'error';
         communicationServiceSpy.postDrawing.and.callFake(() => {
-            return throwError(new Error(''));
+            return throwError({ status: 0, error: errorMessage } as HttpErrorResponse);
         });
         const spyEmitSaveDrawingSubjectEvent = spyOn(service, 'emitSaveDrawingSubjectEvent').and.callFake(() => {
             return;
@@ -71,6 +73,26 @@ describe('FireBaseService', () => {
         expect(spyEmitSaveDrawingSubjectEvent).toHaveBeenCalled();
         expect(service.isDrawingSaving).toEqual(false);
         expect(spyEmitSaveDrawingSubjectEvent.calls.mostRecent().args[0].isSuccess).toEqual(false);
+        expect(spyEmitSaveDrawingSubjectEvent.calls.mostRecent().args[0].message).toEqual('Le serveur est indisponible!');
+    });
+
+    it('postDrawing should emit an error with status not 0 ', () => {
+        service.id = 'test';
+        const url = 'test';
+        const errorMessage = 'error';
+        communicationServiceSpy.postDrawing.and.callFake(() => {
+            return throwError({ status: 400, error: errorMessage } as HttpErrorResponse);
+        });
+        const spyEmitSaveDrawingSubjectEvent = spyOn(service, 'emitSaveDrawingSubjectEvent').and.callFake(() => {
+            return;
+        });
+        service.postDrawing(url);
+        console.log(spyEmitSaveDrawingSubjectEvent.calls.mostRecent().args[0]);
+        expect(communicationServiceSpy.postDrawing).toHaveBeenCalled();
+        expect(spyEmitSaveDrawingSubjectEvent).toHaveBeenCalled();
+        expect(service.isDrawingSaving).toEqual(false);
+        expect(spyEmitSaveDrawingSubjectEvent.calls.mostRecent().args[0].isSuccess).toEqual(false);
+        expect(spyEmitSaveDrawingSubjectEvent.calls.mostRecent().args[0].message).toEqual(errorMessage);
     });
 
     it('postDrawing should add new draw to the MongoDB', () => {
