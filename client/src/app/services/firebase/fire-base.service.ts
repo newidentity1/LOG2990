@@ -49,7 +49,7 @@ export class FireBaseService {
             if (event && event.state === 'success') {
                 this.downloadCanvasURL();
             } else if (event && (event.state === 'canceled' || event.state === 'error')) {
-                this.emitSaveDrawingSubjectEvent(new ResponseResult(false, 'Erreur dans la sauvegarde du dessin dans la base de donnée!'));
+                this.emitSaveDrawingSubjectEvent(new ResponseResult(false, 'Erreur dans de sauvegarde du dessin dans la base de donnée!'));
                 this.isDrawingSaving = false;
             }
         });
@@ -69,22 +69,24 @@ export class FireBaseService {
                 this.postDrawing(drawingUrl);
                 this.reset();
             },
-            error: (error: string) => {
-                this.emitSaveDrawingSubjectEvent(new ResponseResult(false, error));
+            error: () => {
+                const message = "Votre dessin n'a pas pu être transformé en image!";
+                this.emitSaveDrawingSubjectEvent(new ResponseResult(false, message));
                 this.reset();
                 this.isDrawingSaving = false;
             },
         });
     }
     postDrawing(drawingURL: string): void {
-        const drawing: Drawing = { _id: this.id, name: this.name, tags: this.drawingTags, url: drawingURL };
+        const drawing: Drawing = { _id: this.id, name: '1234', tags: this.drawingTags, url: drawingURL };
         this.communicationService.postDrawing(drawing).subscribe({
             next: (response: string) => {
                 this.isDrawingSaving = false;
                 this.emitSaveDrawingSubjectEvent(new ResponseResult(true, 'Votre dessin a été enregistré avec succès'));
             },
             error: (error: HttpErrorResponse) => {
-                const message = 'Le serveur est indisponible!';
+                const message = error.status === 0 ? 'Le serveur est indisponible!' : error.error;
+
                 this.emitSaveDrawingSubjectEvent(new ResponseResult(false, message));
                 this.isDrawingSaving = false;
             },
