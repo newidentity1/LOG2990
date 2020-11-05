@@ -21,7 +21,7 @@
                     </button>
                 </li>
             </ul>
-            <app-eyedropper-option></app-eyedropper-option>
+            <app-eyedropper-option *ngIf="currentTool.name === 'Eyedropper'"></app-eyedropper-option>
             <div id="other-tools">
                 <hr />
                 <div id="undo-redo-contaner">
