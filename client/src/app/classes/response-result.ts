@@ -1,6 +1,6 @@
 export class ResponseResult {
-    isSuccess: boolean;
-    message: string;
+    isSuccess: boolean = false;
+    message: string = '';
 
     constructor(isSuccess: boolean, message: string) {
         this.isSuccess = isSuccess;

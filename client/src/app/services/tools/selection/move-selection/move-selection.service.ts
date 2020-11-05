@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { SelectionArrowIndex } from '@app/classes/selection-arrow-index.enum';
 import { Vec2 } from '@app/classes/vec2';
 import * as CONSTANTS from '@app/constants/constants';
+import { SelectionArrowIndex } from '@app/enums/selection-arrow-index.enum';
 import { SelectionType } from '@app/enums/selection-type.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 

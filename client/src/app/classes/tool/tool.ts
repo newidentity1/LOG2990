@@ -7,20 +7,18 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 
 // tslint:disable:no-empty / reason : abstract class
 export abstract class Tool extends Command {
-    mouseDownCoord: Vec2;
-    pathData: Vec2[];
+    mouseDownCoord: Vec2 = { x: 0, y: 0 };
+    pathData: Vec2[] = [];
     mouseDown: boolean = false;
-    name: string;
-    tooltip: string;
-    iconName: string;
+    name: string = '';
+    tooltip: string = '';
+    iconName: string = '';
     toolProperties: BasicToolProperties;
-    currentPrimaryColor: Color;
-    currentSecondaryColor: Color;
+    currentPrimaryColor: Color = new Color(BLACK);
+    currentSecondaryColor: Color = new Color(WHITE);
 
     constructor(protected drawingService: DrawingService) {
         super();
-        this.currentPrimaryColor = new Color(BLACK);
-        this.currentSecondaryColor = new Color(WHITE);
     }
 
     setTypeDrawing(value: string): void {}

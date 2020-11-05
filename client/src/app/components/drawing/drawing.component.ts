@@ -26,10 +26,10 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
     @Output() requestDrawingContainerDimensions: EventEmitter<void> = new EventEmitter();
 
     previewCtx: CanvasRenderingContext2D;
-    private subscribeCreateNewDrawing: Subscription;
-    private subscribeResetCanvasSize: Subscription;
-    private subscribeDimensionsUpdated: Subscription;
-    private subscribeExecutedCommand: Subscription;
+    private subscribeCreateNewDrawing: Subscription = new Subscription();
+    private subscribeResetCanvasSize: Subscription = new Subscription();
+    private subscribeDimensionsUpdated: Subscription = new Subscription();
+    private subscribeExecutedCommand: Subscription = new Subscription();
     isResizingWidth: boolean = false;
     isResizingHeight: boolean = false;
     resizeCommand: ResizeCommand = new ResizeCommand(this.drawingService);

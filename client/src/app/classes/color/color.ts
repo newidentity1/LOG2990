@@ -1,15 +1,15 @@
 import * as CONSTANTS from '@app/constants/constants';
 
 export class Color {
-    private hexString: string;
-    private redValue: number;
-    private greenValue: number;
-    private blueValue: number;
-    private alpha: number;
+    private hexString: string = CONSTANTS.BLACK;
+    private redValue: number = CONSTANTS.MAX_COLOR_VALUE;
+    private greenValue: number = CONSTANTS.MAX_COLOR_VALUE;
+    private blueValue: number = CONSTANTS.MAX_COLOR_VALUE;
+    private alpha: number = CONSTANTS.DEFAULT_COLOR_OPACITY;
 
     constructor(hex?: string, alpha?: number) {
-        this.hexString = hex ? hex.toUpperCase() : CONSTANTS.BLACK;
-        this.alpha = alpha !== undefined ? alpha : CONSTANTS.DEFAULT_COLOR_OPACITY;
+        this.hexString = hex ? hex.toUpperCase() : this.hexString;
+        this.alpha = alpha !== undefined ? alpha : this.alpha;
         this.computeRBGFromHex();
     }
 

@@ -8,23 +8,20 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { Tool } from './tool';
 
 export abstract class ShapeTool extends Tool {
-    width: number;
-    height: number;
+    width: number = 0;
+    height: number = 0;
     shiftDown: boolean = false;
     escapeDown: boolean = false;
-    radius: Vec2;
-    currentMousePosition: Vec2;
-    dashedSegments: number;
-    dx: number;
-    dy: number;
+    radius: Vec2 = { x: 0, y: 0 };
+    currentMousePosition: Vec2 = { x: 0, y: 0 };
+    dashedSegments: number = DASHED_SEGMENTS;
+    dx: number = 0;
+    dy: number = 0;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.mouseDownCoord = { x: 0, y: 0 };
-        this.mouseDownCoord = { x: 0, y: 0 };
-        this.currentMousePosition = { x: 0, y: 0 };
         this.toolProperties = new BasicShapeProperties();
-        this.dashedSegments = DASHED_SEGMENTS;
     }
 
     onMouseDown(event: MouseEvent): void {
