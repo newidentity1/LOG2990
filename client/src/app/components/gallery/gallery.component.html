@@ -1,27 +1,5 @@
-<div id="window">
-    <h2>Carrousel de dessins</h2>
-    <h4>Recherche par étiquette:</h4>
-    <mat-form-field>
-        <mat-label>Ajouter une étiquette</mat-label>
-        <mat-error>étiquette non valide</mat-error>
-        <input matInput type="text" [(ngModel)]="tagToAdd" [formControl]="tagForm" maxlength="15" />
-    </mat-form-field>
-    <button id="addTagButton" mat-stroked-button [disabled]="!validateTag(tagToAdd)" (click)="addTag(tagToAdd); tagToAdd = ''">Ajouter</button>
-    <mat-chip-list #tags>
-        <mat-chip *ngFor="let tag of drawingTags" [removable]="true" (removed)="deleteTag(tag)">
-            {{ tag }}
-            <mat-icon matChipRemove>cancel</mat-icon>
-        </mat-chip>
-    </mat-chip-list>
+<button class="menu" *ngIf="inMenu" mat-button (click)="openDialog()" routerLink="/editor">Ouvrir le caroussel de dessins</button>
 
-    <div id="imageSliderWrapper" class="row" [hidden]="!isDrawing">
-        <ng-image-slider #imageSlider [images]="this.tab" (imageClick)="continueDrawing($event)" [imagePopup]="false" [infinite]="true">
-        </ng-image-slider>
-    </div>
-    <div class="row" *ngIf="!isDrawing">
-        <h1>Aucun dessin</h1>
-    </div>
-    <div id="buttons">
-        <button mat-stroked-button id="deleteDrawingButton" (click)="deleteDrawing()">Supprimer</button>
-    </div>
-</div>
+<button *ngIf="!inMenu" matTooltip="Carrousel (ctrl+g)" matTooltipPosition="right" mat-button (click)="openDialog()">
+    <mat-icon> folder_special </mat-icon>
+</button>
