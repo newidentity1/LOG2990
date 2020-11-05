@@ -22,6 +22,6 @@
         <h1>Aucun dessin</h1>
     </div>
     <div id="buttons">
-        <button mat-stroked-button id="deleteDrawingButton" (click)="deleteDrawing()">Supprimer</button>
+        <button mat-stroked-button id="deleteDrawingButton" (click)="deleteDrawing()" [disabled]="this.drawings.length === 0">Supprimer</button>
     </div>
 </div>
