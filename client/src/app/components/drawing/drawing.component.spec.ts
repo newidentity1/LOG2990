@@ -85,6 +85,17 @@ describe('DrawingComponent', () => {
         jasmine.clock().uninstall();
     });
 
+    it('should emit requestDrawingContainerDimensions requestCanvasSize event ', () => {
+        const spyRequestDrawingDims = spyOn(component.requestDrawingContainerDimensions, 'emit');
+        component.ngOnInit();
+        const delay = 1000;
+        jasmine.clock().install();
+        drawingServiceStub.emitResetCanvasSizeEvent();
+        jasmine.clock().tick(delay);
+        expect(spyRequestDrawingDims).toHaveBeenCalled();
+        jasmine.clock().uninstall();
+    });
+
     it('should not call newCanvasSetSize when third parameter is false', () => {
         component.ngOnInit();
         const delay = 1000;
