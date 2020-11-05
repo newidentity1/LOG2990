@@ -2,7 +2,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatDialog, MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
 import { MatDialogMock } from '@app/classes/mat-dialog-test-helper';
 import * as CONSTANTS from '@app/constants/constants';
@@ -14,7 +14,7 @@ import { NgImageSliderComponent, NgImageSliderModule } from 'ng-image-slider';
 import { Observable, of } from 'rxjs';
 import { GalleryDialogComponent } from './gallery-dialog.component';
 
-describe('GalleryComponent', () => {
+describe('GalleryDialogComponent', () => {
     let component: GalleryDialogComponent;
     let fixture: ComponentFixture<GalleryDialogComponent>;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
@@ -23,9 +23,8 @@ describe('GalleryComponent', () => {
     let previewCtxStub: CanvasRenderingContext2D;
     let sliderSpy: jasmine.SpyObj<NgImageSliderComponent>;
     let fireBaseServiceSpy: jasmine.SpyObj<FireBaseService>;
-    // let warningRefSpy: jasmine.SpyObj<MatDialogRef>;
     let fakeDrawing: Drawing;
-    let dialog: MatDialog;
+    let mockDialog: MatDialog;
 
     beforeEach(async(() => {
         drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'canvasEmpty']);
@@ -40,13 +39,12 @@ describe('GalleryComponent', () => {
                 { provide: FireBaseService, useValue: fireBaseServiceSpy },
                 { provide: CommunicationService, useValue: communicationSpy },
                 { provide: NgImageSliderComponent, useValue: sliderSpy },
-                { provide: MatDialogRef, useValue: sliderSpy },
                 { provide: MatDialog, useClass: MatDialogMock },
                 { provide: MAT_DIALOG_DATA, useValue: [] },
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
-        dialog = TestBed.inject(MatDialog);
+        mockDialog = TestBed.inject(MatDialog);
         drawingServiceSpy = TestBed.inject(DrawingService) as jasmine.SpyObj<DrawingService>;
         communicationSpy = TestBed.inject(CommunicationService) as jasmine.SpyObj<CommunicationService>;
 
@@ -56,15 +54,15 @@ describe('GalleryComponent', () => {
         sliderSpy.setSliderImages.and.callFake(() => {
             return;
         });
-        //  component.slider = sliderSpy;
+
         const drawingCanvas = document.createElement('canvas');
         drawingCanvas.width = canvasTestHelper.canvas.width;
         drawingCanvas.height = canvasTestHelper.canvas.height;
-        baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
-        previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
+        baseCtxStub = drawingCanvas.getContext('2d') as CanvasRenderingContext2D;
+        previewCtxStub = drawingCanvas.getContext('2d') as CanvasRenderingContext2D;
+        drawingServiceSpy.canvas = drawingCanvas;
         drawingServiceSpy.baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
         drawingServiceSpy.previewCtx = previewCtxStub;
-        drawingServiceSpy.canvas = drawingCanvas;
 
         fakeDrawing = {} as Drawing;
     }));
@@ -79,6 +77,70 @@ describe('GalleryComponent', () => {
         expect(component).toBeTruthy();
     });
 
+    it(' openDialog ', () => {
+        const openDialogSpy = spyOn(mockDialog, 'open').and.callThrough();
+        component.openDialog();
+        expect(openDialogSpy).toHaveBeenCalled();
+    });
+
+    it('updateDrawings should update drawings from the server', () => {
+        const totalDrawings: Drawing[] = [];
+        const fakeDrawing1: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
+        totalDrawings.push(fakeDrawing1);
+        // tslint:disable-next-line:no-string-literal / reason: accessing on private member
+        component['updateDrawings'](totalDrawings);
+
+        expect(component.tab.length).toEqual(1);
+    });
+
+    it('getDrawingTagsToString should return the tags of the drawing in string', () => {
+        const tags = ['tag1', 'tag2'];
+        fakeDrawing.tags = tags;
+        // tslint:disable-next-line:no-string-literal / reason: access on private member
+        expect(component['getDrawingTagsToString'](fakeDrawing)).toEqual('tag1,tag2');
+    });
+
+    it('continueDraw should open warning dialog if canvas is not empty', (done) => {
+        const drawImageSpy = spyOn(drawingServiceSpy.baseCtx, 'drawImage');
+        const closeAllDialogSpy = spyOn(mockDialog, 'closeAll').and.callThrough();
+        drawingServiceSpy.canvasEmpty.and.returnValue(true);
+        drawingServiceSpy.clearCanvas(baseCtxStub);
+        const fakeDrawing1: Drawing = { _id: 'test', name: 'test', tags: [], url: drawingServiceSpy.canvas.toDataURL() };
+        component.drawings.push(fakeDrawing1);
+        component.continueDrawing(0);
+
+        setTimeout(() => {
+            expect(drawingServiceSpy.clearCanvas).toHaveBeenCalled();
+            expect(drawImageSpy).toHaveBeenCalled();
+            expect(closeAllDialogSpy).toHaveBeenCalled();
+            done();
+            // tslint:disable-next-line: no-magic-numbers / reason: waiting for image to load
+        }, 200);
+    });
+
+    it('continueDraw should open warning dialog if canvas is not empty', () => {
+        drawingServiceSpy.canvasEmpty.and.returnValue(false);
+        // tslint:disable-next-line:no-string-literal
+        component['drawingService'].baseCtx.fillRect(0, 0, CONSTANTS.DEFAULT_MITER_LIMIT, CONSTANTS.DEFAULT_MITER_LIMIT);
+        // tslint:disable-next-line:no-any / reason: spying on function
+        const openWarningDialogSpy = spyOn<any>(component, 'openWarningDialog');
+        const fakeDrawing1: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
+        component.drawings.push(fakeDrawing1);
+        component.continueDrawing(0);
+
+        expect(openWarningDialogSpy).toHaveBeenCalled();
+    });
+
+    it('openWarningDialog shoul open warning dialog ', () => {
+        const fakeDrawing1 = {} as Drawing;
+        // tslint:disable-next-line:no-any
+        const dialogOpenSpy = spyOn<any>(mockDialog, 'open').and.callThrough();
+        // tslint:disable-next-line:no-string-literal / reason: accessing on private member
+        component['openWarningDialog'](fakeDrawing1);
+
+        expect(dialogOpenSpy).toHaveBeenCalled();
+    });
+
     it('deleteDrawing should delete the current draw', () => {
         const fakeDrawing1: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
         const fakeDrawing2: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
@@ -87,20 +149,28 @@ describe('GalleryComponent', () => {
         component.drawings.push(fakeDrawing1);
         component.drawings.push(fakeDrawing2);
         component.drawings.push(fakeDrawing3);
-        of(component.deleteDrawing());
+        component.deleteDrawing();
+
+        // tslint:disable-next-line:no-any / reason: spying on private member
+        const getDrawingsSpy = spyOn<any>(component, 'getDrawings').and.callThrough();
+
         expect(fireBaseServiceSpy.deleteImage).toHaveBeenCalled();
         expect(communicationSpy.deleteDrawing).toHaveBeenCalled();
+        fixture.detectChanges();
+        expect(getDrawingsSpy).toHaveBeenCalled();
     });
 
-    it('deleteDrawing should delete the current draw', () => {
+    it('deleteDrawing should not call deleteImage of firebase service if no drawings are available', () => {
         component.drawings.length = 0;
         component.deleteDrawing();
         expect(fireBaseServiceSpy.deleteImage).not.toHaveBeenCalled();
     });
 
     it('getDrawing should get all the drawing present on the server', () => {
-        const spy = spyOn(component, 'transformData');
-        component.getDrawings();
+        // tslint:disable-next-line:no-any / reason: spying on private member
+        const spy = spyOn<any>(component, 'transformData');
+        // tslint:disable-next-line:no-string-literal / reason: accessing on private member
+        component['getDrawings']();
         expect(spy).toHaveBeenCalledWith([]);
     });
 
@@ -108,59 +178,43 @@ describe('GalleryComponent', () => {
         const fakeDrawing1: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
         const data: Drawing[] = [];
         data.push(fakeDrawing1);
-        const spy = spyOn(component, 'updateDrawings');
-        // tslint:disable-next-line:no-string-literal
+        // tslint:disable-next-line:no-any / reason: spying on private member
+        const spy = spyOn<any>(component, 'updateDrawings');
+        // tslint:disable-next-line:no-string-literal / reason: accessing on private member
         component['transformData'](data);
+
         expect(spy).toHaveBeenCalled();
         expect(component.isDrawing).toBeTrue();
     });
 
     it('transformData should call updateDrawings and set isDrawing to false', () => {
         const data: Drawing[] = [];
-        const spy = spyOn(component, 'updateDrawings');
-        // tslint:disable-next-line:no-string-literal
+        // tslint:disable-next-line:no-any / reason: spying on private member
+        const spy = spyOn<any>(component, 'updateDrawings');
+        // tslint:disable-next-line:no-string-literal / reason: accessing on private member
         component['transformData'](data);
+
         expect(spy).toHaveBeenCalled();
         expect(component.isDrawing).not.toBeTrue();
     });
 
-    it('continueDraw should add the choosing draw to the canvas', () => {
-        // tslint:disable-next-line:no-string-literal
-        component['drawingService'].baseCtx.fillRect(0, 0, CONSTANTS.DEFAULT_MITER_LIMIT, CONSTANTS.DEFAULT_MITER_LIMIT);
-        const spy = spyOn(component, 'warningCanvas');
-        const fakeDrawing1: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
-        component.drawings.push(fakeDrawing1);
-        component.continueDrawing(0);
-        expect(spy).toHaveBeenCalled();
-    });
-
-    it('updateDrawings should update drawings from the server', () => {
-        const totalDrawings: Drawing[] = [];
-        const fakeDrawing1: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
-        totalDrawings.push(fakeDrawing1);
-        component.updateDrawings(totalDrawings);
-        expect(component.tab.length).toEqual(1);
-    });
-
-    it('getDrawingTagsToString should return the tags of the drawing in string', () => {
-        const tags = ['tag1', 'tag2'];
-        fakeDrawing.tags = tags;
-        expect(component.getDrawingTagsToString(fakeDrawing)).toEqual('tag1,tag2');
-    });
-
     it('addTag should add the tag and call updateDrawingsBydrawingTags', () => {
         const tag = 'tag1';
-        const spyUpdateDrawingsBydrawingTags = spyOn(component, 'updateDrawingsBydrawingTags');
+        // tslint:disable-next-line:no-any / reason: spying on private member
+        const spyUpdateDrawingsBydrawingTags = spyOn<any>(component, 'updateDrawingsBydrawingTags');
         component.addTag(tag);
+
         expect(component.drawingTags[0]).toEqual(tag);
         expect(spyUpdateDrawingsBydrawingTags).toHaveBeenCalled();
     });
 
     it('deleteTag should delete the tag if it exist and call updateDrawingsBydrawingTags', () => {
         const tag = 'tag1';
-        const spyUpdateDrawingsBydrawingTags = spyOn(component, 'updateDrawingsBydrawingTags');
+        // tslint:disable-next-line:no-any / reason: spying on private member
+        const spyUpdateDrawingsBydrawingTags = spyOn<any>(component, 'updateDrawingsBydrawingTags');
         component.drawingTags = [tag];
         component.deleteTag('tagDoesntExist');
+
         expect(component.drawingTags[0]).toEqual(tag);
         expect(spyUpdateDrawingsBydrawingTags).not.toHaveBeenCalled();
         component.deleteTag('tag1');
@@ -171,7 +225,9 @@ describe('GalleryComponent', () => {
     it('drawingsFilteredBydrawingTags should return all the drawings when there is no tags ', () => {
         component.drawingTags = [];
         component.drawings = [fakeDrawing];
-        expect(component.drawingsFilteredBydrawingTags()).toEqual(component.drawings);
+
+        // tslint:disable-next-line:no-string-literal / reason: accessing on private member
+        expect(component['drawingsFilteredBydrawingTags']()).toEqual(component.drawings);
     });
 
     it('drawingsFilteredBydrawingTags should filter only the drawings with the tag with no duplicates', () => {
@@ -183,13 +239,19 @@ describe('GalleryComponent', () => {
         const fakeDrawing3 = {} as Drawing;
         fakeDrawing3.tags = ['3', '4'];
         component.drawings = [fakeDrawing1, fakeDrawing2, fakeDrawing3];
-        expect(component.drawingsFilteredBydrawingTags()).toEqual([fakeDrawing1, fakeDrawing2]);
+
+        // tslint:disable-next-line:no-string-literal / reason: spying on private member
+        expect(component['drawingsFilteredBydrawingTags']()).toEqual([fakeDrawing1, fakeDrawing2]);
     });
 
     it('updateDrawingsBydrawingTags should call drawingsFilteredBydrawingTags and updateDrawings', () => {
-        const spyDrawingsFilteredBydrawingTags = spyOn(component, 'drawingsFilteredBydrawingTags');
-        const spyUpdateDrawings = spyOn(component, 'updateDrawings');
-        component.updateDrawingsBydrawingTags();
+        // tslint:disable-next-line:no-any / reason: spying on private member
+        const spyDrawingsFilteredBydrawingTags = spyOn<any>(component, 'drawingsFilteredBydrawingTags');
+        // tslint:disable-next-line:no-any / reason: spying on private member
+        const spyUpdateDrawings = spyOn<any>(component, 'updateDrawings');
+        // tslint:disable-next-line:no-string-literal / reason: accessing on private member
+        component['updateDrawingsBydrawingTags']();
+
         expect(spyDrawingsFilteredBydrawingTags).toHaveBeenCalled();
         expect(spyUpdateDrawings).toHaveBeenCalled();
     });
@@ -204,28 +266,14 @@ describe('GalleryComponent', () => {
         const tag = 'tag1';
         component.drawingTags = [tag];
         const emptyTag = '';
+
         expect(component.validateTag(emptyTag)).toEqual(false);
         expect(component.validateTag(tag)).toEqual(false);
-    });
-
-    it('warning Canvas shoul open dialogue', () => {
-        const fakeDrawing1 = {} as Drawing;
-        // tslint:disable-next-line:no-any
-        const dialogOpenSpy = spyOn<any>(dialog, 'open').and.callThrough();
-        component.warningCanvas(fakeDrawing1);
-        expect(dialogOpenSpy).toHaveBeenCalled();
     });
 
     it('validateTag should return false when tag isnt valid', () => {
         const tag = '.@/,.';
         component.tagForm.setValue(tag);
         expect(component.validateTag(tag)).toEqual(false);
-    });
-
-    it('exportDrawing should open dialog', () => {
-        // tslint:disable-next-line:no-any / reason: spying on function
-        spyOn<any>(dialog, 'open').and.callThrough();
-        component.openDialog();
-        expect(dialog.open).toHaveBeenCalled();
     });
 });

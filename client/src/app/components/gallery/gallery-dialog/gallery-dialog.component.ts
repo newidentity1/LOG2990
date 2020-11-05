@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Command } from '@app/classes/commands/command';
 import { ResizeCommand } from '@app/classes/commands/resize-command';
 import { WarningDialogComponent } from '@app/components/gallery/warning/warning-dialog.component';
@@ -27,13 +27,13 @@ export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy 
     isCanvasEmpty: boolean = true;
     resizeCommand: ResizeCommand;
     private subscribeExecutedCommand: Subscription;
+
     constructor(
         private drawingService: DrawingService,
         private dialog: MatDialog,
         private fireBaseService: FireBaseService,
         private communicationService: CommunicationService,
         private undoRedoService: UndoRedoService,
-        public dialogRef: MatDialogRef<WarningDialogComponent>,
     ) {}
 
     ngOnInit(): void {
@@ -58,7 +58,7 @@ export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy 
         });
     }
 
-    updateDrawings(totalDrawings: Drawing[]): void {
+    private updateDrawings(totalDrawings: Drawing[]): void {
         this.tab = [];
         this.slider.images.length = 0;
         for (const image of totalDrawings) {
@@ -75,7 +75,7 @@ export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy 
         this.isDrawing = this.tab.length > 0;
     }
 
-    getDrawingTagsToString(drawing: Drawing): string {
+    private getDrawingTagsToString(drawing: Drawing): string {
         let tags = '';
         for (const tag of drawing.tags) {
             tags += tag + ',';
@@ -106,14 +106,14 @@ export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy 
                 this.dialog.closeAll();
             };
         } else {
-            this.warningCanvas(this.drawings[event]);
+            this.openWarningDialog(this.drawings[event]);
         }
     }
 
-    warningCanvas(d: Drawing): void {
-        WarningDialogComponent.drawing = d;
-        this.dialog.open(WarningDialogComponent);
+    private openWarningDialog(drawing: Drawing): void {
+        this.dialog.open(WarningDialogComponent, { data: { drawing } });
     }
+
     deleteDrawing(): void {
         if (this.drawings.length !== 0) {
             const imageIndex = this.slider.visiableImageIndex;
@@ -125,16 +125,15 @@ export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy 
         }
     }
 
-    getDrawings(): Observable<Drawing[]> {
+    private getDrawings(): Observable<Drawing[]> {
         const obs: Observable<Drawing[]> = this.communicationService.getDrawings();
         obs.subscribe((data) => {
-            console.log(data);
             this.transformData(data);
         });
         return obs;
     }
 
-    transformData(data: Drawing[]): void {
+    private transformData(data: Drawing[]): void {
         this.drawings = [];
         for (const draw of data) {
             this.drawings.push(draw);
@@ -161,7 +160,7 @@ export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy 
         }
     }
 
-    drawingsFilteredBydrawingTags(): Drawing[] {
+    private drawingsFilteredBydrawingTags(): Drawing[] {
         if (this.drawingTags.length === 0) return this.drawings;
         const filteredDrawing: Drawing[] = [];
 
@@ -176,7 +175,7 @@ export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy 
         return filteredDrawing;
     }
 
-    updateDrawingsBydrawingTags(): void {
+    private updateDrawingsBydrawingTags(): void {
         const drawingsFiltered = this.drawingsFilteredBydrawingTags();
         this.updateDrawings(drawingsFiltered);
     }
