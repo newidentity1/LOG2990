@@ -78,7 +78,7 @@ export class FireBaseService {
         });
     }
     postDrawing(drawingURL: string): void {
-        const drawing: Drawing = { _id: this.id, name: '1234', tags: this.drawingTags, url: drawingURL };
+        const drawing: Drawing = { _id: this.id, name: this.name, tags: this.drawingTags, url: drawingURL };
         this.communicationService.postDrawing(drawing).subscribe({
             next: (response: string) => {
                 this.isDrawingSaving = false;
