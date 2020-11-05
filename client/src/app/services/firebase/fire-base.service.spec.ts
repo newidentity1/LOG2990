@@ -87,7 +87,6 @@ describe('FireBaseService', () => {
             return;
         });
         service.postDrawing(url);
-        console.log(spyEmitSaveDrawingSubjectEvent.calls.mostRecent().args[0]);
         expect(communicationServiceSpy.postDrawing).toHaveBeenCalled();
         expect(spyEmitSaveDrawingSubjectEvent).toHaveBeenCalled();
         expect(service.isDrawingSaving).toEqual(false);
