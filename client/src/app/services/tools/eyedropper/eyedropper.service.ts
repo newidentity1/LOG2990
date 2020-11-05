@@ -16,25 +16,13 @@ export class EyedropperService extends Tool {
 
     currentColor: Color;
 
-    private inCanvas: boolean;
+    inCanvas: boolean;
 
     constructor(private colorPickerService: ColorPickerService, drawingService: DrawingService) {
         super(drawingService);
         this.name = 'Eyedropper';
         this.tooltip = 'Pipette(i)';
         this.iconName = 'colorize';
-    }
-
-    isInCanvas(): boolean {
-        return this.inCanvas;
-    }
-
-    onMouseEnter(event: MouseEvent): void {
-        this.inCanvas = true;
-    }
-
-    onMouseLeave(event: MouseEvent): void {
-        this.inCanvas = false;
     }
 
     onMouseMove(event: MouseEvent): void {
@@ -120,7 +108,6 @@ export class EyedropperService extends Tool {
     }
 
     resetContext(): void {
-        this.inCanvas = false;
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
     }
 }
