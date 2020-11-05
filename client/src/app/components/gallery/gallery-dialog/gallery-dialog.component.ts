@@ -72,7 +72,7 @@ export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy 
             this.tab.push(obj);
         }
         this.slider.setSliderImages(this.tab);
-        this.isDrawing = this.tab.length > 0;
+        this.isDrawing = this.tab.length > 2;
     }
 
     getDrawingTagsToString(drawing: Drawing): string {
@@ -116,7 +116,12 @@ export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy 
     }
     deleteDrawing(): void {
         if (this.drawings.length !== 0) {
-            const imageIndex = this.slider.visiableImageIndex;
+            let imageIndex: number;
+            if (this.drawings.length > 2) {
+                imageIndex = this.slider.visiableImageIndex + 2;
+            } else {
+                imageIndex = this.slider.visiableImageIndex + 1;
+            }
             const draw: Drawing = this.drawings[imageIndex];
             this.fireBaseService.deleteImage(draw._id);
             this.communicationService.deleteDrawing(draw._id).subscribe(() => {
