@@ -26,25 +26,29 @@ describe('BucketService', () => {
         const drawingCanvas = document.createElement('canvas');
         drawingCanvas.width = canvasTestHelper.canvas.width;
         drawingCanvas.height = canvasTestHelper.canvas.height;
-        baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
-        previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
+        baseCtxStub = drawingCanvas.getContext('2d') as CanvasRenderingContext2D;
+        previewCtxStub = drawingCanvas.getContext('2d') as CanvasRenderingContext2D;
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
         service['drawingService'].previewCtx = previewCtxStub;
         service['drawingService'].canvas = drawingCanvas;
 
         mouseEventclickLeft = {
-            clientX: 25,
-            clientY: 25,
+            offsetX: 25,
+            offsetY: 25,
             button: 0,
         } as MouseEvent;
 
         mouseEventclickRight = {
-            clientX: 25,
-            clientY: 25,
+            offsetX: 25,
+            offsetY: 25,
             button: 2,
         } as MouseEvent;
-        service['width'] = CONSTANTS.TEST_IMAGE_SIZE;
-        service['height'] = CONSTANTS.TEST_IMAGE_SIZE;
+        service['width'] = drawingCanvas.width;
+        service['height'] = drawingCanvas.height;
+    });
+
+    it('should be created', () => {
+        expect(service).toBeTruthy();
     });
 
     it('should be created', () => {
@@ -53,8 +57,15 @@ describe('BucketService', () => {
         expect(drawServiceSpy.setColor).toHaveBeenCalled();
     });
 
-    it('setColor should call drawing service.setColor()', () => {
-        expect(service).toBeTruthy();
+    it('onMouseUp should set mouse Down to false)', () => {
+        service.onMouseUp(mouseEventclickLeft);
+        expect(service.mouseDown).toBeFalse();
+    });
+
+    it('onMouseUp should set mouse Down to false)', () => {
+        service.mouseDown = true;
+        service.onMouseUp(mouseEventclickLeft);
+        expect(service.mouseDown).toBeFalse();
     });
 
     it('checkColor should return false if pixel is out ', () => {
@@ -101,8 +112,9 @@ describe('BucketService', () => {
     });
 
     it('setTolerance should change toleranceValue', () => {
-        service.setTolerance(CONSTANTS.TEST_TOLERENCE);
-        expect(service['tolerance']).toEqual(CONSTANTS.MAX_COLOR_VALUE * (CONSTANTS.TEST_TOLERENCE / CONSTANTS.POURCENTAGE));
+        const expectedTolerance = 20;
+        service.setTolerance(expectedTolerance);
+        expect(service['tolerance']).toEqual(CONSTANTS.MAX_COLOR_VALUE * (expectedTolerance / CONSTANTS.POURCENTAGE));
     });
 
     it('setTolerance should change toleranceValue', () => {
@@ -123,12 +135,6 @@ describe('BucketService', () => {
         list.push(p2);
         service['clearList'](list);
         expect(list.length).toEqual(0);
-    });
-
-    it('ResetMatrice should reset all pixel Status to 0', () => {
-        service.onMouseDown(mouseEventclickLeft);
-        service['resetMatrice']();
-        expect(service['matrice'][0][0].status).toEqual(0);
     });
 
     it('copyList should copy a list', () => {
@@ -228,6 +234,17 @@ describe('BucketService', () => {
     });
 
     it('checkPixel should call colorPixel if the pixel status = 0', () => {
+        const colorPixelSpy = spyOn<any>(service, 'colorPixel').and.callThrough();
+        drawServiceSpy.baseCtx.fillStyle = 'black';
+        drawServiceSpy.baseCtx.fillRect(0, 0, drawServiceSpy.canvas.width, drawServiceSpy.canvas.height);
+        service['image'] = drawServiceSpy.baseCtx.getImageData(0, 0, drawServiceSpy.canvas.width, drawServiceSpy.canvas.height);
+        service['startPixelColor'] = drawServiceSpy.baseCtx.getImageData(0, 0, 1, 1).data;
+        const p1: Pixel = { x: 2, y: 2, status: 0 };
+        service['checkPixel'](p1);
+        expect(colorPixelSpy).toHaveBeenCalled();
+    });
+
+    it('checkPixel should call colorPixel if the pixel status = 1', () => {
         service.onMouseDown(mouseEventclickRight);
         service['image'] = service['drawingService'].baseCtx.getImageData(0, 0, service['width'], service['height']);
         const colorPixelSpy = spyOn<any>(service, 'colorPixel').and.callThrough();
