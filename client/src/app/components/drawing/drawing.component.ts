@@ -80,6 +80,17 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
         this.subscribeExecutedCommand.unsubscribe();
     }
 
+    @HostListener('window:mousemove', ['$event'])
+    onMouseMoveWindow(event: MouseEvent): void {
+        if (!this.isResizingWidth && !this.isResizingHeight) {
+            if (this.toolbarService.currentTool instanceof PencilService) {
+                this.toolbarService.onMouseMove(event);
+            }
+        } else {
+            this.onResize(event);
+        }
+    }
+
     onMouseMove(event: MouseEvent): void {
         if (!(this.toolbarService.currentTool instanceof PencilService)) {
             this.toolbarService.onMouseMove(event);
@@ -90,17 +101,6 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
         event.preventDefault();
         if (!this.isResizingWidth && !this.isResizingHeight) {
             this.toolbarService.onMouseDown(event);
-        }
-    }
-
-    @HostListener('window:mousemove', ['$event'])
-    onMouseMovePencil(event: MouseEvent): void {
-        if (!this.isResizingWidth && !this.isResizingHeight) {
-            if (this.toolbarService.currentTool instanceof PencilService) {
-                this.toolbarService.onMouseMove(event);
-            }
-        } else {
-            this.onResize(event);
         }
     }
 
