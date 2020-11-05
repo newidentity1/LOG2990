@@ -85,7 +85,7 @@ export class LineService extends Tool {
             const x2: number = this.pathData[0].x;
             const y2: number = this.pathData[0].y;
             const distance: number = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-            if (distance <= CONSTANTS.MINIMAL_DISTANCE) {
+            if (distance <= CONSTANTS.MINIMAL_DISTANCE_PIXEL) {
                 this.pathData.pop();
                 this.pathData.pop();
 

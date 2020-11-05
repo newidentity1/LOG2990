@@ -113,12 +113,12 @@ describe('BucketService', () => {
     it('setTolerance should change toleranceValue', () => {
         const expectedTolerance = 20;
         service.setTolerance(expectedTolerance);
-        expect(service['tolerance']).toEqual(CONSTANTS.MAX_COLOR_VALUE * (expectedTolerance / CONSTANTS.POURCENTAGE));
+        expect(service['tolerance']).toEqual(CONSTANTS.MAX_COLOR_VALUE * (expectedTolerance / CONSTANTS.MAX_PERCENTAGE));
     });
 
     it('setTolerance should change toleranceValue', () => {
         service.setTolerance(null);
-        expect(service['tolerance']).toEqual(CONSTANTS.MAX_COLOR_VALUE * (1 / CONSTANTS.POURCENTAGE));
+        expect(service['tolerance']).toEqual(CONSTANTS.MAX_COLOR_VALUE * (1 / CONSTANTS.MAX_PERCENTAGE));
     });
 
     it('resetContext should reset all the current changes that the tool made', () => {
