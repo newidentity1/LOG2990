@@ -100,10 +100,6 @@ export class ColorPickerService extends Tool {
         this.secondaryColor.next(newColor);
     }
 
-    getPositionFromMouse(event: MouseEvent): Vec2 {
-        return { x: event.offsetX, y: event.offsetY };
-    }
-
     private drawCursor(ctx: CanvasRenderingContext2D, position: Vec2): void {
         ctx.strokeStyle = '#' + this.selectedColor.hex;
         ctx.beginPath();
