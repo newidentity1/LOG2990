@@ -157,10 +157,12 @@ export class ToolbarService {
     }
 
     onMouseEnter(event: MouseEvent): void {
+        this.eyedropperService.inCanvas = true;
         this.currentTool.onMouseEnter(event);
     }
 
     onMouseLeave(event: MouseEvent): void {
+        this.eyedropperService.inCanvas = false;
         this.currentTool.onMouseLeave(event);
     }
 
