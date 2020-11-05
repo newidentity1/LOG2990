@@ -1,6 +1,7 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { canvasTestHelper } from '@app/classes/canvas-test-helper';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { Drawing } from '@common/communication/drawing';
 import { WarningDialogComponent } from './warning-dialog.component';
@@ -49,16 +50,17 @@ describe('WarningDialogComponent', () => {
         expect(spyLoadImage).not.toHaveBeenCalled();
     });
 
-    // it('loadImage should set the image on the canvas and close the dialogue', () => {
-    //     // component.drawingService.canvas = canvasTestHelper.canvas;
-    //     // spyOn(canvasSpy, 'getContext').and.callFake(('2d'){});
-    //     // component.drawingService.canvas = { getContext: {} } as HTMLCanvasElement;
-    //     // tslint:disable-next-line:no-unused-expression
-    //     spyOn(component.drawingService.canvas, 'getContext');
-    //     const spyCancel = spyOn(component, 'cancel');
-    //     component.loadImage();
-    //     expect(spyCancel).toHaveBeenCalled();
-    // });
+    it('loadImage should set the image on the canvas and close the dialogue', () => {
+        component.drawingService.canvas = canvasTestHelper.canvas;
+        // tslint:disable: prefer-const
+        let baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
+        let previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
+        drawingServiceSpy.baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
+        drawingServiceSpy.previewCtx = previewCtxStub;
+        const spyCancel = spyOn(component, 'cancel');
+        component.loadImage();
+        expect(spyCancel).toHaveBeenCalled();
+    });
 
     it('cancel should close dialog', () => {
         component.cancel();

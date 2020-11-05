@@ -210,7 +210,6 @@ describe('GalleryComponent', () => {
     });
 
     it('exportDrawing should open dialog', () => {
-        // tslint:disable: no-string-literal
         // tslint:disable-next-line:no-any / reason: spying on function
         spyOn<any>(dialog, 'open').and.callThrough();
         component.openDialog();
