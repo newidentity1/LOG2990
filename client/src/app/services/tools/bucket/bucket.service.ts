@@ -111,7 +111,6 @@ export class BucketService extends Tool {
 
     private addNeighbours(pixels: Pixel[]): void {
         const newList: Pixel[] = this.copyList(this.openList);
-        // this.showList(this.openList);
         this.clearList(this.openList);
         for (const pixel of newList) {
             const topPixel: Pixel = { x: pixel.x, y: pixel.y + 1, status: 0 };

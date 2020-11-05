@@ -1,7 +1,6 @@
 import { EventEmitter } from '@angular/core';
 
-// Ceci est justifié vu qu'on a des fonctions qui seront gérés par les classes enfant
-// tslint:disable:no-empty
+// tslint:disable:no-empty / reason: abstract class
 export abstract class Command {
     executedCommand: EventEmitter<Command>;
     constructor() {

@@ -5,8 +5,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { BLACK, DEFAULT_MITER_LIMIT, WHITE } from '@app/constants/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
-// Ceci est justifié vu qu'on a des fonctions qui seront gérés par les classes enfant
-// tslint:disable:no-empty
+// tslint:disable:no-empty / reason : abstract class
 export abstract class Tool extends Command {
     mouseDownCoord: Vec2;
     pathData: Vec2[];

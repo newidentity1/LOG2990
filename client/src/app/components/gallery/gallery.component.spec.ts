@@ -23,7 +23,6 @@ describe('GalleryComponent', () => {
     let previewCtxStub: CanvasRenderingContext2D;
     let sliderSpy: jasmine.SpyObj<NgImageSliderComponent>;
     let fireBaseServiceSpy: jasmine.SpyObj<FireBaseService>;
-    // let warningRefSpy: jasmine.SpyObj<MatDialogRef>;
     let fakeDrawing: Drawing;
 
     beforeEach(async(() => {
@@ -52,7 +51,6 @@ describe('GalleryComponent', () => {
         sliderSpy.setSliderImages.and.callFake(() => {
             return;
         });
-        //  component.slider = sliderSpy;
         const drawingCanvas = document.createElement('canvas');
         drawingCanvas.width = canvasTestHelper.canvas.width;
         drawingCanvas.height = canvasTestHelper.canvas.height;
@@ -115,14 +113,6 @@ describe('GalleryComponent', () => {
         expect(spy).toHaveBeenCalled();
         expect(component.isDrawing).not.toBeTrue();
     });
-
-    // it('continueDraw should add the choosing draw to the canvas', () => {
-    //     component.isCanvasEmpty = true;
-    //     const fakeDrawing1: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
-    //     component.drawings.push(fakeDrawing1);
-    //     component.continueDrawing(0);
-    //     expect(drawingServiceSpy.clearCanvas).not.toHaveBeenCalled();
-    // });
 
     it('updateDrawings should update drawings from the server', () => {
         const totalDrawings: Drawing[] = [];
