@@ -46,7 +46,6 @@ export class FireBaseService {
         this.task = this.ref.put(blob);
         this.restoreCanvas();
         this.task.snapshotChanges().subscribe((event) => {
-            console.log(event);
             if (event && event.state === 'success') {
                 this.downloadCanvasURL();
             } else if (event && (event.state === 'canceled' || event.state === 'error')) {
@@ -78,16 +77,13 @@ export class FireBaseService {
         });
     }
     postDrawing(drawingURL: string): void {
-        console.log(drawingURL);
         const drawing: Drawing = { _id: this.id, name: this.name, tags: this.drawingTags, url: drawingURL };
         this.communicationService.postDrawing(drawing).subscribe({
             next: (response: string) => {
-                console.log(response);
                 this.isDrawingSaving = false;
                 this.emitSaveDrawingSubjectEvent(new ResponseResult(true, 'Votre dessin a été enregistré avec succès'));
             },
             error: (error: HttpErrorResponse) => {
-                console.log(error);
                 const message = 'Le serveur est indisponible!';
                 this.emitSaveDrawingSubjectEvent(new ResponseResult(false, message));
                 this.isDrawingSaving = false;
@@ -105,7 +101,6 @@ export class FireBaseService {
     }
 
     emitSaveDrawingSubjectEvent(response: ResponseResult): void {
-        console.log(response);
         this.saveDrawingSubject.next(response);
     }
 
