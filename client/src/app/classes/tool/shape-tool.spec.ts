@@ -14,7 +14,7 @@ export class ShapeToolTest extends ShapeTool {
     draw(ctx: CanvasRenderingContext2D): void {}
 }
 
-// tslint:disable:no-any
+// tslint:disable:no-any / reason: spying on functions
 // tslint:disable:no-string-literal / reason : access private members
 describe('Class: ShapeTool', () => {
     let shapeTool: ShapeToolTest;

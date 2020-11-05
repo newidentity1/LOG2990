@@ -64,33 +64,21 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
     }
 
     private setPreviewSize(): void {
-        let ratio: number;
-        ratio = this.drawingService.canvas.height / this.drawingService.canvas.width;
+        const ratio = this.drawingService.canvas.height / this.drawingService.canvas.width;
 
-        // This logic will make sure the biggest possible size for any side is MAX_PREVIEW_SIZE
+        this.previewCanvas.nativeElement.height =
+            this.drawingService.canvas.height > MAX_PREVIEW_SIZE
+                ? ratio > 1
+                    ? MAX_PREVIEW_SIZE
+                    : MAX_PREVIEW_SIZE * ratio
+                : this.drawingService.canvas.height;
 
-        if (this.drawingService.canvas.height > MAX_PREVIEW_SIZE && this.drawingService.canvas.width > MAX_PREVIEW_SIZE) {
-            // take the biggest one of both, set and scale according to that one
-            if (ratio > 1) {
-                this.previewCanvas.nativeElement.height = MAX_PREVIEW_SIZE;
-                this.previewCanvas.nativeElement.width = this.previewCanvas.nativeElement.height / ratio;
-            } else {
-                this.previewCanvas.nativeElement.width = MAX_PREVIEW_SIZE;
-                this.previewCanvas.nativeElement.height = this.previewCanvas.nativeElement.width * ratio;
-            }
-        } else if (this.drawingService.canvas.width > MAX_PREVIEW_SIZE) {
-            // set width to 800 and scale according to width
-            this.previewCanvas.nativeElement.width = MAX_PREVIEW_SIZE;
-            this.previewCanvas.nativeElement.height = this.previewCanvas.nativeElement.width * ratio;
-        } else if (this.drawingService.canvas.height > MAX_PREVIEW_SIZE) {
-            // set height to 800 and scale according to height
-            this.previewCanvas.nativeElement.height = MAX_PREVIEW_SIZE;
-            this.previewCanvas.nativeElement.width = this.previewCanvas.nativeElement.height / ratio;
-        } else {
-            // Size of canvas is small enough to display without rescaling
-            this.previewCanvas.nativeElement.width = this.drawingService.canvas.width;
-            this.previewCanvas.nativeElement.height = this.drawingService.canvas.height;
-        }
+        this.previewCanvas.nativeElement.width =
+            this.drawingService.canvas.width > MAX_PREVIEW_SIZE
+                ? ratio <= 1
+                    ? MAX_PREVIEW_SIZE
+                    : MAX_PREVIEW_SIZE * ratio
+                : this.drawingService.canvas.width;
     }
 
     private setWhiteBackground(ctx: CanvasRenderingContext2D): void {
