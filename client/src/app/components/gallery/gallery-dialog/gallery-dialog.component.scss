@@ -1,0 +1,21 @@
+@import '../../../style/color.scss';
+
+#window {
+    align-items: center;
+    width: 630px;
+    height: 200px;
+}
+
+#addTagButton,
+#deleteDrawingButton {
+    background-color: $primaryColor;
+    margin-left: 5px;
+}
+
+.row {
+    margin-top: 10px;
+}
+
+#header {
+    display: flex;
+}

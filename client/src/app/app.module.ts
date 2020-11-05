@@ -33,8 +33,8 @@ import { DrawingComponent } from './components/drawing/drawing.component';
 import { EditorComponent } from './components/editor/editor.component';
 import { ExportDrawingDialogComponent } from './components/export-drawing/export-drawing-dialog/export-drawing-dialog.component';
 import { ExportDrawingComponent } from './components/export-drawing/export-drawing.component';
+import { GalleryDialogComponent } from './components/gallery/gallery-dialog/gallery-dialog.component';
 import { GalleryComponent } from './components/gallery/gallery.component';
-import { OpenGalleryComponent } from './components/gallery/open-gallery/open-gallery.component';
 import { WarningDialogComponent } from './components/gallery/warning/warning-dialog.component';
 import { GuideComponent } from './components/guide/guide.component';
 import { OpenGuideComponent } from './components/guide/open-guide/open-guide.component';
@@ -85,7 +85,7 @@ import { UploadComponent } from './components/upload/upload.component';
         ExportDrawingDialogComponent,
         SelectionComponent,
         BucketComponent,
-        OpenGalleryComponent,
+        GalleryDialogComponent,
         GalleryComponent,
         UploadComponent,
         UploadDialogComponent,
