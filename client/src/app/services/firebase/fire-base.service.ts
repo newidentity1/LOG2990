@@ -3,7 +3,7 @@ import { AngularFireStorage, AngularFireStorageReference, AngularFireUploadTask 
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { Drawing } from '@common/communication/drawing';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -16,6 +16,7 @@ export class FireBaseService {
     canvasData: ImageData;
     drawingTags: string[] = [];
     isDrawingSaving: boolean = false;
+    saveDrawingSubject: Subject<string> = new Subject<string>();
 
     constructor(public drawingService: DrawingService, private afStorage: AngularFireStorage, private communicationService: CommunicationService) {}
 
@@ -71,6 +72,7 @@ export class FireBaseService {
             next: (response: string) => {
                 console.log(response);
                 this.isDrawingSaving = false;
+                this.emitSaveDrawingSubjectEvent();
             },
             error: (error: string) => {
                 console.log(error);
@@ -85,5 +87,13 @@ export class FireBaseService {
     }
     reset(): void {
         this.id = '';
+    }
+
+    emitSaveDrawingSubjectEvent(): void {
+        this.saveDrawingSubject.next('Le dessin a été sauvegardé avec succès!');
+    }
+
+    saveDrawingEventListener(): Observable<string> {
+        return this.saveDrawingSubject.asObservable();
     }
 }

@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { FireBaseService } from '@app/services/firebase/fire-base.service';
 import { Drawing } from '@common/communication/drawing';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-upload-dialog',
@@ -17,14 +19,22 @@ export class UploadDialogComponent implements OnInit {
     tagEmpty: boolean;
     tagForm: FormControl;
     titleForm: FormControl;
+    subscribeSaveDrawing: Subscription;
 
-    constructor(public dialog: MatDialog, public fireBaseService: FireBaseService) {
+    constructor(public dialog: MatDialog, public fireBaseService: FireBaseService, private snackBar: MatSnackBar) {
         this.drawingTitle = '';
     }
 
     ngOnInit(): void {
         this.tagForm = new FormControl(this.tagToAdd, [Validators.pattern('^(\\d|[a-zA-ZÀ-ÿ]){0,15}$'), Validators.required]);
         this.titleForm = new FormControl(this.drawingTitle, [Validators.pattern('^[a-zA-ZÀ-ÿ](d|[a-zA-ZÀ-ÿ ]){0,20}$'), Validators.required]);
+        this.subscribeSaveDrawing = this.fireBaseService.saveDrawingEventListener().subscribe((message) => {
+            this.snackBar.open(message, 'Fermer', {
+                duration: 4000,
+                verticalPosition: 'top',
+                panelClass: ['sucess-snackbar'],
+            });
+        });
     }
 
     uploadImage(): void {
