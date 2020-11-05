@@ -11,7 +11,7 @@ describe('CreateNewDrawingComponent', () => {
     let component: CreateNewDrawingComponent;
     let fixture: ComponentFixture<CreateNewDrawingComponent>;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
-    // tslint:disable:no-any / reason: jasmine spy
+    // tslint:disable:no-any / reason: jasmine spy on function
     let dialogOpenSpy: jasmine.Spy<any>;
 
     beforeEach(async(() => {
@@ -44,8 +44,8 @@ describe('CreateNewDrawingComponent', () => {
         drawingServiceSpy.canvasEmpty.and.callFake(() => {
             return false;
         });
-        // tslint:disable-next-line: no-any / reason spying a function
-        const spyWarningClearCanvas = spyOn<any>(component, 'warningClearCanvas').and.callFake(() => {
+
+        const spyWarningClearCanvas = spyOn(component, 'warningClearCanvas').and.callFake(() => {
             return;
         });
         component.createNewDrawing();
@@ -62,7 +62,6 @@ describe('CreateNewDrawingComponent', () => {
     });
 
     it(' warningClearCanvas should open the dialog', () => {
-        // tslint:disable-next-line: no-any / reason: spying on function
         component.warningClearCanvas();
         expect(dialogOpenSpy).toHaveBeenCalled();
     });
