@@ -5,11 +5,11 @@
             <mat-label>Titre du dessin</mat-label>
             <input matInput type="text" [(ngModel)]="drawingTitle" [formControl]="titleForm" name="drawingTitle" maxlength="20" required />
             <mat-hint align="start"
-            ><strong
-             >Ne doit pas contenir de <br />
-                symboles, Ne commence pas <br />
-                par un chiffre</strong
-			      >
+                ><strong
+                    >Ne doit pas contenir de <br />
+                    symboles, Ne commence pas <br />
+                    par un chiffre</strong
+                >
             </mat-hint>
             <mat-hint align="end">{{ drawingTitle.length }} / 20</mat-hint>
             <mat-error *ngIf="!isTitleInputEmpty()">titre non valide</mat-error>
@@ -22,15 +22,21 @@
 
                 <input matInput type="text" [(ngModel)]="tagToAdd" [formControl]="tagForm" maxlength="15" />
                 <mat-hint align="start"
-                ><strong
-                 >Ne doit pas contenir <br />
-                    d'espaces ou de symboles</strong>
+                    ><strong
+                        >Ne doit pas contenir <br />
+                        d'espaces ou de symboles</strong
+                    >
                 </mat-hint>
                 <mat-hint align="end">{{ tagToAdd.length }} / 15</mat-hint>
                 <mat-error *ngIf="!isTagInputEmpty()">étiquette non valide</mat-error>
             </mat-form-field>
             <mat-icon id="info-button" matTooltip="Liste de symboles:  !@#$%^&*(){}[];:',./" matTooltipPosition="above"> information </mat-icon>
-            <button id="addTagButton" mat-stroked-button [disabled]="!validateTag(tagToAdd)" (click)="addTag(tagToAdd); tagToAdd = ''; tagForm.reset('');">
+            <button
+                id="addTagButton"
+                mat-stroked-button
+                [disabled]="!validateTag(tagToAdd)"
+                (click)="addTag(tagToAdd); tagToAdd = ''; tagForm.reset('')"
+            >
                 Ajouter
             </button>
         </form>
@@ -42,16 +48,15 @@
                 <mat-icon matChipRemove>cancel</mat-icon>
             </mat-chip>
         </mat-chip-list>
+        <button
+            class="buttons"
+            id="upload-button"
+            mat-raised-button
+            [disabled]="!validateTitle(drawingTitle) || this.fireBaseService.isDrawingSaving"
+            (click)="uploadImage()"
+        >
+            Sauvegarder
+        </button>
+        <button class="buttons" id="cancel-button" mat-raised-button mat-dialog-close>Annuler</button>
     </div>
 </div>
-<button
-    class="buttons"
-    id="upload-button"
-    mat-raised-button
-    [disabled]="!validateTitle(drawingTitle) || this.fireBaseService.isDrawingSaving"
-
-    (click)="uploadImage()"
->
-    Sauvegarder
-</button>
-<button class="buttons" id="cancel-button" mat-raised-button mat-dialog-close>Annuler</button>
