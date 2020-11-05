@@ -66,19 +66,13 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
     private setPreviewSize(): void {
         const ratio = this.drawingService.canvas.height / this.drawingService.canvas.width;
 
-        this.previewCanvas.nativeElement.height =
-            this.drawingService.canvas.height > MAX_PREVIEW_SIZE
-                ? ratio > 1
-                    ? MAX_PREVIEW_SIZE
-                    : MAX_PREVIEW_SIZE * ratio
-                : this.drawingService.canvas.height;
-
-        this.previewCanvas.nativeElement.width =
-            this.drawingService.canvas.width > MAX_PREVIEW_SIZE
-                ? ratio <= 1
-                    ? MAX_PREVIEW_SIZE
-                    : MAX_PREVIEW_SIZE * ratio
-                : this.drawingService.canvas.width;
+        if (ratio > 1) {
+            this.previewCanvas.nativeElement.height = Math.min(this.drawingService.canvas.height, MAX_PREVIEW_SIZE);
+            this.previewCanvas.nativeElement.width = this.previewCanvas.nativeElement.height / ratio;
+        } else {
+            this.previewCanvas.nativeElement.width = Math.min(this.drawingService.canvas.width, MAX_PREVIEW_SIZE);
+            this.previewCanvas.nativeElement.height = this.previewCanvas.nativeElement.width * ratio;
+        }
     }
 
     private setWhiteBackground(ctx: CanvasRenderingContext2D): void {
