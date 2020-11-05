@@ -1,3 +1,3 @@
 export abstract class BasicToolProperties {
-    thickness: number;
+    thickness: number = 1;
 }

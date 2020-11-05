@@ -12,43 +12,34 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 })
 export class ExportDrawingDialogComponent implements AfterViewInit {
     @ViewChild('drawingImageContainer') drawingImageContainer: ElementRef;
-    @ViewChild('previewCanvas') previewCanvas: ElementRef<HTMLCanvasElement>; // Visualisation canvas with filters
-    @ViewChild('exportCanvas') exportCanvas: ElementRef<HTMLCanvasElement>; // Exported canvas, copy of real canvas with filters
-    selectedFormat: string;
-    selectedFilter: ExportFilterType;
+    @ViewChild('previewCanvas') previewCanvas: ElementRef<HTMLCanvasElement>;
+    @ViewChild('exportCanvas') exportCanvas: ElementRef<HTMLCanvasElement>;
+
+    selectedFormat: string = 'jpeg';
+    selectedFilter: ExportFilterType = ExportFilterType.None;
     typeExportFilter: typeof ExportFilterType = ExportFilterType;
-    drawingTitle: string;
+    drawingTitle: string = '';
     previewCtx: CanvasRenderingContext2D;
     exportCtx: CanvasRenderingContext2D;
-    private exportFilter: string;
+    private exportFilter: string = 'none';
 
-    // Slider
-    percentage: number;
-    sliderIsVisible: boolean;
-    titleForm: FormControl;
+    percentage: number = 1;
+    sliderIsVisible: boolean = false;
+    titleForm: FormControl = new FormControl('', Validators.required);
 
     constructor(public dialogRef: MatDialogRef<ExportDrawingDialogComponent>, public drawingService: DrawingService) {
-        this.selectedFormat = 'jpeg';
-        this.selectedFilter = ExportFilterType.None;
-        this.drawingTitle = '';
-        this.sliderIsVisible = false;
-        this.exportFilter = 'none';
-        this.percentage = 1;
-        this.titleForm = new FormControl('', Validators.required);
         this.titleForm.markAsDirty();
     }
 
     ngAfterViewInit(): void {
-        // Set contexts
         this.previewCtx = this.previewCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.exportCtx = this.exportCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
 
-        // Set Canvas Sizes
         this.setInitialCanvasSize();
-        // Draw first layer
+
         this.setWhiteBackground(this.previewCtx);
         this.setWhiteBackground(this.exportCtx);
-        // Draw filter on preview canvas only
+
         this.setPreviewFilter();
         this.setImageUrl();
     }
@@ -87,13 +78,11 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
         ctx.fillStyle = '#000000';
     }
 
-    // Function is called by slider
     setFilterPercentage(value: number): void {
         this.percentage = value;
         this.setPreviewFilter();
     }
 
-    // Function is called by changing filter selection
     setPreviewFilter(): void {
         this.sliderIsVisible = true;
 
@@ -133,7 +122,7 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
             0,
             0,
             this.previewCanvas.nativeElement.width,
-            this.previewCanvas.nativeElement.height, // Stretches image to fit preview
+            this.previewCanvas.nativeElement.height,
         );
         this.exportFilter = this.previewCtx.filter;
         this.previewCtx.filter = 'none';
@@ -149,9 +138,7 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
         this.setImageUrl();
     }
 
-    // When user completed changes, the export canvas is drawn and image is downloaded
     downloadImage(): void {
-        // Sets filter on the exported canvas
         this.exportCtx.filter = this.exportFilter;
         this.setWhiteBackground(this.exportCtx);
         this.exportCtx.drawImage(this.drawingService.canvas, 0, 0);
