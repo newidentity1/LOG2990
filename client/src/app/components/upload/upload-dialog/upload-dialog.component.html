@@ -1,19 +1,57 @@
-<form>
-    <mat-form-field>
-	<mat-label>Titre du dessin</mat-label>
-	<input matInput [(ngModel)]="drawingTitle" name="drawingTitle" />
-    </mat-form-field>
-</form>
-    <br>
-<form>
-    <mat-form-field>
-	<mat-label>Ajouter une étiquette</mat-label>
-	<!-- <mat-error>étiquette non valide</mat-error> -->
+<h1 id="main-title">Sauvegarder un dessin</h1>
+<div class="window-container">
+    <form>
+        <mat-form-field class="forms">
+            <mat-label>Titre du dessin</mat-label>
+            <input matInput type="text" [(ngModel)]="drawingTitle" [formControl]="titleForm" name="drawingTitle" maxlength="20" required />
+            <mat-hint align="start"
+            ><strong
+             >Ne doit pas contenir de <br />
+                symboles, Ne commence pas <br />
+                par un chiffre</strong
+			      >
+            </mat-hint>
+            <mat-hint align="end">{{ drawingTitle.length }} / 20</mat-hint>
+            <mat-error *ngIf="!isTitleInputEmpty()">titre non valide</mat-error>
+        </mat-form-field>
+    </form>
+    <div id="tag-form-container">
+        <form>
+            <mat-form-field class="forms">
+                <mat-label>Ajouter une étiquette</mat-label>
 
-	<input matInput type="text" [(ngModel)]="tagToAdd" [formControl]="tagForm" maxlength="15" />
-    </mat-form-field>
-    <button id="addTagButton" mat-stroked-button [disabled]="!validateTag(tagToAdd)" (click)="addTag(tagToAdd); tagToAdd = ''">Ajouter</button>
-</form>
+                <input matInput type="text" [(ngModel)]="tagToAdd" [formControl]="tagForm" maxlength="15" />
+                <mat-hint align="start"
+                ><strong
+                 >Ne doit pas contenir <br />
+                    d'espaces ou de symboles</strong>
+                </mat-hint>
+                <mat-hint align="end">{{ tagToAdd.length }} / 15</mat-hint>
+                <mat-error *ngIf="!isTagInputEmpty()">étiquette non valide</mat-error>
+            </mat-form-field>
+            <mat-icon id="info-button" matTooltip="Liste de symboles:  !@#$%^&*(){}[];:',./" matTooltipPosition="above"> information </mat-icon>
+            <button id="addTagButton" mat-stroked-button [disabled]="!validateTag(tagToAdd)" (click)="addTag(tagToAdd); tagToAdd = ''; tagForm.reset('');">
+                Ajouter
+            </button>
+        </form>
+    </div>
+    <div>
+        <mat-chip-list #tags>
+            <mat-chip *ngFor="let tag of drawingTags" [removable]="true" (removed)="deleteTag(tag)">
+                {{ tag }}
+                <mat-icon matChipRemove>cancel</mat-icon>
+            </mat-chip>
+        </mat-chip-list>
+    </div>
+</div>
+<button
+    class="buttons"
+    id="upload-button"
+    mat-raised-button
+    [disabled]="!validateTitle(drawingTitle) || this.fireBaseService.isDrawingSaving"
 
-<button class="buttons" id="upload-button" mat-raised-button (click)="uploadImage()"> Sauvegarder </button>
-<button class="buttons" id="cancel-button" mat-raised-button mat-dialog-close> Annuler </button>
+    (click)="uploadImage()"
+>
+    Sauvegarder
+</button>
+<button class="buttons" id="cancel-button" mat-raised-button mat-dialog-close>Annuler</button>

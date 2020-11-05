@@ -29,18 +29,8 @@ export class EraseService extends PencilService {
     }
 
     onMouseUp(event: MouseEvent): void {
-        const mouseUpPosition = this.getPositionFromMouse(event);
         if (this.mouseDown) {
-            if (this.pathData.length === 1 && mouseUpPosition.x === this.mouseDownCoord.x && mouseUpPosition.y === this.mouseDownCoord.y) {
-                this.drawingService.baseCtx.clearRect(
-                    mouseUpPosition.x - this.toolProperties.thickness / 2,
-                    mouseUpPosition.y - this.toolProperties.thickness / 2,
-                    this.toolProperties.thickness,
-                    this.toolProperties.thickness,
-                );
-            } else {
-                this.draw(this.drawingService.baseCtx);
-            }
+            this.draw(this.drawingService.baseCtx);
             this.executedCommand.emit(this.clone());
         }
         this.mouseDown = false;
@@ -48,6 +38,16 @@ export class EraseService extends PencilService {
     }
 
     draw(ctx: CanvasRenderingContext2D): void {
+        if (this.pathData.length === 1 && this.pathData[0].x === this.mouseDownCoord.x && this.pathData[0].y === this.mouseDownCoord.y) {
+            this.drawingService.baseCtx.clearRect(
+                this.pathData[0].x - this.toolProperties.thickness / 2,
+                this.pathData[0].y - this.toolProperties.thickness / 2,
+                this.toolProperties.thickness,
+                this.toolProperties.thickness,
+            );
+            return;
+        }
+
         this.drawingService.setStrokeColor('white');
         ctx.miterLimit = 1;
         ctx.lineCap = 'butt';

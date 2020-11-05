@@ -255,20 +255,24 @@ describe('ToolbarService', () => {
         expect(service.currentTool.onMouseUp).toHaveBeenCalledWith(mouseEvent);
     });
 
-    it('onMouseEnter should call the onMouseEnter of the currentTool', () => {
+    it('onMouseEnter should call the onMouseEnter of the currentTool and set isInCanvas of eyedropper service to true', () => {
         service.currentTool = pencilServiceSpy;
         const mouseEvent = {} as MouseEvent;
+        eyedropperServiceSpy.inCanvas = false;
         service.onMouseEnter(mouseEvent);
 
         expect(service.currentTool.onMouseEnter).toHaveBeenCalledWith(mouseEvent);
+        expect(eyedropperServiceSpy.inCanvas).toBeTrue();
     });
 
-    it('onMouseLeave should call the onMouseLeave of the currentTool', () => {
+    it('onMouseLeave should call the onMouseLeave of the currentTool and set inCanvas of eyedropper service to false', () => {
         service.currentTool = pencilServiceSpy;
         const mouseEvent = {} as MouseEvent;
+        eyedropperServiceSpy.inCanvas = true;
         service.onMouseLeave(mouseEvent);
 
         expect(service.currentTool.onMouseLeave).toHaveBeenCalledWith(mouseEvent);
+        expect(eyedropperServiceSpy.inCanvas).toBeFalse();
     });
 
     it('onDoubleClick should call the onDoubleClick of the currentTool', () => {
