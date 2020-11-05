@@ -2,8 +2,9 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
+import { MatDialogMock } from '@app/classes/mat-dialog-test-helper';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { FireBaseService } from '@app/services/firebase/fire-base.service';
@@ -25,6 +26,7 @@ describe('GalleryComponent', () => {
     let fireBaseServiceSpy: jasmine.SpyObj<FireBaseService>;
     // let warningRefSpy: jasmine.SpyObj<MatDialogRef>;
     let fakeDrawing: Drawing;
+    let dialog: MatDialog;
 
     beforeEach(async(() => {
         drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'canvasEmpty']);
@@ -40,9 +42,12 @@ describe('GalleryComponent', () => {
                 { provide: CommunicationService, useValue: communicationSpy },
                 { provide: NgImageSliderComponent, useValue: sliderSpy },
                 { provide: MatDialogRef, useValue: sliderSpy },
+                { provide: MatDialog, useClass: MatDialogMock },
+                { provide: MAT_DIALOG_DATA, useValue: [] },
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
+        dialog = TestBed.inject(MatDialog);
         drawingServiceSpy = TestBed.inject(DrawingService) as jasmine.SpyObj<DrawingService>;
         communicationSpy = TestBed.inject(CommunicationService) as jasmine.SpyObj<CommunicationService>;
 
@@ -202,5 +207,13 @@ describe('GalleryComponent', () => {
         const tag = '.@/,.';
         component.tagForm.setValue(tag);
         expect(component.validateTag(tag)).toEqual(false);
+    });
+
+    it('exportDrawing should open dialog', () => {
+        // tslint:disable: no-string-literal
+        // tslint:disable-next-line:no-any / reason: spying on function
+        spyOn<any>(dialog, 'open').and.callThrough();
+        component.openDialog();
+        expect(dialog.open).toHaveBeenCalled();
     });
 });

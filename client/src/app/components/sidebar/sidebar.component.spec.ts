@@ -108,6 +108,20 @@ describe('SidebarComponent', () => {
         expect(spyExportDrawingChild.exportDrawing).toHaveBeenCalled();
     });
 
+    it('openGallery should call the openDialog of the GalleryComponent child', () => {
+        const spyGallery = jasmine.createSpyObj('GalleryComponent', ['openDialog']);
+        component.galleryRef = spyGallery;
+        component.openGallery();
+        expect(spyGallery.openDialog).toHaveBeenCalled();
+    });
+
+    it('Upload should call uploadImage', () => {
+        const spyUplaod = jasmine.createSpyObj('UploadComponent', ['uploadImage']);
+        component.uploadRef = spyUplaod;
+        component.uploadImage();
+        expect(spyUplaod.uploadImage).toHaveBeenCalled();
+    });
+
     it('get currentTool should return the current tool of toolbarService', () => {
         toolbarServiceMock.currentTool = pencilToolMock;
         const currentTool = toolbarServiceMock.currentTool;
