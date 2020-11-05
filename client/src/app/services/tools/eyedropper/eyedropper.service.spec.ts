@@ -57,58 +57,36 @@ describe('EyedropperService', () => {
         expect(service).toBeTruthy();
     });
 
-    it(' isInCanvas should return false if inCanvas is false', () => {
-        service['inCanvas'] = false;
-        expect(service.isInCanvas()).toBeFalse();
-    });
-
-    it(' isInCanvas should return true if inCanvas is true', () => {
-        service['inCanvas'] = true;
-        expect(service.isInCanvas()).toBeTrue();
-    });
-
-    it(' onMouseEnter should set inCanvas to true', () => {
-        service['inCanvas'] = false;
-        service.onMouseEnter(mouseEvent);
-        expect(service['inCanvas']).toBeTrue();
-    });
-
-    it(' onMouseLeave should set inCanvas to false', () => {
-        service['inCanvas'] = true;
-        service.onMouseLeave(mouseEvent);
-        expect(service['inCanvas']).toBeFalse();
-    });
-
     it(' onMouseMove should call drawPreview if mouse is in canvas', () => {
-        mouseEvent = { clientX: 25, clientY: 25, button: MouseButton.Left } as MouseEvent;
+        mouseEvent = { offsetX: 25, offsetY: 25, button: MouseButton.Left } as MouseEvent;
         service['inCanvas'] = true;
         service.onMouseMove(mouseEvent);
         expect(drawPreviewSpy).toHaveBeenCalled();
     });
 
     it(' onMouseMove should not call drawPreview if mouse is not in canvas', () => {
-        mouseEvent = { clientX: 25, clientY: 25, button: MouseButton.Left } as MouseEvent;
+        mouseEvent = { offsetX: 25, offsetY: 25, button: MouseButton.Left } as MouseEvent;
         service['inCanvas'] = false;
         service.onMouseMove(mouseEvent);
         expect(drawPreviewSpy).not.toHaveBeenCalled();
     });
 
     it(' onMouseUp should call setPrimaryColor if left mouse button was released and mouse is in canvas', () => {
-        mouseEvent = { clientX: 25, clientY: 25, button: MouseButton.Left } as MouseEvent;
+        mouseEvent = { offsetX: 25, offsetY: 25, button: MouseButton.Left } as MouseEvent;
         service['inCanvas'] = true;
         service.onMouseUp(mouseEvent);
         expect(colorPickerServiceSpy.setPrimaryColor).toHaveBeenCalled();
     });
 
     it(' onMouseUp should call setSecondaryColor if right mouse button was released and mouse is in canvas', () => {
-        mouseEvent = { clientX: 25, clientY: 25, button: MouseButton.Right } as MouseEvent;
+        mouseEvent = { offsetX: 25, offsetY: 25, button: MouseButton.Right } as MouseEvent;
         service['inCanvas'] = true;
         service.onMouseUp(mouseEvent);
         expect(colorPickerServiceSpy.setSecondaryColor).toHaveBeenCalled();
     });
 
     it(' onMouseUp should not call setPrimaryColor and setSecondaryColor if left or right mouse button were not released', () => {
-        mouseEvent = { clientX: 25, clientY: 25, button: MouseButton.Middle } as MouseEvent;
+        mouseEvent = { offsetX: 25, offsetY: 25, button: MouseButton.Middle } as MouseEvent;
         service['inCanvas'] = true;
         service.onMouseUp(mouseEvent);
         expect(colorPickerServiceSpy.setPrimaryColor).not.toHaveBeenCalled();
@@ -116,7 +94,7 @@ describe('EyedropperService', () => {
     });
 
     it(' onMouseUp should not call setPrimaryColor and setSecondaryColor if left or right mouse button were released outside the canvas', () => {
-        mouseEvent = { clientX: 25, clientY: 25, button: MouseButton.Left } as MouseEvent;
+        mouseEvent = { offsetX: 25, offsetY: 25, button: MouseButton.Left } as MouseEvent;
         service['inCanvas'] = false;
         service.onMouseUp(mouseEvent);
         expect(colorPickerServiceSpy.setPrimaryColor).not.toHaveBeenCalled();
@@ -127,7 +105,7 @@ describe('EyedropperService', () => {
         const drawScaledZoneSpy = spyOn<any>(service, 'drawScaledZone').and.callThrough();
         const drawCursorSpy = spyOn<any>(service, 'drawCursor').and.callThrough();
 
-        mouseEvent = { clientX: 25, clientY: 25, button: MouseButton.Left } as MouseEvent;
+        mouseEvent = { offsetX: 25, offsetY: 25, button: MouseButton.Left } as MouseEvent;
         service['drawPreview'](mouseEvent);
         expect(drawScaledZoneSpy).toHaveBeenCalled();
         expect(drawCursorSpy).toHaveBeenCalled();
@@ -191,11 +169,9 @@ describe('EyedropperService', () => {
         expect(returnedColor).toEqual(expectedColor);
     });
 
-    it(' resetContext should set inCanvas to false and call clearCanvas', () => {
+    it(' resetContext call clearCanvas', () => {
         const clearCanvasSpy = spyOn(service['drawingService'], 'clearCanvas');
-        service['inCanvas'] = true;
         service.resetContext();
         expect(clearCanvasSpy).toHaveBeenCalled();
-        expect(service['inCanvas']).toEqual(false);
     });
 });

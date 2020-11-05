@@ -14,17 +14,13 @@ export class EyedropperComponent implements AfterViewInit {
     private previewCircleCtx: CanvasRenderingContext2D;
     private cursorCtx: CanvasRenderingContext2D;
 
-    constructor(private eyedropperService: EyedropperService) {}
+    constructor(public eyedropperService: EyedropperService) {}
 
     ngAfterViewInit(): void {
         this.previewCircleCtx = this.previewCircleCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.cursorCtx = this.cursorCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.eyedropperService.previewCircleCtx = this.previewCircleCtx;
         this.eyedropperService.cursorCtx = this.cursorCtx;
-    }
-
-    isInCanvas(): boolean {
-        return this.eyedropperService.isInCanvas();
     }
 
     get width(): number {

@@ -6,6 +6,7 @@ import { CANVAS_MARGIN_LEFT, CANVAS_MARGIN_TOP, CANVAS_MIN_HEIGHT, CANVAS_MIN_WI
 import { MouseButton } from '@app/enums/mouse-button.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
+import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Observable, Subscription } from 'rxjs';
 
@@ -80,11 +81,19 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     @HostListener('window:mousemove', ['$event'])
-    onMouseMove(event: MouseEvent): void {
+    onMouseMoveWindow(event: MouseEvent): void {
         if (!this.isResizingWidth && !this.isResizingHeight) {
-            this.toolbarService.onMouseMove(event);
+            if (this.toolbarService.currentTool instanceof PencilService) {
+                this.toolbarService.onMouseMove(event);
+            }
         } else {
             this.onResize(event);
+        }
+    }
+
+    onMouseMove(event: MouseEvent): void {
+        if (!(this.toolbarService.currentTool instanceof PencilService)) {
+            this.toolbarService.onMouseMove(event);
         }
     }
 

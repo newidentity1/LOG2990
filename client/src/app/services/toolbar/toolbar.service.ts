@@ -71,7 +71,8 @@ export class ToolbarService {
             .set(KeyShortcut.Polygon, polygonService)
             .set(KeyShortcut.Eyedropper, eyedropperService)
             .set(KeyShortcut.RectangleSelect, selectionService)
-            .set(KeyShortcut.EllipseSelect, selectionService);
+            .set(KeyShortcut.EllipseSelect, selectionService)
+            .set(KeyShortcut.Bucket, bucketService);
     }
 
     unsubscribeListeners(): void {
@@ -156,10 +157,12 @@ export class ToolbarService {
     }
 
     onMouseEnter(event: MouseEvent): void {
+        this.eyedropperService.inCanvas = true;
         this.currentTool.onMouseEnter(event);
     }
 
     onMouseLeave(event: MouseEvent): void {
+        this.eyedropperService.inCanvas = false;
         this.currentTool.onMouseLeave(event);
     }
 
