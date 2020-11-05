@@ -17,11 +17,16 @@ describe('DrawingService', () => {
         expect(service).toBeTruthy();
     });
 
-    it('emitCreateNewDrawingEvent should emite de createNewDrawingSubject', () => {
-        // tslint:disable-next-line: no-any / reason: testing a function
-        const createNewDrawingSubjectSpy = spyOn<any>(service.createNewDrawingSubject, 'next').and.callThrough();
+    it('emitCreateNewDrawingEvent should emit createNewDrawingSubject', () => {
+        const createNewDrawingSubjectSpy = spyOn(service.createNewDrawingSubject, 'next').and.callThrough();
         service.emitCreateNewDrawingEvent();
         expect(createNewDrawingSubjectSpy).toHaveBeenCalled();
+    });
+
+    it('emitResetCanvasSizeEvent should emit resetCanvasSizeSubject', () => {
+        const resetCanvasSizeEventSpy = spyOn(service.resetCanvasSizeSubject, 'next').and.callThrough();
+        service.emitResetCanvasSizeEvent();
+        expect(resetCanvasSizeEventSpy).toHaveBeenCalled();
     });
 
     it('createNewDrawingEventListener should return createNewDrawingSubject as an observable', () => {
