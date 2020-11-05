@@ -13,15 +13,18 @@
                 fonctionalités soient présentés à gauche. Vous pouvez cliquer
                 sur l'outil que vous voulez et ses propriétés seront affichées
                 à droite.
+
+		<br/>
+
                 <img alt="" src="../../../assets/screenshots/entry-point.png"/>
                 <img alt="" src="../../../assets/screenshots/interface.png"/>
             </div>
             <h1>Carrousel de dessins</h1>
             <div>
-                Il est possible d'accéder au carrousel de dessin
-                depuis le menu principal et avec le raccourcis ctrl-g
-                depuis la vue de dessin. On peut filtrer les dessins
-                affichés et decider de charger un dessin.
+                <p>Il est possible d'accéder au carrousel de dessin
+                    depuis le menu principal et avec le raccourcis ctrl-g
+                    depuis la vue de dessin. On peut filtrer les dessins
+                    affichés à l'aide des étiquettes assignées et decider de charger un dessin.</p>
             </div>
             <h1>Sauvegarde automatique et manuelle</h1>
             <div>
@@ -32,6 +35,8 @@
                 l'utilisateur. En tout temps, il est possible de
                 sauvegarder manuellement un dessin en utilisant le
                 raccourcis ctrl-s.
+		<p class="important-message">Le titre est un champ oligatoire à remplir</p>
+
             </div>
             <h1>Exportation</h1>
             <div>
@@ -40,6 +45,7 @@
                 permet aussi d'appliquer un filtre parmi cinq sur le
                 dessin. Il est possible d'envoyer le dessin
                 directement par email au lieu de l'exporter localement.
+		<p class="important-message">Le titre est un champ oligatoire à remplir</p>
             </div>
         </mat-tab>
         <mat-tab label="Dessiner">
@@ -237,17 +243,27 @@
 	    <h1> Sceau de peinture </h1>
 	    <div>
 
-		L'outil pipette permet de sélectionner la couleur
-		du pixel qui se trouve directement sous le pointeur de la souris.
-		Un clic avec le bouton gauche l'assigne à la couleur
-		principale et un clic avec le bouton droit l'assigne
-		à la couleur secondaire.
+		L'outil « sceau de peinture » permet d'effectuer un remplissage qui colore une ou
+		plusieurs étendues de pixels en fonction de leur couleur. L’outil peut s’utiliser
+		selon deux modes d’opérations : « pixels contigus » et
+		« pixels non contigus ».
 
-		Grâce au cercle de prévisualisation se trouvant sur
-		le panneau d'attributs, il est possible de sélectionner
-		facilement et précisément un pixel particulier. Le cercle
-		est une représentation surdimensionée du canvas, comme une
-		loupe, qui suit le pointeur de la souris.
+		<h4>Pixels contigus (clic gauche):</h4>
+		<p> Chaque pixel voisin partageant la couleur du pixel selectionné est ajouté
+		    à la région. Pour chaque nouveau pixel ajouté, la vérification est effectuée à nouveau.
+		    Le résultat de ce mode est une région de pixels connectés partageant la même couleur.
+		    Enfin, la couleur princale est appliquée à tous les pixels de la région</p>
+
+		<h4>Pixels non contigus (clic droit):</h4>
+		<p> Chaque pixel du canvas (pas forcément voisin) partageant la couleur du pixel selectionné est ajouté
+		    à la région. Ensuite, la couleur principale est appliquée à tous les pixels de la région. </p>
+
+		<h4> Tolérance </h4>
+		<p> Permet de colorer des pixels partageant une couleur similaire (nuances de couleurs)
+		    Un pourcentage de zéro indique aucune tolérance : seuls les pixels de couleur indentique sont identifiés
+		    comme étant à colorer. Plus le pourcentage monte, plus l’écart de couleur toléré est grand. Un
+		    pourcentage de 100 indique une tolérance totale. C’est-à-dire que toutes les couleurs sont acceptées.
+		    Il en résulte donc que l’entièreté des pixels de la surface de dessin sera à colorer.</p>
 
 		<br/>
 
