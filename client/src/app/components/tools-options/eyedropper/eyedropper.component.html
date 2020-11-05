@@ -1,4 +1,4 @@
-<div id="grid-container" [ngClass]="{ hidePreview: !isInCanvas() }">
+<div id="grid-container" [ngClass]="{ hidePreview: !eyedropperService.inCanvas }">
     <canvas #previewCircleCanvas id="preview-circle-canvas" [attr.width]="width" [attr.height]="height"></canvas>
     <canvas #cursorCanvas id="cursor-canvas" [attr.width]="width" [attr.height]="height"></canvas>
 </div>
