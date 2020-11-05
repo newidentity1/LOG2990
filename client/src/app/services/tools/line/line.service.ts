@@ -201,8 +201,9 @@ export class LineService extends Tool {
                 const dy = mousePosition.y - this.pathData[this.pathData.length - 1].y;
                 const sign = this.signOf(dy) * this.signOf(dx);
                 this.lock45 = true;
+                const defaultValue = +!sign * mousePosition.y;
                 point.y =
-                    +!sign * mousePosition.y +
+                    defaultValue +
                     sign * Math.tan(CONSTANTS.ANGLE_45) * (point.x - this.pathData[this.pathData.length - 1].x) +
                     this.pathData[this.pathData.length - 1].y;
                 break;
