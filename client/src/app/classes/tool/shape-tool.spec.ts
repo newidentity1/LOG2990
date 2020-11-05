@@ -27,9 +27,9 @@ describe('Class: ShapeTool', () => {
     let drawSpy: jasmine.Spy<any>;
     let transformToEqualSidesSpy: jasmine.Spy<any>;
     let baseCtxStub: CanvasRenderingContext2D;
-    let previewCtxStub: CanvasRenderingContext2D;
 
     beforeEach(() => {
+        baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setColor', 'setFillColor', 'setStrokeColor', 'setThickness']);
 
         TestBed.configureTestingModule({
@@ -47,17 +47,11 @@ describe('Class: ShapeTool', () => {
         secondColor = new Color(BLACK);
 
         mouseEvent = {
-            clientX: 25,
-            clientY: 25,
+            offsetX: 25,
+            offsetY: 25,
             button: 0,
         } as MouseEvent;
 
-        baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
-        previewCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
-
-        drawingServiceSpy.canvas = canvasTestHelper.canvas;
-        drawingServiceSpy.baseCtx = baseCtxStub;
-        drawingServiceSpy.previewCtx = previewCtxStub;
         shapeTool.currentMousePosition = { x: mouseEvent.x, y: mouseEvent.y };
         shapeTool.mouseDownCoord = { x: mouseEvent.x, y: mouseEvent.y };
     });
@@ -79,8 +73,8 @@ describe('Class: ShapeTool', () => {
 
     it(' mouseDown should set mouseDown property to false on right click', () => {
         const mouseEventRClick = {
-            clientX: 25,
-            clientY: 25,
+            offsetX: 25,
+            offsetY: 25,
             button: 1,
         } as MouseEvent;
         shapeTool.onMouseDown(mouseEventRClick);
@@ -111,8 +105,8 @@ describe('Class: ShapeTool', () => {
     it(' onMouseUp should call drawif mouse was already down and position of mouse changed from initial', () => {
         shapeTool.mouseDown = true;
         const newMouseEvent = {
-            clientX: 30,
-            clientY: 30,
+            offsetX: 30,
+            offsetY: 30,
             button: 0,
         } as MouseEvent;
         shapeTool.currentMousePosition = { x: 30, y: 30 };
@@ -367,52 +361,6 @@ describe('Class: ShapeTool', () => {
         expect(shapeTool.height).toEqual(shapeToolCopy.height);
         expect(shapeTool.mouseDownCoord).toEqual(shapeToolCopy.mouseDownCoord);
         expect(shapeTool.currentMousePosition).toEqual(shapeToolCopy.currentMousePosition);
-    });
-
-    it('getPositionFromMouse should call capMousePositionInCanvas', () => {
-        const capMousePositionInCanvasSpy = spyOn<any>(shapeTool, 'capMousePositionInCanvas').and.callThrough();
-        shapeTool.getPositionFromMouse(mouseEvent);
-        expect(capMousePositionInCanvasSpy).toHaveBeenCalledWith(mouseEvent);
-    });
-
-    it('capMousePositionInCanvas should not cap positon if mouse is in canvas', () => {
-        const canvasBoundingRect = drawingServiceSpy.canvas.getBoundingClientRect();
-        const mousePos = { x: drawingServiceSpy.canvas.width / 2, y: drawingServiceSpy.canvas.height / 2 };
-        const event = { clientX: mousePos.x, clientY: mousePos.y } as MouseEvent;
-        const returnedPosition = shapeTool['capMousePositionInCanvas'](event);
-        expect(returnedPosition).toEqual({ x: mousePos.x - canvasBoundingRect.x, y: mousePos.y - canvasBoundingRect.y });
-    });
-
-    it('capMousePositionInCanvas should cap positon in x if mouse horizontal coordinate is not in canvas', () => {
-        const canvasBoundingRect = drawingServiceSpy.canvas.getBoundingClientRect();
-        const mousePos = { x: -1, y: drawingServiceSpy.canvas.height / 2 };
-        const event = { clientX: mousePos.x, clientY: mousePos.y } as MouseEvent;
-        const returnedPosition = shapeTool['capMousePositionInCanvas'](event);
-        expect(returnedPosition).toEqual({ x: 0, y: mousePos.y - canvasBoundingRect.y });
-    });
-
-    it('capMousePositionInCanvas should cap positon in x if mouse horizontal coordinate is not in canvas', () => {
-        const canvasBoundingRect = drawingServiceSpy.canvas.getBoundingClientRect();
-        const mousePos = { x: drawingServiceSpy.canvas.width + 1, y: drawingServiceSpy.canvas.height / 2 };
-        const event = { clientX: mousePos.x, clientY: mousePos.y } as MouseEvent;
-        const returnedPosition = shapeTool['capMousePositionInCanvas'](event);
-        expect(returnedPosition).toEqual({ x: drawingServiceSpy.canvas.width, y: mousePos.y - canvasBoundingRect.y });
-    });
-
-    it('capMousePositionInCanvas should cap positon in y if mouse vertical coordinate is not in canvas', () => {
-        const canvasBoundingRect = drawingServiceSpy.canvas.getBoundingClientRect();
-        const mousePos = { x: drawingServiceSpy.canvas.width / 2, y: -1 };
-        const event = { clientX: mousePos.x, clientY: mousePos.y } as MouseEvent;
-        const returnedPosition = shapeTool['capMousePositionInCanvas'](event);
-        expect(returnedPosition).toEqual({ x: mousePos.x - canvasBoundingRect.x, y: 0 });
-    });
-
-    it('capMousePositionInCanvas should cap positon in y if mouse vertical coordinate is not in canvas', () => {
-        const canvasBoundingRect = drawingServiceSpy.canvas.getBoundingClientRect();
-        const mousePos = { x: drawingServiceSpy.canvas.width / 2, y: drawingServiceSpy.canvas.height + 1 };
-        const event = { clientX: mousePos.x, clientY: mousePos.y } as MouseEvent;
-        const returnedPosition = shapeTool['capMousePositionInCanvas'](event);
-        expect(returnedPosition).toEqual({ x: mousePos.x - canvasBoundingRect.x, y: drawingServiceSpy.canvas.height });
     });
 
     it('resetContext should reset all the current changes that the tool made', () => {
