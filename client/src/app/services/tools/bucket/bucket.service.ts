@@ -92,7 +92,7 @@ export class BucketService extends Tool {
 
     setTolerance(tolerance: number | null): void {
         tolerance = tolerance === null ? 1 : tolerance;
-        this.tolerance = CONSTANTS.MAX_COLOR_VALUE * (tolerance / CONSTANTS.POURCENTAGE);
+        this.tolerance = CONSTANTS.MAX_COLOR_VALUE * (tolerance / CONSTANTS.MAX_PERCENTAGE);
     }
 
     resetContext(): void {
