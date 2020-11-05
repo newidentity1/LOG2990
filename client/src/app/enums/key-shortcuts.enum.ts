@@ -9,4 +9,5 @@ export enum KeyShortcut {
     Eyedropper = 'i',
     RectangleSelect = 'r',
     EllipseSelect = 's',
+    Bucket = 'b',
 }
