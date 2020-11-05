@@ -50,17 +50,17 @@ describe('WarningDialogComponent', () => {
         expect(spyLoadImage).not.toHaveBeenCalled();
     });
 
-    it('loadImage should set the image on the canvas and close the dialogue', () => {
-        component.drawingService.canvas = canvasTestHelper.canvas;
-        // tslint:disable: prefer-const
-        let baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
-        let previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
-        drawingServiceSpy.baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
-        drawingServiceSpy.previewCtx = previewCtxStub;
-        const spyCancel = spyOn(component, 'cancel');
-        component.loadImage();
-        expect(spyCancel).toHaveBeenCalled();
-    });
+    // it('loadImage should set the image on the canvas and close the dialogue', () => {
+    //     component.drawingService.canvas = canvasTestHelper.canvas;
+    //     // tslint:disable: prefer-const
+    //     let baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
+    //     let previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
+    //     drawingServiceSpy.baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
+    //     drawingServiceSpy.previewCtx = previewCtxStub;
+    //     const spyCancel = spyOn(component, 'cancel');
+    //     component.loadImage();
+    //     expect(spyCancel).toHaveBeenCalled();
+    // });
 
     it('cancel should close dialog', () => {
         component.cancel();
