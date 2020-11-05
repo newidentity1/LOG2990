@@ -117,7 +117,7 @@ export class GalleryComponent implements OnInit, AfterViewInit, OnDestroy {
     deleteDrawing(): void {
         if (this.drawings.length !== 0) {
             const i = this.slider.visiableImageIndex;
-            const draw: Drawing = this.drawings[i+1];
+            const draw: Drawing = this.drawings[i + 1];
             this.fireBaseService.deleteImage(draw._id);
             this.communicationService.deleteDrawing(draw._id).subscribe(() => {
                 this.getDrawings();
