@@ -11,7 +11,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { FireBaseService } from '@app/services/firebase/fire-base.service';
 import { Drawing } from '@common/communication/drawing';
 import { NgImageSliderComponent, NgImageSliderModule } from 'ng-image-slider';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 import { GalleryDialogComponent } from './gallery-dialog.component';
 
 describe('GalleryDialogComponent', () => {
@@ -49,7 +49,6 @@ describe('GalleryDialogComponent', () => {
         communicationSpy = TestBed.inject(CommunicationService) as jasmine.SpyObj<CommunicationService>;
 
         const data: Drawing[] = [];
-        communicationSpy.deleteDrawing.and.returnValue(new Observable());
         communicationSpy.getDrawings.and.returnValue(of(data));
         sliderSpy.setSliderImages.and.callFake(() => {
             return;
@@ -83,14 +82,15 @@ describe('GalleryDialogComponent', () => {
         expect(openDialogSpy).toHaveBeenCalled();
     });
 
-    it('updateDrawings should update drawings from the server', () => {
+    it('updateDrawings should update drawings from the server ', () => {
         const totalDrawings: Drawing[] = [];
         const fakeDrawing1: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
-        totalDrawings.push(fakeDrawing1);
+        const fakeDrawing2: Drawing = { _id: 'test', name: 'test', tags: ['tag1'], url: 'test' };
+        totalDrawings.push(fakeDrawing1, fakeDrawing2);
         // tslint:disable-next-line:no-string-literal / reason: accessing on private member
         component['updateDrawings'](totalDrawings);
 
-        expect(component.tab.length).toEqual(1);
+        expect(component.tab.length).toEqual(2);
     });
 
     it('getDrawingTagsToString should return the tags of the drawing in string', () => {
@@ -151,11 +151,11 @@ describe('GalleryDialogComponent', () => {
         component.drawings.push(fakeDrawing2);
         component.drawings.push(fakeDrawing3);
         component.drawings.push(fakeDrawing4);
+        communicationSpy.deleteDrawing.and.returnValue(of());
         component.deleteDrawing();
 
         expect(fireBaseServiceSpy.deleteImage).toHaveBeenCalled();
         expect(communicationSpy.deleteDrawing).toHaveBeenCalled();
-        fixture.detectChanges();
     });
 
     it('deleteDrawing should delete the current draw from the left image of the slider', () => {
@@ -164,6 +164,7 @@ describe('GalleryDialogComponent', () => {
         component.slider.visiableImageIndex = 0;
         component.drawings.push(fakeDrawing1);
         component.drawings.push(fakeDrawing2);
+        communicationSpy.deleteDrawing.and.returnValue(of(''));
         component.deleteDrawing();
 
         expect(fireBaseServiceSpy.deleteImage).toHaveBeenCalled();
