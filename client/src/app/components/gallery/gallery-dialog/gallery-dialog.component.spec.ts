@@ -141,23 +141,34 @@ describe('GalleryDialogComponent', () => {
         expect(dialogOpenSpy).toHaveBeenCalled();
     });
 
-    it('deleteDrawing should delete the current draw', () => {
+    it('deleteDrawing should delete the current draw from the middle image on the slider', () => {
         const fakeDrawing1: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
         const fakeDrawing2: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
         const fakeDrawing3: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
+        const fakeDrawing4: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
         component.slider.visiableImageIndex = 0;
         component.drawings.push(fakeDrawing1);
         component.drawings.push(fakeDrawing2);
         component.drawings.push(fakeDrawing3);
+        component.drawings.push(fakeDrawing4);
         component.deleteDrawing();
-
-        // tslint:disable-next-line:no-any / reason: spying on private member
-        const getDrawingsSpy = spyOn<any>(component, 'getDrawings').and.callThrough();
 
         expect(fireBaseServiceSpy.deleteImage).toHaveBeenCalled();
         expect(communicationSpy.deleteDrawing).toHaveBeenCalled();
         fixture.detectChanges();
-        expect(getDrawingsSpy).toHaveBeenCalled();
+    });
+
+    it('deleteDrawing should delete the current draw from the left image of the slider', () => {
+        const fakeDrawing1: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
+        const fakeDrawing2: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
+        component.slider.visiableImageIndex = 0;
+        component.drawings.push(fakeDrawing1);
+        component.drawings.push(fakeDrawing2);
+        component.deleteDrawing();
+
+        expect(fireBaseServiceSpy.deleteImage).toHaveBeenCalled();
+        expect(communicationSpy.deleteDrawing).toHaveBeenCalled();
+        fixture.detectChanges();
     });
 
     it('deleteDrawing should not call deleteImage of firebase service if no drawings are available', () => {
@@ -176,8 +187,14 @@ describe('GalleryDialogComponent', () => {
 
     it('transformData should call updateDrawings and set isDrawing to true', () => {
         const fakeDrawing1: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
+        const fakeDrawing2: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
+        const fakeDrawing3: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
+        const fakeDrawing4: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
         const data: Drawing[] = [];
         data.push(fakeDrawing1);
+        data.push(fakeDrawing2);
+        data.push(fakeDrawing3);
+        data.push(fakeDrawing4);
         // tslint:disable-next-line:no-any / reason: spying on private member
         const spy = spyOn<any>(component, 'updateDrawings');
         // tslint:disable-next-line:no-string-literal / reason: accessing on private member

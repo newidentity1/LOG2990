@@ -72,7 +72,6 @@ export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy 
             this.tab.push(obj);
         }
         this.slider.setSliderImages(this.tab);
-        this.isDrawing = this.tab.length > 2;
     }
 
     private getDrawingTagsToString(drawing: Drawing): string {
@@ -144,7 +143,7 @@ export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy 
             this.drawings.push(draw);
         }
         this.updateDrawings(this.drawings);
-        if (this.drawings.length > 0) {
+        if (this.drawings.length > 1) {
             this.isDrawing = true; // je vais test ca
         } else {
             this.isDrawing = false;
