@@ -39,7 +39,6 @@ export class GalleryComponent implements OnInit, AfterViewInit {
     }
 
     openDialog(): void {
-        console.log('etape 3');
         this.dialog.open(GalleryComponent, {
             height: '55%',
         });
