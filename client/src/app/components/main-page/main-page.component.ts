@@ -28,7 +28,7 @@ export class MainPageComponent {
     getMessagesFromServer(): void {
         this.basicService
             .basicGet()
-            // Cette étape transforme le Message en un seul string
+            // Transforms message to string
             .pipe(
                 map((message: Message) => {
                     return `${message.title} ${message.body}`;

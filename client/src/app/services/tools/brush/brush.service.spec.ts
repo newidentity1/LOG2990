@@ -24,7 +24,6 @@ describe('BrushService', () => {
         });
         service = TestBed.inject(BrushService);
 
-        // Configuration du spy du service
         // tslint:disable:no-string-literal
         service['drawingService'].canvas = canvasTestHelper.canvas;
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data

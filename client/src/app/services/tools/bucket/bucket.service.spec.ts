@@ -21,7 +21,6 @@ describe('BucketService', () => {
             providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
         });
         service = TestBed.inject(BucketService);
-        // Configuration du spy du service
         // tslint:disable:no-string-literal
         const drawingCanvas = document.createElement('canvas');
         drawingCanvas.width = canvasTestHelper.canvas.width;
