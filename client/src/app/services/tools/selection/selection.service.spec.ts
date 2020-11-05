@@ -19,12 +19,7 @@ describe('SelectionService', () => {
 
     beforeEach(() => {
         drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setThickness', 'setStrokeColor']);
-        // moveSelectionService = jasmine.createSpyObj('MoveSelectionService', [
-        //     'checkArrowKeysPressed',
-        //     'checkArrowKeysReleased',
-        //     'moveSelection',
-        //     'copySelection',
-        // ]);
+
         moveSelectionService = new MoveSelectionService(drawingServiceSpy);
         TestBed.configureTestingModule({
             providers: [
@@ -52,6 +47,8 @@ describe('SelectionService', () => {
         mouseEvent = {
             clientX: 25,
             clientY: 25,
+            offsetX: 25,
+            offsetY: 25,
             button: MouseButton.Left,
         } as MouseEvent;
     });
@@ -82,8 +79,8 @@ describe('SelectionService', () => {
 
     it('onMouseDown should not set mouseDown to true if right mouse button was clicked', () => {
         const rightMouseEvent = {
-            clientX: 25,
-            clientY: 25,
+            offsetX: 25,
+            offsetY: 25,
             button: MouseButton.Right,
         } as MouseEvent;
         service.mouseDown = false;
@@ -97,7 +94,7 @@ describe('SelectionService', () => {
         service['moveSelectionPos'] = { x: 0, y: 0 };
         service.onMouseDown(mouseEvent);
         expect(service.mouseDown).toBeTrue();
-        expect(service['moveSelectionPos']).toEqual({ x: mouseEvent.clientX, y: mouseEvent.clientY });
+        expect(service['moveSelectionPos']).toEqual({ x: mouseEvent.offsetX, y: mouseEvent.offsetY });
     });
 
     it('onMouseMove should not call drawPreview if mouse was not already down', () => {
@@ -120,7 +117,7 @@ describe('SelectionService', () => {
         service.isAreaSelected = true;
         service['moveSelectionPos'] = { x: 0, y: 0 };
         service.onMouseMove(mouseEvent);
-        expect(service['moveSelectionPos']).toEqual({ x: mouseEvent.clientX, y: mouseEvent.clientY });
+        expect(service['moveSelectionPos']).toEqual({ x: mouseEvent.offsetX, y: mouseEvent.offsetY });
         expect(moveSelectionSpy).toHaveBeenCalled();
     });
 
@@ -147,6 +144,8 @@ describe('SelectionService', () => {
         const event = {
             clientX: 0,
             clientY: 0,
+            offsetX: 0,
+            offsetY: 0,
             button: MouseButton.Left,
         } as MouseEvent;
         service.onMouseMove(event);
