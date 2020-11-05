@@ -86,12 +86,12 @@ describe('EraseService', () => {
         expect(drawSpy).toHaveBeenCalled();
     });
 
-    it('onMouseUp should call clearRect if pathData lenght is 1, mouse was not moved and mouse down is true', () => {
+    it('Draw should call clearRect if pathData lenght is 1, mouse was not moved and mouse down is true', () => {
         const clearRectSpy = spyOn<any>(baseCtxStub, 'clearRect');
         service.mouseDown = true;
         service.mouseDownCoord = { x: mouseEvent.clientX, y: mouseEvent.clientY };
-        service.pathData = [{ x: mouseEvent.x, y: mouseEvent.y }];
-        service.onMouseUp(mouseEvent);
+        service.pathData = [{ x: mouseEvent.clientX, y: mouseEvent.clientY }];
+        service.draw(drawServiceSpy.baseCtx);
         expect(clearRectSpy).toHaveBeenCalled();
     });
 
