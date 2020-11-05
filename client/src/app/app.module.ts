@@ -15,6 +15,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSliderModule } from '@angular/material/slider';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserModule } from '@angular/platform-browser';
@@ -126,6 +127,7 @@ import { UploadComponent } from './components/upload/upload.component';
         MatExpansionModule,
         MatSelectModule,
         MatChipsModule,
+        MatSnackBarModule,
     ],
     providers: [{ provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher }],
     bootstrap: [AppComponent],
