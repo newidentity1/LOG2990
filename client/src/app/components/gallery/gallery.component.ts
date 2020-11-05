@@ -1,19 +1,22 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Command } from '@app/classes/commands/command';
+import { ResizeCommand } from '@app/classes/commands/resize-command';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { FireBaseService } from '@app/services/firebase/fire-base.service';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Drawing } from '@common/communication/drawing';
 import { NgImageSliderComponent } from 'ng-image-slider';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { WarningDialogComponent } from './warning/warning-dialog.component';
 @Component({
     selector: 'app-gallery',
     styleUrls: ['./gallery.component.scss'],
     templateUrl: './gallery.component.html',
 })
-export class GalleryComponent implements OnInit, AfterViewInit {
+export class GalleryComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('imageSlider', { static: false }) slider: NgImageSliderComponent;
     drawings: Drawing[] = [];
     tab: object[] = [];
@@ -22,16 +25,27 @@ export class GalleryComponent implements OnInit, AfterViewInit {
     isDrawing: boolean = false;
     tagForm: FormControl;
     isCanvasEmpty: boolean = true;
+    resizeCommand: ResizeCommand;
+    private subscribeExecutedCommand: Subscription;
     constructor(
         private drawingService: DrawingService,
         private dialog: MatDialog,
         private fireBaseService: FireBaseService,
         private communicationService: CommunicationService,
+        private undoRedoService: UndoRedoService,
         public dialogRef: MatDialogRef<WarningDialogComponent>,
     ) {}
 
     ngOnInit(): void {
         this.tagForm = new FormControl(this.tagToAdd, [Validators.pattern('^(\\d|[a-zA-ZÀ-ÿ]){0,15}$'), Validators.required]);
+        this.resizeCommand = new ResizeCommand(this.drawingService);
+        this.subscribeExecutedCommand = this.resizeCommand.executedCommand.subscribe((command: Command) => {
+            this.undoRedoService.addCommand(command);
+        });
+    }
+
+    ngOnDestroy(): void {
+        this.subscribeExecutedCommand.unsubscribe();
     }
 
     ngAfterViewInit(): void {
@@ -81,7 +95,13 @@ export class GalleryComponent implements OnInit, AfterViewInit {
                 this.drawingService.baseCtx.canvas.height = image.height;
                 this.drawingService.previewCtx.canvas.width = image.width;
                 this.drawingService.previewCtx.canvas.height = image.height;
-                ctx.drawImage(image, 0, 0);
+                this.drawingService.baseCtx.drawImage(image, 0, 0);
+
+                this.undoRedoService.resetUndoRedo();
+                this.resizeCommand.resize(image.width, image.height);
+                this.drawingService.clearCanvas(this.drawingService.baseCtx);
+                this.resizeCommand.drawImage();
+
                 this.dialog.closeAll();
             };
         } else {
