@@ -62,11 +62,11 @@ export class GalleryComponent implements OnInit, AfterViewInit, OnDestroy {
         this.tab = [];
         this.slider.images.length = 0;
         for (const image of totalDrawings) {
-            const prefix = image.tags.length ? '\nétiquette: ' : '';
+            const prefix = image.tags.length ? '\nÉtiquette: ' : '';
             const obj = {
                 image: image.url,
                 thumbImage: image.url,
-                title: 'titre: ' + image.name + prefix + this.getDrawingTagsToString(image),
+                title: 'Titre: ' + image.name + prefix + this.getDrawingTagsToString(image),
                 alt: image.name,
             };
             this.tab.push(obj);
