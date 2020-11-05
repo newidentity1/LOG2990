@@ -1,35 +1,40 @@
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { canvasTestHelper } from '@app/classes/canvas-test-helper';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { Drawing } from '@common/communication/drawing';
 import { WarningDialogComponent } from './warning-dialog.component';
 
 describe('WarningDialogComponent', () => {
     let component: WarningDialogComponent;
     let fixture: ComponentFixture<WarningDialogComponent>;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
-    // let canvasSpy: jasmine.SpyObj<HTMLCanvasElement>;
-    WarningDialogComponent.drawing = {} as Drawing;
 
-    const mockDialogRef = {
-        close: jasmine.createSpy('close'),
+    const mockDialog = {
+        closeAll: jasmine.createSpy('closeAll'),
     };
+
     beforeEach(async(() => {
         drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'emitCreateNewDrawingEvent']);
-        // canvasSpy = jasmine.createSpyObj('DrawingService', ['getContext']);
+
         TestBed.configureTestingModule({
             declarations: [WarningDialogComponent],
             providers: [
-                { provide: MatDialogRef, useValue: mockDialogRef },
+                { provide: MatDialog, useValue: mockDialog },
                 { provide: MAT_DIALOG_DATA, useValue: [] },
                 { provide: DrawingService, useValue: drawingServiceSpy },
-                // { provide: HTMLCanvasElement, useValue: canvasSpy },
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
+
         drawingServiceSpy = TestBed.inject(DrawingService) as jasmine.SpyObj<DrawingService>;
-        // canvasSpy = TestBed.inject(HTMLCanvasElement) as jasmine.SpyObj<HTMLCanvasElement>;
+
+        const canvas = document.createElement('canvas');
+        canvas.width = canvasTestHelper.canvas.width;
+        canvas.height = canvasTestHelper.canvas.height;
+        drawingServiceSpy.canvas = canvas;
+        drawingServiceSpy.baseCtx = canvas.getContext('2d') as CanvasRenderingContext2D;
+        drawingServiceSpy.previewCtx = canvas.getContext('2d') as CanvasRenderingContext2D;
     }));
 
     beforeEach(() => {
@@ -42,27 +47,40 @@ describe('WarningDialogComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('deleteCanvas should clear base Canvas, close dialog and emit CreateNewDrawing', () => {
-        // component.drawingService.canvas = canvasTestHelper.canvas;
+    it('deleteCanvas should call loadImage', (done) => {
         const spyLoadImage = spyOn(component, 'loadImage');
+        component.data = { drawing: { _id: '1', name: 'test', tags: [], url: drawingServiceSpy.canvas.toDataURL() } };
         component.deleteCanvas();
-        expect(spyLoadImage).not.toHaveBeenCalled();
+
+        setTimeout(() => {
+            expect(spyLoadImage).toHaveBeenCalled();
+            done();
+            // tslint:disable-next-line: no-magic-numbers / reason: waiting for image to load
+        }, 200);
     });
 
-    // it('loadImage should set the image on the canvas and close the dialogue', () => {
-    //     component.drawingService.canvas = canvasTestHelper.canvas;
-    //     // tslint:disable: prefer-const
-    //     let baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
-    //     let previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
-    //     drawingServiceSpy.baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
-    //     drawingServiceSpy.previewCtx = previewCtxStub;
-    //     const spyCancel = spyOn(component, 'cancel');
-    //     component.loadImage();
-    //     expect(spyCancel).toHaveBeenCalled();
-    // });
+    it('loadImage should set the image on the canvas and close the dialogue', () => {
+        const drawImageSpy = spyOn(drawingServiceSpy.baseCtx, 'drawImage');
+        const spyCancel = spyOn(component, 'cancel');
+        const imageSize = 10;
+        const image = new Image();
+        image.width = imageSize;
+        image.height = imageSize;
+        // tslint:disable: no-string-literal /reason: waiting for image to load
+        component['image'] = image;
+
+        component.loadImage();
+
+        expect(spyCancel).toHaveBeenCalled();
+        expect(drawImageSpy).toHaveBeenCalled();
+        expect(drawingServiceSpy.baseCtx.canvas.width).toEqual(imageSize);
+        expect(drawingServiceSpy.baseCtx.canvas.height).toEqual(imageSize);
+        expect(drawingServiceSpy.previewCtx.canvas.width).toEqual(imageSize);
+        expect(drawingServiceSpy.previewCtx.canvas.height).toEqual(imageSize);
+    });
 
     it('cancel should close dialog', () => {
         component.cancel();
-        expect(mockDialogRef.close).toHaveBeenCalled();
+        expect(mockDialog.closeAll).toHaveBeenCalled();
     });
 });
