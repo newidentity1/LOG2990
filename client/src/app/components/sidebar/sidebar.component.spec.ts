@@ -40,13 +40,15 @@ describe('SidebarComponent', () => {
         toolbarServiceMock = TestBed.inject(ToolbarService) as jasmine.SpyObj<ToolbarService>;
         pencilToolMock = TestBed.inject(PencilService) as jasmine.SpyObj<PencilService>;
         eyedropperToolMock = TestBed.inject(EyedropperService) as jasmine.SpyObj<EyedropperService>;
+
+        toolbarServiceMock.currentTool = pencilToolMock;
+        // tslint:disable-next-line:no-string-literal / reason : access private members
+        toolbarServiceMock['tools'] = [pencilToolMock, eyedropperToolMock];
     }));
 
     beforeEach(() => {
         fixture = TestBed.createComponent(SidebarComponent);
         component = fixture.componentInstance;
-        // tslint:disable-next-line:no-string-literal / reason : access private members
-        component['tools'] = [pencilToolMock, eyedropperToolMock];
         fixture.detectChanges();
     });
 

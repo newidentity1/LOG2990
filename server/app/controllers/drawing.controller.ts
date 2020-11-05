@@ -46,7 +46,7 @@ export class DrawingController {
                     res.sendStatus(HTTP_STATUS_CREATED);
                 })
                 .catch((error) => {
-                    res.sendStatus(HTTP_STATUS_BAD_REQUEST).send(error.message);
+                    res.status(HTTP_STATUS_BAD_REQUEST).send(error.message);
                 });
         });
 
