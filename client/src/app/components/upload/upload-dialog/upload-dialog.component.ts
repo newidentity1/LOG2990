@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -12,7 +12,7 @@ import { Subscription } from 'rxjs';
     templateUrl: './upload-dialog.component.html',
     styleUrls: ['./upload-dialog.component.scss'],
 })
-export class UploadDialogComponent implements OnInit {
+export class UploadDialogComponent implements OnInit, OnDestroy {
     drawingTitle: string = '';
     drawings: Drawing[] = [];
     drawingTags: string[] = [];
@@ -36,6 +36,10 @@ export class UploadDialogComponent implements OnInit {
                 panelClass: result.isSuccess ? ['sucess-snackbar'] : ['error-snackbar'],
             });
         });
+    }
+
+    ngOnDestroy(): void {
+        this.subscribeSaveDrawing.unsubscribe();
     }
 
     uploadImage(): void {
