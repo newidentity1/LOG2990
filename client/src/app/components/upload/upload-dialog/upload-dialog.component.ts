@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ResponseResult } from '@app/classes/response-result';
 import { FireBaseService } from '@app/services/firebase/fire-base.service';
 import { Drawing } from '@common/communication/drawing';
 import { Subscription } from 'rxjs';
@@ -28,11 +29,11 @@ export class UploadDialogComponent implements OnInit {
     ngOnInit(): void {
         this.tagForm = new FormControl(this.tagToAdd, [Validators.pattern('^(\\d|[a-zA-ZÀ-ÿ]){0,15}$'), Validators.required]);
         this.titleForm = new FormControl(this.drawingTitle, [Validators.pattern('^[a-zA-ZÀ-ÿ](d|[a-zA-ZÀ-ÿ ]){0,20}$'), Validators.required]);
-        this.subscribeSaveDrawing = this.fireBaseService.saveDrawingEventListener().subscribe((message) => {
-            this.snackBar.open(message, 'Fermer', {
+        this.subscribeSaveDrawing = this.fireBaseService.saveDrawingEventListener().subscribe((result: ResponseResult) => {
+            this.snackBar.open(result.message, 'Fermer', {
                 duration: 4000,
                 verticalPosition: 'top',
-                panelClass: ['sucess-snackbar'],
+                panelClass: result.isSuccess ? ['sucess-snackbar'] : ['error-snackbar'],
             });
         });
     }

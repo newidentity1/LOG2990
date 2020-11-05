@@ -1,5 +1,7 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AngularFireStorage, AngularFireStorageReference, AngularFireUploadTask } from '@angular/fire/storage';
+import { ResponseResult } from '@app/classes/response-result';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { Drawing } from '@common/communication/drawing';
@@ -16,7 +18,7 @@ export class FireBaseService {
     canvasData: ImageData;
     drawingTags: string[] = [];
     isDrawingSaving: boolean = false;
-    saveDrawingSubject: Subject<string> = new Subject<string>();
+    saveDrawingSubject: Subject<ResponseResult> = new Subject<ResponseResult>();
 
     constructor(public drawingService: DrawingService, private afStorage: AngularFireStorage, private communicationService: CommunicationService) {}
 
@@ -44,8 +46,11 @@ export class FireBaseService {
         this.task = this.ref.put(blob);
         this.restoreCanvas();
         this.task.snapshotChanges().subscribe((event) => {
+            console.log(event);
             if (event && event.state === 'success') {
                 this.downloadCanvasURL();
+            } else if (event && (event.state === 'canceled' || event.state === 'error')) {
+                this.emitSaveDrawingSubjectEvent(new ResponseResult(false, 'Erreur dans la sauvegarde du dessin dans la base de donnée!'));
             }
         });
     }
@@ -60,9 +65,15 @@ export class FireBaseService {
 
     downloadCanvasURL(): void {
         const downloadURLObservable: Observable<string> = this.ref.getDownloadURL();
-        downloadURLObservable.subscribe((imageURL) => {
-            this.postDrawing(imageURL);
-            this.reset();
+        downloadURLObservable.subscribe({
+            next: (drawingUrl: string) => {
+                this.postDrawing(drawingUrl);
+                this.reset();
+            },
+            error: (error: string) => {
+                this.emitSaveDrawingSubjectEvent(new ResponseResult(false, error));
+                this.reset();
+            },
         });
     }
     postDrawing(drawingURL: string): void {
@@ -72,10 +83,12 @@ export class FireBaseService {
             next: (response: string) => {
                 console.log(response);
                 this.isDrawingSaving = false;
-                this.emitSaveDrawingSubjectEvent();
+                this.emitSaveDrawingSubjectEvent(new ResponseResult(true, 'Votre dessin a été enregistré avec succès'));
             },
-            error: (error: string) => {
+            error: (error: HttpErrorResponse) => {
                 console.log(error);
+                const message = 'Le serveur est indisponible!';
+                this.emitSaveDrawingSubjectEvent(new ResponseResult(false, message));
             },
         });
     }
@@ -89,11 +102,12 @@ export class FireBaseService {
         this.id = '';
     }
 
-    emitSaveDrawingSubjectEvent(): void {
-        this.saveDrawingSubject.next('Le dessin a été sauvegardé avec succès!');
+    emitSaveDrawingSubjectEvent(response: ResponseResult): void {
+        console.log(response);
+        this.saveDrawingSubject.next(response);
     }
 
-    saveDrawingEventListener(): Observable<string> {
+    saveDrawingEventListener(): Observable<ResponseResult> {
         return this.saveDrawingSubject.asObservable();
     }
 }
