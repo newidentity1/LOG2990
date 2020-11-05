@@ -116,8 +116,8 @@ export class GalleryComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     deleteDrawing(): void {
         if (this.drawings.length !== 0) {
-            const i = this.slider.visiableImageIndex;
-            const draw: Drawing = this.drawings[i + 2];
+            const imageIndex = this.slider.visiableImageIndex;
+            const draw: Drawing = this.drawings[imageIndex];
             this.fireBaseService.deleteImage(draw._id);
             this.communicationService.deleteDrawing(draw._id).subscribe(() => {
                 this.getDrawings();
@@ -128,6 +128,7 @@ export class GalleryComponent implements OnInit, AfterViewInit, OnDestroy {
     getDrawings(): Observable<Drawing[]> {
         const obs: Observable<Drawing[]> = this.communicationService.getDrawings();
         obs.subscribe((data) => {
+            console.log(data);
             this.transformData(data);
         });
         return obs;
