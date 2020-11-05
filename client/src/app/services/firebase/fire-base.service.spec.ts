@@ -276,7 +276,6 @@ describe('FireBaseService', () => {
     });
 
     it('emitSaveDrawingSubjectEvent should emit the response result', () => {
-        console.log(service.saveDrawingSubject);
         const spySaveDrawingSubject = spyOn(service.saveDrawingSubject, 'next').and.callFake(() => {
             return;
         });
@@ -286,7 +285,6 @@ describe('FireBaseService', () => {
     });
 
     it('saveDrawingEventListener should return the saveDrawingSubject as an observable', () => {
-        console.log(service.saveDrawingSubject);
         const spySaveDrawingSubject = spyOn(service.saveDrawingSubject, 'asObservable').and.callThrough();
 
         service.saveDrawingEventListener();
