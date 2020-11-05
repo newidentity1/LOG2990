@@ -10,26 +10,22 @@ body {
     font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
 
-// image-slider
-.ng-image-slider .ng-image-slider-container .main .main-inner .img-div .caption {
+.ng-image-slider .ng-image-slider-container .main .main-inner .img-div .caption,
+.ng-image-slider .ng-image-slider-container .main .icons {
     background-color: black !important;
 }
 
-.ng-image-slider .ng-image-slider-container .main .next, .ng-image-slider .ng-image-slider-container .main .prev {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    background-color: #fff;
-    border-radius: 50%;
-    cursor: pointer;
-    margin-top: -16px;
-    border: 1px solid #000;
-    outline: 1;
-    width: 35px;
-    height: 35px;
-    font-size: 35px;
-    line-height: 30px;
-    z-index: 8;
-    transition: .5s ease-in-out;
-    text-align: center;
+.ng-image-slider .ng-image-slider-container .main .main-inner .img-div .caption {
+    text-align: left !important;
+    white-space: pre-wrap;
+}
+
+.sucess-snackbar {
+    color: #4f8a10 !important;
+    background-color: #dff2bf !important;
+}
+
+.error-snackbar {
+    color: #d8000c !important;
+    background-color: #ffd2d2 !important;
 }
