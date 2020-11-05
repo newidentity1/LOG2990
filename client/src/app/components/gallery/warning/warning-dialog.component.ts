@@ -10,6 +10,7 @@ import { Drawing } from '@common/communication/drawing';
 })
 export class WarningDialogComponent {
     static drawing: Drawing;
+    // tslint:disable-next-line:typedef // because Image is not a type
     private image = new Image();
     constructor(public drawingService: DrawingService, public dialogRef: MatDialogRef<WarningDialogComponent>) {}
 

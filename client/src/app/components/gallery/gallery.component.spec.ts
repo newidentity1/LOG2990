@@ -5,15 +5,14 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog, MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
 import { MatDialogMock } from '@app/classes/mat-dialog-test-helper';
+import * as CONSTANTS from '@app/constants/constants';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { FireBaseService } from '@app/services/firebase/fire-base.service';
 import { Drawing } from '@common/communication/drawing';
 import { NgImageSliderComponent, NgImageSliderModule } from 'ng-image-slider';
 import { Observable, of } from 'rxjs';
-// import { Observable } from 'rxjs';
 import { GalleryComponent } from './gallery.component';
-// import { of } from 'rxjs';
 
 describe('GalleryComponent', () => {
     let component: GalleryComponent;
@@ -121,13 +120,15 @@ describe('GalleryComponent', () => {
         expect(component.isDrawing).not.toBeTrue();
     });
 
-    // it('continueDraw should add the choosing draw to the canvas', () => {
-    //     component.isCanvasEmpty = true;
-    //     const fakeDrawing1: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
-    //     component.drawings.push(fakeDrawing1);
-    //     component.continueDrawing(0);
-    //     expect(drawingServiceSpy.clearCanvas).not.toHaveBeenCalled();
-    // });
+    it('continueDraw should add the choosing draw to the canvas', () => {
+        // tslint:disable-next-line:no-string-literal
+        component['drawingService'].baseCtx.fillRect(0, 0, CONSTANTS.DEFAULT_MITER_LIMIT, CONSTANTS.DEFAULT_MITER_LIMIT);
+        const spy = spyOn(component, 'warningCanvas');
+        const fakeDrawing1: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
+        component.drawings.push(fakeDrawing1);
+        component.continueDrawing(0);
+        expect(spy).toHaveBeenCalled();
+    });
 
     it('updateDrawings should update drawings from the server', () => {
         const totalDrawings: Drawing[] = [];
@@ -201,6 +202,14 @@ describe('GalleryComponent', () => {
         const emptyTag = '';
         expect(component.validateTag(emptyTag)).toEqual(false);
         expect(component.validateTag(tag)).toEqual(false);
+    });
+
+    it('warning Canvas shoul open dialogue', () => {
+        const fakeDrawing1 = {} as Drawing;
+        // tslint:disable-next-line:no-any
+        const dialogOpenSpy = spyOn<any>(dialog, 'open').and.callThrough();
+        component.warningCanvas(fakeDrawing1);
+        expect(dialogOpenSpy).toHaveBeenCalled();
     });
 
     it('validateTag should return false when tag isnt valid', () => {
