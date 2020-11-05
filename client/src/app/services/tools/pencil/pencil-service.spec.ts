@@ -17,8 +17,6 @@ describe('PencilService', () => {
     let drawCursorSpy: jasmine.Spy<any>;
 
     beforeEach(() => {
-        baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
-        previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setColor', 'setThickness']);
 
         TestBed.configureTestingModule({
@@ -30,7 +28,12 @@ describe('PencilService', () => {
 
         // Configuration du spy du service
         // tslint:disable:no-string-literal
-        service['drawingService'].canvas = canvasTestHelper.canvas;
+        const canvas = document.createElement('canvas');
+        canvas.width = canvasTestHelper.canvas.width;
+        canvas.height = canvasTestHelper.canvas.height;
+        baseCtxStub = canvas.getContext('2d') as CanvasRenderingContext2D;
+        previewCtxStub = canvas.getContext('2d') as CanvasRenderingContext2D;
+        service['drawingService'].canvas = canvas;
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
         service['drawingService'].previewCtx = previewCtxStub;
 

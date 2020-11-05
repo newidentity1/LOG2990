@@ -7,4 +7,8 @@ export class MatDialogMock {
     open(): {} {
         return {};
     }
+
+    closeAll(): {} {
+        return {};
+    }
 }
