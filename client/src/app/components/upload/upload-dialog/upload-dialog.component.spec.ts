@@ -57,6 +57,13 @@ describe('UploadDialogComponent', () => {
         expect(mockSnackbar.open).toHaveBeenCalled();
     });
 
+    it('should open snackbar with ResponseResult false', () => {
+        fireBaseServiceSpy.saveDrawingEventListener.and.returnValue(of(new ResponseResult(false, '')));
+        component.ngOnInit();
+        expect(fireBaseServiceSpy.saveDrawingEventListener).toHaveBeenCalled();
+        expect(mockSnackbar.open).toHaveBeenCalled();
+    });
+
     it(' uploadImage should call uploadCanvas of firebaseService ', () => {
         component.drawingTitle = 'test';
         component.drawingTags = ['test1'];
