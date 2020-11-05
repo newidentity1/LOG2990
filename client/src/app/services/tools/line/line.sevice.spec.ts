@@ -36,8 +36,8 @@ describe('LineService', () => {
         service['drawingService'].previewCtx = previewCtxStub;
 
         mouseEventclick1 = {
-            clientX: 25,
-            clientY: 25,
+            offsetX: 25,
+            offsetY: 25,
             button: 0,
         } as MouseEvent;
 
@@ -89,7 +89,7 @@ describe('LineService', () => {
         service.mouseDownCoord = { x: 50, y: 50 };
         service.pathData.push(service.mouseDownCoord);
         service.onKeyDown(keyboardEventShift);
-        mouseEventclick1 = { clientX: 175, clientY: -175, button: 0 } as MouseEvent;
+        mouseEventclick1 = { offsetX: 175, offsetY: -175, button: 0 } as MouseEvent;
         service.onClick(mouseEventclick1);
         const yy: number =
             // tslint:disable-next-line:no-magic-numbers
@@ -104,7 +104,7 @@ describe('LineService', () => {
         service.mouseDownCoord = { x: 200, y: 200 };
         service.pathData.push(service.mouseDownCoord);
         service.onKeyDown(keyboardEventShift);
-        mouseEventclick1 = { clientX: 50, clientY: 203, button: 0 } as MouseEvent;
+        mouseEventclick1 = { offsetX: 50, offsetY: 203, button: 0 } as MouseEvent;
         service.onMouseMove(mouseEventclick1);
         service.onClick(mouseEventclick1);
         expect(service.lock180).toEqual(true);
@@ -116,7 +116,7 @@ describe('LineService', () => {
         service.mouseDownCoord = { x: 200, y: 200 };
         service.pathData.push(service.mouseDownCoord);
         service.onKeyDown(keyboardEventShift);
-        mouseEventclick1 = { clientX: 203, clientY: 50, button: 0 } as MouseEvent;
+        mouseEventclick1 = { offsetX: 203, offsetY: 50, button: 0 } as MouseEvent;
         service.onMouseMove(mouseEventclick1);
         service.onClick(mouseEventclick1);
         expect(service.lock90).toEqual(true);
