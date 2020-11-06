@@ -49,7 +49,9 @@ export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy 
     }
 
     ngAfterViewInit(): void {
-        this.getDrawings();
+        setTimeout(() => {
+            this.getDrawings();
+        }, 0);
     }
 
     private updateDrawings(totalDrawings: Drawing[]): void {
@@ -109,7 +111,7 @@ export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy 
 
     deleteDrawing(): void {
         if (this.drawings.length !== 0) {
-            const imageIndex = this.slider.visiableImageIndex;
+            const imageIndex = this.drawings.length > 1 ? this.slider.visiableImageIndex + 1 : this.slider.visiableImageIndex;
             const draw: Drawing = this.drawings[imageIndex];
             this.fireBaseService.deleteImage(draw._id);
             this.communicationService.deleteDrawing(draw._id).subscribe(() => {
