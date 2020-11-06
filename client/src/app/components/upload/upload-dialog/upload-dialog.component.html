@@ -35,7 +35,7 @@
                 id="addTagButton"
                 mat-stroked-button
                 [disabled]="!validateTag(tagForm.value)"
-                (click)="addTag(tagForm.value); tagForm.value = ''; tagForm.reset('')"
+                (click)="addTag(tagForm.value)"
             >
                 Ajouter
             </button>

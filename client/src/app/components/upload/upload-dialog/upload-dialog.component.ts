@@ -50,6 +50,7 @@ export class UploadDialogComponent implements OnInit {
 
     addTag(tag: string): void {
         this.drawingTags.push(tag);
+        this.tagForm.reset('');
     }
 
     deleteTag(tag: string): void {
