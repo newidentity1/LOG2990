@@ -157,7 +157,7 @@ describe('LineService', () => {
         service.mouseDownCoord = { x: 50, y: 50 };
         service.pathData.push(service.mouseDownCoord);
         service.onClick(mouseEventclick1);
-        expect(drawSpy).toHaveBeenCalled();
+        expect(drawSpy).not.toHaveBeenCalled();
     });
 
     it('shift is press should set shift to true', () => {
