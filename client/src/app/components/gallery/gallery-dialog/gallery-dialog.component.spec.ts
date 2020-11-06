@@ -69,6 +69,7 @@ describe('GalleryDialogComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(GalleryDialogComponent);
         component = fixture.componentInstance;
+        component.isDrawing = true;
         fixture.detectChanges();
     });
 
@@ -84,7 +85,7 @@ describe('GalleryDialogComponent', () => {
         // tslint:disable-next-line:no-string-literal / reason: accessing on private member
         component['updateDrawings'](totalDrawings);
 
-        expect(component.tab.length).toEqual(2);
+        expect(component.tab.length).toEqual(totalDrawings.length + 1);
     });
 
     it('getDrawingTagsToString should return the tags of the drawing in string', () => {
@@ -154,10 +155,8 @@ describe('GalleryDialogComponent', () => {
 
     it('deleteDrawing should delete the current draw from the left image of the slider', () => {
         const fakeDrawing1: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
-        const fakeDrawing2: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
         component.slider.visiableImageIndex = 0;
         component.drawings.push(fakeDrawing1);
-        component.drawings.push(fakeDrawing2);
         communicationSpy.deleteDrawing.and.returnValue(of(''));
         component.deleteDrawing();
 
