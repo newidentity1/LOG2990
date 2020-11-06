@@ -102,7 +102,7 @@ describe('GalleryDialogComponent', () => {
         drawingServiceSpy.clearCanvas(baseCtxStub);
         const fakeDrawing1: Drawing = { _id: 'test', name: 'test', tags: [], url: drawingServiceSpy.canvas.toDataURL() };
         component.drawings.push(fakeDrawing1);
-        component.continueDrawing(0);
+        component.continueDrawing(1);
 
         setTimeout(() => {
             expect(drawingServiceSpy.clearCanvas).toHaveBeenCalled();
