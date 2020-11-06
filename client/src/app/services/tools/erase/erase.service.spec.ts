@@ -74,7 +74,6 @@ describe('EraseService', () => {
         expect(clone).toEqual(service);
     });
 
-    // Todo rajouter test
     it('onMouseUp should call draw if pathData lenght is different than 1 and mouse down is true', () => {
         const drawSpy = spyOn<any>(service, 'draw').and.callThrough();
         service.mouseDown = true;

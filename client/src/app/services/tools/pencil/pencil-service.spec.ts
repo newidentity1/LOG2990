@@ -26,7 +26,6 @@ describe('PencilService', () => {
         drawSpy = spyOn<any>(service, 'draw').and.callThrough();
         drawCursorSpy = spyOn<any>(service, 'drawCursor').and.callThrough();
 
-        // Configuration du spy du service
         // tslint:disable:no-string-literal
         const canvas = document.createElement('canvas');
         canvas.width = canvasTestHelper.canvas.width;
@@ -108,14 +107,12 @@ describe('PencilService', () => {
         expect(drawServiceSpy.setColor).toHaveBeenCalled();
     });
 
-    // Exemple de test d'intégration qui est quand même utile
     it(' should change the pixel of the canvas ', () => {
         mouseEvent = { clientX: 0, clientY: 0, button: 0 } as MouseEvent;
         service.onMouseDown(mouseEvent);
         mouseEvent = { clientX: 1, clientY: 0, button: 0 } as MouseEvent;
         service.onMouseUp(mouseEvent);
 
-        // Premier pixel seulement
         const imageData: ImageData = baseCtxStub.getImageData(0, 0, 1, 1);
         expect(imageData.data[0]).toEqual(0); // R
         expect(imageData.data[1]).toEqual(0); // G

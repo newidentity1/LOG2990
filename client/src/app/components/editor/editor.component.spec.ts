@@ -53,7 +53,6 @@ describe('EditorComponent', () => {
 
         toolbarServiceMock = TestBed.inject(ToolbarService);
 
-        // adding a few shortcuts
         toolbarServiceMock.keyShortcuts = new Map();
         toolbarServiceMock.keyShortcuts
             .set(KeyShortcut.Pencil, pencilServiceSpy)
@@ -105,8 +104,7 @@ describe('EditorComponent', () => {
     });
 
     it('initializeShortcuts should call addShortcut of shortcut service', () => {
-        // tslint:disable-next-line:no-any / reason: spying on function
-        const addShortcutSpy = spyOn<any>(shortcutService, 'addShortcut').and.callThrough();
+        const addShortcutSpy = spyOn(shortcutService, 'addShortcut').and.callThrough();
         // tslint:disable-next-line:no-string-literal / reason: calling private function
         component['initializeShortcuts']();
         expect(addShortcutSpy).toHaveBeenCalled();
@@ -133,8 +131,7 @@ describe('EditorComponent', () => {
     it('tool shortcut should call createNewDrawing of SidebarComponent', () => {
         // tslint:disable-next-line:no-empty / reason: creating mock component
         component.toolbarRef = { createNewDrawing: () => {} } as SidebarComponent;
-        // tslint:disable-next-line:no-any / reason: spying on mock component function
-        const createNewDrawingSpy = spyOn<any>(component.toolbarRef, 'createNewDrawing').and.callThrough();
+        const createNewDrawingSpy = spyOn(component.toolbarRef, 'createNewDrawing').and.callThrough();
         const shortcutEvent = new KeyboardEvent('keydown', { key: 'control.o' });
         document.dispatchEvent(shortcutEvent);
         expect(createNewDrawingSpy).toHaveBeenCalled();
@@ -163,8 +160,8 @@ describe('EditorComponent', () => {
     it('tool shortcut should call exportDrawing of SidebarComponent', () => {
         // tslint:disable-next-line:no-empty / reason: creating mock component
         component.toolbarRef = { exportDrawing: () => {} } as SidebarComponent;
-        // tslint:disable-next-line:no-any / reason: spying on mock component function
-        const createNewDrawingSpy = spyOn<any>(component.toolbarRef, 'exportDrawing').and.callThrough();
+
+        const createNewDrawingSpy = spyOn(component.toolbarRef, 'exportDrawing').and.callThrough();
         const shortcutEvent = new KeyboardEvent('keydown', { key: 'control.e' });
         document.dispatchEvent(shortcutEvent);
         expect(createNewDrawingSpy).toHaveBeenCalled();

@@ -38,7 +38,7 @@ export const ANGLE_90 = 90;
 export const ANGLE_45 = 45;
 export const ANGLE_180 = 180;
 
-export const MINIMAL_DISTANCE = 20;
+export const MINIMAL_DISTANCE_PIXEL = 20;
 
 export const DEFAULT_LINE_POINT_SIZE = 20;
 export const DEFAULT_MITER_LIMIT = 10;
@@ -57,7 +57,7 @@ export const SELECTION_MOVE_STEP = 3;
 export const SELECTION_MOVE_START_DELAY = 500;
 export const SELECTION_MOVE_DELAY = 100;
 
-export const POURCENTAGE = 100;
+export const MAX_PERCENTAGE = 100;
 
 export const BLUR_CONVERSION = 10;
 export const HUE_CONVERSION = 360;

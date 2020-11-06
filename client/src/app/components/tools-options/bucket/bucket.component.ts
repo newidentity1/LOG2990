@@ -9,9 +9,7 @@ import { BucketService } from '@app/services/tools/bucket/bucket.service';
 })
 export class BucketComponent {
     tolerance: number = 1;
-    constructor(public bucketService: BucketService) {
-        // const rectangleProperties = bucketService.toolProperties as BasicShapeProperties;
-    }
+    constructor(public bucketService: BucketService) {}
 
     onToleranceChange(event: MatSliderChange): void {
         this.bucketService.setTolerance(event.value);

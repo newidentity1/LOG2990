@@ -13,8 +13,8 @@ import { RectangleService } from '@app/services/tools/rectangle/rectangle.servic
 })
 export class RectangleComponent {
     typesDrawing: typeof DrawingType = DrawingType;
-    currentType: string;
-    currentThickness: number;
+    currentType: string = DrawingType.Fill;
+    currentThickness: number = 1;
 
     constructor(public rectangleService: RectangleService) {
         const rectangleProperties = rectangleService.toolProperties as BasicShapeProperties;
