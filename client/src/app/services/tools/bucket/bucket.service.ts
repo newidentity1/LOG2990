@@ -71,17 +71,7 @@ export class BucketService extends Tool {
     floodFillRight(): void {
         const targetColor: Color = this.colorPickerService.primaryColor.getValue().clone();
         for (let i = 0; i < this.image.data.length; i += CONSTANTS.IMAGE_DATA_OPACITY_INDEX + 1) {
-            if (
-                this.image.data[i] >= this.startPixelColor[0] - this.tolerance &&
-                this.image.data[i] < this.startPixelColor[0] + this.tolerance &&
-                this.image.data[i + 1] >= this.startPixelColor[1] - this.tolerance &&
-                this.image.data[i + 1] < this.startPixelColor[1] + this.tolerance &&
-                this.image.data[i + 2] >= this.startPixelColor[2] - this.tolerance &&
-                this.image.data[i + 2] < this.startPixelColor[2] + this.tolerance &&
-                this.image.data[i + CONSTANTS.IMAGE_DATA_OPACITY_INDEX] >=
-                    this.startPixelColor[CONSTANTS.IMAGE_DATA_OPACITY_INDEX] - this.tolerance &&
-                this.image.data[i + CONSTANTS.IMAGE_DATA_OPACITY_INDEX] < this.startPixelColor[CONSTANTS.IMAGE_DATA_OPACITY_INDEX] + this.tolerance
-            ) {
+            if (this.checkColor(i)) {
                 this.image.data[i] = targetColor.getRed;
                 this.image.data[i + 1] = targetColor.getGreen;
                 this.image.data[i + 2] = targetColor.getBlue;
@@ -137,7 +127,8 @@ export class BucketService extends Tool {
 
     private checkPixel(point: Pixel | null): void {
         if (point !== null) {
-            if (this.checkColor(point) && point.status !== 1) {
+            const offset = (point.y * this.width + point.x) * (CONSTANTS.IMAGE_DATA_OPACITY_INDEX + 1);
+            if (this.checkColor(offset) && point.status !== 1) {
                 this.openList.push(point);
                 this.colorPixel(point);
                 point.status = 1;
@@ -146,28 +137,21 @@ export class BucketService extends Tool {
     }
 
     private checkPosition(point: Pixel): boolean {
-        if (point.x >= 0 && point.y >= 0 && point.x < this.width && point.y < this.height) {
-            return true;
-        }
-        return false;
+        return point.x >= 0 && point.y >= 0 && point.x < this.width && point.y < this.height;
     }
 
-    private checkColor(point: Pixel): boolean {
-        const offset = (point.y * this.width + point.x) * (CONSTANTS.IMAGE_DATA_OPACITY_INDEX + 1);
-        if (
-            this.image.data[offset] >= this.startPixelColor[0] - this.tolerance &&
-            this.image.data[offset] < this.startPixelColor[0] + this.tolerance &&
-            this.image.data[offset + 1] >= this.startPixelColor[1] - this.tolerance &&
-            this.image.data[offset + 1] < this.startPixelColor[1] + this.tolerance &&
-            this.image.data[offset + 2] >= this.startPixelColor[2] - this.tolerance &&
-            this.image.data[offset + 2] < this.startPixelColor[2] + this.tolerance &&
-            this.image.data[offset + CONSTANTS.IMAGE_DATA_OPACITY_INDEX] >=
+    private checkColor(index: number): boolean {
+        return (
+            this.image.data[index] >= this.startPixelColor[0] - this.tolerance &&
+            this.image.data[index] < this.startPixelColor[0] + this.tolerance &&
+            this.image.data[index + 1] >= this.startPixelColor[1] - this.tolerance &&
+            this.image.data[index + 1] < this.startPixelColor[1] + this.tolerance &&
+            this.image.data[index + 2] >= this.startPixelColor[2] - this.tolerance &&
+            this.image.data[index + 2] < this.startPixelColor[2] + this.tolerance &&
+            this.image.data[index + CONSTANTS.IMAGE_DATA_OPACITY_INDEX] >=
                 this.startPixelColor[CONSTANTS.IMAGE_DATA_OPACITY_INDEX] - this.tolerance &&
-            this.image.data[offset + CONSTANTS.IMAGE_DATA_OPACITY_INDEX] < this.startPixelColor[CONSTANTS.IMAGE_DATA_OPACITY_INDEX] + this.tolerance
-        ) {
-            return true;
-        }
-        return false;
+            this.image.data[index + CONSTANTS.IMAGE_DATA_OPACITY_INDEX] < this.startPixelColor[CONSTANTS.IMAGE_DATA_OPACITY_INDEX] + this.tolerance
+        );
     }
 
     private colorPixel(pixel: Pixel): void {
