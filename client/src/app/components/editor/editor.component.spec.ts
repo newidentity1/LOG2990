@@ -29,7 +29,6 @@ describe('EditorComponent', () => {
     beforeEach(async(() => {
         toolbarServiceMock = jasmine.createSpyObj('ToolbarService', [
             'onKeyDown',
-            'onKeyPress',
             'onKeyUp',
             'changeTool',
             'changeSelectionTool',
@@ -54,7 +53,6 @@ describe('EditorComponent', () => {
 
         toolbarServiceMock = TestBed.inject(ToolbarService);
 
-        // adding a few shortcuts
         toolbarServiceMock.keyShortcuts = new Map();
         toolbarServiceMock.keyShortcuts
             .set(KeyShortcut.Pencil, pencilServiceSpy)
@@ -91,22 +89,6 @@ describe('EditorComponent', () => {
         jasmine.clock().uninstall();
     });
 
-    it('should call the toolbar onKeyDown when receiving a keyboard event', () => {
-        const eventSpy = jasmine.createSpyObj('KeyboardEvent', ['preventDefault']);
-        component.onKeyDown(eventSpy);
-        expect(eventSpy.preventDefault).toHaveBeenCalled();
-        expect(toolbarServiceMock.onKeyDown).toHaveBeenCalled();
-        expect(toolbarServiceMock.onKeyDown).toHaveBeenCalledWith(eventSpy);
-    });
-
-    it('should call the toolbar onKeyPress when receiving a keyboard event', () => {
-        const eventSpy = jasmine.createSpyObj('KeyboardEvent', ['preventDefault']);
-        component.onKeyPress(eventSpy);
-        expect(eventSpy.preventDefault).toHaveBeenCalled();
-        expect(toolbarServiceMock.onKeyPress).toHaveBeenCalled();
-        expect(toolbarServiceMock.onKeyPress).toHaveBeenCalledWith(eventSpy);
-    });
-
     it('should call the toolbar onKeyUp when receiving a keyboard event', () => {
         const eventSpy = jasmine.createSpyObj('KeyboardEvent', ['preventDefault']);
         component.onKeyUp(eventSpy);
@@ -122,8 +104,7 @@ describe('EditorComponent', () => {
     });
 
     it('initializeShortcuts should call addShortcut of shortcut service', () => {
-        // tslint:disable-next-line:no-any / reason: spying on function
-        const addShortcutSpy = spyOn<any>(shortcutService, 'addShortcut').and.callThrough();
+        const addShortcutSpy = spyOn(shortcutService, 'addShortcut').and.callThrough();
         // tslint:disable-next-line:no-string-literal / reason: calling private function
         component['initializeShortcuts']();
         expect(addShortcutSpy).toHaveBeenCalled();
@@ -150,18 +131,37 @@ describe('EditorComponent', () => {
     it('tool shortcut should call createNewDrawing of SidebarComponent', () => {
         // tslint:disable-next-line:no-empty / reason: creating mock component
         component.toolbarRef = { createNewDrawing: () => {} } as SidebarComponent;
-        // tslint:disable-next-line:no-any / reason: spying on mock component function
-        const createNewDrawingSpy = spyOn<any>(component.toolbarRef, 'createNewDrawing').and.callThrough();
+        const createNewDrawingSpy = spyOn(component.toolbarRef, 'createNewDrawing').and.callThrough();
         const shortcutEvent = new KeyboardEvent('keydown', { key: 'control.o' });
         document.dispatchEvent(shortcutEvent);
         expect(createNewDrawingSpy).toHaveBeenCalled();
     });
 
+    it('tool shortcut should call createNewDrawing of SidebarComponent', () => {
+        // tslint:disable-next-line:no-empty / reason: creating mock component
+        component.toolbarRef = { openGallery: () => {} } as SidebarComponent;
+        // tslint:disable-next-line:no-any / reason: spying on mock component function
+        const openGallerySpy = spyOn<any>(component.toolbarRef, 'openGallery').and.callThrough();
+        const shortcutEvent = new KeyboardEvent('keydown', { key: 'control.g' });
+        document.dispatchEvent(shortcutEvent);
+        expect(openGallerySpy).toHaveBeenCalled();
+    });
+
+    it('tool shortcut should call createNewDrawing of SidebarComponent', () => {
+        // tslint:disable-next-line:no-empty / reason: creating mock component
+        component.toolbarRef = { uploadImage: () => {} } as SidebarComponent;
+        // tslint:disable-next-line:no-any / reason: spying on mock component function
+        const uploadImageSpy = spyOn<any>(component.toolbarRef, 'uploadImage').and.callThrough();
+        const shortcutEvent = new KeyboardEvent('keydown', { key: 'control.s' });
+        document.dispatchEvent(shortcutEvent);
+        expect(uploadImageSpy).toHaveBeenCalled();
+    });
+
     it('tool shortcut should call exportDrawing of SidebarComponent', () => {
         // tslint:disable-next-line:no-empty / reason: creating mock component
         component.toolbarRef = { exportDrawing: () => {} } as SidebarComponent;
-        // tslint:disable-next-line:no-any / reason: spying on mock component function
-        const createNewDrawingSpy = spyOn<any>(component.toolbarRef, 'exportDrawing').and.callThrough();
+
+        const createNewDrawingSpy = spyOn(component.toolbarRef, 'exportDrawing').and.callThrough();
         const shortcutEvent = new KeyboardEvent('keydown', { key: 'control.e' });
         document.dispatchEvent(shortcutEvent);
         expect(createNewDrawingSpy).toHaveBeenCalled();
@@ -183,5 +183,11 @@ describe('EditorComponent', () => {
         const shortcutEvent = new KeyboardEvent('keydown', { key: 'control.shift.z' });
         document.dispatchEvent(shortcutEvent);
         expect(toolbarServiceMock.redo).toHaveBeenCalled();
+    });
+
+    it('keydown event should call onKeyDown of toolbar', () => {
+        const shortcutEvent = new KeyboardEvent('keydown', { key: 'Escape' });
+        document.dispatchEvent(shortcutEvent);
+        expect(toolbarServiceMock.onKeyDown).toHaveBeenCalledWith(shortcutEvent);
     });
 });

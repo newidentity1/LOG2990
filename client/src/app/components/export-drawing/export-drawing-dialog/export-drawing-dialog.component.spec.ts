@@ -181,8 +181,10 @@ describe('ExportDrawingDialogComponent', () => {
     it('downloadImage should call drawImage and setWhiteBackground on exportCtx', () => {
         const setWhiteBackgroundSpy = spyOn<any>(component, 'setWhiteBackground').and.callThrough();
         const drawImageSpy = spyOn<any>(component.exportCtx, 'drawImage').and.callThrough();
-        // tslint:disable-next-line:no-empty / reason: calling fake function to avoid automatic image download
-        spyOn<any>(component.drawingImageContainer.nativeElement, 'click').and.callFake(() => {});
+
+        spyOn(component.drawingImageContainer.nativeElement, 'click').and.callFake(() => {
+            return;
+        });
         component['downloadImage']();
         expect(setWhiteBackgroundSpy).toHaveBeenCalledWith(component.exportCtx);
         expect(drawImageSpy).toHaveBeenCalled();

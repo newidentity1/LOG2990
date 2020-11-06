@@ -5,7 +5,7 @@ import { Pixel } from '@app/classes/pixel';
 import * as CONSTANTS from '@app/constants/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { BucketService } from './bucket.service';
-// tslint:disable:no-any : reason spying on functions
+
 describe('BucketService', () => {
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     let service: BucketService;
@@ -21,7 +21,6 @@ describe('BucketService', () => {
             providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
         });
         service = TestBed.inject(BucketService);
-        // Configuration du spy du service
         // tslint:disable:no-string-literal
         const drawingCanvas = document.createElement('canvas');
         drawingCanvas.width = canvasTestHelper.canvas.width;
@@ -73,7 +72,8 @@ describe('BucketService', () => {
         service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(2, 2, 1, 1).data;
         service['generateMatrice']();
         const p1: Pixel = { x: -1, y: -1, status: 0 };
-        expect(service['checkColor'](p1)).toEqual(false);
+        const index = (p1.y * drawServiceSpy.canvas.width + p1.x) * (CONSTANTS.IMAGE_DATA_OPACITY_INDEX + 1);
+        expect(service['checkColor'](index)).toEqual(false);
     });
 
     it('GenerateMatrice should generate a matrice of Pixel with a status of 0', () => {
@@ -85,7 +85,7 @@ describe('BucketService', () => {
     });
 
     it('onMouseDown with a left click should call floodFillLeft algorithme', () => {
-        const floodFillLeftSpy = spyOn<any>(service, 'floodFillLeft').and.callThrough();
+        const floodFillLeftSpy = spyOn(service, 'floodFillLeft').and.callThrough();
         service.onMouseDown(mouseEventclickLeft);
         expect(floodFillLeftSpy).toHaveBeenCalled();
     });
@@ -93,13 +93,13 @@ describe('BucketService', () => {
     it('onMouseDown with a right click should call floodFillRight algorithme', () => {
         service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(2, 2, 1, 1).data;
         service['generateMatrice']();
-        const floodFillRightSpy = spyOn<any>(service, 'floodFillRight').and.callThrough();
+        const floodFillRightSpy = spyOn(service, 'floodFillRight').and.callThrough();
         service.onMouseDown(mouseEventclickRight);
         expect(floodFillRightSpy).toHaveBeenCalled();
     });
 
     it('onMouseDown with a right click should call floodFillRight algorithme', () => {
-        const floodFillRightSpy = spyOn<any>(service, 'floodFillRight').and.callThrough();
+        const floodFillRightSpy = spyOn(service, 'floodFillRight').and.callThrough();
         service.onMouseDown(mouseEventclickRight);
         service['image'].data[0] = 1;
         service['image'].data[1] = 1;
@@ -114,12 +114,12 @@ describe('BucketService', () => {
     it('setTolerance should change toleranceValue', () => {
         const expectedTolerance = 20;
         service.setTolerance(expectedTolerance);
-        expect(service['tolerance']).toEqual(CONSTANTS.MAX_COLOR_VALUE * (expectedTolerance / CONSTANTS.POURCENTAGE));
+        expect(service['tolerance']).toEqual(CONSTANTS.MAX_COLOR_VALUE * (expectedTolerance / CONSTANTS.MAX_PERCENTAGE));
     });
 
     it('setTolerance should change toleranceValue', () => {
         service.setTolerance(null);
-        expect(service['tolerance']).toEqual(CONSTANTS.MAX_COLOR_VALUE * (1 / CONSTANTS.POURCENTAGE));
+        expect(service['tolerance']).toEqual(CONSTANTS.MAX_COLOR_VALUE * (1 / CONSTANTS.MAX_PERCENTAGE));
     });
 
     it('resetContext should reset all the current changes that the tool made', () => {
@@ -148,6 +148,7 @@ describe('BucketService', () => {
     });
 
     it('AddNeighboors should add the 2 neighboors pixels if the pixel is on left top corner', () => {
+        // tslint:disable-next-line: no-any / reason spying on functions
         const checkPixelSpy = spyOn<any>(service, 'checkPixel').and.callThrough();
         service.onMouseDown(mouseEventclickRight);
         service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(2, 2, 1, 1).data;
@@ -159,6 +160,7 @@ describe('BucketService', () => {
     });
 
     it('AddNeighboors should add the 4 neighboors pixels if status = 0', () => {
+        // tslint:disable-next-line: no-any / reason spying on functions
         const checkPixelSpy = spyOn<any>(service, 'checkPixel').and.callThrough();
         service.onMouseDown(mouseEventclickRight);
         service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(
@@ -175,6 +177,7 @@ describe('BucketService', () => {
     });
 
     it('AddNeighboors should add the 0 neighboors pixels if status = 1 ', () => {
+        // tslint:disable-next-line: no-any / reason spying on functions
         const checkPixelSpy = spyOn<any>(service, 'checkPixel').and.callThrough();
         service.onMouseDown(mouseEventclickRight);
         service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(2, 2, 1, 1).data;
@@ -194,6 +197,7 @@ describe('BucketService', () => {
         service.onMouseDown(mouseEventclickRight);
         service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(2, 2, 1, 1).data;
         service['generateMatrice']();
+        // tslint:disable-next-line: no-any / reason spying on functions
         const checkPixelSpy = spyOn<any>(service, 'checkPixel').and.callThrough();
         const p1: Pixel = { x: 2, y: 2, status: 0 };
         service['matrice'][2][2].status = 0;
@@ -218,6 +222,7 @@ describe('BucketService', () => {
 
     it('checkPixel should do nothing if there is no pixel', () => {
         service.onMouseDown(mouseEventclickRight);
+        // tslint:disable-next-line: no-any / reason spying on functions
         const colorPixelSpy = spyOn<any>(service, 'colorPixel').and.callThrough();
         service['checkPixel'](null);
         expect(colorPixelSpy).not.toHaveBeenCalled();
@@ -225,6 +230,7 @@ describe('BucketService', () => {
 
     it('checkPixel should not call colorPixel if the pixel status = 1', () => {
         service.onMouseDown(mouseEventclickRight);
+        // tslint:disable-next-line: no-any / reason spying on functions
         const colorPixelSpy = spyOn<any>(service, 'colorPixel').and.callThrough();
         service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(2, 2, 1, 1).data;
         service['generateMatrice']();
@@ -234,6 +240,7 @@ describe('BucketService', () => {
     });
 
     it('checkPixel should call colorPixel if the pixel status = 0', () => {
+        // tslint:disable-next-line: no-any / reason spying on functions
         const colorPixelSpy = spyOn<any>(service, 'colorPixel').and.callThrough();
         drawServiceSpy.baseCtx.fillStyle = 'black';
         drawServiceSpy.baseCtx.fillRect(0, 0, drawServiceSpy.canvas.width, drawServiceSpy.canvas.height);
@@ -247,6 +254,7 @@ describe('BucketService', () => {
     it('checkPixel should call colorPixel if the pixel status = 1', () => {
         service.onMouseDown(mouseEventclickRight);
         service['image'] = service['drawingService'].baseCtx.getImageData(0, 0, service['width'], service['height']);
+        // tslint:disable-next-line: no-any / reason spying on functions
         const colorPixelSpy = spyOn<any>(service, 'colorPixel').and.callThrough();
         service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(2, 2, 1, 1).data;
         service['generateMatrice']();
@@ -260,7 +268,8 @@ describe('BucketService', () => {
         service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(2, 2, 1, 1).data;
         service['generateMatrice']();
         const p1: Pixel = { x: 2, y: 2, status: 1 };
-        expect(service['checkColor'](p1)).toBeTrue();
+        const index = (p1.y * drawServiceSpy.canvas.width + p1.x) * (CONSTANTS.IMAGE_DATA_OPACITY_INDEX + 1);
+        expect(service['checkColor'](index)).toBeTrue();
     });
 
     it('clone should return a clone of the tool', () => {

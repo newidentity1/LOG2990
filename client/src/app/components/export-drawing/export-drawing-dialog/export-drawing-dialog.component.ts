@@ -12,43 +12,34 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 })
 export class ExportDrawingDialogComponent implements AfterViewInit {
     @ViewChild('drawingImageContainer') drawingImageContainer: ElementRef;
-    @ViewChild('previewCanvas') previewCanvas: ElementRef<HTMLCanvasElement>; // Visualisation canvas with filters
-    @ViewChild('exportCanvas') exportCanvas: ElementRef<HTMLCanvasElement>; // Exported canvas, copy of real canvas with filters
-    selectedFormat: string;
-    selectedFilter: ExportFilterType;
+    @ViewChild('previewCanvas') previewCanvas: ElementRef<HTMLCanvasElement>;
+    @ViewChild('exportCanvas') exportCanvas: ElementRef<HTMLCanvasElement>;
+
+    selectedFormat: string = 'jpeg';
+    selectedFilter: ExportFilterType = ExportFilterType.None;
     typeExportFilter: typeof ExportFilterType = ExportFilterType;
-    drawingTitle: string;
+    drawingTitle: string = '';
     previewCtx: CanvasRenderingContext2D;
     exportCtx: CanvasRenderingContext2D;
-    private exportFilter: string;
+    private exportFilter: string = 'none';
 
-    // Slider
-    percentage: number;
-    sliderIsVisible: boolean;
-    titleForm: FormControl;
+    percentage: number = 1;
+    sliderIsVisible: boolean = false;
+    titleForm: FormControl = new FormControl('', Validators.required);
 
     constructor(public dialogRef: MatDialogRef<ExportDrawingDialogComponent>, public drawingService: DrawingService) {
-        this.selectedFormat = 'jpeg';
-        this.selectedFilter = ExportFilterType.None;
-        this.drawingTitle = '';
-        this.sliderIsVisible = false;
-        this.exportFilter = 'none';
-        this.percentage = 1;
-        this.titleForm = new FormControl('', Validators.required);
         this.titleForm.markAsDirty();
     }
 
     ngAfterViewInit(): void {
-        // Set contexts
         this.previewCtx = this.previewCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.exportCtx = this.exportCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
 
-        // Set Canvas Sizes
         this.setInitialCanvasSize();
-        // Draw first layer
+
         this.setWhiteBackground(this.previewCtx);
         this.setWhiteBackground(this.exportCtx);
-        // Draw filter on preview canvas only
+
         this.setPreviewFilter();
         this.setImageUrl();
     }
@@ -64,32 +55,14 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
     }
 
     private setPreviewSize(): void {
-        let ratio: number;
-        ratio = this.drawingService.canvas.height / this.drawingService.canvas.width;
+        const ratio = this.drawingService.canvas.height / this.drawingService.canvas.width;
 
-        // This logic will make sure the biggest possible size for any side is MAX_PREVIEW_SIZE
-
-        if (this.drawingService.canvas.height > MAX_PREVIEW_SIZE && this.drawingService.canvas.width > MAX_PREVIEW_SIZE) {
-            // take the biggest one of both, set and scale according to that one
-            if (ratio > 1) {
-                this.previewCanvas.nativeElement.height = MAX_PREVIEW_SIZE;
-                this.previewCanvas.nativeElement.width = this.previewCanvas.nativeElement.height / ratio;
-            } else {
-                this.previewCanvas.nativeElement.width = MAX_PREVIEW_SIZE;
-                this.previewCanvas.nativeElement.height = this.previewCanvas.nativeElement.width * ratio;
-            }
-        } else if (this.drawingService.canvas.width > MAX_PREVIEW_SIZE) {
-            // set width to 800 and scale according to width
-            this.previewCanvas.nativeElement.width = MAX_PREVIEW_SIZE;
-            this.previewCanvas.nativeElement.height = this.previewCanvas.nativeElement.width * ratio;
-        } else if (this.drawingService.canvas.height > MAX_PREVIEW_SIZE) {
-            // set height to 800 and scale according to height
-            this.previewCanvas.nativeElement.height = MAX_PREVIEW_SIZE;
+        if (ratio > 1) {
+            this.previewCanvas.nativeElement.height = Math.min(this.drawingService.canvas.height, MAX_PREVIEW_SIZE);
             this.previewCanvas.nativeElement.width = this.previewCanvas.nativeElement.height / ratio;
         } else {
-            // Size of canvas is small enough to display without rescaling
-            this.previewCanvas.nativeElement.width = this.drawingService.canvas.width;
-            this.previewCanvas.nativeElement.height = this.drawingService.canvas.height;
+            this.previewCanvas.nativeElement.width = Math.min(this.drawingService.canvas.width, MAX_PREVIEW_SIZE);
+            this.previewCanvas.nativeElement.height = this.previewCanvas.nativeElement.width * ratio;
         }
     }
 
@@ -99,13 +72,11 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
         ctx.fillStyle = '#000000';
     }
 
-    // Function is called by slider
     setFilterPercentage(value: number): void {
         this.percentage = value;
         this.setPreviewFilter();
     }
 
-    // Function is called by changing filter selection
     setPreviewFilter(): void {
         this.sliderIsVisible = true;
 
@@ -145,7 +116,7 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
             0,
             0,
             this.previewCanvas.nativeElement.width,
-            this.previewCanvas.nativeElement.height, // Stretches image to fit preview
+            this.previewCanvas.nativeElement.height,
         );
         this.exportFilter = this.previewCtx.filter;
         this.previewCtx.filter = 'none';
@@ -161,16 +132,14 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
         this.setImageUrl();
     }
 
-    // When user completed changes, the export canvas is drawn and image is downloaded
     downloadImage(): void {
-        // Sets filter on the exported canvas
         this.exportCtx.filter = this.exportFilter;
         this.setWhiteBackground(this.exportCtx);
         this.exportCtx.drawImage(this.drawingService.canvas, 0, 0);
         this.exportCtx.filter = 'none';
 
         this.setImageUrl();
-        this.drawingImageContainer.nativeElement.download = this.drawingTitle + '.' + this.selectedFormat;
+        this.drawingImageContainer.nativeElement.download = this.titleForm.value + '.' + this.selectedFormat;
         this.drawingImageContainer.nativeElement.click();
         this.dialogRef.close();
     }

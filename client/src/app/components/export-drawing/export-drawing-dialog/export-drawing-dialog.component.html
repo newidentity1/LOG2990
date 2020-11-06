@@ -47,7 +47,7 @@
     <form>
         <mat-form-field>
             <mat-label>Titre de l'image </mat-label>
-            <input matInput [(ngModel)]="drawingTitle" name="drawingTitle" [formControl]="titleForm" />
+            <input matInput name="drawingTitle" [formControl]="titleForm" />
             <mat-error>SVP entrez un titre</mat-error>
         </mat-form-field>
     </form>
@@ -61,7 +61,7 @@
     <canvas id="exportCanvas" #exportCanvas width="250" height="250"></canvas>
 
     <div>
-        <button class="buttons" id="downloadButton" mat-raised-button (click)="downloadImage()" [disabled]="drawingTitle.length === 0">
+        <button class="buttons" id="downloadButton" mat-raised-button (click)="downloadImage()" [disabled]="titleForm.value.length === 0">
             Télécharger
         </button>
         <button class="buttons" id="cancelButton" mat-raised-button mat-dialog-close>Annuler</button>

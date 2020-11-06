@@ -8,13 +8,12 @@ import { BLACK, DASHED_SEGMENTS, WHITE } from '@app/constants/constants';
 import { DrawingType } from '@app/enums/drawing-type.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
-// To instanciate a ShapeTool object
 export class ShapeToolTest extends ShapeTool {
     // tslint:disable-next-line:no-empty / reason: mocking class for test
     draw(ctx: CanvasRenderingContext2D): void {}
 }
 
-// tslint:disable:no-any
+// tslint:disable:no-any / reason: spying on functions
 // tslint:disable:no-string-literal / reason : access private members
 describe('Class: ShapeTool', () => {
     let shapeTool: ShapeToolTest;

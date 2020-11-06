@@ -13,8 +13,8 @@ import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
 })
 export class EllipseComponent {
     typesDrawing: typeof DrawingType = DrawingType;
-    currentType: string;
-    currentThickness: number;
+    currentType: string = DrawingType.Fill;
+    currentThickness: number = 1;
 
     constructor(public ellipseService: EllipseService) {
         const ellipseProperties = ellipseService.toolProperties as BasicShapeProperties;

@@ -12,12 +12,12 @@ import { MoveSelectionService } from './move-selection/move-selection.service';
     providedIn: 'root',
 })
 export class SelectionService extends ShapeTool {
-    currentType: SelectionType;
+    currentType: SelectionType = SelectionType.RectangleSelection;
     isAreaSelected: boolean;
-    positiveStartingPos: Vec2;
+    positiveStartingPos: Vec2 = { x: 0, y: 0 };
     positiveWidth: number;
     positiveHeight: number;
-    private moveSelectionPos: Vec2;
+    private moveSelectionPos: Vec2 = { x: 0, y: 0 };
 
     constructor(drawingService: DrawingService, private moveSelectionService: MoveSelectionService) {
         super(drawingService);
@@ -25,9 +25,6 @@ export class SelectionService extends ShapeTool {
         this.tooltip = 'Selection (r)';
         this.iconName = 'highlight_alt';
         this.toolProperties = new BasicShapeProperties();
-        this.currentType = SelectionType.RectangleSelection;
-        this.positiveStartingPos = { x: 0, y: 0 };
-        this.moveSelectionPos = { x: 0, y: 0 };
     }
 
     setSelectionType(type: SelectionType): void {
