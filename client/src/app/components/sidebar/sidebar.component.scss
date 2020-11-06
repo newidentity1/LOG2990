@@ -1,8 +1,13 @@
 @import '../../style/color.scss';
 
+mat-sidenav-container {
+    z-index: 100;
+    overflow: visible;
+}
+
 #tool-container {
     height: auto;
-    width: 80px;
+    width: 160px;
     min-height: 100vh;
     background-color: $primaryColor;
     overflow: hidden;
@@ -13,8 +18,8 @@
     padding: 0px 0px 0px 5px;
 
     li {
-        padding: 2px 0px;
-
+        padding: 2px 5px;
+        display: inline-block;
         button {
             padding: 0;
             margin: 0;
@@ -33,15 +38,28 @@
     border: 1px solid black !important;
 }
 
+#other-tools {
+    height: auto;
+}
+
 mat-sidenav {
-    margin-left: 80px;
+    margin-left: 160px;
     width: 250px;
     background-color: #1a174f;
 }
 
-#colors-container,
+mat-sidenav-content {
+    z-index: 101;
+}
+
 #other-functionality-container {
-    padding-left: 5px;
+    width: 100%;
+}
+
+.other-functionality-button {
+    display: inline-block;
+    width: 50%;
+    text-align: center;
 }
 
 .type-drawing-group {
@@ -68,4 +86,9 @@ mat-sidenav {
     .type-drawing-group  > mat-radio-button {
         padding-top: 5px;
     }
+}
+
+hr {
+    margin-top: 15px;
+    margin-bottom: 15px;
 }

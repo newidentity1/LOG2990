@@ -15,17 +15,13 @@ export class ColorPickerService extends Tool {
     cursorCanvasCtx: CanvasRenderingContext2D;
     canvas: HTMLCanvasElement;
 
-    primaryColor: BehaviorSubject<Color>;
-    secondaryColor: BehaviorSubject<Color>;
-    selectedColor: Color;
-    recentColors: Color[];
+    primaryColor: BehaviorSubject<Color> = new BehaviorSubject<Color>(new Color(CONSTANTS.BLACK));
+    secondaryColor: BehaviorSubject<Color> = new BehaviorSubject<Color>(new Color(CONSTANTS.WHITE));
+    selectedColor: Color = new Color(CONSTANTS.BLACK);
+    recentColors: Color[] = [];
 
     constructor(protected drawingService: DrawingService) {
         super(drawingService);
-        this.primaryColor = new BehaviorSubject<Color>(new Color(CONSTANTS.BLACK));
-        this.secondaryColor = new BehaviorSubject<Color>(new Color(CONSTANTS.WHITE));
-        this.selectedColor = new Color(CONSTANTS.BLACK);
-        this.recentColors = [];
         for (let i = 0; i < CONSTANTS.MAX_RECENT_COLORS_SIZE; i++) {
             this.recentColors.push(new Color(CONSTANTS.BLACK));
         }
@@ -44,8 +40,9 @@ export class ColorPickerService extends Tool {
         }
     }
 
-    onMouseUp(event: MouseEvent): void {
+    onMouseUp(event: MouseEvent): Tool {
         this.mouseDown = false;
+        return this;
     }
 
     setRedHex(hex: string): void {
@@ -70,11 +67,7 @@ export class ColorPickerService extends Tool {
     }
 
     resetSelectedColor(isSecondaryColorPicker: boolean): void {
-        if (isSecondaryColorPicker) {
-            this.selectedColor = this.secondaryColor.getValue().clone();
-        } else {
-            this.selectedColor = this.primaryColor.getValue().clone();
-        }
+        this.selectedColor = isSecondaryColorPicker ? this.secondaryColor.getValue().clone() : this.primaryColor.getValue().clone();
     }
 
     swapColors(): void {
@@ -133,10 +126,5 @@ export class ColorPickerService extends Tool {
             }
             this.recentColors.unshift(color);
         }
-    }
-
-    // not used
-    resetContext(): void {
-        throw new Error('Method not implemented.');
     }
 }

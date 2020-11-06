@@ -10,7 +10,7 @@ canvas {
 }
 
 #canvas {
-    z-index: 1;
+    z-index: 0;
     background-color: white;
 }
 
@@ -20,7 +20,7 @@ canvas {
 }
 
 #previewLayer {
-    z-index: 2;
+    z-index: 1;
 }
 
 .showOutline {
@@ -34,29 +34,45 @@ canvas {
 .resizable {
     position: absolute;
     margin: $margin-canvas;
-    box-sizing: border-box;
-    border: 1px solid $primaryColor;
 }
 
-.resizable .resizer {
+.resizer {
     width: 5px;
     height: 5px;
     background: $primaryColor;
-    border: 2px solid $primaryColor;
     position: absolute;
+    border: 1px solid white;
     z-index: 2;
 }
 
-.resizable .resizer.right-center {
-    right: -7px;
+.resizable .resizer.top-left {
+    cursor: nwse-resize;
+}
+
+.resizable .resizer.top-center {
+    cursor: n-resize;
+}
+
+.resizable .resizer.top-right {
+    cursor: nesw-resize;
+}
+
+.resizable .resizer.left-center {
     cursor: e-resize;
 }
+
+.resizable .resizer.right-center {
+    cursor: e-resize;
+}
+
+.resizable .resizer.bottom-left {
+    cursor: nesw-resize;
+}
+
 .resizable .resizer.bottom-center {
-    bottom: -7px;
     cursor: s-resize;
 }
+
 .resizable .resizer.bottom-right {
-    right: -7px;
-    bottom: -7px;
     cursor: nwse-resize;
 }

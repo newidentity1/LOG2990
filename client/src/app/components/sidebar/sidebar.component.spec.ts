@@ -8,6 +8,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
+import { EyedropperService } from '@app/services/tools/eyedropper/eyedropper.service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle.service';
 import { SidebarComponent } from './sidebar.component';
@@ -17,10 +18,12 @@ describe('SidebarComponent', () => {
     let fixture: ComponentFixture<SidebarComponent>;
     let toolbarServiceMock: jasmine.SpyObj<ToolbarService>;
     let pencilToolMock: jasmine.SpyObj<PencilService>;
+    let eyedropperToolMock: jasmine.SpyObj<EyedropperService>;
 
     beforeEach(async(() => {
-        toolbarServiceMock = jasmine.createSpyObj('ToolbarService', ['getTools', 'applyCurrentTool', 'initializeColors']);
+        toolbarServiceMock = jasmine.createSpyObj('ToolbarService', ['getTools', 'applyCurrentTool', 'initializeColors', 'changeTool']);
         pencilToolMock = jasmine.createSpyObj('PencilService', ['resetContext']);
+        eyedropperToolMock = jasmine.createSpyObj('EyedropperService', ['resetContext']);
 
         TestBed.configureTestingModule({
             declarations: [SidebarComponent],
@@ -29,12 +32,18 @@ describe('SidebarComponent', () => {
                 { provide: MatDialog, useValue: {} },
                 { provide: ToolbarService, useValue: toolbarServiceMock },
                 { provide: PencilService, useValue: pencilToolMock },
+                { provide: EyedropperService, useValue: eyedropperToolMock },
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
 
         toolbarServiceMock = TestBed.inject(ToolbarService) as jasmine.SpyObj<ToolbarService>;
         pencilToolMock = TestBed.inject(PencilService) as jasmine.SpyObj<PencilService>;
+        eyedropperToolMock = TestBed.inject(EyedropperService) as jasmine.SpyObj<EyedropperService>;
+
+        toolbarServiceMock.currentTool = pencilToolMock;
+        // tslint:disable-next-line:no-string-literal / reason : access private members
+        toolbarServiceMock['tools'] = [pencilToolMock, eyedropperToolMock];
     }));
 
     beforeEach(() => {
@@ -66,8 +75,7 @@ describe('SidebarComponent', () => {
         toolbarServiceMock.currentTool = pencilToolMock;
         const spySideNav = spyOn(component.sidenavProperties, 'open');
         component.onToolChanged(anotherTool);
-        expect(toolbarServiceMock.applyCurrentTool).toHaveBeenCalled();
-        expect(toolbarServiceMock.currentTool).toEqual(anotherTool);
+        expect(toolbarServiceMock.changeTool).toHaveBeenCalled();
         expect(spySideNav).toHaveBeenCalled();
     });
 
@@ -79,6 +87,15 @@ describe('SidebarComponent', () => {
         expect(spySideNav).toHaveBeenCalled();
     });
 
+    it('onToolChanged should toggle the MatSideNav if the parameter is not the currentTool', () => {
+        const spySideNavClose = spyOn(component.sidenavProperties, 'close');
+        eyedropperToolMock.name = 'Eyedropper';
+        toolbarServiceMock.currentTool = pencilToolMock;
+        const currentTool = eyedropperToolMock;
+        component.onToolChanged(currentTool);
+        expect(spySideNavClose).toHaveBeenCalled();
+    });
+
     it('createNewDrawing should call the createNewDrawing of the CreateNewDrawingComponent child', () => {
         const spyNewDrawingChild = jasmine.createSpyObj('CreateNewDrawingComponent', ['createNewDrawing']);
         component.newDrawingRef = spyNewDrawingChild;
@@ -86,15 +103,30 @@ describe('SidebarComponent', () => {
         expect(spyNewDrawingChild.createNewDrawing).toHaveBeenCalled();
     });
 
+    it('exportDrawing should call the exportDrawing of the ExportDrawingComponent child', () => {
+        const spyExportDrawingChild = jasmine.createSpyObj('ExportDrawingComponent', ['exportDrawing']);
+        component.exportRef = spyExportDrawingChild;
+        component.exportDrawing();
+        expect(spyExportDrawingChild.exportDrawing).toHaveBeenCalled();
+    });
+
+    it('openGallery should call the openDialog of the GalleryComponent child', () => {
+        const spyGallery = jasmine.createSpyObj('GalleryComponent', ['openDialog']);
+        component.galleryRef = spyGallery;
+        component.openGallery();
+        expect(spyGallery.openDialog).toHaveBeenCalled();
+    });
+
+    it('Upload should call uploadImage', () => {
+        const spyUplaod = jasmine.createSpyObj('UploadComponent', ['uploadImage']);
+        component.uploadRef = spyUplaod;
+        component.uploadImage();
+        expect(spyUplaod.uploadImage).toHaveBeenCalled();
+    });
+
     it('get currentTool should return the current tool of toolbarService', () => {
         toolbarServiceMock.currentTool = pencilToolMock;
         const currentTool = toolbarServiceMock.currentTool;
         expect(component.currentTool).toEqual(currentTool);
-    });
-
-    it('set currentTool should set the current tool of toolbarService', () => {
-        const currentTool = pencilToolMock;
-        component.currentTool = currentTool;
-        expect(toolbarServiceMock.currentTool).toEqual(currentTool);
     });
 });

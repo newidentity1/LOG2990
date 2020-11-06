@@ -2,6 +2,9 @@ import { Component, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Tool } from '@app/classes/tool/tool';
 import { CreateNewDrawingComponent } from '@app/components/create-new-drawing/create-new-drawing.component';
+import { ExportDrawingComponent } from '@app/components/export-drawing/export-drawing.component';
+import { GalleryComponent } from '@app/components/gallery/gallery.component';
+import { UploadComponent } from '@app/components/upload/upload.component';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 
 @Component({
@@ -10,9 +13,12 @@ import { ToolbarService } from '@app/services/toolbar/toolbar.service';
     styleUrls: ['./sidebar.component.scss'],
 })
 export class SidebarComponent {
-    tools: Tool[];
+    tools: Tool[] = [];
     @ViewChild('toolProperties') sidenavProperties: MatSidenav;
     @ViewChild(CreateNewDrawingComponent) newDrawingRef: CreateNewDrawingComponent;
+    @ViewChild(ExportDrawingComponent) exportRef: ExportDrawingComponent;
+    @ViewChild(UploadComponent) uploadRef: UploadComponent;
+    @ViewChild(GalleryComponent) galleryRef: GalleryComponent;
 
     constructor(protected toolbarService: ToolbarService) {
         this.tools = toolbarService.getTools();
@@ -24,11 +30,13 @@ export class SidebarComponent {
 
     onToolChanged(tool: Tool): void {
         if (tool !== this.currentTool) {
-            this.currentTool = tool;
-            this.toolbarService.applyCurrentTool();
+            this.toolbarService.changeTool(tool);
             this.sidenavProperties.open();
         } else {
             this.sidenavProperties.toggle();
+        }
+        if (tool.name === 'Eyedropper') {
+            this.sidenavProperties.close();
         }
     }
 
@@ -36,11 +44,19 @@ export class SidebarComponent {
         this.newDrawingRef.createNewDrawing();
     }
 
-    get currentTool(): Tool {
-        return this.toolbarService.currentTool;
+    exportDrawing(): void {
+        this.exportRef.exportDrawing();
     }
 
-    set currentTool(tool: Tool) {
-        this.toolbarService.currentTool = tool;
+    openGallery(): void {
+        this.galleryRef.openDialog();
+    }
+
+    uploadImage(): void {
+        this.uploadRef.uploadImage();
+    }
+
+    get currentTool(): Tool {
+        return this.toolbarService.currentTool;
     }
 }

@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Color } from '@app/classes/color/color';
 import { Tool } from '@app/classes/tool/tool';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 import { Vec2 } from '@app/classes/vec2';
@@ -10,8 +9,6 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
     providedIn: 'root',
 })
 export class PencilService extends Tool {
-    protected pathData: Vec2[];
-
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.name = 'Crayon';
@@ -33,7 +30,8 @@ export class PencilService extends Tool {
 
     onMouseUp(event: MouseEvent): void {
         if (this.mouseDown) {
-            this.drawLine(this.drawingService.baseCtx, this.pathData);
+            this.draw(this.drawingService.baseCtx);
+            this.executedCommand.emit(this.clone());
         }
         this.mouseDown = false;
         this.clearPath();
@@ -43,40 +41,18 @@ export class PencilService extends Tool {
         const mousePosition = this.getPositionFromMouse(event);
         if (this.mouseDown) {
             this.pathData.push(mousePosition);
-            // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawLine(this.drawingService.previewCtx, this.pathData);
+            this.draw(this.drawingService.previewCtx);
         } else {
             this.drawCursor(mousePosition);
         }
     }
 
-    onMouseEnter(event: MouseEvent): void {
-        if (this.mouseDown) {
-            const mousePosition = this.getPositionFromMouse(event);
-            this.pathData.push(mousePosition);
-            this.drawLine(this.drawingService.previewCtx, this.pathData);
-            this.clearPath();
-        }
-    }
-
-    onMouseLeave(event: MouseEvent): void {
-        const mousePosition = this.getPositionFromMouse(event);
-        this.pathData.push(mousePosition);
-        if (this.mouseDown) {
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawLine(this.drawingService.baseCtx, this.pathData);
-            this.clearPath();
-        } else {
-            this.drawCursor(mousePosition);
-        }
-    }
-
-    protected drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+    draw(ctx: CanvasRenderingContext2D): void {
         ctx.beginPath();
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
-        for (const point of path) {
+        for (const point of this.pathData) {
             ctx.lineTo(point.x, point.y);
         }
         ctx.stroke();
@@ -90,21 +66,18 @@ export class PencilService extends Tool {
         cursorCtx.fill();
     }
 
-    setColors(primaryColor: Color, secondaryColor: Color): void {
-        this.drawingService.setColor(primaryColor.toStringRGBA());
-    }
-
     protected clearPath(): void {
         this.pathData = [];
     }
 
-    resetContext(): void {
-        const previewCtx = this.drawingService.previewCtx;
-        const baseCtx = this.drawingService.baseCtx;
-        previewCtx.lineCap = baseCtx.lineCap = 'butt';
-        previewCtx.lineJoin = baseCtx.lineJoin = 'miter';
-        this.mouseDown = false;
-        this.setThickness(this.toolProperties.thickness);
-        this.drawingService.clearCanvas(previewCtx);
+    clone(): Tool {
+        const pencilClone: PencilService = new PencilService(this.drawingService);
+        this.copyTool(pencilClone);
+        return pencilClone;
+    }
+
+    getPositionFromMouse(event: MouseEvent): Vec2 {
+        const canvasBoundingRect = this.drawingService.canvas.getBoundingClientRect();
+        return { x: event.clientX - canvasBoundingRect.x, y: event.clientY - canvasBoundingRect.y };
     }
 }

@@ -1,0 +1,71 @@
+<div id="wrap">
+    <mat-accordion>
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title> Format </mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <div>
+                <mat-select [(value)]="selectedFormat" (selectionChange)="onFormatChange()">
+                    <mat-option value="png">PNG</mat-option>
+                    <mat-option value="jpeg">JPG</mat-option>
+                </mat-select>
+            </div>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title> Filtre </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div id="filter-names">
+                <mat-select [(value)]="selectedFilter" (selectionChange)="setPreviewFilter()">
+                    <mat-option *ngFor="let type of typeExportFilter | keyvalue: keepOriginalOrder" [value]="type.value">{{ type.value }}</mat-option>
+                </mat-select>
+            </div>
+
+            <!-- filter slider -->
+            <div id="slider-container" [style.display]="sliderIsVisible ? 'block' : 'none'">
+                <label> Intensité du filtre: </label>
+                <mat-slider id="filterSlider" min="0" max="1" step="0.01" [value]="percentage" (input)="setFilterPercentage($event.value)">
+                </mat-slider>
+                <input
+                    #filterInput
+                    id="filter-input"
+                    type="text"
+                    [value]="percentage"
+                    (input)="setFilterPercentage(filterInput.value)"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    maxlength="4"
+                    matInput
+                    matSuffix
+                />
+            </div>
+        </mat-expansion-panel>
+    </mat-accordion>
+    <form>
+        <mat-form-field>
+            <mat-label>Titre de l'image </mat-label>
+            <input matInput name="drawingTitle" [formControl]="titleForm" />
+            <mat-error>SVP entrez un titre</mat-error>
+        </mat-form-field>
+    </form>
+
+    <h3>Prévisualisation de l'image</h3>
+    <a #drawingImageContainer href="" download=""> </a>
+    <!-- default width and height  -->
+    <canvas id="previewCanvas" #previewCanvas width="250" height="250"></canvas>
+
+    <!-- disabled in css -->
+    <canvas id="exportCanvas" #exportCanvas width="250" height="250"></canvas>
+
+    <div>
+        <button class="buttons" id="downloadButton" mat-raised-button (click)="downloadImage()" [disabled]="titleForm.value.length === 0">
+            Télécharger
+        </button>
+        <button class="buttons" id="cancelButton" mat-raised-button mat-dialog-close>Annuler</button>
+
+        <h3 id="canvas-size-string">Taille de l'image: {{ drawingService.canvas.width }} x {{ drawingService.canvas.height }} px</h3>
+    </div>
+</div>

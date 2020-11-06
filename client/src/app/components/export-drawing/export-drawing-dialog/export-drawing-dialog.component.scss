@@ -1,0 +1,30 @@
+#downloadButton {
+    background-color: green;
+    margin-right: 5px;
+}
+
+#cancelButton {
+    background-color: red;
+}
+
+#exportCanvas {
+    display: none;
+    float: right;
+}
+
+#filter-names {
+    display: block;
+}
+#filter-input {
+    text-align: left;
+    width: 40%;
+}
+
+#toggleFilterButton {
+    display: block;
+}
+
+#canvas-size-string{
+    float: right;
+    color: yellow;
+}

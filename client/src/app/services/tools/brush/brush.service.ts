@@ -5,16 +5,10 @@ import { BrushType } from '@app/enums/brush-filters.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
 
-// Ceci est une implémentation de base de l'outil Crayon pour aider à débuter le projet
-// L'implémentation ici ne couvre pas tous les critères d'accepetation du projet
-// Vous êtes encouragés de modifier et compléter le code.
-// N'oubliez pas de regarder les tests dans le fichier spec.ts aussi!
 @Injectable({
     providedIn: 'root',
 })
 export class BrushService extends PencilService {
-    protected pathData: Vec2[];
-
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.name = 'Brush';
@@ -31,11 +25,10 @@ export class BrushService extends PencilService {
         this.switchFilter(cursorCtx);
         cursorCtx.arc(position.x, position.y, this.toolProperties.thickness / 2, 0, Math.PI * 2);
         cursorCtx.fill();
-        // reset filter
         cursorCtx.filter = 'none';
     }
 
-    protected drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+    draw(ctx: CanvasRenderingContext2D): void {
         ctx.beginPath();
 
         ctx.lineCap = 'round';
@@ -43,11 +36,10 @@ export class BrushService extends PencilService {
 
         this.switchFilter(ctx);
 
-        for (const point of path) {
+        for (const point of this.pathData) {
             ctx.lineTo(point.x, point.y);
         }
         ctx.stroke();
-        // reset filter
         ctx.filter = 'none';
     }
 
@@ -77,5 +69,14 @@ export class BrushService extends PencilService {
                 ctx.filter = 'url(#Cloud)';
                 break;
         }
+    }
+
+    clone(): BrushService {
+        const brushClone: BrushService = new BrushService(this.drawingService);
+        this.copyTool(brushClone);
+        const brushCloneProperties = brushClone.toolProperties as BrushProperties;
+        const brushProperties = this.toolProperties as BrushProperties;
+        brushCloneProperties.currentFilter = brushProperties.currentFilter;
+        return brushClone;
     }
 }

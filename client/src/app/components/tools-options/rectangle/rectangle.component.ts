@@ -13,8 +13,8 @@ import { RectangleService } from '@app/services/tools/rectangle/rectangle.servic
 })
 export class RectangleComponent {
     typesDrawing: typeof DrawingType = DrawingType;
-    currentType: string;
-    currentThickness: number;
+    currentType: string = DrawingType.Fill;
+    currentThickness: number = 1;
 
     constructor(public rectangleService: RectangleService) {
         const rectangleProperties = rectangleService.toolProperties as BasicShapeProperties;
@@ -29,6 +29,11 @@ export class RectangleComponent {
     }
 
     onTypeDrawingChange(event: MatRadioChange): void {
-        if (Object.values(DrawingType).includes(event.value)) this.rectangleService.setTypeDrawing(event.value);
+        for (const value in DrawingType) {
+            if (DrawingType[value as keyof typeof DrawingType] === event.value) {
+                this.rectangleService.setTypeDrawing(event.value);
+                break;
+            }
+        }
     }
 }

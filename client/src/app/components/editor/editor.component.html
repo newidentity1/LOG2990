@@ -1,8 +1,8 @@
 <div class="container">
-    <app-sidebar #toolbar></app-sidebar>
+    <app-sidebar #toolbar id="sidebar"></app-sidebar>
     <div #drawingContainer class="drawing-container">
         <app-drawing
-            (requestDrawingContainerDimensions)="computeDimensionsDrawingContainer()"
+            (requestDrawingContainerDimensions)="computeDimensionsDrawingContainer(true)"
             [dimensionsUpdatedEvent]="dimensionsUpdatedSubject.asObservable()"
             [drawingContainerWidth]="width"
             [drawingContainerHeight]="height"
