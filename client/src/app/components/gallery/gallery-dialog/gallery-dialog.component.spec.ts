@@ -76,12 +76,6 @@ describe('GalleryDialogComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it(' openDialog ', () => {
-        const openDialogSpy = spyOn(mockDialog, 'open').and.callThrough();
-        component.openDialog();
-        expect(openDialogSpy).toHaveBeenCalled();
-    });
-
     it('updateDrawings should update drawings from the server ', () => {
         const totalDrawings: Drawing[] = [];
         const fakeDrawing1: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };

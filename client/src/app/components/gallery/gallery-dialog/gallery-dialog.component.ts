@@ -53,12 +53,6 @@ export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy 
         this.getDrawings();
     }
 
-    openDialog(): void {
-        this.dialog.open(GalleryDialogComponent, {
-            height: '55%',
-        });
-    }
-
     private updateDrawings(totalDrawings: Drawing[]): void {
         this.tab = [];
         this.slider.images.length = 0;
