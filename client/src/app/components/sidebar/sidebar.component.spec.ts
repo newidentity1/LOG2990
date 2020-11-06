@@ -129,4 +129,18 @@ describe('SidebarComponent', () => {
         const currentTool = toolbarServiceMock.currentTool;
         expect(component.currentTool).toEqual(currentTool);
     });
+
+    it('get currentTool should return the current tool of toolbarService', () => {
+        toolbarServiceMock.currentTool = pencilToolMock;
+        const currentTool = toolbarServiceMock.currentTool;
+        expect(component.currentTool).toEqual(currentTool);
+    });
+
+    it('onFocusLost should set focus on target', () => {
+        // tslint:disable-next-line:no-empty / reason creating mock HTML element
+        const element = { focus: () => {} } as HTMLElement;
+        const focusSpy = spyOn(element, 'focus');
+        component.onFocusLost(element);
+        expect(focusSpy).toHaveBeenCalled();
+    });
 });
