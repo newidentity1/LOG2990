@@ -459,7 +459,6 @@ describe('DrawingComponent', () => {
     });
 
     it('calculateResizerStyle should give correct positions for control points if preview canvas is set', () => {
-        // tslint:disable-next-line:no-any / reason: set typed object to null
         component.previewCanvas.nativeElement.style.top = '100px';
         component.previewCanvas.nativeElement.style.left = '100px';
         // tslint:disable:no-magic-numbers / reason: testing with random position

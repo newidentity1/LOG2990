@@ -5,7 +5,6 @@ import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { BrushService } from './brush.service';
 
-// tslint:disable:no-any
 describe('BrushService', () => {
     let service: BrushService;
     let mouseEvent: MouseEvent;
@@ -24,7 +23,6 @@ describe('BrushService', () => {
         });
         service = TestBed.inject(BrushService);
 
-        // Configuration du spy du service
         // tslint:disable:no-string-literal
         service['drawingService'].canvas = canvasTestHelper.canvas;
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
@@ -45,6 +43,7 @@ describe('BrushService', () => {
     });
 
     it('mouseMove should not call drawCursor if mouseDown is true', () => {
+        // tslint:disable-next-line: no-any / reason: jasmine spy
         const drawCursorSpy = spyOn<any>(service, 'drawCursor').and.callThrough();
         service.mouseDown = true;
         service.mouseDownCoord = { x: 0, y: 0 };
@@ -54,6 +53,7 @@ describe('BrushService', () => {
     });
 
     it('mouseMove should call drawCursor if mouseDown is false', () => {
+        // tslint:disable-next-line: no-any/ reason: jasmine spy
         const drawCursorSpy = spyOn<any>(service, 'drawCursor').and.callThrough();
 
         service.mouseDown = false;
@@ -64,7 +64,7 @@ describe('BrushService', () => {
     });
 
     it('switchFilter should change to correct filter(Brouille)', () => {
-        const drawSpy = spyOn<any>(service, 'draw').and.callThrough();
+        const drawSpy = spyOn(service, 'draw').and.callThrough();
         service.setFilter('Brouillé');
         service.pathData = path;
         service['draw'](previewCtxStub);
@@ -74,7 +74,7 @@ describe('BrushService', () => {
     });
 
     it('switchFilter should change to correct filter(Brosse)', () => {
-        const drawSpy = spyOn<any>(service, 'draw').and.callThrough();
+        const drawSpy = spyOn(service, 'draw').and.callThrough();
         service.setFilter('Brosse');
         service.pathData = path;
         service['draw'](previewCtxStub);
@@ -84,7 +84,7 @@ describe('BrushService', () => {
     });
 
     it('switchFilter should change to correct filter(Graffiti)', () => {
-        const drawSpy = spyOn<any>(service, 'draw').and.callThrough();
+        const drawSpy = spyOn(service, 'draw').and.callThrough();
         service.setFilter('Graffiti');
         service.pathData = path;
         service['draw'](previewCtxStub);
@@ -94,7 +94,7 @@ describe('BrushService', () => {
     });
 
     it('switchFilter should change to correct filter(Eclaboussure)', () => {
-        const drawSpy = spyOn<any>(service, 'draw').and.callThrough();
+        const drawSpy = spyOn(service, 'draw').and.callThrough();
         service.setFilter('Éclaboussure');
         service.pathData = path;
         service['draw'](previewCtxStub);
@@ -104,7 +104,7 @@ describe('BrushService', () => {
     });
 
     it('switchFilter should change to correct filter(Nuage)', () => {
-        const drawSpy = spyOn<any>(service, 'draw').and.callThrough();
+        const drawSpy = spyOn(service, 'draw').and.callThrough();
         service.setFilter('Nuage');
         service.pathData = path;
         service['draw'](previewCtxStub);

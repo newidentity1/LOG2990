@@ -57,7 +57,6 @@ describe('DrawingService', () => {
         service.setThickness(thickness);
         expect(service.previewCtx.lineWidth).toEqual(thickness);
         expect(service.baseCtx.lineWidth).toEqual(thickness);
-        // reset lineWidth propertie to  defaults
         service.previewCtx.lineWidth = 1;
         service.baseCtx.lineWidth = 1;
     });
@@ -67,7 +66,6 @@ describe('DrawingService', () => {
         service.setFillColor(color);
         expect(service.previewCtx.fillStyle).toEqual(color);
         expect(service.baseCtx.fillStyle).toEqual(color);
-        // reset fillStyle propertie to  defaults
         service.previewCtx.fillStyle = '#000';
         service.baseCtx.fillStyle = '#000';
     });
@@ -77,7 +75,6 @@ describe('DrawingService', () => {
         service.setStrokeColor(color);
         expect(service.previewCtx.strokeStyle).toEqual(color);
         expect(service.baseCtx.strokeStyle).toEqual(color);
-        // reset strokeStyle propertie to  defaults
         service.previewCtx.strokeStyle = '#000';
         service.baseCtx.strokeStyle = '#000';
     });

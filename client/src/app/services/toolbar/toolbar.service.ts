@@ -23,7 +23,7 @@ import { Subscription } from 'rxjs';
     providedIn: 'root',
 })
 export class ToolbarService {
-    private tools: Tool[];
+    private tools: Tool[] = [];
     toolsSubscription: Subscription[] = [];
     currentTool: Tool;
     primaryColor: Color;

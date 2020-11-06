@@ -4,8 +4,8 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { Command } from './command';
 
 export class ResizeCommand extends Command {
-    newWidth: number;
-    newHeight: number;
+    newWidth: number = 0;
+    newHeight: number = 0;
     canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
     baseCtx: CanvasRenderingContext2D;
     imgData: ImageData;

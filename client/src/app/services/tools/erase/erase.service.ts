@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
@@ -13,7 +12,6 @@ export class EraseService extends PencilService {
         this.name = 'Eraser';
         this.tooltip = 'Efface(e)';
         this.iconName = 'kitchen';
-        this.toolProperties = new BasicShapeProperties();
         this.clearPath();
     }
 
@@ -21,7 +19,6 @@ export class EraseService extends PencilService {
         const mousePosition = this.getPositionFromMouse(event);
         if (this.mouseDown) {
             this.pathData.push(mousePosition);
-            // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.draw(this.drawingService.previewCtx);
         }

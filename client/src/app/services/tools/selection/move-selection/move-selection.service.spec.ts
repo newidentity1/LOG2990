@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
-import { SelectionArrowIndex } from '@app/classes/selection-arrow-index.enum';
 import { SELECTION_MOVE_DELAY, SELECTION_MOVE_START_DELAY, SELECTION_MOVE_STEP } from '@app/constants/constants';
+import { SelectionArrowIndex } from '@app/enums/selection-arrow-index.enum';
 import { SelectionType } from '@app/enums/selection-type.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { MoveSelectionService } from './move-selection.service';
