@@ -10,7 +10,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
     providedIn: 'root',
 })
 export class LineService extends Tool {
-    private mouse: Vec2;
+    private mouse: Vec2 = { x: 0, y: 0 };
 
     shift: boolean = false;
     lock180: boolean = false;

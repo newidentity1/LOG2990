@@ -8,8 +8,7 @@ import { GuideComponent } from '@app/components/guide/guide.component';
     styleUrls: ['./open-guide.component.scss'],
 })
 export class OpenGuideComponent {
-    @Input()
-    inMenu: boolean = false;
+    @Input() inMenu: boolean = false;
 
     constructor(private dialog: MatDialog) {}
 

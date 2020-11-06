@@ -1,11 +1,11 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
-import { Command } from '@app/classes/commands/command';
-import { ResizeCommand } from '@app/classes/commands/resize-command';
-import { ResizerProperties } from '@app/classes/resizer-properties';
-import { CANVAS_MARGIN_LEFT, CANVAS_MARGIN_TOP, CANVAS_MIN_HEIGHT, CANVAS_MIN_WIDTH, SELECTION_CONTROL_POINT_SIZE } from '@app/constants/constants';
-import { MouseButton } from '@app/enums/mouse-button.enum';
-import { DrawingService } from '@app/services/drawing/drawing.service';
-import { ToolbarService } from '@app/services/toolbar/toolbar.service';
+import { FormControl, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ResponseResult } from '@app/classes/response-result';
+import { FireBaseService } from '@app/services/firebase/fire-base.service';
+import { Drawing } from '@common/communication/drawing';
+import { Subscription } from 'rxjs';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Observable, Subscription } from 'rxjs';
@@ -26,10 +26,10 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
     @Output() requestDrawingContainerDimensions: EventEmitter<void> = new EventEmitter();
 
     previewCtx: CanvasRenderingContext2D;
-    private subscribeCreateNewDrawing: Subscription = new Subscription();
-    private subscribeResetCanvasSize: Subscription = new Subscription();
-    private subscribeDimensionsUpdated: Subscription = new Subscription();
-    private subscribeExecutedCommand: Subscription = new Subscription();
+    private subscribeCreateNewDrawing: Subscription;
+    private subscribeResetCanvasSize: Subscription;
+    private subscribeDimensionsUpdated: Subscription;
+    private subscribeExecutedCommand: Subscription;
     isResizingWidth: boolean = false;
     isResizingHeight: boolean = false;
     resizeCommand: ResizeCommand = new ResizeCommand(this.drawingService);

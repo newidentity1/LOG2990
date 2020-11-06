@@ -16,7 +16,7 @@ export class EyedropperService extends Tool {
 
     currentColor: Color;
 
-    inCanvas: boolean;
+    inCanvas: boolean = false;
 
     constructor(private colorPickerService: ColorPickerService, drawingService: DrawingService) {
         super(drawingService);

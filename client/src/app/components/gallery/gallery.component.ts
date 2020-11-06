@@ -19,7 +19,7 @@ import { WarningDialogComponent } from './warning/warning-dialog.component';
 export class GalleryComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('imageSlider', { static: false }) slider: NgImageSliderComponent;
     drawings: Drawing[] = [];
-    tab: object[] = [];
+    imageObjects: object[] = [];
     drawingTags: string[] = [];
     tagToAdd: string = '';
     isDrawing: boolean = false;
@@ -59,7 +59,7 @@ export class GalleryComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     updateDrawings(totalDrawings: Drawing[]): void {
-        this.tab = [];
+        this.imageObjects = [];
         this.slider.images.length = 0;
         for (const image of totalDrawings) {
             const prefix = image.tags.length ? '\nÉtiquette: ' : '';
@@ -69,10 +69,10 @@ export class GalleryComponent implements OnInit, AfterViewInit, OnDestroy {
                 title: 'Titre: ' + image.name + prefix + this.getDrawingTagsToString(image),
                 alt: image.name,
             };
-            this.tab.push(obj);
+            this.imageObjects.push(obj);
         }
-        this.slider.setSliderImages(this.tab);
-        this.isDrawing = this.tab.length > 0;
+        this.slider.setSliderImages(this.imageObjects);
+        this.isDrawing = this.imageObjects.length > 0;
     }
 
     getDrawingTagsToString(drawing: Drawing): string {
