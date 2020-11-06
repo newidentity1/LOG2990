@@ -3,7 +3,7 @@
     <form>
         <mat-form-field class="forms">
             <mat-label>Titre du dessin</mat-label>
-            <input matInput type="text" [(ngModel)]="drawingTitle" [formControl]="titleForm" name="drawingTitle" maxlength="20" required />
+            <input matInput type="text" [formControl]="titleForm" name="titleForm.value" maxlength="20" required />
             <mat-hint align="start"
                 ><strong
                     >Ne doit pas contenir de <br />
@@ -11,7 +11,7 @@
                     par un chiffre</strong
                 >
             </mat-hint>
-            <mat-hint align="end">{{ drawingTitle.length }} / 20</mat-hint>
+            <mat-hint align="end">{{ titleForm.value.length }} / 20</mat-hint>
             <mat-error *ngIf="!isTitleInputEmpty()">titre non valide</mat-error>
         </mat-form-field>
     </form>
@@ -20,22 +20,22 @@
             <mat-form-field class="forms">
                 <mat-label>Ajouter une étiquette</mat-label>
 
-                <input matInput type="text" [(ngModel)]="tagToAdd" [formControl]="tagForm" maxlength="15" />
+                <input matInput type="text" [formControl]="tagForm" maxlength="15" />
                 <mat-hint align="start"
                     ><strong
                         >Ne doit pas contenir <br />
                         d'espaces ou de symboles</strong
                     >
                 </mat-hint>
-                <mat-hint align="end">{{ tagToAdd.length }} / 15</mat-hint>
+                <mat-hint align="end">{{ titleForm.value.length }} / 15</mat-hint>
                 <mat-error *ngIf="!isTagInputEmpty()">étiquette non valide</mat-error>
             </mat-form-field>
             <mat-icon id="info-button" matTooltip="Liste de symboles:  !@#$%^&*(){}[];:',./" matTooltipPosition="above"> information </mat-icon>
             <button
                 id="addTagButton"
                 mat-stroked-button
-                [disabled]="!validateTag(tagToAdd)"
-                (click)="addTag(tagToAdd); tagToAdd = ''; tagForm.reset('')"
+                [disabled]="!validateTag(tagForm.value)"
+                (click)="addTag(tagForm.value); tagForm.value = ''; tagForm.reset('')"
             >
                 Ajouter
             </button>
@@ -52,7 +52,7 @@
             class="buttons"
             id="upload-button"
             mat-raised-button
-            [disabled]="!validateTitle(drawingTitle) || this.fireBaseService.isDrawingSaving"
+            [disabled]="!validateTitle(titleForm.value) || this.fireBaseService.isDrawingSaving"
             (click)="uploadImage()"
         >
             Sauvegarder
