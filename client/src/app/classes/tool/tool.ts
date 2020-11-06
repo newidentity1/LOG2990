@@ -38,8 +38,6 @@ export abstract class Tool extends Command {
 
     onKeyDown(event: KeyboardEvent): void {}
 
-    onKeyPress(event: KeyboardEvent): void {}
-
     onKeyUp(event: KeyboardEvent): void {}
 
     onDoubleClick(event: MouseEvent): void {}

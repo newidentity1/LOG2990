@@ -131,6 +131,7 @@ export class MoveSelectionService {
         selectionCtx.putImageData(this.imgData, 0, 0, 0, 0, width, height);
         this.drawingService.baseCtx.putImageData(areaToClear, startingPos.x, startingPos.y, 0, 0, width, height);
         selectionCtx.canvas.style.cursor = 'move';
+        this.canMoveSelection = true;
     }
 
     private isPositionInEllipse(position: Vec2, width: number, height: number): boolean {
