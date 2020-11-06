@@ -49,7 +49,9 @@ export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy 
     }
 
     ngAfterViewInit(): void {
-        this.getDrawings();
+        setTimeout(() => {
+            this.getDrawings();
+        }, 0);
     }
 
     private updateDrawings(totalDrawings: Drawing[]): void {
