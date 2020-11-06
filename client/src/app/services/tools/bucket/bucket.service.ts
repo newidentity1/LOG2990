@@ -25,7 +25,7 @@ export class BucketService extends Tool {
     constructor(drawingService: DrawingService, private colorPickerService: ColorPickerService) {
         super(drawingService);
         this.name = 'Sceau de peinture';
-        this.tooltip = 'Bucket(b)';
+        this.tooltip = 'Sceau de peinture(b)';
         this.iconName = 'format_paint';
         this.toolProperties = new BasicShapeProperties();
     }
