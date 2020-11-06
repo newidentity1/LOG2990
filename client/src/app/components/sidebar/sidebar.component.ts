@@ -3,7 +3,7 @@ import { MatSidenav } from '@angular/material/sidenav';
 import { Tool } from '@app/classes/tool/tool';
 import { CreateNewDrawingComponent } from '@app/components/create-new-drawing/create-new-drawing.component';
 import { ExportDrawingComponent } from '@app/components/export-drawing/export-drawing.component';
-import { OpenGalleryComponent } from '@app/components/gallery/open-gallery/open-gallery.component';
+import { GalleryComponent } from '@app/components/gallery/gallery.component';
 import { UploadComponent } from '@app/components/upload/upload.component';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 
@@ -13,12 +13,12 @@ import { ToolbarService } from '@app/services/toolbar/toolbar.service';
     styleUrls: ['./sidebar.component.scss'],
 })
 export class SidebarComponent {
-    tools: Tool[];
+    tools: Tool[] = [];
     @ViewChild('toolProperties') sidenavProperties: MatSidenav;
     @ViewChild(CreateNewDrawingComponent) newDrawingRef: CreateNewDrawingComponent;
     @ViewChild(ExportDrawingComponent) exportRef: ExportDrawingComponent;
     @ViewChild(UploadComponent) uploadRef: UploadComponent;
-    @ViewChild(OpenGalleryComponent) galleryRef: OpenGalleryComponent;
+    @ViewChild(GalleryComponent) galleryRef: GalleryComponent;
 
     constructor(protected toolbarService: ToolbarService) {
         this.tools = toolbarService.getTools();

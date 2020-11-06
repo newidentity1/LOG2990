@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { SelectionArrowIndex } from '@app/classes/selection-arrow-index.enum';
 import { Vec2 } from '@app/classes/vec2';
 import * as CONSTANTS from '@app/constants/constants';
+import { SelectionArrowIndex } from '@app/enums/selection-arrow-index.enum';
 import { SelectionType } from '@app/enums/selection-type.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
@@ -10,17 +10,12 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 })
 export class MoveSelectionService {
     imgData: ImageData;
-    canMoveSelection: boolean;
-    finalPosition: Vec2;
-    private canMoveSelectionContiniously: boolean;
-    private pressedKeys: number[];
+    canMoveSelection: boolean = false;
+    finalPosition: Vec2 = { x: 0, y: 0 };
+    private canMoveSelectionContiniously: boolean = false;
+    private pressedKeys: number[] = [0, 0, 0, 0];
 
-    constructor(private drawingService: DrawingService) {
-        this.pressedKeys = [0, 0, 0, 0];
-        this.canMoveSelection = false;
-        this.canMoveSelectionContiniously = false;
-        this.finalPosition = { x: 0, y: 0 };
-    }
+    constructor(private drawingService: DrawingService) {}
 
     checkArrowKeysPressed(event: KeyboardEvent): boolean {
         let arrowKeyPressed = false;
@@ -131,6 +126,7 @@ export class MoveSelectionService {
         selectionCtx.putImageData(this.imgData, 0, 0, 0, 0, width, height);
         this.drawingService.baseCtx.putImageData(areaToClear, startingPos.x, startingPos.y, 0, 0, width, height);
         selectionCtx.canvas.style.cursor = 'move';
+        this.canMoveSelection = true;
     }
 
     private isPositionInEllipse(position: Vec2, width: number, height: number): boolean {

@@ -12,8 +12,8 @@ import { LineService } from '@app/services/tools/line/line.service';
 export class LineComponent {
     typesDrawing: typeof LinePointType = LinePointType;
     currentType: string = this.typesDrawing.SansPoint;
-    currentThickness: number;
-    pointSize: number;
+    currentThickness: number = 1;
+    pointSize: number = 1;
 
     constructor(public lineService: LineService) {
         const lineProperties = lineService.toolProperties as LineProperties;

@@ -39,8 +39,7 @@ mat-sidenav-container {
 }
 
 #other-tools {
-    position: absolute;
-    bottom: 1px;
+    height: auto;
 }
 
 mat-sidenav {
@@ -59,7 +58,7 @@ mat-sidenav-content {
 
 .other-functionality-button {
     display: inline-block;
-    width: 100%;
+    width: 50%;
     text-align: center;
 }
 

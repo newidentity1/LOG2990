@@ -29,7 +29,6 @@ describe('LineService', () => {
         });
         service = TestBed.inject(LineService);
 
-        // Configuration du spy du service
         // tslint:disable:no-string-literal
         service['drawingService'].canvas = canvasTestHelper.canvas;
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
@@ -158,7 +157,7 @@ describe('LineService', () => {
         service.mouseDownCoord = { x: 50, y: 50 };
         service.pathData.push(service.mouseDownCoord);
         service.onClick(mouseEventclick1);
-        expect(drawSpy).toHaveBeenCalled();
+        expect(drawSpy).not.toHaveBeenCalled();
     });
 
     it('shift is press should set shift to true', () => {

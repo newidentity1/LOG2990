@@ -34,8 +34,7 @@ describe('ExportDrawingComponent', () => {
     });
 
     it('exportDrawing should open dialog', () => {
-        // tslint:disable-next-line:no-any / reason: spying on function
-        spyOn<any>(dialog, 'open').and.callThrough();
+        spyOn(dialog, 'open').and.callThrough();
         component.exportDrawing();
         expect(dialog.open).toHaveBeenCalled();
     });

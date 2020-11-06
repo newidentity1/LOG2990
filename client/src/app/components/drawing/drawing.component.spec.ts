@@ -3,6 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
 import { ResizeCommand } from '@app/classes/commands/resize-command';
 import { ResizerProperties } from '@app/classes/resizer-properties';
+import { Tool } from '@app/classes/tool/tool';
 import { SVGFilterComponent } from '@app/components/tools-options/brush/svgfilter/svgfilter.component';
 import { CANVAS_MARGIN_LEFT, CANVAS_MARGIN_TOP, CANVAS_MIN_HEIGHT, CANVAS_MIN_WIDTH, SELECTION_CONTROL_POINT_SIZE } from '@app/constants/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -125,7 +126,7 @@ describe('DrawingComponent', () => {
         expect(toolbarServiceSpy.initializeListeners).toHaveBeenCalled();
     });
 
-    it(' should call onResize when receiving a mouseMove on window if isResizingWidth and isResizingHeight are false', () => {
+    it(' onMouseMoveWindow should call onResize when receiving a mouseMove on window if isResizingWidth and isResizingHeight are false', () => {
         component.isResizingWidth = false;
         component.isResizingHeight = false;
         toolbarServiceSpy.currentTool = new PencilService(drawingServiceStub);
@@ -133,22 +134,33 @@ describe('DrawingComponent', () => {
         expect(toolbarServiceSpy.onMouseMove).toHaveBeenCalled();
     });
 
-    it(' should call onResize when receiving a mouseMove on window if isResizingWidth or isResizingHeight', () => {
+    it(' onMouseMoveWindow should call onResize when receiving a mouseMove on window if isResizingHeight', () => {
         const onResizeSpy = spyOn(component, 'onResize').and.callThrough();
 
+        component.isResizingWidth = false;
         component.isResizingHeight = true;
-        component.onMouseMoveWindow(mouseEvent);
-        expect(onResizeSpy).toHaveBeenCalled();
-
-        component.isResizingHeight = false;
-        component.isResizingWidth = true;
         component.onMouseMoveWindow(mouseEvent);
         expect(onResizeSpy).toHaveBeenCalled();
     });
 
+    it(' onMouseMoveWindow should not call onMouseMove if current tool is not pencil', () => {
+        component.isResizingWidth = false;
+        component.isResizingHeight = false;
+        toolbarServiceSpy.currentTool = {} as Tool;
+        component.onMouseMoveWindow(mouseEvent);
+        expect(toolbarServiceSpy.onMouseMove).not.toHaveBeenCalled();
+    });
+
+    it(' onMouseMove should not call onMouseMove if current tool is not pencil', () => {
+        component.isResizingWidth = false;
+        component.isResizingHeight = false;
+        toolbarServiceSpy.currentTool = new PencilService(drawingServiceStub);
+        component.onMouseMove(mouseEvent);
+        expect(toolbarServiceSpy.onMouseMove).not.toHaveBeenCalled();
+    });
+
     it(' onMouseMove should call toolbarService onMouseMove when receiving a mouse event', () => {
         component.onMouseMove(mouseEvent);
-        expect(toolbarServiceSpy.onMouseMove).toHaveBeenCalled();
         expect(toolbarServiceSpy.onMouseMove).toHaveBeenCalledWith(mouseEvent);
     });
 
@@ -447,7 +459,6 @@ describe('DrawingComponent', () => {
     });
 
     it('calculateResizerStyle should give correct positions for control points if preview canvas is set', () => {
-        // tslint:disable-next-line:no-any / reason: set typed object to null
         component.previewCanvas.nativeElement.style.top = '100px';
         component.previewCanvas.nativeElement.style.left = '100px';
         // tslint:disable:no-magic-numbers / reason: testing with random position

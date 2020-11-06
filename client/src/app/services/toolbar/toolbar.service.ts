@@ -23,7 +23,7 @@ import { Subscription } from 'rxjs';
     providedIn: 'root',
 })
 export class ToolbarService {
-    private tools: Tool[];
+    private tools: Tool[] = [];
     toolsSubscription: Subscription[] = [];
     currentTool: Tool;
     primaryColor: Color;
@@ -128,10 +128,6 @@ export class ToolbarService {
 
     onKeyDown(event: KeyboardEvent): void {
         this.currentTool.onKeyDown(event);
-    }
-
-    onKeyPress(event: KeyboardEvent): void {
-        this.currentTool.onKeyPress(event);
     }
 
     onKeyUp(event: KeyboardEvent): void {

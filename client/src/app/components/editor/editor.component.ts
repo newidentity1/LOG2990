@@ -41,18 +41,6 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         });
     }
 
-    @HostListener('keydown', ['$event'])
-    onKeyDown(event: KeyboardEvent): void {
-        event.preventDefault();
-        this.toolbarService.onKeyDown(event);
-    }
-
-    @HostListener('keypress', ['$event'])
-    onKeyPress(event: KeyboardEvent): void {
-        event.preventDefault();
-        this.toolbarService.onKeyPress(event);
-    }
-
     @HostListener('window:keyup', ['$event'])
     onKeyUp(event: KeyboardEvent): void {
         event.preventDefault();
@@ -110,6 +98,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.toolbarRef.exportDrawing();
             }),
         );
+
         this.subscribedShortcuts.push(
             this.shortcutService.addShortcut('control.s').subscribe(() => {
                 this.toolbarRef.uploadImage();
@@ -131,5 +120,14 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.toolbarService.redo();
             }),
         );
+
+        const keyDownButtons = ['Escape', 'Shift', 'Backspace', 'ArrowLeft', 'ArrowUp', 'ArrowRight', 'ArrowDown'];
+        keyDownButtons.forEach((button: string) => {
+            this.subscribedShortcuts.push(
+                this.shortcutService.addShortcut(button).subscribe((event: KeyboardEvent) => {
+                    this.toolbarService.onKeyDown(event);
+                }),
+            );
+        });
     }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -12,23 +12,21 @@ import { Subscription } from 'rxjs';
     templateUrl: './upload-dialog.component.html',
     styleUrls: ['./upload-dialog.component.scss'],
 })
-export class UploadDialogComponent implements OnInit {
+export class UploadDialogComponent implements OnInit, OnDestroy {
     drawingTitle: string = '';
     drawings: Drawing[] = [];
     drawingTags: string[] = [];
     tagToAdd: string = '';
-    tagEmpty: boolean;
+    tagEmpty: boolean = false;
     tagForm: FormControl;
     titleForm: FormControl;
     subscribeSaveDrawing: Subscription;
 
-    constructor(public dialog: MatDialog, public fireBaseService: FireBaseService, private snackBar: MatSnackBar) {
-        this.drawingTitle = '';
-    }
+    constructor(public dialog: MatDialog, public fireBaseService: FireBaseService, private snackBar: MatSnackBar) {}
 
     ngOnInit(): void {
-        this.tagForm = new FormControl(this.tagToAdd, [Validators.pattern('^(\\d|[a-zA-ZÀ-ÿ]){0,15}$'), Validators.required]);
-        this.titleForm = new FormControl(this.drawingTitle, [Validators.pattern('^[a-zA-ZÀ-ÿ](\\d|[a-zA-ZÀ-ÿ ]){0,20}$'), Validators.required]);
+        this.tagForm = new FormControl('', [Validators.pattern('^(\\d|[a-zA-ZÀ-ÿ]){0,15}$'), Validators.required]);
+        this.titleForm = new FormControl('', [Validators.pattern('^[a-zA-ZÀ-ÿ](\\d|[a-zA-ZÀ-ÿ ]){0,20}$'), Validators.required]);
         this.subscribeSaveDrawing = this.fireBaseService.saveDrawingEventListener().subscribe((result: ResponseResult) => {
             this.snackBar.open(result.message, 'Fermer', {
                 duration: 4000,
@@ -38,8 +36,12 @@ export class UploadDialogComponent implements OnInit {
         });
     }
 
+    ngOnDestroy(): void {
+        this.subscribeSaveDrawing.unsubscribe();
+    }
+
     uploadImage(): void {
-        this.fireBaseService.name = this.drawingTitle;
+        this.fireBaseService.name = this.titleForm.value;
         this.fireBaseService.drawingTags = this.drawingTags;
         this.fireBaseService.uploadCanvas();
     }
@@ -54,6 +56,7 @@ export class UploadDialogComponent implements OnInit {
 
     addTag(tag: string): void {
         this.drawingTags.push(tag);
+        this.tagForm.reset('');
     }
 
     deleteTag(tag: string): void {
@@ -65,10 +68,10 @@ export class UploadDialogComponent implements OnInit {
     }
 
     isTitleInputEmpty(): boolean {
-        return this.drawingTitle.length === 0;
+        return this.titleForm.value.length === 0;
     }
 
     isTagInputEmpty(): boolean {
-        return this.tagToAdd.length === 0;
+        return this.tagForm.value.length === 0;
     }
 }
