@@ -16,7 +16,13 @@
         <div id="tool-container">
             <ul id="tools">
                 <li *ngFor="let tool of tools" matTooltip="{{ tool.tooltip }}" [matTooltipPosition]="'right'">
-                    <button mat-button [ngClass]="{ currentTool: isCurrentTool(tool) }" (click)="onToolChanged(tool)">
+                    <button
+                        mat-button
+                        [ngClass]="{ currentTool: isCurrentTool(tool) }"
+                        (click)="onToolChanged(tool)"
+                        autofocus
+                        (blur)="onFocusLost($event.target)"
+                    >
                         <mat-icon>{{ tool.iconName }}</mat-icon>
                     </button>
                 </li>
