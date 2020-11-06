@@ -11,6 +11,7 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Drawing } from '@common/communication/drawing';
 import { NgImageSliderComponent } from 'ng-image-slider';
 import { Observable, Subscription } from 'rxjs';
+import { ImageSlider } from './image';
 @Component({
     selector: 'app-gallery-dialog',
     styleUrls: ['./gallery-dialog.component.scss'],
@@ -19,7 +20,7 @@ import { Observable, Subscription } from 'rxjs';
 export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('imageSlider', { static: false }) slider: NgImageSliderComponent;
     drawings: Drawing[] = [];
-    tab: object[] = [];
+    tab: ImageSlider[] = [];
     drawingTags: string[] = [];
     tagToAdd: string = '';
     isDrawing: boolean = false;
