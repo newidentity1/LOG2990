@@ -83,7 +83,7 @@ export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy 
         if (isCanvasEmpty) {
             const image = new Image();
             image.crossOrigin = '';
-            image.src = this.drawings[event].url;
+            image.src = this.drawings[event - 1].url;
             image.onload = () => {
                 const ctx = this.drawingService.canvas.getContext('2d') as CanvasRenderingContext2D;
                 this.drawingService.clearCanvas(ctx as CanvasRenderingContext2D);
@@ -101,7 +101,7 @@ export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy 
                 this.dialog.closeAll();
             };
         } else {
-            this.openWarningDialog(this.drawings[event]);
+            this.openWarningDialog(this.drawings[event - 1]);
         }
     }
 
