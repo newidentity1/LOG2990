@@ -29,24 +29,26 @@ export class LineService extends Tool {
     onClick(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
         const mousePosition = this.getPositionFromMouse(event);
-        if (this.pathData.length > 1) {
-            if (this.shift) {
-                if (this.lock180) {
-                    mousePosition.y = this.pathData[this.pathData.length - 1].y;
-                } else if (this.lock45) {
-                    const dx = mousePosition.x - this.pathData[this.pathData.length - 1].x;
-                    const dy = mousePosition.y - this.pathData[this.pathData.length - 1].y;
-                    const sign = this.signOf(dx) * this.signOf(dy);
-                    mousePosition.y =
-                        sign * Math.tan(CONSTANTS.ANGLE_45) * (mousePosition.x - this.pathData[this.pathData.length - 1].x) +
-                        this.pathData[this.pathData.length - 1].y;
-                } else if (this.lock90) {
-                    mousePosition.x = this.pathData[this.pathData.length - 1].x;
-                }
-            }
+        if (this.pathData.length > 1 && this.shift) {
+            this.angleTransform(mousePosition)
             this.draw(this.drawingService.previewCtx);
         }
         this.pathData.push(mousePosition);
+    }
+
+    angleTransform(mousePosition: Vec2): void {
+        if (this.lock180) {
+            mousePosition.y = this.pathData[this.pathData.length - 1].y;
+        } else if (this.lock45) {
+            const dx = mousePosition.x - this.pathData[this.pathData.length - 1].x;
+            const dy = mousePosition.y - this.pathData[this.pathData.length - 1].y;
+            const sign = this.signOf(dx) * this.signOf(dy);
+            mousePosition.y =
+                sign * Math.tan(CONSTANTS.ANGLE_45) * (mousePosition.x - this.pathData[this.pathData.length - 1].x) +
+                this.pathData[this.pathData.length - 1].y;
+        } else if (this.lock90) {
+            mousePosition.x = this.pathData[this.pathData.length - 1].x;
+        }
     }
 
     onMouseMove(event: MouseEvent): void {
