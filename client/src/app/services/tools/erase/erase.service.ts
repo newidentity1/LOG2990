@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
@@ -13,7 +12,6 @@ export class EraseService extends PencilService {
         this.name = 'Eraser';
         this.tooltip = 'Efface(e)';
         this.iconName = 'kitchen';
-        this.toolProperties = new BasicShapeProperties();
         this.clearPath();
     }
 
@@ -21,18 +19,38 @@ export class EraseService extends PencilService {
         const mousePosition = this.getPositionFromMouse(event);
         if (this.mouseDown) {
             this.pathData.push(mousePosition);
-            // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawLine(this.drawingService.previewCtx, this.pathData);
+            this.draw(this.drawingService.previewCtx);
         }
         this.drawCursor(mousePosition);
     }
 
-    protected drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+    onMouseUp(event: MouseEvent): void {
+        if (this.mouseDown) {
+            this.draw(this.drawingService.baseCtx);
+            this.executedCommand.emit(this.clone());
+        }
+        this.mouseDown = false;
+        this.clearPath();
+    }
+
+    draw(ctx: CanvasRenderingContext2D): void {
+        if (this.pathData.length === 1 && this.pathData[0].x === this.mouseDownCoord.x && this.pathData[0].y === this.mouseDownCoord.y) {
+            this.drawingService.baseCtx.clearRect(
+                this.pathData[0].x - this.toolProperties.thickness / 2,
+                this.pathData[0].y - this.toolProperties.thickness / 2,
+                this.toolProperties.thickness,
+                this.toolProperties.thickness,
+            );
+            return;
+        }
+
         this.drawingService.setStrokeColor('white');
         ctx.miterLimit = 1;
+        ctx.lineCap = 'butt';
+        ctx.lineJoin = 'miter';
         ctx.beginPath();
-        for (const point of path) {
+        for (const point of this.pathData) {
             ctx.lineTo(point.x, point.y);
         }
         ctx.stroke();
@@ -61,5 +79,11 @@ export class EraseService extends PencilService {
             this.toolProperties.thickness,
         );
         cursorCtx.lineWidth = this.toolProperties.thickness;
+    }
+
+    clone(): EraseService {
+        const eraserClone: EraseService = new EraseService(this.drawingService);
+        this.copyTool(eraserClone);
+        return eraserClone;
     }
 }

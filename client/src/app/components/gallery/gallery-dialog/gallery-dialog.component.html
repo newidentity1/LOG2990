@@ -1,0 +1,36 @@
+<div id="window">
+    <div id="header">
+        <h2>Carrousel de dessins</h2>
+        <mat-icon
+            id="info-button"
+            matTooltip="Veuillez survoler l'image si vous n'arrivez pas à voir toutes les étiquettes"
+            matTooltipPosition="above"
+        >
+            information
+        </mat-icon>
+    </div>
+    <h4>Recherche par étiquette:</h4>
+    <mat-form-field>
+        <mat-label>Ajouter une étiquette</mat-label>
+        <input matInput type="text" [formControl]="tagForm" maxlength="15" />
+        <mat-error *ngIf="!isTagInputEmpty()">étiquette non valide</mat-error>
+    </mat-form-field>
+    <button id="addTagButton" mat-stroked-button [disabled]="!validateTag(tagForm.value)" (click)="addTag(tagForm.value)">Ajouter</button>
+    <mat-chip-list #tags>
+        <mat-chip *ngFor="let tag of drawingTags" [removable]="true" (removed)="deleteTag(tag)">
+            {{ tag }}
+            <mat-icon matChipRemove>cancel</mat-icon>
+        </mat-chip>
+    </mat-chip-list>
+
+    <div id="imageSliderWrapper" class="row" [hidden]="!isDrawing">
+        <ng-image-slider #imageSlider [images]="this.tab" (imageClick)="continueDrawing($event)" [imagePopup]="false" [infinite]="true">
+        </ng-image-slider>
+    </div>
+    <div class="row" *ngIf="!isDrawing">
+        <h1>Aucun dessin</h1>
+    </div>
+    <div id="buttons">
+        <button mat-stroked-button id="deleteDrawingButton" (click)="deleteDrawing()" [disabled]="this.drawings.length === 0">Supprimer</button>
+    </div>
+</div>

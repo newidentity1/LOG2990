@@ -5,7 +5,6 @@ import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { BrushService } from './brush.service';
 
-// tslint:disable:no-any
 describe('BrushService', () => {
     let service: BrushService;
     let mouseEvent: MouseEvent;
@@ -15,8 +14,6 @@ describe('BrushService', () => {
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
-    let drawLineSpy: jasmine.Spy<any>;
-    let drawCursorSpy: jasmine.Spy<any>;
     beforeEach(() => {
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
@@ -25,19 +22,18 @@ describe('BrushService', () => {
             providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
         });
         service = TestBed.inject(BrushService);
-        drawLineSpy = spyOn<any>(service, 'drawLine').and.callThrough();
-        drawCursorSpy = spyOn<any>(service, 'drawCursor').and.callThrough();
 
-        // Configuration du spy du service
         // tslint:disable:no-string-literal
+        service['drawingService'].canvas = canvasTestHelper.canvas;
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
         service['drawingService'].previewCtx = previewCtxStub;
+        service['drawingService'].canvas = canvasTestHelper.canvas;
         path.push(point1);
         path.push(point2);
 
         mouseEvent = {
-            offsetX: 25,
-            offsetY: 25,
+            clientX: 25,
+            clientY: 25,
             button: 0,
         } as MouseEvent;
     });
@@ -47,6 +43,8 @@ describe('BrushService', () => {
     });
 
     it('mouseMove should not call drawCursor if mouseDown is true', () => {
+        // tslint:disable-next-line: no-any / reason: jasmine spy
+        const drawCursorSpy = spyOn<any>(service, 'drawCursor').and.callThrough();
         service.mouseDown = true;
         service.mouseDownCoord = { x: 0, y: 0 };
 
@@ -55,6 +53,9 @@ describe('BrushService', () => {
     });
 
     it('mouseMove should call drawCursor if mouseDown is false', () => {
+        // tslint:disable-next-line: no-any / reason: jasmine spy
+        const drawCursorSpy = spyOn<any>(service, 'drawCursor').and.callThrough();
+
         service.mouseDown = false;
         service.mouseDownCoord = { x: 0, y: 0 };
 
@@ -63,41 +64,51 @@ describe('BrushService', () => {
     });
 
     it('switchFilter should change to correct filter(Brouille)', () => {
+        const drawSpy = spyOn(service, 'draw').and.callThrough();
         service.setFilter('Brouillé');
-        service['drawLine'](previewCtxStub, path);
-        expect(drawLineSpy).toHaveBeenCalled();
+        service.pathData = path;
+        service['draw'](previewCtxStub);
+        expect(drawSpy).toHaveBeenCalled();
         const brushProperties = service.toolProperties as BrushProperties;
         expect(brushProperties.currentFilter).toEqual('Brouillé');
     });
 
     it('switchFilter should change to correct filter(Brosse)', () => {
+        const drawSpy = spyOn(service, 'draw').and.callThrough();
         service.setFilter('Brosse');
-        service['drawLine'](previewCtxStub, path);
-        expect(drawLineSpy).toHaveBeenCalled();
+        service.pathData = path;
+        service['draw'](previewCtxStub);
+        expect(drawSpy).toHaveBeenCalled();
         const brushProperties = service.toolProperties as BrushProperties;
         expect(brushProperties.currentFilter).toEqual('Brosse');
     });
 
     it('switchFilter should change to correct filter(Graffiti)', () => {
+        const drawSpy = spyOn(service, 'draw').and.callThrough();
         service.setFilter('Graffiti');
-        service['drawLine'](previewCtxStub, path);
-        expect(drawLineSpy).toHaveBeenCalled();
+        service.pathData = path;
+        service['draw'](previewCtxStub);
+        expect(drawSpy).toHaveBeenCalled();
         const brushProperties = service.toolProperties as BrushProperties;
         expect(brushProperties.currentFilter).toEqual('Graffiti');
     });
 
     it('switchFilter should change to correct filter(Eclaboussure)', () => {
+        const drawSpy = spyOn(service, 'draw').and.callThrough();
         service.setFilter('Éclaboussure');
-        service['drawLine'](previewCtxStub, path);
-        expect(drawLineSpy).toHaveBeenCalled();
+        service.pathData = path;
+        service['draw'](previewCtxStub);
+        expect(drawSpy).toHaveBeenCalled();
         const brushProperties = service.toolProperties as BrushProperties;
         expect(brushProperties.currentFilter).toEqual('Éclaboussure');
     });
 
     it('switchFilter should change to correct filter(Nuage)', () => {
+        const drawSpy = spyOn(service, 'draw').and.callThrough();
         service.setFilter('Nuage');
-        service['drawLine'](previewCtxStub, path);
-        expect(drawLineSpy).toHaveBeenCalled();
+        service.pathData = path;
+        service['draw'](previewCtxStub);
+        expect(drawSpy).toHaveBeenCalled();
         const brushProperties = service.toolProperties as BrushProperties;
         expect(brushProperties.currentFilter).toEqual('Nuage');
     });
@@ -112,5 +123,12 @@ describe('BrushService', () => {
         service.setFilter('');
         const brushProperties = service.toolProperties as BrushProperties;
         expect(brushProperties.currentFilter).not.toEqual('');
+    });
+
+    it('clone should return a clone of the tool', () => {
+        const spyCopyTool = spyOn(BrushService.prototype, 'copyTool');
+        const clone = service.clone();
+        expect(spyCopyTool).toHaveBeenCalled();
+        expect(clone).toEqual(service);
     });
 });

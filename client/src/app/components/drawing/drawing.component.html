@@ -1,10 +1,10 @@
 <div id="canvas-container">
     <svgfilter id="filters" (contextmenu)="(false)" #drawing [attr.width]="width" [attr.height]="height"> </svgfilter>
 
-    <canvas id="canvas" #baseCanvas [attr.width]="width" [attr.height]="height"></canvas>
+    <canvas id="canvas" #baseCanvas [attr.width]="width" [attr.height]="height" (mousedown)="onBaseCanvasMouseDown($event)"></canvas>
     <canvas
         id="previewLayer"
-        [ngClass]="{ showOutline: isResizingWidth || isResizingHeight }"
+        [ngClass]="{ showOutline: isResizingWidth || isResizingHeight || isAreaSelected() }"
         #previewCanvas
         [attr.width]="width"
         [attr.height]="height"
@@ -19,18 +19,37 @@
     ></canvas>
 </div>
 
-<div class="resizable" [style.width.px]="width" [style.height.px]="height">
-    <div
-        class="resizer right-center"
-        [ngStyle]="{ 'top.px': this.height / 2 }"
-        (mousedown)="onResizeWidthStart($event)"
-        (mousemove)="onResize($event)"
-    ></div>
-    <div
-        class="resizer bottom-center"
-        [ngStyle]="{ 'left.px': this.width / 2 }"
-        (mousedown)="onResizeHeightStart($event)"
-        (mousemove)="onResize($event)"
-    ></div>
-    <div class="resizer bottom-right" (mousedown)="onResizeBothStart($event)" (mousemove)="onResize($event)"></div>
+<div class="resizable">
+    <div *ngIf="isAreaSelected()">
+        <div class="resizer top-left" [ngStyle]="calculateResizerStyle(0, 0)"></div>
+        <div class="resizer top-center" [ngStyle]="calculateResizerStyle(0, 1)"></div>
+        <div class="resizer top-right" [ngStyle]="calculateResizerStyle(0, 2)"></div>
+        <div class="resizer left-center" [ngStyle]="calculateResizerStyle(1, 0)"></div>
+        <div class="resizer bottom-left" [ngStyle]="calculateResizerStyle(2, 0)"></div>
+        <div class="resizer right-center" [ngStyle]="calculateResizerStyle(1, 2)"></div>
+        <div class="resizer bottom-center" [ngStyle]="calculateResizerStyle(2, 1)"></div>
+        <div class="resizer bottom-right" [ngStyle]="calculateResizerStyle(2, 2)"></div>
+    </div>
+
+    <div *ngIf="!isAreaSelected()">
+        <div
+            class="resizer right-center"
+            [ngStyle]="calculateResizerStyle(1, 2)"
+            (mousedown)="onResizeWidthStart($event)"
+            (mousemove)="onResize($event)"
+        ></div>
+
+        <div
+            class="resizer bottom-center"
+            [ngStyle]="calculateResizerStyle(2, 1)"
+            (mousedown)="onResizeHeightStart($event)"
+            (mousemove)="onResize($event)"
+        ></div>
+        <div
+            class="resizer bottom-right"
+            [ngStyle]="calculateResizerStyle(2, 2)"
+            (mousedown)="onResizeBothStart($event)"
+            (mousemove)="onResize($event)"
+        ></div>
+    </div>
 </div>

@@ -13,8 +13,8 @@ import { BrushService } from '@app/services/tools/brush/brush.service';
 })
 export class BrushComponent {
     filterType: typeof BrushType = BrushType;
-    currentFilter: string;
-    currentThickness: number;
+    currentFilter: string = BrushType.Blurred;
+    currentThickness: number = 1;
 
     constructor(public brushService: BrushService) {
         const brushProperties = brushService.toolProperties as BrushProperties;
@@ -28,6 +28,11 @@ export class BrushComponent {
     }
 
     onFilterChange(event: MatRadioChange): void {
-        if (Object.values(this.filterType).includes(event.value)) this.brushService.setFilter(event.value);
+        for (const value in BrushType) {
+            if (BrushType[value as keyof typeof BrushType] === event.value) {
+                this.brushService.setFilter(event.value);
+                break;
+            }
+        }
     }
 }

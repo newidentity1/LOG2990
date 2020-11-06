@@ -13,8 +13,8 @@ import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
 })
 export class EllipseComponent {
     typesDrawing: typeof DrawingType = DrawingType;
-    currentType: string;
-    currentThickness: number;
+    currentType: string = DrawingType.Fill;
+    currentThickness: number = 1;
 
     constructor(public ellipseService: EllipseService) {
         const ellipseProperties = ellipseService.toolProperties as BasicShapeProperties;
@@ -29,6 +29,11 @@ export class EllipseComponent {
     }
 
     onTypeDrawingChange(event: MatRadioChange): void {
-        if (Object.values(DrawingType).includes(event.value)) this.ellipseService.setTypeDrawing(event.value);
+        for (const value in DrawingType) {
+            if (DrawingType[value as keyof typeof DrawingType] === event.value) {
+                this.ellipseService.setTypeDrawing(event.value);
+                break;
+            }
+        }
     }
 }

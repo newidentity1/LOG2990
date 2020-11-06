@@ -1,0 +1,5 @@
+<button class="menu" *ngIf="inMenu" mat-button (click)="openDialog()" routerLink="/editor">Ouvrir le caroussel de dessins</button>
+
+<button *ngIf="!inMenu" matTooltip="Carrousel (ctrl+g)" matTooltipPosition="right" mat-button (click)="openDialog()">
+    <mat-icon> folder_special </mat-icon>
+</button>

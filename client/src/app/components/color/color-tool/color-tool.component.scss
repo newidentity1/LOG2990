@@ -6,6 +6,8 @@
 
 #colors-container {
     display: grid;
+    align-items: center;
+    justify-content: center;
 }
 
 #primary-color-picker-button {
@@ -23,6 +25,14 @@
 }
 
 #swap-color-button {
-    margin: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
     background-color: white;
+}
+
+#other {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

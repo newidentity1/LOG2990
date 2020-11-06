@@ -1,0 +1,8 @@
+<div id="undo-redo-container">
+    <button matTooltip="Annuler" mat-button [disabled]="!canUndo()" (click)="undo()">
+        <mat-icon> undo </mat-icon>
+    </button>
+    <button matTooltip="Refaire" mat-button [disabled]="!canRedo()" (click)="redo()">
+        <mat-icon> redo </mat-icon>
+    </button>
+</div>

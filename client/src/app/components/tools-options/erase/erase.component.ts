@@ -7,7 +7,7 @@ import { EraseService } from '@app/services/tools/erase/erase.service';
     styleUrls: ['../../sidebar/sidebar.component.scss'],
 })
 export class EraseComponent {
-    currentThickness: number;
+    currentThickness: number = 5;
     constructor(private eraseService: EraseService) {
         this.currentThickness = this.eraseService.toolProperties.thickness;
         this.eraseService.setThickness(this.eraseService.toolProperties.thickness);

@@ -13,29 +13,32 @@ describe('PencilService', () => {
 
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
-    let drawLineSpy: jasmine.Spy<any>;
+    let drawSpy: jasmine.Spy<any>;
     let drawCursorSpy: jasmine.Spy<any>;
 
     beforeEach(() => {
-        baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
-        previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setColor', 'setThickness']);
 
         TestBed.configureTestingModule({
             providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
         });
         service = TestBed.inject(PencilService);
-        drawLineSpy = spyOn<any>(service, 'drawLine').and.callThrough();
+        drawSpy = spyOn<any>(service, 'draw').and.callThrough();
         drawCursorSpy = spyOn<any>(service, 'drawCursor').and.callThrough();
 
-        // Configuration du spy du service
         // tslint:disable:no-string-literal
+        const canvas = document.createElement('canvas');
+        canvas.width = canvasTestHelper.canvas.width;
+        canvas.height = canvasTestHelper.canvas.height;
+        baseCtxStub = canvas.getContext('2d') as CanvasRenderingContext2D;
+        previewCtxStub = canvas.getContext('2d') as CanvasRenderingContext2D;
+        service['drawingService'].canvas = canvas;
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
         service['drawingService'].previewCtx = previewCtxStub;
 
         mouseEvent = {
-            offsetX: 25,
-            offsetY: 25,
+            clientX: 25,
+            clientY: 25,
             button: 0,
         } as MouseEvent;
     });
@@ -57,28 +60,28 @@ describe('PencilService', () => {
 
     it(' mouseDown should set mouseDown property to false on right click', () => {
         const mouseEventRClick = {
-            offsetX: 25,
-            offsetY: 25,
+            clientX: 25,
+            clientY: 25,
             button: 1,
         } as MouseEvent;
         service.onMouseDown(mouseEventRClick);
         expect(service.mouseDown).toEqual(false);
     });
 
-    it(' onMouseUp should call drawLine if mouse was already down', () => {
+    it(' onMouseUp should call draw if mouse was already down and inside canvas', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = true;
 
         service.onMouseUp(mouseEvent);
-        expect(drawLineSpy).toHaveBeenCalled();
+        expect(drawSpy).toHaveBeenCalled();
     });
 
-    it(' onMouseUp should not call drawLine if mouse was not already down', () => {
+    it(' onMouseUp should not call draw if mouse was not already down', () => {
         service.mouseDown = false;
         service.mouseDownCoord = { x: 0, y: 0 };
 
         service.onMouseUp(mouseEvent);
-        expect(drawLineSpy).not.toHaveBeenCalled();
+        expect(drawSpy).not.toHaveBeenCalled();
     });
 
     it(' onMouseMove should call drawLine and should not call drawCursor if mouse was already down', () => {
@@ -87,7 +90,7 @@ describe('PencilService', () => {
 
         service.onMouseMove(mouseEvent);
         expect(drawCursorSpy).not.toHaveBeenCalled();
-        expect(drawLineSpy).toHaveBeenCalled();
+        expect(drawSpy).toHaveBeenCalled();
     });
 
     it(' onMouseMove should call drawCursor and should not call drawLine if mouse was not already down', () => {
@@ -96,41 +99,7 @@ describe('PencilService', () => {
 
         service.onMouseMove(mouseEvent);
         expect(drawCursorSpy).toHaveBeenCalled();
-        expect(drawLineSpy).not.toHaveBeenCalled();
-    });
-
-    it(' onMouseEnterShould should call drawLine if mouse was already down', () => {
-        service.mouseDownCoord = { x: 0, y: 0 };
-        service.mouseDown = true;
-
-        service.onMouseEnter(mouseEvent);
-        expect(drawLineSpy).toHaveBeenCalled();
-    });
-
-    it(' onMouseEnterShould should not call drawLine if mouse was not already down', () => {
-        service.mouseDownCoord = { x: 0, y: 0 };
-        service.mouseDown = false;
-
-        service.onMouseEnter(mouseEvent);
-        expect(drawLineSpy).not.toHaveBeenCalled();
-    });
-
-    it(' onMouseLeave should call drawLine and should not call drawCursor if mouse was already down', () => {
-        service.mouseDownCoord = { x: 0, y: 0 };
-        service.mouseDown = true;
-
-        service.onMouseLeave(mouseEvent);
-        expect(drawCursorSpy).not.toHaveBeenCalled();
-        expect(drawLineSpy).toHaveBeenCalled();
-    });
-
-    it(' onMouseLeave should call drawCursor and should not call drawLine if mouse was not already down', () => {
-        service.mouseDownCoord = { x: 0, y: 0 };
-        service.mouseDown = false;
-
-        service.onMouseLeave(mouseEvent);
-        expect(drawCursorSpy).toHaveBeenCalled();
-        expect(drawLineSpy).not.toHaveBeenCalled();
+        expect(drawSpy).not.toHaveBeenCalled();
     });
 
     it(' setColors should call setColor of drawingService', () => {
@@ -138,14 +107,12 @@ describe('PencilService', () => {
         expect(drawServiceSpy.setColor).toHaveBeenCalled();
     });
 
-    // Exemple de test d'intégration qui est quand même utile
     it(' should change the pixel of the canvas ', () => {
-        mouseEvent = { offsetX: 0, offsetY: 0, button: 0 } as MouseEvent;
+        mouseEvent = { clientX: 0, clientY: 0, button: 0 } as MouseEvent;
         service.onMouseDown(mouseEvent);
-        mouseEvent = { offsetX: 1, offsetY: 0, button: 0 } as MouseEvent;
+        mouseEvent = { clientX: 1, clientY: 0, button: 0 } as MouseEvent;
         service.onMouseUp(mouseEvent);
 
-        // Premier pixel seulement
         const imageData: ImageData = baseCtxStub.getImageData(0, 0, 1, 1);
         expect(imageData.data[0]).toEqual(0); // R
         expect(imageData.data[1]).toEqual(0); // G
