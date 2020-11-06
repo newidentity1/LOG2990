@@ -38,7 +38,6 @@ describe('ToolbarService', () => {
         pencilServiceSpy = jasmine.createSpyObj('PencilService', [
             'onKeyDown',
             'setColors',
-            'onKeyPress',
             'onKeyUp',
             'onMouseMove',
             'onMouseDown',
@@ -215,15 +214,7 @@ describe('ToolbarService', () => {
         expect(service.currentTool.onKeyDown).toHaveBeenCalledWith(keyboardEvent);
     });
 
-    it('onKeyPress should call the onKeyPress of the currentTool', () => {
-        service.currentTool = pencilServiceSpy;
-        const keyboardEvent = { key: KeyShortcut.Pencil } as KeyboardEvent;
-        service.onKeyPress(keyboardEvent);
-
-        expect(service.currentTool.onKeyPress).toHaveBeenCalledWith(keyboardEvent);
-    });
-
-    it('onKeyUp should call the onKeyPress of the currentTool', () => {
+    it('onKeyUp should call the onKeyUp of the currentTool', () => {
         service.currentTool = pencilServiceSpy;
         const keyboardEvent = { key: KeyShortcut.Pencil } as KeyboardEvent;
         service.onKeyUp(keyboardEvent);
