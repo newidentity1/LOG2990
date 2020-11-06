@@ -16,12 +16,16 @@ h1, h2 {
     font-weight: bold;
     color: #ffffff;
 }
-
+.important-message{
+    color:#DB3938;
+    font-weight: bold;
+    font-size: 12px;
+}
 div {
     color: #eee
 }
 
-img {
+.create-drawing {
     height: 50%;
     width: 50%;
 }
@@ -36,3 +40,12 @@ iframe {
     width: 840px;
     height: 462px;
 }
+
+.max-image-height{
+    height: 462px;
+}
+
+#save-confirm{
+    display: flex;
+}
+

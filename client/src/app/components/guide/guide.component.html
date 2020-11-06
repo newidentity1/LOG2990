@@ -13,34 +13,62 @@
                 fonctionalités soient présentés à gauche. Vous pouvez cliquer
                 sur l'outil que vous voulez et ses propriétés seront affichées
                 à droite.
-                <br/>
-                <img alt="" src="../../../assets/screenshots/entry-point.png"/>
-                <img alt="" src="../../../assets/screenshots/interface.png"/>
+
+		<br/>
+
+                <img class="create-drawing" alt="" src="../../../assets/screenshots/entry-point.png"/>
+                <img class="create-drawing" alt="" src="../../../assets/screenshots/interface.png"/>
             </div>
             <h1>Carrousel de dessins</h1>
             <div>
-                Il est possible d'accéder au carrousel de dessin
-                depuis le menu principal et avec le raccourcis ctrl-g
-                depuis la vue de dessin. On peut filtrer les dessins
-                affichés et decider de charger un dessin.
+                <p>Il est possible d'accéder au carrousel de dessin
+                    depuis le menu principal et avec le raccourcis ctrl-g
+                    depuis la vue de dessin. On peut filtrer les dessins
+                    affichés à l'aide des étiquettes assignées et decider de charger un dessin.
+		</p>
+		<img alt="" src="../../../assets/screenshots/gallery.png"/>
             </div>
             <h1>Sauvegarde automatique et manuelle</h1>
             <div>
-                Une sauvegarde automatique est déclanchée après la création
-                d'un dessin, l'ouverture d'un dessin et à chaque
-                modification de la surface de dessin. La sauvegarde est
-                faite localement sur le navigateur de
-                l'utilisateur. En tout temps, il est possible de
-                sauvegarder manuellement un dessin en utilisant le
-                raccourcis ctrl-s.
+		<p> Une sauvegarde automatique est déclanchée après la création
+                    d'un dessin, l'ouverture d'un dessin et à chaque
+                    modification de la surface de dessin. La sauvegarde est
+                    faite localement sur le navigateur de
+                    l'utilisateur. En tout temps, il est possible de
+                    sauvegarder manuellement un dessin en utilisant le
+                    raccourcis ctrl-s.
+		</p>
+		<h2> Sauvegarde manuelle </h2>
+		<p>
+		    Dans la fenêtre de sauvegarde manuelle, il est possible d'associer des étiquettes à
+		    l'image que l'on souhaite sauvegarder. Les étiquettes ajoutées à l'image apparaissent
+		    au dessus du bouton d'envoi et d'annulation. En cliquant sur le x, il est possible d'enlever
+		    une étiquette. Une fois sauvegardé, le dessin apparaîtra dans le carroussel de dessins.
+		    Après avoir cliquer sur le bouton sauvergarder, un message apparaîtra à l'écran afin
+		    de confirmer la réussite de la sauvegarde du dessin.
+		</p>
+		<p class="important-message">Le titre est un champ oligatoire à remplir</p>
+		<img id="save-confirm" alt="" src="../../../assets/screenshots/save-confirm.png"/>
+		<img class="max-image-height" alt="" src="../../../assets/screenshots/sauvegarder-dessin.png"/>
             </div>
             <h1>Exportation</h1>
             <div>
                 Lorsqu'on fait un dessin, il est possible de
                 l'exporter en format JPG ou PNG. Cette fonctionalité
                 permet aussi d'appliquer un filtre parmi cinq sur le
-                dessin. Il est possible d'envoyer le dessin
+                dessin. Les cinq filtres sont disponibles dans l'onglet
+		« filtre ». Il est possible d'envoyer le dessin
                 directement par email au lieu de l'exporter localement.
+		La taille de l'image exportée est présentée au coin inférieur droit.
+		<p class="important-message">
+		    Le titre est un champ oligatoire à remplir
+		    <br/>
+		    L'image sera exportée avec la taille exacte de la zone de dessin
+		</p>
+
+		<img class="max-image-height" alt="" src="../../../assets/screenshots/export-window.png"/>
+		<img class="max-image-height" alt="" src="../../../assets/screenshots/export-filters.png"/>
+
             </div>
         </mat-tab>
         <mat-tab label="Dessiner">
@@ -76,6 +104,14 @@
                         <td>Ligne</td>
                         <td>L</td>
                     </tr>
+		    <tr>
+                        <td>Pipette</td>
+                        <td>I</td>
+                    </tr>
+		    <tr>
+                        <td>Sceau de peinture</td>
+                        <td>B</td>
+                    </tr>
                 </table>
                 Les propriétés de chaque outil peuvent être manipulées
                 lorsqu'on clique sur l'outil.
@@ -103,7 +139,7 @@
                     src="https://www.youtube.com/embed/_TmSF3Ni0-I"
                     frameborder="0"
                     allow="accelerometer; autoplay;
-                           clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                         clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowfullscreen>
                 </iframe>
             </div>
@@ -121,7 +157,7 @@
                     src="https://www.youtube.com/embed/iNJrAj3Qx8c"
                     frameborder="0"
                     allow="accelerometer; autoplay; clipboard-write;
-                           encrypted-media; gyroscope; picture-in-picture"
+                         encrypted-media; gyroscope; picture-in-picture"
                     allowfullscreen>
                 </iframe>
             </div>
@@ -141,7 +177,7 @@
                     src="https://www.youtube.com/embed/BMgo0-W83XM"
                     frameborder="0"
                     allow="accelerometer; autoplay; clipboard-write;
-                           encrypted-media; gyroscope; picture-in-picture"
+                         encrypted-media; gyroscope; picture-in-picture"
                     allowfullscreen>
                 </iframe>
             </div>
@@ -160,7 +196,7 @@
                     src="https://www.youtube.com/embed/ClZqhBwHFjs"
                     frameborder="0"
                     allow="accelerometer; autoplay; clipboard-write;
-                           encrypted-media; gyroscope; picture-in-picture"
+                         encrypted-media; gyroscope; picture-in-picture"
                     allowfullscreen>
                 </iframe>
             </div>
@@ -175,7 +211,7 @@
                     src="https://www.youtube.com/embed/kjFUTQJ9_yI"
                     frameborder="0"
                     allow="accelerometer; autoplay; clipboard-write;
-                           encrypted-media; gyroscope; picture-in-picture"
+                         encrypted-media; gyroscope; picture-in-picture"
                     allowfullscreen>
                 </iframe>
             </div>
@@ -197,10 +233,71 @@
                     src="https://www.youtube.com/embed/fSmFDLBFcqg"
                     frameborder="0"
                     allow="accelerometer; autoplay; clipboard-write;
-                           encrypted-media; gyroscope; picture-in-picture"
+                         encrypted-media; gyroscope; picture-in-picture"
                     allowfullscreen>
                 </iframe>
             </div>
+	    <h1> Pipette </h1>
+	    <div>
+
+		L'outil pipette permet de sélectionner la couleur
+		du pixel qui se trouve directement sous le pointeur de la souris.
+		Un clic avec le bouton gauche l'assigne à la couleur
+		principale et un clic avec le bouton droit l'assigne
+		à la couleur secondaire.
+
+		Grâce au cercle de prévisualisation se trouvant sur
+		le panneau d'attributs, il est possible de sélectionner
+		facilement et précisément un pixel particulier. Le cercle
+		est une représentation surdimensionée du canvas, comme une
+		loupe, qui suit le pointeur de la souris.
+
+		<br/>
+
+		<iframe
+                    src="https://www.youtube.com/embed/e2z-QXEnrDk"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write;
+                         encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+                </iframe>
+	    </div>
+
+	    <h1> Sceau de peinture </h1>
+	    <div>
+
+		L'outil « sceau de peinture » permet d'effectuer un remplissage qui colore une ou
+		plusieurs étendues de pixels en fonction de leur couleur. L’outil peut s’utiliser
+		selon deux modes d’opérations : « pixels contigus » et
+		« pixels non contigus ».
+
+		<h2>Pixels contigus (clic gauche):</h2>
+		<p> Chaque pixel voisin partageant la couleur du pixel selectionné est ajouté
+		    à la région. Pour chaque nouveau pixel ajouté, la vérification est effectuée à nouveau.
+		    Le résultat de ce mode est une région de pixels connectés partageant la même couleur.
+		    Enfin, la couleur princale est appliquée à tous les pixels de la région</p>
+
+		<h2>Pixels non contigus (clic droit):</h2>
+		<p> Chaque pixel du canvas (pas forcément voisin) partageant la couleur du pixel selectionné est ajouté
+		    à la région. Ensuite, la couleur principale est appliquée à tous les pixels de la région. </p>
+
+		<h2> Tolérance </h2>
+		<p> Permet de colorer des pixels partageant une couleur similaire (nuances de couleurs)
+		    Un pourcentage de zéro indique aucune tolérance : seuls les pixels de couleur indentique sont identifiés
+		    comme étant à colorer. Plus le pourcentage monte, plus l’écart de couleur toléré est grand. Un
+		    pourcentage de 100 indique une tolérance totale. C’est-à-dire que toutes les couleurs sont acceptées.
+		    Il en résulte donc que l’entièreté des pixels de la surface de dessin sera à colorer.</p>
+
+		<br/>
+
+		<iframe src="https://www.youtube.com/embed/za4aDfwGHwE"
+			frameborder="0"
+			allow="accelerometer; autoplay; clipboard-write;
+			     encrypted-media; gyroscope; picture-in-picture"
+			allowfullscreen>
+		</iframe>
+	    </div>
+
             <h1>Manipulations de sélection</h1>
             <div>
                 Lorsqu'on a une sélection de faite il est possible de
@@ -240,6 +337,14 @@
                 sélection en appuyant la touche escape ou en cliquant
                 en dehors de la sélection.
             </div>
+	    <br/>
+	    <iframe src="https://www.youtube.com/embed/IFROs8jRBAs"
+		    frameborder="0"
+		    allow="accelerometer; autoplay; clipboard-write;
+			 encrypted-media; gyroscope; picture-in-picture"
+		    allowfullscreen>
+	    </iframe>
+
             <h1>Annuler-refaire</h1>
             <div>
                 Lorsqu'on fait un dessin, il est toujours possible
@@ -247,8 +352,16 @@
                 peut utiliser les raccourcis ctrl-z pour annuler et
                 ctrl-shift-z pour refaire. Il est aussi possible
                 d'accéder à cette fonctionalité depuis la barre
-                latérale.
+                latérale .
             </div>
+
+	    <iframe src="https://www.youtube.com/embed/DrIp2UJtxAU"
+		    frameborder="0"
+		    allow="accelerometer; autoplay; clipboard-write;
+			 encrypted-media; gyroscope; picture-in-picture"
+		    allowfullscreen>
+	    </iframe>
+
             <h1>Grille et magnetisme</h1>
             <div>
                 Sur la surface de dessin, il est possible d'afficher
