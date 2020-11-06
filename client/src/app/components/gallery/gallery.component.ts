@@ -140,7 +140,7 @@ export class GalleryComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         this.updateDrawings(this.drawings);
         if (this.drawings.length > 0) {
-            this.isDrawing = true; // je vais test ca
+            this.isDrawing = true;
         } else {
             this.isDrawing = false;
         }

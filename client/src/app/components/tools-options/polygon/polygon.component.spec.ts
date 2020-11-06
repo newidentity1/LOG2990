@@ -54,7 +54,6 @@ describe('PolygonComponent', () => {
     it('onThicknessChange should not call setThickness of polygon service if value is outside scope', () => {
         matSliderEvent = { source: matSliderSource, value: MINIMUM_THICKNESS - 1 };
         component.onThicknessChange(matSliderEvent);
-        // constructor call
         expect(polygonServiceMock.setThickness).toHaveBeenCalled();
         expect(polygonServiceMock.setThickness).not.toHaveBeenCalledWith(matSliderEvent.value);
     });
