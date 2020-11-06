@@ -1,4 +1,4 @@
-export interface ImageSlider {
+export interface ImageGallery {
     image: string;
     thumbImage: string;
     title: string;
