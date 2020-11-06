@@ -3,6 +3,7 @@ import { FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Command } from '@app/classes/commands/command';
 import { ResizeCommand } from '@app/classes/commands/resize-command';
+import { ImageGallery } from '@app/classes/image-gallery';
 import { WarningDialogComponent } from '@app/components/gallery/warning/warning-dialog.component';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -11,7 +12,6 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Drawing } from '@common/communication/drawing';
 import { NgImageSliderComponent } from 'ng-image-slider';
 import { Observable, Subscription } from 'rxjs';
-import { ImageSlider } from './image';
 @Component({
     selector: 'app-gallery-dialog',
     styleUrls: ['./gallery-dialog.component.scss'],
@@ -20,7 +20,7 @@ import { ImageSlider } from './image';
 export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('imageSlider', { static: false }) slider: NgImageSliderComponent;
     drawings: Drawing[] = [];
-    tab: ImageSlider[] = [];
+    tab: ImageGallery[] = [];
     drawingTags: string[] = [];
     tagToAdd: string = '';
     isDrawing: boolean = false;
@@ -60,7 +60,7 @@ export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy 
     }
 
     private updateDrawings(totalDrawings: Drawing[]): void {
-        this.tab = [];
+        this.tab = [{} as ImageGallery];
         this.slider.images.length = 0;
         for (const image of totalDrawings) {
             const prefix = image.tags.length ? '\nÉtiquette: ' : '';
@@ -116,8 +116,7 @@ export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy 
 
     deleteDrawing(): void {
         if (this.drawings.length !== 0) {
-            let imageIndex: number;
-            imageIndex = this.drawings.length > 2 ? this.slider.visiableImageIndex + 2 : this.slider.visiableImageIndex + 1;
+            const imageIndex = this.slider.visiableImageIndex;
             const draw: Drawing = this.drawings[imageIndex];
             this.fireBaseService.deleteImage(draw._id);
             this.communicationService.deleteDrawing(draw._id).subscribe(() => {
@@ -140,7 +139,7 @@ export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy 
             this.drawings.push(draw);
         }
         this.updateDrawings(this.drawings);
-        this.isDrawing = this.drawings.length > 1 ? true : false;
+        this.isDrawing = this.drawings.length > 0 ? true : false;
     }
 
     addTag(tag: string): void {
