@@ -73,11 +73,10 @@ describe('ColorPickerService', () => {
     });
 
     it(' onMouseDown should draw cursor', () => {
-        // color of cursor is inverse of selected color
+        // color of cursor is inverse of selected colo
         service.selectedColor = new Color(WHITE);
         service.onMouseDown(leftMouseEvent);
 
-        // Premier pixel seulement
         const imageData: ImageData = service.cursorCanvasCtx.getImageData(
             leftMouseEvent.offsetX,
             leftMouseEvent.offsetY + COLOR_PICKER_CURSOR_RADIUS,
@@ -266,7 +265,6 @@ describe('ColorPickerService', () => {
     });
 
     it(' addToRecentColors should remove last color from recentColors array if length is MAX_RECENT_COLORS_SIZE', () => {
-        // Manually adding 10 colors even if it's the same
         service.recentColors = [];
         for (let i = 0; i < MAX_RECENT_COLORS_SIZE; i++) {
             service.recentColors.push(new Color(BLACK));

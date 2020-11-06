@@ -10,9 +10,7 @@ import { FireBaseService } from '@app/services/firebase/fire-base.service';
 import { Drawing } from '@common/communication/drawing';
 import { NgImageSliderComponent, NgImageSliderModule } from 'ng-image-slider';
 import { Observable, of } from 'rxjs';
-// import { Observable } from 'rxjs';
 import { GalleryComponent } from './gallery.component';
-// import { of } from 'rxjs';
 
 describe('GalleryComponent', () => {
     let component: GalleryComponent;

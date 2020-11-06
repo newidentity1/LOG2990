@@ -43,7 +43,6 @@ describe('EyedropperService', () => {
         service.previewCircleCtx = colorPreviewCanvas.getContext('2d') as CanvasRenderingContext2D;
         service.cursorCtx = cursorCanvas.getContext('2d') as CanvasRenderingContext2D;
 
-        // Configuration du spy du service
         // tslint:disable:no-string-literal / reason: accessing private member
         const drawingCanvas = document.createElement('canvas');
         drawingCanvas.width = canvasTestHelper.canvas.width;
@@ -159,7 +158,6 @@ describe('EyedropperService', () => {
     });
 
     it(' getColorFromPosition should return white color if picked color is white', () => {
-        // Setting canvas to white
         const expectedColor = new Color(WHITE);
         baseCtxStub.fillStyle = expectedColor.toStringRGBA();
         baseCtxStub.fillRect(0, 0, canvasTestHelper.canvas.width, canvasTestHelper.canvas.height);

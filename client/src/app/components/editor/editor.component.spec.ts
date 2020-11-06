@@ -54,7 +54,6 @@ describe('EditorComponent', () => {
 
         toolbarServiceMock = TestBed.inject(ToolbarService);
 
-        // adding a few shortcuts
         toolbarServiceMock.keyShortcuts = new Map();
         toolbarServiceMock.keyShortcuts
             .set(KeyShortcut.Pencil, pencilServiceSpy)
