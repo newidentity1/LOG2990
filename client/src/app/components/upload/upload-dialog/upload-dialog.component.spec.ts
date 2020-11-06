@@ -65,7 +65,7 @@ describe('UploadDialogComponent', () => {
     });
 
     it(' uploadImage should call uploadCanvas of firebaseService ', () => {
-        component.drawingTitle = 'test';
+        component.titleForm.setValue('test');
         component.drawingTags = ['test1'];
         component.uploadImage();
         expect(fireBaseServiceSpy.name).toEqual('test');
@@ -103,22 +103,22 @@ describe('UploadDialogComponent', () => {
     });
 
     it(' isTitleInputEmpty should return true if current title is empty', () => {
-        component.drawingTitle = '';
+        component.titleForm.setValue('');
         expect(component.isTitleInputEmpty()).toEqual(true);
     });
 
     it(' isTitleInputEmpty should return false if current title is not empty', () => {
-        component.drawingTitle = 'validTitle';
+        component.titleForm.setValue('title');
         expect(component.isTitleInputEmpty()).toEqual(false);
     });
 
     it(' isTagInputEmpty should return true if current tag is empty', () => {
-        component.tagToAdd = '';
+        component.tagForm.setValue('');
         expect(component.isTagInputEmpty()).toEqual(true);
     });
 
     it(' isTagInputEmpty should return false if current tag is not empty', () => {
-        component.tagToAdd = 'validTag';
+        component.tagForm.setValue('tag');
         expect(component.isTagInputEmpty()).toEqual(false);
     });
 });
