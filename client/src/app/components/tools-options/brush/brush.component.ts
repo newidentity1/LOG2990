@@ -28,6 +28,11 @@ export class BrushComponent {
     }
 
     onFilterChange(event: MatRadioChange): void {
-        if (Object.values(this.filterType).includes(event.value)) this.brushService.setFilter(event.value);
+        for (const value in BrushType) {
+            if (BrushType[value as keyof typeof BrushType] === event.value) {
+                this.brushService.setFilter(event.value);
+                break;
+            }
+        }
     }
 }

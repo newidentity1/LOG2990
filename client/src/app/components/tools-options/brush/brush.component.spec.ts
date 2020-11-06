@@ -32,7 +32,9 @@ describe('BrushComponent', () => {
         }).compileComponents();
         brushServiceMock = TestBed.inject(BrushService) as jasmine.SpyObj<BrushService>;
         thicknessSpy = spyOn(brushServiceMock, 'setThickness').and.callThrough();
-        filterSpy = spyOn(brushServiceMock, 'setFilter').and.callThrough();
+        filterSpy = spyOn(brushServiceMock, 'setFilter').and.callFake(() => {
+            return;
+        });
     }));
 
     beforeEach(() => {
