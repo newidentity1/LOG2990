@@ -29,7 +29,6 @@ describe('EditorComponent', () => {
     beforeEach(async(() => {
         toolbarServiceMock = jasmine.createSpyObj('ToolbarService', [
             'onKeyDown',
-            'onKeyPress',
             'onKeyUp',
             'changeTool',
             'changeSelectionTool',
@@ -89,22 +88,6 @@ describe('EditorComponent', () => {
         jasmine.clock().tick(delay);
         expect(spyComputeDims).toHaveBeenCalledWith(true);
         jasmine.clock().uninstall();
-    });
-
-    it('should call the toolbar onKeyDown when receiving a keyboard event', () => {
-        const eventSpy = jasmine.createSpyObj('KeyboardEvent', ['preventDefault']);
-        component.onKeyDown(eventSpy);
-        expect(eventSpy.preventDefault).toHaveBeenCalled();
-        expect(toolbarServiceMock.onKeyDown).toHaveBeenCalled();
-        expect(toolbarServiceMock.onKeyDown).toHaveBeenCalledWith(eventSpy);
-    });
-
-    it('should call the toolbar onKeyPress when receiving a keyboard event', () => {
-        const eventSpy = jasmine.createSpyObj('KeyboardEvent', ['preventDefault']);
-        component.onKeyPress(eventSpy);
-        expect(eventSpy.preventDefault).toHaveBeenCalled();
-        expect(toolbarServiceMock.onKeyPress).toHaveBeenCalled();
-        expect(toolbarServiceMock.onKeyPress).toHaveBeenCalledWith(eventSpy);
     });
 
     it('should call the toolbar onKeyUp when receiving a keyboard event', () => {
@@ -203,5 +186,11 @@ describe('EditorComponent', () => {
         const shortcutEvent = new KeyboardEvent('keydown', { key: 'control.shift.z' });
         document.dispatchEvent(shortcutEvent);
         expect(toolbarServiceMock.redo).toHaveBeenCalled();
+    });
+
+    it('keydown event should call onKeyDown of toolbar', () => {
+        const shortcutEvent = new KeyboardEvent('keydown', { key: 'Escape' });
+        document.dispatchEvent(shortcutEvent);
+        expect(toolbarServiceMock.onKeyDown).toHaveBeenCalledWith(shortcutEvent);
     });
 });
