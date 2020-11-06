@@ -1,11 +1,11 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { ResponseResult } from '@app/classes/response-result';
-import { FireBaseService } from '@app/services/firebase/fire-base.service';
-import { Drawing } from '@common/communication/drawing';
-import { Subscription } from 'rxjs';
+import { Command } from '@app/classes/commands/command';
+import { ResizeCommand } from '@app/classes/commands/resize-command';
+import { ResizerProperties } from '@app/classes/resizer-properties';
+import { CANVAS_MARGIN_LEFT, CANVAS_MIN_HEIGHT, CANVAS_MIN_WIDTH, SELECTION_CONTROL_POINT_SIZE } from '@app/constants/constants';
+import { MouseButton } from '@app/enums/mouse-button.enum';
+import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Observable, Subscription } from 'rxjs';
@@ -161,7 +161,7 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
         if (this.isResizingHeight) {
             event.preventDefault();
             let newHeight = event.clientY - this.baseCanvas.nativeElement.getBoundingClientRect().y;
-            const heightLimit = this.drawingContainerHeight - CANVAS_MARGIN_TOP;
+            const heightLimit = this.drawingContainerHeight - CANVAS_MARGIN_LEFT;
             if (newHeight < CANVAS_MIN_HEIGHT) {
                 newHeight = CANVAS_MIN_HEIGHT;
             } else if (newHeight > heightLimit) {
