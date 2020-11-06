@@ -182,7 +182,9 @@ describe('ExportDrawingDialogComponent', () => {
         const setWhiteBackgroundSpy = spyOn<any>(component, 'setWhiteBackground').and.callThrough();
         const drawImageSpy = spyOn<any>(component.exportCtx, 'drawImage').and.callThrough();
 
-        spyOn(component.drawingImageContainer.nativeElement, 'click').and.callFake(() => {});
+        spyOn(component.drawingImageContainer.nativeElement, 'click').and.callFake(() => {
+            return;
+        });
         component['downloadImage']();
         expect(setWhiteBackgroundSpy).toHaveBeenCalledWith(component.exportCtx);
         expect(drawImageSpy).toHaveBeenCalled();
