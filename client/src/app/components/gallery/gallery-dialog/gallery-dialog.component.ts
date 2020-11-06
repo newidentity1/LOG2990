@@ -68,6 +68,7 @@ export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy 
             this.tab.push(obj);
         }
         this.slider.setSliderImages(this.tab);
+        this.slider.next();
     }
 
     private getDrawingTagsToString(drawing: Drawing): string {
