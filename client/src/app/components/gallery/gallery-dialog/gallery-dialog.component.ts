@@ -22,7 +22,6 @@ export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy 
     drawings: Drawing[] = [];
     tab: ImageGallery[] = [];
     drawingTags: string[] = [];
-    tagToAdd: string = '';
     isDrawing: boolean = false;
     tagForm: FormControl;
     isCanvasEmpty: boolean = true;
@@ -38,7 +37,7 @@ export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy 
     ) {}
 
     ngOnInit(): void {
-        this.tagForm = new FormControl(this.tagToAdd, [Validators.pattern('^(\\d|[a-zA-ZÀ-ÿ]){0,15}$'), Validators.required]);
+        this.tagForm = new FormControl('', [Validators.pattern('^(\\d|[a-zA-ZÀ-ÿ]){0,15}$'), Validators.required]);
         this.resizeCommand = new ResizeCommand(this.drawingService);
         this.subscribeExecutedCommand = this.resizeCommand.executedCommand.subscribe((command: Command) => {
             this.undoRedoService.addCommand(command);
@@ -51,12 +50,6 @@ export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy 
 
     ngAfterViewInit(): void {
         this.getDrawings();
-    }
-
-    openDialog(): void {
-        this.dialog.open(GalleryDialogComponent, {
-            height: '55%',
-        });
     }
 
     private updateDrawings(totalDrawings: Drawing[]): void {
@@ -145,6 +138,7 @@ export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy 
     addTag(tag: string): void {
         this.drawingTags.push(tag);
         this.updateDrawingsBydrawingTags();
+        this.tagForm.reset('');
     }
 
     deleteTag(tag: string): void {
@@ -178,5 +172,9 @@ export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy 
 
     validateTag(tag: string): boolean {
         return tag.length > 0 && !this.drawingTags.includes(tag) && !this.tagForm.invalid;
+    }
+
+    isTagInputEmpty(): boolean {
+        return this.tagForm.value.length === 0;
     }
 }
