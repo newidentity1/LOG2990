@@ -130,10 +130,6 @@ export class ToolbarService {
         this.currentTool.onKeyDown(event);
     }
 
-    onKeyPress(event: KeyboardEvent): void {
-        this.currentTool.onKeyPress(event);
-    }
-
     onKeyUp(event: KeyboardEvent): void {
         this.currentTool.onKeyUp(event);
     }
