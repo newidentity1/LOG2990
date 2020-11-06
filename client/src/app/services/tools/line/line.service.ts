@@ -30,7 +30,7 @@ export class LineService extends Tool {
         this.mouseDown = event.button === MouseButton.Left;
         const mousePosition = this.getPositionFromMouse(event);
         if (this.pathData.length > 1 && this.shift) {
-            this.angleTransform(mousePosition)
+            this.angleTransform(mousePosition);
             this.draw(this.drawingService.previewCtx);
         }
         this.pathData.push(mousePosition);

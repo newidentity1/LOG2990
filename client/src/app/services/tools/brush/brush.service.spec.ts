@@ -53,7 +53,7 @@ describe('BrushService', () => {
     });
 
     it('mouseMove should call drawCursor if mouseDown is false', () => {
-        // tslint:disable-next-line: no-any/ reason: jasmine spy
+        // tslint:disable-next-line: no-any / reason: jasmine spy
         const drawCursorSpy = spyOn<any>(service, 'drawCursor').and.callThrough();
 
         service.mouseDown = false;
