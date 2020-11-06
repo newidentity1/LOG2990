@@ -39,10 +39,9 @@ mat-sidenav-container {
 }
 
 #other-tools {
+    height: auto;
     position: absolute;
     bottom: 1px;
-    z-index: 200;
-    background-color: $primaryColor;
 }
 
 mat-sidenav {
