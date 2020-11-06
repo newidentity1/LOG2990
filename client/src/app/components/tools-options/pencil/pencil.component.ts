@@ -9,7 +9,7 @@ import { PencilService } from '@app/services/tools/pencil/pencil-service';
     styleUrls: ['../../sidebar/sidebar.component.scss'],
 })
 export class PencilComponent {
-    currentThickness: number;
+    currentThickness: number = 1;
 
     constructor(private pencilService: PencilService) {
         this.currentThickness = this.pencilService.toolProperties.thickness;

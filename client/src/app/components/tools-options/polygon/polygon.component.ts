@@ -13,9 +13,9 @@ import { PolygonService } from '@app/services/tools/polygon/polygon.service';
 })
 export class PolygonComponent {
     typesDrawing: typeof DrawingType = DrawingType;
-    currentType: string;
-    currentThickness: number;
-    currentNumberOfSides: number;
+    currentType: string = DrawingType.Fill;
+    currentThickness: number = 1;
+    currentNumberOfSides: number = 3;
 
     constructor(public polygonService: PolygonService) {
         const polygoneProperties = polygonService.toolProperties as PolygonProperties;

@@ -13,7 +13,7 @@ import { ToolbarService } from '@app/services/toolbar/toolbar.service';
     styleUrls: ['./sidebar.component.scss'],
 })
 export class SidebarComponent {
-    tools: Tool[];
+    tools: Tool[] = [];
     @ViewChild('toolProperties') sidenavProperties: MatSidenav;
     @ViewChild(CreateNewDrawingComponent) newDrawingRef: CreateNewDrawingComponent;
     @ViewChild(ExportDrawingComponent) exportRef: ExportDrawingComponent;

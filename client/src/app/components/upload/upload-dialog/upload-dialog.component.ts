@@ -17,14 +17,12 @@ export class UploadDialogComponent implements OnInit, OnDestroy {
     drawings: Drawing[] = [];
     drawingTags: string[] = [];
     tagToAdd: string = '';
-    tagEmpty: boolean;
+    tagEmpty: boolean = false;
     tagForm: FormControl;
     titleForm: FormControl;
     subscribeSaveDrawing: Subscription;
 
-    constructor(public dialog: MatDialog, public fireBaseService: FireBaseService, private snackBar: MatSnackBar) {
-        this.drawingTitle = '';
-    }
+    constructor(public dialog: MatDialog, public fireBaseService: FireBaseService, private snackBar: MatSnackBar) {}
 
     ngOnInit(): void {
         this.tagForm = new FormControl(this.tagToAdd, [Validators.pattern('^(\\d|[a-zA-ZÀ-ÿ]){0,15}$'), Validators.required]);

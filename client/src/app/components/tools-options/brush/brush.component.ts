@@ -13,8 +13,8 @@ import { BrushService } from '@app/services/tools/brush/brush.service';
 })
 export class BrushComponent {
     filterType: typeof BrushType = BrushType;
-    currentFilter: string;
-    currentThickness: number;
+    currentFilter: string = BrushType.Blurred;
+    currentThickness: number = 1;
 
     constructor(public brushService: BrushService) {
         const brushProperties = brushService.toolProperties as BrushProperties;

@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
@@ -13,7 +12,6 @@ export class EraseService extends PencilService {
         this.name = 'Eraser';
         this.tooltip = 'Efface(e)';
         this.iconName = 'kitchen';
-        this.toolProperties = new BasicShapeProperties();
         this.clearPath();
     }
 

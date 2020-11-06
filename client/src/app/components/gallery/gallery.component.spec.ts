@@ -119,7 +119,7 @@ describe('GalleryComponent', () => {
         const fakeDrawing1: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
         totalDrawings.push(fakeDrawing1);
         component.updateDrawings(totalDrawings);
-        expect(component.tab.length).toEqual(1);
+        expect(component.imageObjects.length).toEqual(1);
     });
 
     it('getDrawingTagsToString should return the tags of the drawing in string', () => {
