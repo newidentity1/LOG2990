@@ -127,11 +127,8 @@ export class LineService extends Tool {
 
     setTypeDrawing(value: string): void {
         const lineProperties = this.toolProperties as LineProperties;
-        if (value[0] === 'A') {
-            lineProperties.withPoint = true;
-        } else {
-            lineProperties.withPoint = false;
-        }
+        lineProperties.withPoint = value[0] === 'A' ? true : false;
+
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.draw(this.drawingService.previewCtx);
     }

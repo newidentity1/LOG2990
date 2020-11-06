@@ -67,11 +67,7 @@ export class ColorPickerService extends Tool {
     }
 
     resetSelectedColor(isSecondaryColorPicker: boolean): void {
-        if (isSecondaryColorPicker) {
-            this.selectedColor = this.secondaryColor.getValue().clone();
-        } else {
-            this.selectedColor = this.primaryColor.getValue().clone();
-        }
+        this.selectedColor = isSecondaryColorPicker ? this.secondaryColor.getValue().clone() : this.primaryColor.getValue().clone();
     }
 
     swapColors(): void {
