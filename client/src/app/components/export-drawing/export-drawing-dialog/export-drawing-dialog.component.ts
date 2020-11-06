@@ -17,7 +17,6 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
     selectedFormat: string;
     selectedFilter: ExportFilterType;
     typeExportFilter: typeof ExportFilterType = ExportFilterType;
-    drawingTitle: string;
     previewCtx: CanvasRenderingContext2D;
     exportCtx: CanvasRenderingContext2D;
     private exportFilter: string;
@@ -30,7 +29,6 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
     constructor(public dialogRef: MatDialogRef<ExportDrawingDialogComponent>, public drawingService: DrawingService) {
         this.selectedFormat = 'jpeg';
         this.selectedFilter = ExportFilterType.None;
-        this.drawingTitle = '';
         this.sliderIsVisible = false;
         this.exportFilter = 'none';
         this.percentage = 1;
@@ -170,7 +168,7 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
         this.exportCtx.filter = 'none';
 
         this.setImageUrl();
-        this.drawingImageContainer.nativeElement.download = this.drawingTitle + '.' + this.selectedFormat;
+        this.drawingImageContainer.nativeElement.download = this.titleForm.value + '.' + this.selectedFormat;
         this.drawingImageContainer.nativeElement.click();
         this.dialogRef.close();
     }
