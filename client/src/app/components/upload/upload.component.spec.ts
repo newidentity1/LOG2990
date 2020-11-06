@@ -8,7 +8,7 @@ describe('UploadComponent', () => {
     let fixture: ComponentFixture<UploadComponent>;
 
     const mockDialog = {
-        close: jasmine.createSpy('close'),
+        open: jasmine.createSpy('open'),
     };
 
     beforeEach(async(() => {
@@ -30,5 +30,10 @@ describe('UploadComponent', () => {
 
     it('should create', () => {
         expect(component).toBeTruthy();
+    });
+
+    it('should open dialog', () => {
+        component.uploadImage();
+        expect(component.dialog.open).toHaveBeenCalled();
     });
 });
