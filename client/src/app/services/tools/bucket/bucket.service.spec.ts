@@ -72,7 +72,8 @@ describe('BucketService', () => {
         service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(2, 2, 1, 1).data;
         service['generateMatrice']();
         const p1: Pixel = { x: -1, y: -1, status: 0 };
-        expect(service['checkColor'](p1)).toEqual(false);
+        const index = (p1.y * drawServiceSpy.canvas.width + p1.x) * (CONSTANTS.IMAGE_DATA_OPACITY_INDEX + 1);
+        expect(service['checkColor'](index)).toEqual(false);
     });
 
     it('GenerateMatrice should generate a matrice of Pixel with a status of 0', () => {
@@ -267,7 +268,8 @@ describe('BucketService', () => {
         service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(2, 2, 1, 1).data;
         service['generateMatrice']();
         const p1: Pixel = { x: 2, y: 2, status: 1 };
-        expect(service['checkColor'](p1)).toBeTrue();
+        const index = (p1.y * drawServiceSpy.canvas.width + p1.x) * (CONSTANTS.IMAGE_DATA_OPACITY_INDEX + 1);
+        expect(service['checkColor'](index)).toBeTrue();
     });
 
     it('clone should return a clone of the tool', () => {
