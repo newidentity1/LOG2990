@@ -154,10 +154,8 @@ describe('GalleryDialogComponent', () => {
 
     it('deleteDrawing should delete the current draw from the left image of the slider', () => {
         const fakeDrawing1: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
-        const fakeDrawing2: Drawing = { _id: 'test', name: 'test', tags: [], url: 'test' };
         component.slider.visiableImageIndex = 0;
         component.drawings.push(fakeDrawing1);
-        component.drawings.push(fakeDrawing2);
         communicationSpy.deleteDrawing.and.returnValue(of(''));
         component.deleteDrawing();
 
