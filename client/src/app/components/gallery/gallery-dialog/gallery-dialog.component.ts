@@ -117,11 +117,7 @@ export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy 
     deleteDrawing(): void {
         if (this.drawings.length !== 0) {
             let imageIndex: number;
-            if (this.drawings.length > 2) {
-                imageIndex = this.slider.visiableImageIndex + 2;
-            } else {
-                imageIndex = this.slider.visiableImageIndex + 1;
-            }
+            imageIndex = this.drawings.length > 2 ? this.slider.visiableImageIndex + 2 : this.slider.visiableImageIndex + 1;
             const draw: Drawing = this.drawings[imageIndex];
             this.fireBaseService.deleteImage(draw._id);
             this.communicationService.deleteDrawing(draw._id).subscribe(() => {
@@ -144,11 +140,7 @@ export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy 
             this.drawings.push(draw);
         }
         this.updateDrawings(this.drawings);
-        if (this.drawings.length > 1) {
-            this.isDrawing = true; // je vais test ca
-        } else {
-            this.isDrawing = false;
-        }
+        this.isDrawing = this.drawings.length > 1 ? true : false;
     }
 
     addTag(tag: string): void {
