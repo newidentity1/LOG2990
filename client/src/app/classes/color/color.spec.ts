@@ -203,7 +203,6 @@ describe('Color', () => {
 
     it(' computeRBGFromHex should set hex if RGB values are valid', () => {
         const testColor = new Color();
-        // manually setting hex string
         testColor['hexString'] = 'ABCDEF';
         testColor['computeRBGFromHex']();
         expect(testColor['redValue']).toEqual(171);
@@ -213,7 +212,6 @@ describe('Color', () => {
 
     it(' computeRBGFromHex should not set hex if RGB values are invalid', () => {
         const testColor = new Color();
-        // manually setting hex string
         testColor['hexString'] = 'ssssss';
         testColor['computeRBGFromHex']();
         expect(testColor['redValue']).toEqual(0);
