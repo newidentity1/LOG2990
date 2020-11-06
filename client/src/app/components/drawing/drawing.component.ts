@@ -144,7 +144,6 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
         return false;
     }
 
-    // @HostListener('window:mousemove', ['$event'])
     onResize(event: MouseEvent): void {
         if (this.isResizingWidth) {
             event.preventDefault();

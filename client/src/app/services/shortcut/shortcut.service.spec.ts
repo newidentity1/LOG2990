@@ -46,7 +46,6 @@ describe('ShortcutService', () => {
             fakeObject.shortcutCallback();
         });
 
-        // adding a mock dialog
         // tslint:disable-next-line:no-any / reason: adding a mock MatDialogRef
         matDialogMock.openDialogs.push({} as MatDialogRef<any>);
 

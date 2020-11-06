@@ -19,7 +19,6 @@ export class EraseService extends PencilService {
         const mousePosition = this.getPositionFromMouse(event);
         if (this.mouseDown) {
             this.pathData.push(mousePosition);
-            // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.draw(this.drawingService.previewCtx);
         }
