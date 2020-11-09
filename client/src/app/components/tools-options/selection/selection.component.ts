@@ -5,7 +5,7 @@ import { SelectionService } from '@app/services/tools/selection/selection.servic
 @Component({
     selector: 'app-selection-option',
     templateUrl: './selection.component.html',
-    styleUrls: ['./selection.component.scss'],
+    styleUrls: ['../../sidebar/sidebar.component.scss'],
 })
 export class SelectionComponent {
     typesSelection: typeof SelectionType = SelectionType;
