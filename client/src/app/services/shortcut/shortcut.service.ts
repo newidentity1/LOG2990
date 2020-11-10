@@ -9,9 +9,6 @@ import { Observable } from 'rxjs';
     providedIn: 'root',
 })
 export class ShortcutService {
-    // TODO voir avoir chargé
-    // tslint:disable-next-line: ban-types
-    globalListener: Function | undefined;
     constructor(private eventManager: EventManager, private dialog: MatDialog, private toolbarService: ToolbarService) {}
 
     addShortcut(keys: string): Observable<KeyboardEvent> {
@@ -27,19 +24,5 @@ export class ShortcutService {
 
             this.eventManager.addGlobalEventListener('document', `keydown.${keys}`, handler);
         });
-    }
-
-    writingTextMode(): void {
-        this.globalListener = this.eventManager.addGlobalEventListener(
-            'document',
-            'keydown',
-            this.toolbarService.currentTool.onKeyDown.bind(this.toolbarService.currentTool),
-        );
-    }
-
-    removeWritingTextMode(): void {
-        if (this.globalListener) {
-            this.globalListener();
-        }
     }
 }
