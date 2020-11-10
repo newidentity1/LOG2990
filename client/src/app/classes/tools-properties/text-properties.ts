@@ -4,7 +4,9 @@ import { BasicToolProperties } from './basic-tool-properties';
 export class TextProperties extends BasicToolProperties {
     isBold: boolean = false;
     isItalic: boolean = false;
-    font: TextFont = TextFont.TimesNewRoman;
+    fonts: string[] = [TextFont.Arial, TextFont.CourierNew, TextFont.SansSerif, TextFont.Serif, TextFont.TimesNewRoman, TextFont.Verdana];
+    font: string = TextFont.Arial;
     size: number = 10;
-    textAlignment: TextAlignment = TextAlignment.Left;
+    textAlignments: string[] = [TextAlignment.Left, TextAlignment.Middle, TextAlignment.Right];
+    textAlignment: string = TextAlignment.Left;
 }
