@@ -30,10 +30,7 @@ export class SidebarComponent {
     }
 
     onToolChanged(tool: Tool): void {
-        const isWritingTextMode = tool.name === 'Text' && this.currentTool.name !== 'Text';
-
         if (tool !== this.currentTool) {
-            if (this.currentTool.name === 'Text') this.shortcutService.removeWritingTextMode();
             this.toolbarService.changeTool(tool);
             this.sidenavProperties.open();
         } else {
@@ -41,7 +38,6 @@ export class SidebarComponent {
         }
 
         if (tool.name === 'Eyedropper') this.sidenavProperties.close();
-        if (isWritingTextMode) this.shortcutService.writingTextMode();
     }
 
     createNewDrawing(): void {
