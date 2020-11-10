@@ -3,14 +3,17 @@ import { Tool } from '@app/classes/tool/tool';
 import { TextProperties } from '@app/classes/tools-properties/text-properties';
 import { MouseButton } from '@app/enums/mouse-button.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { WritingTextService } from '@app/services/tools/text/writing-text/writing-text.service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class TextService extends Tool {
     currentText: string = '';
+    confirmText: boolean = false;
+    initialText: boolean = true;
 
-    constructor(drawingService: DrawingService) {
+    constructor(drawingService: DrawingService, private writingTextService: WritingTextService) {
         super(drawingService);
         this.name = 'Text';
         this.tooltip = 'Texte(t)';
@@ -33,12 +36,21 @@ export class TextService extends Tool {
     }
 
     onClick(event: MouseEvent): void {
-        this.mouseDown = event.button === MouseButton.Left;
         const previewContext = this.drawingService.previewCtx;
         this.drawingService.clearCanvas(previewContext);
-        this.writeText(this.drawingService.baseCtx);
-        this.mouseDownCoord = this.mouseDown ? this.getPositionFromMouse(event) : this.mouseDownCoord;
-        this.currentText = this.mouseDown ? '' : this.currentText;
+        if (this.currentText.length > 0) this.writeText(this.drawingService.baseCtx);
+        this.mouseDown = event.button === MouseButton.Left;
+        if (this.mouseDown && !this.confirmText && !this.initialText) {
+            this.confirmText = true;
+            this.mouseDown = false;
+            this.writingTextService.removeWritingTextMode();
+        } else if (this.mouseDown) {
+            this.writingTextService.writingTextMode(this);
+            this.confirmText = false;
+            this.mouseDownCoord = this.getPositionFromMouse(event);
+            this.currentText = '';
+        }
+        if (this.initialText) this.initialText = false;
     }
 
     writeText(context: CanvasRenderingContext2D): void {
