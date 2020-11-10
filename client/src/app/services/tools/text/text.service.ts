@@ -12,6 +12,7 @@ export class TextService extends Tool {
     currentText: string = '';
     confirmText: boolean = false;
     initialText: boolean = true;
+    currentStyle: string = '';
 
     constructor(drawingService: DrawingService, private writingTextService: WritingTextService) {
         super(drawingService);
@@ -19,6 +20,7 @@ export class TextService extends Tool {
         this.tooltip = 'Texte(t)';
         this.iconName = 'title';
         this.toolProperties = new TextProperties();
+        this.createStyle(this.toolProperties as TextProperties);
     }
 
     onKeyDown(event: KeyboardEvent): void {
@@ -55,5 +57,44 @@ export class TextService extends Tool {
 
     writeText(context: CanvasRenderingContext2D): void {
         context.fillText(this.currentText, this.mouseDownCoord.x, this.mouseDownCoord.y);
+    }
+
+    setFontText(value: string): void {
+        const testProperties = this.toolProperties as TextProperties;
+        if (testProperties.fonts.includes(value)) {
+            testProperties.font = value;
+        }
+    }
+
+    setTextAlignment(value: string): void {
+        const testProperties = this.toolProperties as TextProperties;
+        if (testProperties.textAlignments.includes(value)) {
+            testProperties.textAlignment = value;
+        }
+    }
+
+    setSizeText(value: number | null): void {
+        const testProperties = this.toolProperties as TextProperties;
+        value = value === null ? 1 : value;
+        testProperties.size = value;
+        this.drawingService.setThickness(value);
+    }
+
+    setBold(value: boolean): void {
+        const testProperties = this.toolProperties as TextProperties;
+        testProperties.isBold = value;
+    }
+
+    setItalic(value: boolean): void {
+        const testProperties = this.toolProperties as TextProperties;
+        testProperties.isItalic = value;
+    }
+
+    createStyle(textProperties: TextProperties) {
+        this.currentStyle += textProperties.isItalic ? 'italic' : '';
+        this.currentStyle += textProperties.isBold ? 'bold' : '';
+        this.currentStyle += textProperties.size + 'px';
+        this.currentStyle += textProperties.font;
+        this.drawingService.setTextStyle(this.currentStyle);
     }
 }

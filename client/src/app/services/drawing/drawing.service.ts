@@ -57,4 +57,17 @@ export class DrawingService {
         this.baseCtx.strokeStyle = color;
         this.previewCtx.strokeStyle = color;
     }
+
+    setTextStyle(style: string): void {
+        this.baseCtx.font = style;
+        this.previewCtx.font = style;
+    }
+
+    setTextAlignment(alignment: string): void {
+        switch (alignment) {
+            case 'Gauche':
+                this.baseCtx.textAlign = 'left';
+                this.previewCtx.textAlign = 'left';
+        }
+    }
 }
