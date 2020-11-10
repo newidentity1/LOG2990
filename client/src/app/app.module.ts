@@ -51,7 +51,7 @@ import { PencilComponent } from './components/tools-options/pencil/pencil.compon
 import { PolygonComponent } from './components/tools-options/polygon/polygon.component';
 import { RectangleComponent } from './components/tools-options/rectangle/rectangle.component';
 import { SelectionComponent } from './components/tools-options/selection/selection.component';
-import { TextComponent } from './components/tools-options/text/text/text.component';
+import { TextComponent } from './components/tools-options/text/text.component';
 import { ThicknessSliderComponent } from './components/tools-options/thickness-slider/thickness-slider.component';
 import { UndoRedoComponent } from './components/undo-redo/undo-redo.component';
 import { UploadDialogComponent } from './components/upload/upload-dialog/upload-dialog.component';

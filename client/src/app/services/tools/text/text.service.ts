@@ -18,16 +18,30 @@ export class TextService extends Tool {
         this.toolProperties = new TextProperties();
     }
 
-    onMouseDown(event: MouseEvent): void {
-        this.mouseDown = event.button === MouseButton.Left;
-        this.mouseDownCoord = this.mouseDown ? this.getPositionFromMouse(event) : this.mouseDownCoord;
+    onKeyDown(event: KeyboardEvent): void {
+        if (this.mouseDown) {
+            if (event.key.length > 1 && event.key !== 'Backspace') return;
+            const context = this.drawingService.previewCtx;
+            if (event.key === 'Backspace') {
+                this.drawingService.clearCanvas(context);
+                this.currentText = this.currentText.substring(0, this.currentText.length - 1);
+            } else {
+                this.currentText += event.key;
+            }
+            this.writeText(context);
+        }
     }
 
-    onKeyUp(event: KeyboardEvent): void {
-        if (this.mouseDown) {
-            this.currentText += event.key;
-            const context = this.drawingService.previewCtx;
-            context.fillText(this.currentText, this.mouseDownCoord.x, this.mouseDownCoord.y);
-        }
+    onClick(event: MouseEvent): void {
+        this.mouseDown = event.button === MouseButton.Left;
+        const previewContext = this.drawingService.previewCtx;
+        this.drawingService.clearCanvas(previewContext);
+        this.writeText(this.drawingService.baseCtx);
+        this.mouseDownCoord = this.mouseDown ? this.getPositionFromMouse(event) : this.mouseDownCoord;
+        this.currentText = this.mouseDown ? '' : this.currentText;
+    }
+
+    writeText(context: CanvasRenderingContext2D): void {
+        context.fillText(this.currentText, this.mouseDownCoord.x, this.mouseDownCoord.y);
     }
 }

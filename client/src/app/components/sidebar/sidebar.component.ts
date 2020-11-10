@@ -5,6 +5,7 @@ import { CreateNewDrawingComponent } from '@app/components/create-new-drawing/cr
 import { ExportDrawingComponent } from '@app/components/export-drawing/export-drawing.component';
 import { GalleryComponent } from '@app/components/gallery/gallery.component';
 import { UploadComponent } from '@app/components/upload/upload.component';
+import { ShortcutService } from '@app/services/shortcut/shortcut.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 
 @Component({
@@ -20,8 +21,8 @@ export class SidebarComponent {
     @ViewChild(UploadComponent) uploadRef: UploadComponent;
     @ViewChild(GalleryComponent) galleryRef: GalleryComponent;
 
-    constructor(protected toolbarService: ToolbarService) {
-        this.tools = toolbarService.getTools();
+    constructor(protected toolbarService: ToolbarService, protected shortcutService: ShortcutService) {
+        this.tools = this.toolbarService.getTools();
     }
 
     isCurrentTool(tool: Tool): boolean {
@@ -29,15 +30,18 @@ export class SidebarComponent {
     }
 
     onToolChanged(tool: Tool): void {
+        const isWritingTextMode = tool.name === 'Text' && this.currentTool.name !== 'Text';
+
         if (tool !== this.currentTool) {
+            if (this.currentTool.name === 'Text') this.shortcutService.removeWritingTextMode();
             this.toolbarService.changeTool(tool);
             this.sidenavProperties.open();
         } else {
             this.sidenavProperties.toggle();
         }
-        if (tool.name === 'Eyedropper') {
-            this.sidenavProperties.close();
-        }
+
+        if (tool.name === 'Eyedropper') this.sidenavProperties.close();
+        if (isWritingTextMode) this.shortcutService.writingTextMode();
     }
 
     createNewDrawing(): void {
