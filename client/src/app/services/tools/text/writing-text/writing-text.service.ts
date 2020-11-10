@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { EventManager } from '@angular/platform-browser';
-import { TextService } from '../text.service';
+import { TextService } from '@app/services/tools/text/text.service';
 
 @Injectable({
     providedIn: 'root',
