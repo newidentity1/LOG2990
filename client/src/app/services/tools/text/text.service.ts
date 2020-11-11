@@ -20,7 +20,6 @@ export class TextService extends Tool {
         this.tooltip = 'Texte(t)';
         this.iconName = 'title';
         this.toolProperties = new TextProperties();
-        this.createStyle(this.toolProperties as TextProperties);
     }
 
     onKeyDown(event: KeyboardEvent): void {
@@ -56,14 +55,19 @@ export class TextService extends Tool {
     }
 
     writeText(context: CanvasRenderingContext2D): void {
+        if (context === this.drawingService.previewCtx) this.drawingService.clearCanvas(this.drawingService.previewCtx);
+
+        this.createStyle(this.toolProperties as TextProperties);
         context.fillText(this.currentText, this.mouseDownCoord.x, this.mouseDownCoord.y);
     }
 
     setFontText(value: string): void {
+        console.log(value);
         const testProperties = this.toolProperties as TextProperties;
         if (testProperties.fonts.includes(value)) {
             testProperties.font = value;
         }
+        this.writeText(this.drawingService.previewCtx);
     }
 
     setTextAlignment(value: string): void {
@@ -71,6 +75,7 @@ export class TextService extends Tool {
         if (testProperties.textAlignments.includes(value)) {
             testProperties.textAlignment = value;
         }
+        this.writeText(this.drawingService.previewCtx);
     }
 
     setSizeText(value: number | null): void {
@@ -78,23 +83,28 @@ export class TextService extends Tool {
         value = value === null ? 1 : value;
         testProperties.size = value;
         this.drawingService.setThickness(value);
+        this.writeText(this.drawingService.previewCtx);
     }
 
     setBold(value: boolean): void {
         const testProperties = this.toolProperties as TextProperties;
         testProperties.isBold = value;
+        this.writeText(this.drawingService.previewCtx);
     }
 
     setItalic(value: boolean): void {
         const testProperties = this.toolProperties as TextProperties;
         testProperties.isItalic = value;
+        this.writeText(this.drawingService.previewCtx);
     }
 
-    createStyle(textProperties: TextProperties) {
-        this.currentStyle += textProperties.isItalic ? 'italic' : '';
-        this.currentStyle += textProperties.isBold ? 'bold' : '';
-        this.currentStyle += textProperties.size + 'px';
+    createStyle(textProperties: TextProperties): void {
+        this.currentStyle = '';
+        this.currentStyle += textProperties.isItalic ? 'italic ' : ' ';
+        this.currentStyle += textProperties.isBold ? 'bold ' : ' ';
+        this.currentStyle += textProperties.size + 'px ';
         this.currentStyle += textProperties.font;
         this.drawingService.setTextStyle(this.currentStyle);
+        this.drawingService.setTextAlignment(textProperties.textAlignment);
     }
 }

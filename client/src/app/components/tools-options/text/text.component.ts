@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { MatRadioChange } from '@angular/material/radio';
 import { MatSliderChange } from '@angular/material/slider';
 import { TextProperties } from '@app/classes/tools-properties/text-properties';
+import { MAXIMUM_TEXT_SIZE, MINIMUM_TEXT_SIZE } from '@app/constants/constants';
 import { TextAlignment } from '@app/enums/text-alignment.enum';
 import { TextFont } from '@app/enums/text-font.enum';
 import { TextService } from '@app/services/tools/text/text.service';
@@ -40,21 +41,41 @@ export class TextComponent {
     }
 
     onFontChange(event: MatRadioChange): void {
-        this.font = event.value;
-        this.textService.setThickness(event.value);
+        for (const value in TextFont) {
+            if (TextFont[value as keyof typeof TextFont] === event.value) {
+                this.font = event.value;
+                this.textService.setFontText(event.value);
+                break;
+            }
+        }
     }
 
     onSizeChange(event: MatSliderChange): void {
-        this.size = event.value ? event.value : this.size;
-        this.textService.setSizeText(event.value);
+        if (event.value !== null && event.value >= MINIMUM_TEXT_SIZE && event.value <= MAXIMUM_TEXT_SIZE) {
+            this.size = event.value;
+            this.textService.setSizeText(event.value);
+        }
     }
 
     onTextAlignment(event: MatRadioChange): void {
-        this.textAlignment = event.value;
-        this.textService.setTextAlignment(event.value);
+        for (const value in TextAlignment) {
+            if (TextAlignment[value as keyof typeof TextAlignment] === event.value) {
+                this.textAlignment = event.value;
+                this.textService.setTextAlignment(event.value);
+                break;
+            }
+        }
     }
 
     isCurrentAlignment(textAlignment: string): boolean {
         return textAlignment === this.textAlignment;
+    }
+
+    get minimumTextSize(): number {
+        return MINIMUM_TEXT_SIZE;
+    }
+
+    get maximumTextSize(): number {
+        return MAXIMUM_TEXT_SIZE;
     }
 }
