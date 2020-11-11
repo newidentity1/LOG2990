@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool/tool';
 import { TextProperties } from '@app/classes/tools-properties/text-properties';
+import { DASHED_SEGMENTS } from '@app/constants/constants';
 import { MouseButton } from '@app/enums/mouse-button.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { WritingTextService } from '@app/services/tools/text/writing-text/writing-text.service';
@@ -13,6 +14,7 @@ export class TextService extends Tool {
     confirmText: boolean = false;
     initialText: boolean = true;
     currentStyle: string = '';
+    cursorIntervalRef: number;
 
     constructor(drawingService: DrawingService, private writingTextService: WritingTextService) {
         super(drawingService);
@@ -39,12 +41,14 @@ export class TextService extends Tool {
     onClick(event: MouseEvent): void {
         const previewContext = this.drawingService.previewCtx;
         this.drawingService.clearCanvas(previewContext);
-        if (this.currentText.length > 0) this.writeText(this.drawingService.baseCtx);
         this.mouseDown = event.button === MouseButton.Left;
+        this.writeText(this.drawingService.previewCtx);
         if (this.mouseDown && !this.confirmText && !this.initialText) {
+            this.writeText(this.drawingService.baseCtx);
             this.confirmText = true;
             this.mouseDown = false;
             this.writingTextService.removeWritingTextMode();
+            clearInterval(this.cursorIntervalRef);
         } else if (this.mouseDown) {
             this.writingTextService.writingTextMode(this);
             this.confirmText = false;
@@ -55,10 +59,32 @@ export class TextService extends Tool {
     }
 
     writeText(context: CanvasRenderingContext2D): void {
-        if (context === this.drawingService.previewCtx) this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        const properties = this.toolProperties as TextProperties;
+        this.createStyle(properties);
+        if (context === this.drawingService.previewCtx) {
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
 
-        this.createStyle(this.toolProperties as TextProperties);
+            const dimensions = context.measureText(this.currentText);
+            context.setLineDash([DASHED_SEGMENTS]);
+            context.lineWidth = 1;
+            context.strokeRect(this.mouseDownCoord.x, this.mouseDownCoord.y + properties.size / 5, dimensions.width + 2, -properties.size);
+            if (this.cursorIntervalRef) {
+                clearInterval(this.cursorIntervalRef);
+            }
+            this.cursorIntervalRef = setInterval(this.drawCursor.bind(this), 1200, dimensions.width, -properties.size);
+
+            context.setLineDash([]);
+        }
         context.fillText(this.currentText, this.mouseDownCoord.x, this.mouseDownCoord.y);
+    }
+
+    drawCursor(width: number, height: number): void {
+        const context = this.drawingService.previewCtx;
+        context.strokeStyle = '#000000';
+        context.strokeRect(this.mouseDownCoord.x + width, this.mouseDownCoord.y - height / 5, 1, height);
+        setTimeout(() => {
+            context.clearRect(this.mouseDownCoord.x + width, this.mouseDownCoord.y - height / 5, 2, height + 1);
+        }, 1000);
     }
 
     setFontText(value: string): void {
