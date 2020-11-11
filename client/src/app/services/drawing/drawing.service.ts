@@ -68,6 +68,15 @@ export class DrawingService {
             case 'Gauche':
                 this.baseCtx.textAlign = 'left';
                 this.previewCtx.textAlign = 'left';
+            case 'Centre':
+                this.baseCtx.textAlign = 'center';
+                this.previewCtx.textAlign = 'center';
+            case 'Droite':
+                this.baseCtx.textAlign = 'right';
+                this.previewCtx.textAlign = 'right';
+            default:
+                this.baseCtx.textAlign = 'left';
+                this.previewCtx.textAlign = 'left';
         }
     }
 }

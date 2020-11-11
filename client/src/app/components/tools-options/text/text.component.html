@@ -11,21 +11,17 @@
 
     <div>
         <label class="label">Choisissez la taille du texte: </label>
-        <mat-slider thumbLabel (change)="onSizeChange($event)" tickInterval="1" [min]="10" [max]="100" [value]="size"> </mat-slider>
+        <mat-slider thumbLabel (change)="onSizeChange($event)" tickInterval="1" [min]="minimumTextSize" [max]="maximumTextSize" [value]="size">
+        </mat-slider>
     </div>
 
     <div>
         <label class="label">Choisissez le style du texte:</label>
-        <mat-radio-button class="image-radio-button" [value]="this.isBold" (change)="onBoldChange()" [ngClass]="{ isStyleApplied: this.isBold }">
+        <mat-radio-button class="image-radio-button" [value]="this.isBold" (click)="onBoldChange()" [ngClass]="{ isStyleApplied: this.isBold }">
             <mat-icon>format_bold</mat-icon>
         </mat-radio-button>
 
-        <mat-radio-button
-            class="image-radio-button"
-            [value]="this.isItalic"
-            (change)="onItalicChange()"
-            [ngClass]="{ isStyleApplied: this.isItalic }"
-        >
+        <mat-radio-button class="image-radio-button" [value]="this.isItalic" (click)="onItalicChange()" [ngClass]="{ isStyleApplied: this.isItalic }">
             <mat-icon>format_italic</mat-icon>
         </mat-radio-button>
     </div>
