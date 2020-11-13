@@ -121,7 +121,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             }),
         );
 
-        const keyDownButtons = ['Escape', 'Shift', 'Backspace', 'ArrowLeft', 'ArrowUp', 'ArrowRight', 'ArrowDown'];
+        const keyDownButtons = ['Escape', 'Shift', 'Backspace', 'ArrowLeft', 'ArrowUp', 'ArrowRight', 'ArrowDown', 'Delete'];
         keyDownButtons.forEach((button: string) => {
             this.subscribedShortcuts.push(
                 this.shortcutService.addShortcut(button).subscribe((event: KeyboardEvent) => {
