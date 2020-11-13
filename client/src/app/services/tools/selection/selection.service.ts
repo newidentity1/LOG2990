@@ -93,8 +93,11 @@ export class SelectionService extends ShapeTool {
         }
 
         if (this.isAreaSelected) {
-            if (this.moveSelectionService.checkArrowKeysPressed(event))
+            if (this.moveSelectionService.checkArrowKeysPressed(event)) {
                 this.drawSelectionBox({ x: 0, y: 0 }, this.positiveWidth, this.positiveHeight);
+            } else if (event.key === 'Delete') {
+                this.deleteSelection();
+            }
         } else {
             super.onKeyDown(event);
         }
