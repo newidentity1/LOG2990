@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool/tool';
 import { TextProperties } from '@app/classes/tools-properties/text-properties';
+import { Vec2 } from '@app/classes/vec2';
 import { DASHED_SEGMENTS } from '@app/constants/constants';
 import { MouseButton } from '@app/enums/mouse-button.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { WritingTextService } from '@app/services/tools/text/writing-text/writing-text.service';
+import { ShortcutService } from '@app/services/shortcut/shortcut.service';
 
 @Injectable({
     providedIn: 'root',
@@ -14,27 +15,38 @@ export class TextService extends Tool {
     confirmText: boolean = false;
     initialText: boolean = true;
     currentStyle: string = '';
+    cursorPosition: Vec2 = { x: 0, y: 0 };
     cursorIntervalRef: number;
+    actionKeys: Map<string, () => void> = new Map<string, () => void>();
 
-    constructor(drawingService: DrawingService, private writingTextService: WritingTextService) {
+    constructor(drawingService: DrawingService, private shortcutService: ShortcutService) {
         super(drawingService);
         this.name = 'Text';
         this.tooltip = 'Texte(t)';
         this.iconName = 'title';
         this.toolProperties = new TextProperties();
+        this.actionKeys.set('Backspace', this.onBackspace.bind(this));
+    }
+
+    onBackspace(): void {
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.currentText = this.currentText.substring(0, this.currentText.length - 1);
     }
 
     onKeyDown(event: KeyboardEvent): void {
         if (this.mouseDown) {
-            if (event.key.length > 1 && event.key !== 'Backspace') return;
-            const context = this.drawingService.previewCtx;
-            if (event.key === 'Backspace') {
-                this.drawingService.clearCanvas(context);
-                this.currentText = this.currentText.substring(0, this.currentText.length - 1);
+            const isAction = this.actionKeys.get(event.key) !== undefined;
+
+            if (event.key.length > 1 && !isAction) return;
+
+            if (isAction) {
+                const actionFunction = this.actionKeys.get(event.key);
+                if (actionFunction) actionFunction();
             } else {
                 this.currentText += event.key;
             }
-            this.writeText(context);
+
+            this.writeText(this.drawingService.previewCtx);
         }
     }
 
@@ -42,19 +54,21 @@ export class TextService extends Tool {
         const previewContext = this.drawingService.previewCtx;
         this.drawingService.clearCanvas(previewContext);
         this.mouseDown = event.button === MouseButton.Left;
-        this.writeText(this.drawingService.previewCtx);
+
         if (this.mouseDown && !this.confirmText && !this.initialText) {
             this.writeText(this.drawingService.baseCtx);
             this.confirmText = true;
             this.mouseDown = false;
-            this.writingTextService.removeWritingTextMode();
+            this.shortcutService.disableShortcuts = false;
             clearInterval(this.cursorIntervalRef);
         } else if (this.mouseDown) {
-            this.writingTextService.writingTextMode(this);
+            this.shortcutService.disableShortcuts = true;
+            this.writeText(this.drawingService.previewCtx);
             this.confirmText = false;
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.currentText = '';
         }
+
         if (this.initialText) this.initialText = false;
     }
 
