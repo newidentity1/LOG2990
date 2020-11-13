@@ -20,6 +20,26 @@ export class SelectionComponent {
         this.selectionService.selectAll();
     }
 
+    triggerCopy(): void {
+        this.selectionService.selectAll();
+    }
+
+    triggerCut(): void {
+        this.selectionService.selectAll();
+    }
+
+    triggerPaste(): void {
+        this.selectionService.selectAll();
+    }
+
+    triggerDelete(): void {
+        this.selectionService.deleteSelection();
+    }
+
+    isAreaSelected(): boolean {
+        return this.selectionService.isAreaSelected;
+    }
+
     keepOriginalOrder(): number {
         return 0;
     }

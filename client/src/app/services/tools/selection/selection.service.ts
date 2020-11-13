@@ -17,6 +17,7 @@ export class SelectionService extends ShapeTool {
     positiveStartingPos: Vec2 = { x: 0, y: 0 };
     positiveWidth: number;
     positiveHeight: number;
+    private selectionImageData: ImageData;
     private moveSelectionPos: Vec2 = { x: 0, y: 0 };
 
     constructor(drawingService: DrawingService, private moveSelectionService: MoveSelectionService) {
@@ -78,6 +79,7 @@ export class SelectionService extends ShapeTool {
                     this.isAreaSelected = true;
                     this.moveSelectionService.finalPosition = { x: this.positiveStartingPos.x, y: this.positiveStartingPos.y };
                     this.moveSelectionService.copySelection(this.positiveStartingPos, this.positiveWidth, this.positiveHeight, this.currentType);
+                    this.selectionImageData = this.moveSelectionService.imgData;
                     this.drawSelectionBox({ x: 0, y: 0 }, this.positiveWidth, this.positiveHeight);
                 }
             }
@@ -137,7 +139,7 @@ export class SelectionService extends ShapeTool {
         const selectionCtx = this.drawingService.previewCtx;
 
         this.drawingService.clearCanvas(selectionCtx);
-        selectionCtx.putImageData(this.moveSelectionService.imgData, 0, 0);
+        selectionCtx.putImageData(this.selectionImageData, 0, 0);
         this.drawingService.baseCtx.drawImage(
             selectionCtx.canvas,
             this.moveSelectionService.finalPosition.x,
@@ -200,6 +202,16 @@ export class SelectionService extends ShapeTool {
             x: this.moveSelectionService.finalPosition.x,
             y: this.moveSelectionService.finalPosition.y,
         };
+        selectionService.selectionImageData = this.selectionImageData;
+    }
+
+    deleteSelection(): void {
+        for (let i = 0; i < this.selectionImageData.data.length; i++) {
+            this.selectionImageData.data[i] = 0;
+        }
+        this.executedCommand.emit(this.clone());
+
+        this.resetSelection();
     }
 
     clone(): SelectionService {
