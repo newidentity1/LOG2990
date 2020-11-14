@@ -5,7 +5,6 @@ import { CreateNewDrawingComponent } from '@app/components/create-new-drawing/cr
 import { ExportDrawingComponent } from '@app/components/export-drawing/export-drawing.component';
 import { GalleryComponent } from '@app/components/gallery/gallery.component';
 import { UploadComponent } from '@app/components/upload/upload.component';
-import { ShortcutService } from '@app/services/shortcut/shortcut.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 
 @Component({
@@ -21,7 +20,7 @@ export class SidebarComponent {
     @ViewChild(UploadComponent) uploadRef: UploadComponent;
     @ViewChild(GalleryComponent) galleryRef: GalleryComponent;
 
-    constructor(protected toolbarService: ToolbarService, protected shortcutService: ShortcutService) {
+    constructor(protected toolbarService: ToolbarService) {
         this.tools = this.toolbarService.getTools();
     }
 
