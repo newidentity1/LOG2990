@@ -256,7 +256,6 @@ export class SelectionService extends ShapeTool {
             this.selectionImageData.data[i] = 0;
         }
         this.executedCommand.emit(this.clone());
-
         this.resetSelection();
     }
 
