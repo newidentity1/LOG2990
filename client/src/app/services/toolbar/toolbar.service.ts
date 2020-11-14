@@ -208,6 +208,7 @@ export class ToolbarService {
     }
 
     triggerPasteSelection(): void {
+        this.currentTool = this.selectionService;
         this.selectionService.pasteSelection();
     }
 
