@@ -218,7 +218,12 @@ export class SelectionService extends ShapeTool {
 
     copySelection(): void {
         if (this.isAreaSelected) {
-            this.clipboardImage = { image: this.selectionImageData, selectionType: this.currentType };
+            this.clipboardImage = {
+                image: new ImageData(this.selectionImageData.width, this.selectionImageData.height),
+                selectionType: this.currentType,
+            };
+            const dataCopy = new Uint8ClampedArray(this.selectionImageData.data);
+            this.clipboardImage.image.data.set(dataCopy);
         }
     }
 
