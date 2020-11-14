@@ -199,6 +199,18 @@ export class ToolbarService {
         this.selectionService.selectAll();
     }
 
+    triggerCopySelection(): void {
+        this.selectionService.copySelection();
+    }
+
+    triggerCutSelection(): void {
+        this.selectionService.cutSelection();
+    }
+
+    triggerPasteSelection(): void {
+        this.selectionService.pasteSelection();
+    }
+
     isDrawing(): boolean {
         return this.mouseDown || this.isAreaSelected();
     }

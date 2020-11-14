@@ -8,6 +8,11 @@ import { SelectionType } from '@app/enums/selection-type.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { MoveSelectionService } from './move-selection/move-selection.service';
 
+interface ClipboardImage {
+    image: ImageData;
+    selectionType: SelectionType;
+}
+
 @Injectable({
     providedIn: 'root',
 })
@@ -18,6 +23,7 @@ export class SelectionService extends ShapeTool {
     positiveWidth: number;
     positiveHeight: number;
     private selectionImageData: ImageData;
+    private clipboardImage: ClipboardImage;
     private moveSelectionPos: Vec2 = { x: 0, y: 0 };
 
     constructor(drawingService: DrawingService, private moveSelectionService: MoveSelectionService) {
@@ -121,6 +127,7 @@ export class SelectionService extends ShapeTool {
         this.positiveHeight = this.drawingService.canvas.height;
         this.isAreaSelected = true;
         this.moveSelectionService.copySelection(this.positiveStartingPos, this.positiveWidth, this.positiveHeight, this.currentType);
+        this.selectionImageData = this.moveSelectionService.imgData;
         this.drawSelectionBox({ x: 0, y: 0 }, this.positiveWidth, this.positiveHeight);
     }
 
@@ -192,6 +199,7 @@ export class SelectionService extends ShapeTool {
     resetContext(): void {
         this.mouseDown = false;
         this.isAreaSelected = false;
+        this.shiftDown = false;
         this.positiveStartingPos = { x: 0, y: 0 };
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
     }
@@ -206,6 +214,36 @@ export class SelectionService extends ShapeTool {
             y: this.moveSelectionService.finalPosition.y,
         };
         selectionService.selectionImageData = this.selectionImageData;
+    }
+
+    copySelection(): void {
+        if (this.isAreaSelected) {
+            this.clipboardImage = { image: this.selectionImageData, selectionType: this.currentType };
+        }
+    }
+
+    pasteSelection(): void {
+        // TODO make this better
+        if (this.clipboardImage) {
+            this.setSelectionType(this.clipboardImage.selectionType);
+            this.isAreaSelected = true;
+            this.moveSelectionService.imgData = this.clipboardImage.image;
+            this.selectionImageData = this.clipboardImage.image;
+            this.drawingService.previewCtx.canvas.width = this.clipboardImage.image.width;
+            this.drawingService.previewCtx.canvas.height = this.clipboardImage.image.height;
+            this.positiveWidth = this.clipboardImage.image.width;
+            this.positiveHeight = this.clipboardImage.image.height;
+            this.drawingService.previewCtx.putImageData(this.clipboardImage.image, 0, 0);
+            this.moveSelectionService.finalPosition.x = 0;
+            this.moveSelectionService.finalPosition.y = 0;
+            this.drawingService.previewCtx.canvas.style.cursor = 'move';
+            this.drawSelectionBox({ x: 0, y: 0 }, this.clipboardImage.image.width, this.clipboardImage.image.height);
+        }
+    }
+
+    cutSelection(): void {
+        this.copySelection();
+        this.deleteSelection();
     }
 
     deleteSelection(): void {

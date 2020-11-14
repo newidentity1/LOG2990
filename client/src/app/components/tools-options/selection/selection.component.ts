@@ -21,15 +21,15 @@ export class SelectionComponent {
     }
 
     triggerCopy(): void {
-        this.selectionService.selectAll();
+        this.selectionService.copySelection();
     }
 
     triggerCut(): void {
-        this.selectionService.selectAll();
+        this.selectionService.cutSelection();
     }
 
     triggerPaste(): void {
-        this.selectionService.selectAll();
+        this.selectionService.pasteSelection();
     }
 
     triggerDelete(): void {
