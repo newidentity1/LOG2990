@@ -73,6 +73,9 @@ export class TextService extends Tool {
     }
 
     writeText(context: CanvasRenderingContext2D): void {
+        const HEIGHT_FACTOR = 5;
+        const BLINKING_CURSOR_SPEED = 1000;
+
         const properties = this.toolProperties as TextProperties;
         this.createStyle(properties);
         if (context === this.drawingService.previewCtx) {
@@ -81,11 +84,16 @@ export class TextService extends Tool {
             const dimensions = context.measureText(this.currentText);
             context.setLineDash([DASHED_SEGMENTS]);
             context.lineWidth = 1;
-            context.strokeRect(this.mouseDownCoord.x, this.mouseDownCoord.y + properties.size / 5, dimensions.width + 2, -properties.size);
+            context.strokeRect(
+                this.mouseDownCoord.x,
+                this.mouseDownCoord.y + properties.size / HEIGHT_FACTOR,
+                dimensions.width + 2,
+                -properties.size,
+            );
             if (this.cursorIntervalRef) {
                 clearInterval(this.cursorIntervalRef);
             }
-            this.cursorIntervalRef = setInterval(this.drawCursor.bind(this), 1200, dimensions.width, -properties.size);
+            this.cursorIntervalRef = window.setInterval(this.drawCursor.bind(this), BLINKING_CURSOR_SPEED, dimensions.width, -properties.size);
 
             context.setLineDash([]);
         }
@@ -93,12 +101,15 @@ export class TextService extends Tool {
     }
 
     drawCursor(width: number, height: number): void {
+        const HEIGHT_FACTOR = 5;
+        const BLINKING_CURSOR_SPEED = 1000;
+
         const context = this.drawingService.previewCtx;
         context.strokeStyle = '#000000';
-        context.strokeRect(this.mouseDownCoord.x + width, this.mouseDownCoord.y - height / 5, 1, height);
+        context.strokeRect(this.mouseDownCoord.x + width, this.mouseDownCoord.y - height / HEIGHT_FACTOR, 1, height);
         setTimeout(() => {
-            context.clearRect(this.mouseDownCoord.x + width, this.mouseDownCoord.y - height / 5, 2, height + 1);
-        }, 1000);
+            context.clearRect(this.mouseDownCoord.x + width, this.mouseDownCoord.y - height / HEIGHT_FACTOR, 2, height + 1);
+        }, BLINKING_CURSOR_SPEED);
     }
 
     setFontText(value: string): void {
