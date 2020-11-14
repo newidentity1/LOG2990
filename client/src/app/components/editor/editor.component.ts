@@ -111,6 +111,24 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             }),
         );
         this.subscribedShortcuts.push(
+            this.shortcutService.addShortcut('control.c').subscribe(() => {
+                this.toolbarService.triggerCopySelection();
+            }),
+        );
+
+        this.subscribedShortcuts.push(
+            this.shortcutService.addShortcut('control.x').subscribe(() => {
+                this.toolbarService.triggerCutSelection();
+            }),
+        );
+
+        this.subscribedShortcuts.push(
+            this.shortcutService.addShortcut('control.v').subscribe(() => {
+                this.toolbarService.triggerPasteSelection();
+            }),
+        );
+
+        this.subscribedShortcuts.push(
             this.shortcutService.addShortcut('control.z').subscribe(() => {
                 this.toolbarService.undo();
             }),
