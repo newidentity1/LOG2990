@@ -40,6 +40,10 @@ export class SelectionComponent {
         return this.selectionService.isAreaSelected;
     }
 
+    isClipboardEmpty(): boolean {
+        return this.selectionService.isClipboardEmpty();
+    }
+
     keepOriginalOrder(): number {
         return 0;
     }

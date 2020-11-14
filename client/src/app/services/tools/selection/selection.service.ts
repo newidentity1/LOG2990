@@ -259,6 +259,10 @@ export class SelectionService extends ShapeTool {
         this.resetSelection();
     }
 
+    isClipboardEmpty(): boolean {
+        return this.clipboardImage === undefined;
+    }
+
     clone(): SelectionService {
         const selectionClone: SelectionService = new SelectionService(this.drawingService, new MoveSelectionService(this.drawingService));
         this.copySelectionService(selectionClone);
