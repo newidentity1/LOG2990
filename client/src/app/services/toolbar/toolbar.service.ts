@@ -211,10 +211,6 @@ export class ToolbarService {
         return this.selectionService.isAreaSelected;
     }
 
-    isCurrentToolText(): boolean {
-        return this.currentTool === this.textService;
-    }
-
     resetSelection(): void {
         if (this.isAreaSelected()) {
             this.selectionService.drawSelection();
