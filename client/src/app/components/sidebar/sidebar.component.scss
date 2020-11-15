@@ -70,8 +70,15 @@ mat-sidenav-content {
 
 .property {
     margin: 5px;
-    .type-drawing-label {
+
+    label {
         width: 100%;
+        display: block;
+    }
+
+    .type-textalignment {
+        margin-right: 10px;
+        margin-top: 10px;
     }
 
     .sliderWrapper {
