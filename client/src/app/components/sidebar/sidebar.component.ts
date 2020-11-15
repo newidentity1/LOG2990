@@ -21,7 +21,7 @@ export class SidebarComponent {
     @ViewChild(GalleryComponent) galleryRef: GalleryComponent;
 
     constructor(protected toolbarService: ToolbarService) {
-        this.tools = toolbarService.getTools();
+        this.tools = this.toolbarService.getTools();
     }
 
     isCurrentTool(tool: Tool): boolean {
@@ -35,9 +35,8 @@ export class SidebarComponent {
         } else {
             this.sidenavProperties.toggle();
         }
-        if (tool.name === 'Eyedropper') {
-            this.sidenavProperties.close();
-        }
+
+        if (tool.name === 'Eyedropper') this.sidenavProperties.close();
     }
 
     createNewDrawing(): void {
