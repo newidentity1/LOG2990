@@ -10,4 +10,5 @@ export enum KeyShortcut {
     RectangleSelect = 'r',
     EllipseSelect = 's',
     Bucket = 'b',
+    Text = 't',
 }
