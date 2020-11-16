@@ -11,7 +11,7 @@ describe('SelectionComponent', () => {
     let selectionServiceMock: jasmine.SpyObj<SelectionService>;
 
     beforeEach(async(() => {
-        selectionServiceMock = jasmine.createSpyObj('SelectionService', ['setSelectionType', 'selectAll']);
+        selectionServiceMock = jasmine.createSpyObj('SelectionService', ['setSelectionType', 'selectAll', 'isClipboardEmpty']);
 
         TestBed.configureTestingModule({
             declarations: [SelectionComponent],
