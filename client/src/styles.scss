@@ -1,5 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @import '@angular/material/prebuilt-themes/purple-green.css';
+@import '../src/app/style/color.scss';
 
 html,
 body {
@@ -28,4 +29,14 @@ body {
 .error-snackbar {
     color: #d8000c !important;
     background-color: #ffd2d2 !important;
+}
+
+.image-radio-button .mat-radio-container {
+    display: none !important;
+}
+
+.currentAlignment .mat-radio-label-content mat-icon,
+.isStyleApplied .mat-radio-label-content mat-icon {
+    background-color: white;
+    color: $primaryColor;
 }
