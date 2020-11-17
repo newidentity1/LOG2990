@@ -36,6 +36,9 @@ export class SelectionService extends ShapeTool {
             case SelectionType.EllipseSelection:
                 this.currentType = SelectionType.EllipseSelection;
                 break;
+            case SelectionType.MagicBrushSelection:
+                this.currentType = SelectionType.MagicBrushSelection;
+                break;
         }
     }
 

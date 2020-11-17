@@ -72,6 +72,7 @@ export class ToolbarService {
             .set(KeyShortcut.Eyedropper, eyedropperService)
             .set(KeyShortcut.RectangleSelect, selectionService)
             .set(KeyShortcut.EllipseSelect, selectionService)
+            .set(KeyShortcut.MagicBrushSelect, selectionService)
             .set(KeyShortcut.Bucket, bucketService);
     }
 

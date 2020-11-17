@@ -137,6 +137,7 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     onClick(event: MouseEvent): void {
+        console.log(event);
         this.toolbarService.onClick(event);
     }
 
