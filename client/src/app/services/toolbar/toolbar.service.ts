@@ -173,6 +173,10 @@ export class ToolbarService {
         this.currentTool.onClick(event);
     }
 
+    onContextMenu(event: MouseEvent): void {
+        this.currentTool.onContextMenu(event);
+    }
+
     undo(): void {
         this.undoRedoService.undo(this.isDrawing());
 

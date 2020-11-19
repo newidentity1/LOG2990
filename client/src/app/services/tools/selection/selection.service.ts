@@ -61,7 +61,7 @@ export class SelectionService extends ShapeTool {
                 this.moveSelectionPos.x = event.clientX;
                 this.moveSelectionPos.y = event.clientY;
                 this.moveSelectionService.moveSelection(moveX, moveY);
-                this.drawSelectionBox({ x: 0, y: 0 }, this.positiveWidth, this.positiveHeight);
+                this.drawSelectionBox({ x: 0, y: 0 }, this.drawingService.previewCtx.canvas.width, this.drawingService.previewCtx.canvas.height);
             } else {
                 this.drawPreview();
             }
@@ -86,6 +86,19 @@ export class SelectionService extends ShapeTool {
             }
             this.mouseDown = false;
         }
+    }
+
+    onContextMenu(event: MouseEvent): boolean {
+        if (this.currentType === SelectionType.MagicBrushSelection) {
+            if (!this.isAreaSelected) {
+                this.currentMousePosition = this.getPositionFromMouse(event);
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                this.isAreaSelected = true;
+                this.moveSelectionService.copyMagicSelection(this.currentMousePosition);
+                this.drawSelectionBox({ x: 0, y: 0 }, this.drawingService.previewCtx.canvas.width, this.drawingService.previewCtx.canvas.height);
+            }
+        }
+        return false;
     }
 
     onKeyDown(event: KeyboardEvent): void {
@@ -135,6 +148,7 @@ export class SelectionService extends ShapeTool {
     }
 
     resetSelection(): void {
+        console.log('reset');
         this.isAreaSelected = false;
         this.moveSelectionService.canMoveSelection = false;
         const selectionCtx = this.drawingService.previewCtx;
