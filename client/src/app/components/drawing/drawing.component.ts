@@ -18,6 +18,7 @@ import { Observable, Subscription } from 'rxjs';
 export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('baseCanvas', { static: false }) baseCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
+    @ViewChild('gridCanvas', { static: false }) gridCanvas: ElementRef<HTMLCanvasElement>;
 
     @Input() drawingContainerWidth: number;
     @Input() drawingContainerHeight: number;
@@ -26,6 +27,7 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
     @Output() requestDrawingContainerDimensions: EventEmitter<void> = new EventEmitter();
 
     previewCtx: CanvasRenderingContext2D;
+    gridCtx: CanvasRenderingContext2D;
     private subscribeCreateNewDrawing: Subscription;
     private subscribeResetCanvasSize: Subscription;
     private subscribeDimensionsUpdated: Subscription;
@@ -64,8 +66,10 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
     ngAfterViewInit(): void {
         this.resizeCommand.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.previewCtx = this.previewCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.gridCtx = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.drawingService.baseCtx = this.resizeCommand.baseCtx;
         this.drawingService.previewCtx = this.previewCtx;
+        this.drawingService.gridCtx = this.gridCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
 
         this.toolbarService.initializeListeners();
@@ -155,6 +159,7 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
                 newWidth = widthLimit;
             }
             this.previewCanvas.nativeElement.width = newWidth;
+            this.gridCanvas.nativeElement.width = newWidth;
         }
 
         if (this.isResizingHeight) {
@@ -167,6 +172,7 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
                 newHeight = heightLimit;
             }
             this.previewCanvas.nativeElement.height = newHeight;
+            this.gridCanvas.nativeElement.height = newHeight;
         }
     }
 
