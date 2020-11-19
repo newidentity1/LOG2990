@@ -19,6 +19,11 @@ export class GridService extends Tool {
 
     draw(): void {
         this.isGrid = !this.isGrid;
+        this.generateGrid();
+    }
+
+    private generateGrid(): void {
+        this.drawingService.clearCanvas(this.drawingService.gridCtx);
         if (this.isGrid) {
             const m: number = (this.drawingService.canvas.height - (this.drawingService.canvas.height % this.dx)) / this.dx;
             const n: number = (this.drawingService.canvas.width - (this.drawingService.canvas.width % this.dx)) / this.dx;
@@ -39,5 +44,34 @@ export class GridService extends Tool {
         } else {
             this.drawingService.clearCanvas(this.drawingService.gridCtx);
         }
+    }
+    setDeltaX(size: number): void {
+        this.dx = this.roundUp(size);
+        this.generateGrid();
+    }
+
+    private roundUp(n: number): number {
+        const dy = n % 5;
+        if (dy >= 3) {
+            n = n - dy + 5;
+        } else {
+            n = n - dy;
+        }
+        return n;
+    }
+
+    setCanvasOpacity(n: number) {
+        console.log('slideruse');
+        const ctx = this.drawingService.gridCtx;
+        ctx.globalAlpha = n / 255;
+        this.generateGrid();
+    }
+
+    resetContext(): void {
+        this.generateGrid();
+    }
+
+    getDeltaX(): number {
+        return this.dx;
     }
 }

@@ -32,10 +32,9 @@ export class SidebarComponent {
         if (tool !== this.currentTool) {
             if (tool.name === 'Grid') {
                 this.toolbarService.setGrid();
-            } else {
-                this.toolbarService.changeTool(tool);
-                this.sidenavProperties.open();
             }
+            this.toolbarService.changeTool(tool);
+            this.sidenavProperties.open();
         } else {
             this.sidenavProperties.toggle();
         }

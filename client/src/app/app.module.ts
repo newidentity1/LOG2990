@@ -14,6 +14,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -46,6 +47,7 @@ import { BucketComponent } from './components/tools-options/bucket/bucket.compon
 import { EllipseComponent } from './components/tools-options/ellipse/ellipse.component';
 import { EraseComponent } from './components/tools-options/erase/erase.component';
 import { EyedropperComponent } from './components/tools-options/eyedropper/eyedropper.component';
+import { GridComponent } from './components/tools-options/grid/grid.component';
 import { LineComponent } from './components/tools-options/line/line.component';
 import { PencilComponent } from './components/tools-options/pencil/pencil.component';
 import { PolygonComponent } from './components/tools-options/polygon/polygon.component';
@@ -56,7 +58,6 @@ import { ThicknessSliderComponent } from './components/tools-options/thickness-s
 import { UndoRedoComponent } from './components/undo-redo/undo-redo.component';
 import { UploadDialogComponent } from './components/upload/upload-dialog/upload-dialog.component';
 import { UploadComponent } from './components/upload/upload.component';
-import { GridComponent } from './components/tools-options/grid/grid.component';
 @NgModule({
     declarations: [
         AppComponent,
@@ -107,6 +108,7 @@ import { GridComponent } from './components/tools-options/grid/grid.component';
             appId: '1:408322091008:web:920757c8a7e33e14d910e5',
             measurementId: 'G-9X4P4RJB02',
         }),
+        MatSlideToggleModule,
         BrowserModule,
         HttpClientModule,
         AppRoutingModule,
