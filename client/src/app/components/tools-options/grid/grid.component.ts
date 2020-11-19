@@ -5,7 +5,7 @@ import { GridService } from '@app/services/tools/grid/grid.service';
 @Component({
     selector: 'app-grid-option',
     templateUrl: './grid.component.html',
-    styleUrls: ['./grid.component.scss'],
+    styleUrls: ['../../sidebar/sidebar.component.scss'],
 })
 export class GridComponent implements OnInit {
     titleForm: FormControl;
