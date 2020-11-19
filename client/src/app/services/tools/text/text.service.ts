@@ -4,6 +4,7 @@ import { TextProperties } from '@app/classes/tools-properties/text-properties';
 import { Vec2 } from '@app/classes/vec2';
 import { DASHED_SEGMENTS } from '@app/constants/constants';
 import { MouseButton } from '@app/enums/mouse-button.enum';
+import { TextAlignment } from '@app/enums/text-alignment.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ShortcutService } from '@app/services/shortcut/shortcut.service';
 
@@ -11,7 +12,7 @@ import { ShortcutService } from '@app/services/shortcut/shortcut.service';
     providedIn: 'root',
 })
 export class TextService extends Tool {
-    currentText: string[] = [];
+    currentText: string[] = [''];
     isConfirmText: boolean = false;
     isInitialText: boolean = true;
     currentStyle: string = '';
@@ -63,12 +64,17 @@ export class TextService extends Tool {
     }
 
     onEscape(): void {
-        this.currentText[this.cursorRowIndex] = '';
+        for (let i = 0; i < this.currentText.length; ++i) {
+            this.currentText[i] = '';
+        }
         this.mouseDown = false;
         this.shortcutService.disableShortcuts = false;
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         clearInterval(this.cursorIntervalRef);
         this.isInitialText = true;
+        this.currentText = [''];
+        this.cursorRowIndex = 0;
+        this.cursorColumnIndex = 0;
     }
 
     onArrowLeft(): void {
@@ -129,8 +135,12 @@ export class TextService extends Tool {
             this.confirmText();
         } else if (this.mouseDown) {
             this.shortcutService.disableShortcuts = true;
-            this.currentText[this.cursorRowIndex] = isInsideTextArea ? this.currentText[this.cursorRowIndex] : '';
-            this.mouseDownCoord = isInsideTextArea ? this.mouseDownCoord : this.getPositionFromMouse(event);
+            if (!isInsideTextArea) {
+                for (let i = 0; i < this.currentText.length; ++i) {
+                    this.currentText[i] = '';
+                }
+                this.mouseDownCoord = this.getPositionFromMouse(event);
+            }
             this.writeText(this.drawingService.previewCtx);
             this.isConfirmText = false;
         }
@@ -147,7 +157,7 @@ export class TextService extends Tool {
         }
 
         for (let i = 0; i < this.currentText.length; ++i) {
-            context.fillText(this.currentText[i], this.mouseDownCoord.x, this.mouseDownCoord.y - this.textAreaDimensions.y * i);
+            context.fillText(this.currentText[i], this.calculateXCoord(), this.mouseDownCoord.y - this.textAreaDimensions.y * i);
         }
     }
 
@@ -161,18 +171,18 @@ export class TextService extends Tool {
         this.mouseDown = false;
         this.shortcutService.disableShortcuts = false;
         clearInterval(this.cursorIntervalRef);
+        this.currentText = [''];
+        this.cursorRowIndex = 0;
+        this.cursorColumnIndex = 0;
     }
 
     drawTextArea(): void {
         const HEIGHT_FACTOR = 5;
         const context = this.drawingService.previewCtx;
         const properties = this.toolProperties as TextProperties;
-        let biggestWidth = this.currentText[0];
-        for (const text of this.currentText) {
-            biggestWidth = context.measureText(text).width > context.measureText(biggestWidth).width ? text : biggestWidth;
-        }
-        const dimensions = context.measureText(biggestWidth);
-        this.textAreaDimensions = { x: dimensions.width + 2, y: -properties.size + 2 };
+
+        const dimensions = this.calculateLongestWidth();
+        this.textAreaDimensions = { x: dimensions + 2, y: -properties.size + 2 };
         this.textAreaStartingPoint = { x: this.mouseDownCoord.x - 2, y: this.mouseDownCoord.y + properties.size / HEIGHT_FACTOR };
 
         this.drawingService.clearCanvas(context);
@@ -221,16 +231,40 @@ export class TextService extends Tool {
         }, BLINKING_CURSOR_SPEED);
     }
 
+    calculateXCoord(): number {
+        const properties = this.toolProperties as TextProperties;
+        let x = 0;
+        switch (properties.textAlignment) {
+            case TextAlignment.Left:
+                x = this.mouseDownCoord.x;
+                break;
+            case TextAlignment.Middle:
+                x = this.mouseDownCoord.x + this.calculateLongestWidth() / 2;
+                break;
+            case TextAlignment.Right:
+                x = this.mouseDownCoord.x + this.calculateLongestWidth();
+                break;
+        }
+        return x;
+    }
+
+    calculateLongestWidth(): number {
+        const context = this.drawingService.previewCtx;
+        let longestWidth = context.measureText(this.currentText[0]).width;
+        let textWidth = 0;
+        for (const text of this.currentText) {
+            textWidth = context.measureText(text).width;
+            longestWidth = longestWidth < textWidth ? textWidth : longestWidth;
+        }
+        return longestWidth;
+    }
+
     isClickInsideTextArea(event: MouseEvent): boolean {
-        const OUTSIDE_CANVAS_MARGIN_LEFT = 165;
-        const canvasX = event.x - OUTSIDE_CANVAS_MARGIN_LEFT;
+        const isXInsideTextArea =
+            event.offsetX >= this.textAreaStartingPoint.x && event.offsetX <= this.textAreaStartingPoint.x + this.textAreaDimensions.x;
 
-        const isXInsideTextArea = canvasX >= this.textAreaStartingPoint.x && canvasX <= this.textAreaStartingPoint.x + this.textAreaDimensions.x;
-
-        const OUTSIDE_CANVAS_MARGIN_TOP = 5;
-        const canvasY = event.y - OUTSIDE_CANVAS_MARGIN_TOP;
-
-        const isYInsideTextArea = canvasY <= this.textAreaStartingPoint.y && canvasY >= this.textAreaStartingPoint.y + this.textAreaDimensions.y;
+        const isYInsideTextArea =
+            event.offsetY <= this.textAreaStartingPoint.y && event.offsetY >= this.textAreaStartingPoint.y + this.textAreaDimensions.y;
 
         return isXInsideTextArea && isYInsideTextArea;
     }
