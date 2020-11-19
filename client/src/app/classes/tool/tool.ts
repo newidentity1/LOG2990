@@ -41,6 +41,8 @@ export abstract class Tool extends Command {
 
     onClick(event: MouseEvent): void {}
 
+    onContextMenu(event: MouseEvent): void {}
+
     draw(ctx: CanvasRenderingContext2D): void {}
 
     copyTool(tool: Tool): void {
