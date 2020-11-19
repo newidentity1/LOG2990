@@ -9,6 +9,7 @@ import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Observable, Subscription } from 'rxjs';
+import { AutomaticSavingService } from '@app/services/automatic-saving/automatic-saving.service';
 
 @Component({
     selector: 'app-drawing',
@@ -32,9 +33,14 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
     private subscribeExecutedCommand: Subscription;
     isResizingWidth: boolean = false;
     isResizingHeight: boolean = false;
-    resizeCommand: ResizeCommand = new ResizeCommand(this.drawingService);
+    resizeCommand: ResizeCommand = new ResizeCommand(this.drawingService, this.automaticSavingService);
 
-    constructor(private drawingService: DrawingService, private toolbarService: ToolbarService, private undoRedoService: UndoRedoService) {
+    constructor(
+        private drawingService: DrawingService,
+        private toolbarService: ToolbarService,
+        private undoRedoService: UndoRedoService,
+        private automaticSavingService: AutomaticSavingService,
+    ) {
         this.undoRedoService.resetUndoRedo();
     }
 

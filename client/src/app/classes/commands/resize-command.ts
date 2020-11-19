@@ -1,5 +1,7 @@
+import { EventEmitter } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
 import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants/constants';
+import { AutomaticSavingService } from '@app/services/automatic-saving/automatic-saving.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { Command } from './command';
 
@@ -9,8 +11,9 @@ export class ResizeCommand extends Command {
     canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
     baseCtx: CanvasRenderingContext2D;
     imgData: ImageData;
+    canvasResizedData: EventEmitter<string> = new EventEmitter<string>();
 
-    constructor(private drawingService: DrawingService) {
+    constructor(private drawingService: DrawingService, private automaticSavingService: AutomaticSavingService) {
         super();
         this.baseCtx = drawingService.baseCtx;
     }
@@ -41,12 +44,13 @@ export class ResizeCommand extends Command {
     }
 
     clone(): ResizeCommand {
-        const resizeCommandClone = new ResizeCommand(this.drawingService);
+        const resizeCommandClone = new ResizeCommand(this.drawingService, this.automaticSavingService);
         this.copy(resizeCommandClone);
         return resizeCommandClone;
     }
 
     drawImage(): void {
         this.baseCtx.putImageData(this.imgData, 0, 0);
+        this.automaticSavingService.save();
     }
 }
