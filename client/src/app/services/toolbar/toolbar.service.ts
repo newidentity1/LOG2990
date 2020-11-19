@@ -11,6 +11,7 @@ import { BucketService } from '@app/services/tools/bucket/bucket.service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
 import { EraseService } from '@app/services/tools/erase/erase.service';
 import { EyedropperService } from '@app/services/tools/eyedropper/eyedropper.service';
+import { GridService } from '@app/services/tools/grid/grid.service';
 import { LineService } from '@app/services/tools/line/line.service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { PolygonService } from '@app/services/tools/polygon/polygon.service';
@@ -48,6 +49,7 @@ export class ToolbarService {
         protected colorPickerService: ColorPickerService,
         protected bucketService: BucketService,
         protected undoRedoService: UndoRedoService,
+        protected gridService: GridService,
         protected textService: TextService,
     ) {
         this.tools = [
@@ -62,6 +64,7 @@ export class ToolbarService {
             eyedropperService,
             bucketService,
             textService,
+            gridService,
         ];
         this.currentTool = this.tools[0];
         this.keyShortcuts
@@ -109,6 +112,10 @@ export class ToolbarService {
 
     getTools(): Tool[] {
         return this.tools;
+    }
+
+    setGrid(): void {
+        this.gridService.draw();
     }
 
     setColors(primaryColor: Color, secondaryColor: Color): void {
