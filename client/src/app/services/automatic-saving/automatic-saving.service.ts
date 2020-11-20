@@ -12,8 +12,10 @@ export class AutomaticSavingService {
     constructor(private drawingService: DrawingService, private undoRedoService: UndoRedoService) {}
 
     save(): void {
-        const baseCanvas = this.drawingService.canvas;
-        localStorage.setItem('savedDrawing', baseCanvas.toDataURL());
+        const canvas = this.drawingService.canvas;
+        const isCanvasEmpty = this.drawingService.canvasEmpty(this.drawingService.baseCtx, canvas);
+        if (!isCanvasEmpty) localStorage.setItem('savedDrawing', canvas.toDataURL());
+        else localStorage.clear();
     }
 
     recover(): void {
