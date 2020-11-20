@@ -11,20 +11,26 @@ import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { BehaviorSubject } from 'rxjs';
 import { DrawingComponent } from './drawing.component';
+import { AutomaticSavingService } from '@app/services/automatic-saving/automatic-saving.service';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
 describe('DrawingComponent', () => {
     let component: DrawingComponent;
     let fixture: ComponentFixture<DrawingComponent>;
     let drawingServiceStub: DrawingService;
+    let resizeServiceStub: ResizeService;
+    let automaticSavingServiceStub: AutomaticSavingService;
+    let undoRedoServiceStub: UndoRedoService;
     const width: number = CANVAS_MIN_WIDTH;
     const height: number = CANVAS_MIN_HEIGHT;
     const dimensionsUpdatedSubjectStub: BehaviorSubject<number[]> = new BehaviorSubject([width, height]);
     let toolbarServiceSpy: jasmine.SpyObj<ToolbarService>;
-    let resizeServiceSpy: jasmine.SpyObj<ResizeService>;
     let mouseEvent: MouseEvent;
 
     beforeEach(async(() => {
         drawingServiceStub = new DrawingService();
+        automaticSavingServiceStub = new AutomaticSavingService(drawingServiceStub, undoRedoServiceStub);
+        resizeServiceStub = new ResizeService(drawingServiceStub, automaticSavingServiceStub);
         toolbarServiceSpy = jasmine.createSpyObj('ToolbarService', [
             'onMouseMove',
             'onMouseDown',
@@ -44,14 +50,12 @@ describe('DrawingComponent', () => {
             'addCommand',
         ]);
 
-        resizeServiceSpy = jasmine.createSpyObj('ResizeService', ['resizeFromImage', 'resize', 'execute']);
-
         TestBed.configureTestingModule({
             declarations: [DrawingComponent, SVGFilterComponent],
             providers: [
                 { provide: DrawingService, useValue: drawingServiceStub },
+                { provide: ResizeService, useValue: resizeServiceStub },
                 { provide: ToolbarService, useValue: toolbarServiceSpy },
-                { provide: ResizeService, useValue: resizeServiceSpy },
             ],
         }).compileComponents();
 
