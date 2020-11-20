@@ -11,4 +11,5 @@ export enum KeyShortcut {
     EllipseSelect = 's',
     MagicBrushSelect = 'v',
     Bucket = 'b',
+    Text = 't',
 }
