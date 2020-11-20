@@ -1,1 +1,1 @@
-<button class="menu" *ngIf="inMenu" mat-button (click)="continueDrawing()" routerLink="/editor">Continuer un dessin</button>
+<button class="menu" *ngIf="inMenu" mat-button (click)="continueDrawing()" [disabled]="!canContinueDrawing()" routerLink="/editor">Continuer un dessin</button>

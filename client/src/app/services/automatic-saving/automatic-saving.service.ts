@@ -14,8 +14,6 @@ export class AutomaticSavingService {
     save(): void {
         const baseCanvas = this.drawingService.canvas;
         localStorage.setItem('savedDrawing', baseCanvas.toDataURL());
-        localStorage.setItem('width', baseCanvas.width.toString());
-        localStorage.setItem('height', baseCanvas.height.toString());
     }
 
     recover(): void {
@@ -28,5 +26,9 @@ export class AutomaticSavingService {
             this.drawingService.clearCanvas(this.drawingService.baseCtx);
             this.recoverImage.emit(img);
         };
+    }
+
+    savedDrawingExists(): boolean {
+        return localStorage.getItem('savedDrawing') ? true : false;
     }
 }
