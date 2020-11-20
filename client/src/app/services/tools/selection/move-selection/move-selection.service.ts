@@ -143,30 +143,35 @@ export class MoveSelectionService {
         for (let i = 0; i < this.imgData.data.length; i += CONSTANTS.IMAGE_DATA_OPACITY_INDEX + 1) {
             const x = (i / (CONSTANTS.IMAGE_DATA_OPACITY_INDEX + 1)) % this.imgData.width;
             if (x === 0) y++;
-            const stuff = [this.imgData.data[i], this.imgData.data[i + 1], this.imgData.data[i + 2], this.imgData.data[i + 3]];
-            const pixelToCheck = new Uint8ClampedArray(stuff);
+            const pixelToCheckData = [
+                this.imgData.data[i],
+                this.imgData.data[i + 1],
+                this.imgData.data[i + 2],
+                this.imgData.data[i + CONSTANTS.IMAGE_DATA_OPACITY_INDEX],
+            ];
+            const pixelToCheck = new Uint8ClampedArray(pixelToCheckData);
             if (this.isColorMatchingStartingColor(pixelToCheck, pixelColor)) {
                 this.startingPosition.x = Math.min(this.startingPosition.x, x);
                 this.startingPosition.y = Math.min(this.startingPosition.y, y);
                 selectionSize.x = Math.max(selectionSize.x, x - this.startingPosition.x);
                 selectionSize.y = Math.max(selectionSize.y, y - this.startingPosition.y);
+                areaToClear.data[i] = 0;
+                areaToClear.data[i + 1] = 0;
+                areaToClear.data[i + 2] = 0;
+                areaToClear.data[i + CONSTANTS.IMAGE_DATA_OPACITY_INDEX] = 0;
+
+                if (this.imgData.data[i + CONSTANTS.IMAGE_DATA_OPACITY_INDEX] === 0) {
+                    this.imgData.data[i] = CONSTANTS.MAX_COLOR_VALUE;
+                    this.imgData.data[i + 1] = CONSTANTS.MAX_COLOR_VALUE;
+                    this.imgData.data[i + 2] = CONSTANTS.MAX_COLOR_VALUE;
+                    this.imgData.data[i + CONSTANTS.IMAGE_DATA_OPACITY_INDEX] = CONSTANTS.MAX_COLOR_VALUE;
+                }
             } else {
                 this.imgData.data[i] = 0;
                 this.imgData.data[i + 1] = 0;
                 this.imgData.data[i + 2] = 0;
                 this.imgData.data[i + CONSTANTS.IMAGE_DATA_OPACITY_INDEX] = 0;
                 continue;
-            }
-            areaToClear.data[i] = 0;
-            areaToClear.data[i + 1] = 0;
-            areaToClear.data[i + 2] = 0;
-            areaToClear.data[i + CONSTANTS.IMAGE_DATA_OPACITY_INDEX] = 0;
-
-            if (this.imgData.data[i + CONSTANTS.IMAGE_DATA_OPACITY_INDEX] === 0) {
-                this.imgData.data[i] = CONSTANTS.MAX_COLOR_VALUE;
-                this.imgData.data[i + 1] = CONSTANTS.MAX_COLOR_VALUE;
-                this.imgData.data[i + 2] = CONSTANTS.MAX_COLOR_VALUE;
-                this.imgData.data[i + CONSTANTS.IMAGE_DATA_OPACITY_INDEX] = CONSTANTS.MAX_COLOR_VALUE;
             }
         }
         selectionCtx.putImageData(this.imgData, 0, 0, 0, 0, this.imgData.width, this.imgData.height);
@@ -179,6 +184,7 @@ export class MoveSelectionService {
         this.drawingService.baseCtx.putImageData(areaToClear, 0, 0);
         selectionCtx.canvas.style.cursor = 'move';
         this.canMoveSelection = true;
+        this.finalPosition = { x: this.startingPosition.x, y: this.startingPosition.y };
     }
 
     private isPositionInEllipse(position: Vec2, width: number, height: number): boolean {
@@ -186,11 +192,26 @@ export class MoveSelectionService {
     }
 
     private isColorMatchingStartingColor(pixelToCheck: Uint8ClampedArray, startingColor: Uint8ClampedArray): boolean {
+        // checking white and transparent color
+        if (
+            (pixelToCheck[0] === CONSTANTS.MAX_COLOR_VALUE &&
+                pixelToCheck[1] === CONSTANTS.MAX_COLOR_VALUE &&
+                pixelToCheck[2] === CONSTANTS.MAX_COLOR_VALUE &&
+                pixelToCheck[CONSTANTS.IMAGE_DATA_OPACITY_INDEX] === CONSTANTS.MAX_COLOR_VALUE &&
+                startingColor[CONSTANTS.IMAGE_DATA_OPACITY_INDEX] === 0) ||
+            (startingColor[0] === CONSTANTS.MAX_COLOR_VALUE &&
+                startingColor[1] === CONSTANTS.MAX_COLOR_VALUE &&
+                startingColor[2] === CONSTANTS.MAX_COLOR_VALUE &&
+                startingColor[CONSTANTS.IMAGE_DATA_OPACITY_INDEX] === CONSTANTS.MAX_COLOR_VALUE &&
+                pixelToCheck[CONSTANTS.IMAGE_DATA_OPACITY_INDEX] === 0)
+        ) {
+            return true;
+        }
         return (
             pixelToCheck[0] === startingColor[0] &&
             pixelToCheck[1] === startingColor[1] &&
             pixelToCheck[2] === startingColor[2] &&
-            pixelToCheck[3] === startingColor[3]
+            pixelToCheck[CONSTANTS.IMAGE_DATA_OPACITY_INDEX] === startingColor[CONSTANTS.IMAGE_DATA_OPACITY_INDEX]
         );
     }
 }

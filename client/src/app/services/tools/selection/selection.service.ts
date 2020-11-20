@@ -148,7 +148,6 @@ export class SelectionService extends ShapeTool {
     }
 
     resetSelection(): void {
-        console.log('reset');
         this.isAreaSelected = false;
         this.moveSelectionService.canMoveSelection = false;
         const selectionCtx = this.drawingService.previewCtx;
