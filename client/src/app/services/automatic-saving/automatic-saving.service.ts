@@ -1,12 +1,13 @@
-import { Injectable } from '@angular/core';
-import { DrawingService } from '../drawing/drawing.service';
-import { UndoRedoService } from '../undo-redo/undo-redo.service';
+import { EventEmitter, Injectable } from '@angular/core';
+import { DrawingService } from '@app/services/drawing/drawing.service';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class AutomaticSavingService {
     recovering: boolean = false;
+    recoverImage: EventEmitter<HTMLImageElement> = new EventEmitter<HTMLImageElement>();
 
     constructor(private drawingService: DrawingService, private undoRedoService: UndoRedoService) {}
 
@@ -25,11 +26,7 @@ export class AutomaticSavingService {
         img.src = dataURL ? dataURL : '';
         img.onload = () => {
             this.drawingService.clearCanvas(this.drawingService.baseCtx);
-            this.drawingService.baseCtx.canvas.width = img.width;
-            this.drawingService.baseCtx.canvas.height = img.height;
-            this.drawingService.previewCtx.canvas.width = img.width;
-            this.drawingService.previewCtx.canvas.height = img.height;
-            this.drawingService.baseCtx.drawImage(img, 0, 0);
+            this.recoverImage.emit(img);
         };
     }
 }
