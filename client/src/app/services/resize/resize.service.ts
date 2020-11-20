@@ -13,7 +13,6 @@ export class ResizeService extends Command implements OnDestroy {
     newWidth: number = 0;
     newHeight: number = 0;
     canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
-    baseCtx: CanvasRenderingContext2D;
     img: HTMLImageElement = new Image();
     canvasResizedData: EventEmitter<string> = new EventEmitter<string>();
     private subscribeRecoverImage: Subscription;
@@ -23,7 +22,6 @@ export class ResizeService extends Command implements OnDestroy {
         this.subscribeRecoverImage = this.automaticSavingService.recoverImage.subscribe((img: HTMLImageElement) => {
             this.resizeFromImage(img);
         });
-        this.baseCtx = drawingService.baseCtx;
     }
 
     ngOnDestroy(): void {
@@ -69,7 +67,6 @@ export class ResizeService extends Command implements OnDestroy {
         resizeService.img = new Image();
         resizeService.img.src = this.img.src;
         resizeService.img.crossOrigin = this.img.crossOrigin;
-        resizeService.baseCtx = this.baseCtx;
     }
 
     clone(): ResizeService {
