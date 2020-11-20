@@ -1,23 +1,33 @@
-import { Injectable } from '@angular/core';
+import { EventEmitter, Injectable, OnDestroy } from '@angular/core';
 import { Command } from '@app/classes/commands/command';
 import { Vec2 } from '@app/classes/vec2';
 import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants/constants';
 import { AutomaticSavingService } from '@app/services/automatic-saving/automatic-saving.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { Subscription } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
 })
-export class ResizeService extends Command {
+export class ResizeService extends Command implements OnDestroy {
     newWidth: number = 0;
     newHeight: number = 0;
     canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
     baseCtx: CanvasRenderingContext2D;
     img: HTMLImageElement = new Image();
+    canvasResizedData: EventEmitter<string> = new EventEmitter<string>();
+    private subscribeRecoverImage: Subscription;
 
     constructor(private drawingService: DrawingService, private automaticSavingService: AutomaticSavingService) {
         super();
+        this.subscribeRecoverImage = this.automaticSavingService.recoverImage.subscribe((img: HTMLImageElement) => {
+            this.resizeFromImage(img);
+        });
         this.baseCtx = drawingService.baseCtx;
+    }
+
+    ngOnDestroy(): void {
+        this.subscribeRecoverImage.unsubscribe();
     }
 
     resizeFromImage(img: HTMLImageElement): void {
