@@ -20,6 +20,7 @@ describe('DrawingComponent', () => {
     const height: number = CANVAS_MIN_HEIGHT;
     const dimensionsUpdatedSubjectStub: BehaviorSubject<number[]> = new BehaviorSubject([width, height]);
     let toolbarServiceSpy: jasmine.SpyObj<ToolbarService>;
+    let resizeServiceSpy: jasmine.SpyObj<ResizeService>;
     let mouseEvent: MouseEvent;
 
     beforeEach(async(() => {
@@ -43,11 +44,14 @@ describe('DrawingComponent', () => {
             'addCommand',
         ]);
 
+        resizeServiceSpy = jasmine.createSpyObj('ResizeService', ['resizeFromImage', 'resize', 'execute']);
+
         TestBed.configureTestingModule({
             declarations: [DrawingComponent, SVGFilterComponent],
             providers: [
                 { provide: DrawingService, useValue: drawingServiceStub },
                 { provide: ToolbarService, useValue: toolbarServiceSpy },
+                { provide: ResizeService, useValue: resizeServiceSpy },
             ],
         }).compileComponents();
 
@@ -62,7 +66,6 @@ describe('DrawingComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(DrawingComponent);
         component = fixture.componentInstance;
-        component.resizeService = new ResizeService(drawingServiceStub);
         component.dimensionsUpdatedEvent = dimensionsUpdatedSubjectStub.asObservable();
         component.requestDrawingContainerDimensions = new EventEmitter();
         fixture.detectChanges();
