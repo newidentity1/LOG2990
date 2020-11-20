@@ -99,9 +99,19 @@ export class TextService extends Tool {
     }
 
     onEnter(): void {
+        // TODO cas ou on enter pendant que le cursor nest pas dans la last row
         this.cursorRowIndex += 1;
-        this.currentText[this.cursorRowIndex] = '';
-        this.cursorColumnIndex = 0;
+
+        const textRightOfCursor = this.currentText[this.cursorRowIndex - 1].substring(this.cursorColumnIndex);
+
+        const isTextWithLineJump = textRightOfCursor.length !== 0;
+
+        this.currentText[this.cursorRowIndex - 1] = this.currentText[this.cursorRowIndex - 1].substring(0, this.cursorColumnIndex);
+
+        this.currentText[this.cursorRowIndex] = isTextWithLineJump ? textRightOfCursor : '';
+
+        this.cursorColumnIndex = textRightOfCursor.length;
+
         this.writeText(this.drawingService.previewCtx);
     }
 
@@ -178,11 +188,12 @@ export class TextService extends Tool {
 
     drawTextArea(): void {
         const HEIGHT_FACTOR = 5;
+        const CURSOR_WIDTH = 5;
         const context = this.drawingService.previewCtx;
         const properties = this.toolProperties as TextProperties;
 
         const dimensions = this.calculateLongestWidth();
-        this.textAreaDimensions = { x: dimensions + 2, y: -properties.size + 2 };
+        this.textAreaDimensions = { x: dimensions + CURSOR_WIDTH, y: -properties.size + 2 };
         this.textAreaStartingPoint = { x: this.mouseDownCoord.x - 2, y: this.mouseDownCoord.y + properties.size / HEIGHT_FACTOR };
 
         this.drawingService.clearCanvas(context);
@@ -209,25 +220,23 @@ export class TextService extends Tool {
 
     drawCursor(): void {
         const HEIGHT_FACTOR = 5;
-        const BLINKING_CURSOR_SPEED = 1000;
+        const BLINKING_CURSOR_SPEED = 800;
         const context = this.drawingService.previewCtx;
-        const cursorPosition = context.measureText(this.currentText[this.cursorRowIndex].substring(0, this.cursorColumnIndex)).width;
 
-        context.strokeStyle = '#000000';
+        context.fillStyle = '#000000';
         context.lineWidth = 1;
-        context.strokeRect(
-            this.mouseDownCoord.x + cursorPosition,
+
+        const cursorX = Math.round(this.calculateXCoordCursor());
+        const cursorY = Math.round(
             this.mouseDownCoord.y - this.textAreaDimensions.y / HEIGHT_FACTOR - this.textAreaDimensions.y * this.cursorRowIndex,
-            1,
-            this.textAreaDimensions.y,
         );
+        const cursorWidth = 2;
+        const cursorHeight = Math.round(this.textAreaDimensions.y);
+
+        context.fillRect(cursorX, cursorY, cursorWidth, cursorHeight);
+
         setTimeout(() => {
-            context.clearRect(
-                this.mouseDownCoord.x + cursorPosition - 1,
-                this.mouseDownCoord.y - this.textAreaDimensions.y / HEIGHT_FACTOR - this.textAreaDimensions.y * this.cursorRowIndex - 1,
-                1 + 2,
-                this.textAreaDimensions.y + 2,
-            );
+            context.clearRect(cursorX, cursorY, cursorWidth, cursorHeight);
         }, BLINKING_CURSOR_SPEED);
     }
 
@@ -240,6 +249,25 @@ export class TextService extends Tool {
                 break;
             case TextAlignment.Middle:
                 x = this.mouseDownCoord.x + this.calculateLongestWidth() / 2;
+                break;
+            case TextAlignment.Right:
+                x = this.mouseDownCoord.x + this.calculateLongestWidth();
+                break;
+        }
+        return x;
+    }
+
+    calculateXCoordCursor(): number {
+        const properties = this.toolProperties as TextProperties;
+        const textWidth = this.drawingService.previewCtx.measureText(this.currentText[this.cursorRowIndex].substring(0, this.cursorColumnIndex))
+            .width;
+        let x = 0;
+        switch (properties.textAlignment) {
+            case TextAlignment.Left:
+                x = this.mouseDownCoord.x + Math.floor(textWidth);
+                break;
+            case TextAlignment.Middle:
+                x = this.mouseDownCoord.x + this.calculateLongestWidth() / 2 + Math.floor(textWidth / 2);
                 break;
             case TextAlignment.Right:
                 x = this.mouseDownCoord.x + this.calculateLongestWidth();
@@ -264,7 +292,8 @@ export class TextService extends Tool {
             event.offsetX >= this.textAreaStartingPoint.x && event.offsetX <= this.textAreaStartingPoint.x + this.textAreaDimensions.x;
 
         const isYInsideTextArea =
-            event.offsetY <= this.textAreaStartingPoint.y && event.offsetY >= this.textAreaStartingPoint.y + this.textAreaDimensions.y;
+            event.offsetY >= this.textAreaStartingPoint.y + this.textAreaDimensions.y &&
+            event.offsetY <= this.textAreaStartingPoint.y - this.textAreaDimensions.y * this.currentText.length;
 
         return isXInsideTextArea && isYInsideTextArea;
     }
