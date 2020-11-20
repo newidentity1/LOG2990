@@ -88,19 +88,9 @@ export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy 
             image.crossOrigin = '';
             image.src = this.drawings[event - 1].url;
             image.onload = () => {
-                const ctx = this.drawingService.canvas.getContext('2d') as CanvasRenderingContext2D;
-                this.drawingService.clearCanvas(ctx as CanvasRenderingContext2D);
-                this.drawingService.baseCtx.canvas.width = image.width;
-                this.drawingService.baseCtx.canvas.height = image.height;
-                this.drawingService.previewCtx.canvas.width = image.width;
-                this.drawingService.previewCtx.canvas.height = image.height;
-                this.drawingService.baseCtx.drawImage(image, 0, 0);
-
-                this.undoRedoService.resetUndoRedo();
-                this.resizeService.resize(image.width, image.height);
                 this.drawingService.clearCanvas(this.drawingService.baseCtx);
-                this.resizeService.drawImage();
-
+                this.undoRedoService.resetUndoRedo();
+                this.resizeService.resizeFromImage(image);
                 this.dialog.closeAll();
             };
         } else {

@@ -1,4 +1,4 @@
-import { EventEmitter, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Command } from '@app/classes/commands/command';
 import { Vec2 } from '@app/classes/vec2';
 import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants/constants';
@@ -13,36 +13,52 @@ export class ResizeService extends Command {
     newHeight: number = 0;
     canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
     baseCtx: CanvasRenderingContext2D;
-    imgData: ImageData;
-    canvasResizedData: EventEmitter<string> = new EventEmitter<string>();
+    img: HTMLImageElement = new Image();
 
     constructor(private drawingService: DrawingService, private automaticSavingService: AutomaticSavingService) {
         super();
         this.baseCtx = drawingService.baseCtx;
     }
 
-    resize(newWidth: number, newHeight: number): void {
-        this.newWidth = newWidth;
-        this.newHeight = newHeight;
-        this.imgData = this.baseCtx.getImageData(0, 0, newWidth, newHeight);
+    resizeFromImage(img: HTMLImageElement): void {
+        this.img = img;
+        this.newWidth = img.width;
+        this.newHeight = img.height;
         this.execute();
+        this.drawImage();
         this.executedCommand.emit(this.clone());
     }
 
+    resize(newWidth: number, newHeight: number): void {
+        this.newWidth = newWidth;
+        this.newHeight = newHeight;
+
+        const imgDataURL = this.drawingService.canvas.toDataURL();
+        this.execute();
+
+        this.img.src = imgDataURL;
+        this.img.onload = () => {
+            this.drawImage();
+            this.executedCommand.emit(this.clone());
+        };
+    }
+
     execute(): void {
-        this.canvasSize.x = this.newWidth;
-        this.canvasSize.y = this.newHeight;
         this.drawingService.baseCtx.canvas.width = this.newWidth;
         this.drawingService.baseCtx.canvas.height = this.newHeight;
         this.drawingService.previewCtx.canvas.width = this.newWidth;
         this.drawingService.previewCtx.canvas.height = this.newHeight;
+        this.canvasSize.x = this.newWidth;
+        this.canvasSize.y = this.newHeight;
     }
 
     copy(resizeService: ResizeService): void {
         resizeService.newWidth = this.newWidth;
         resizeService.newHeight = this.newHeight;
         resizeService.canvasSize = this.canvasSize;
-        resizeService.imgData = this.imgData;
+        resizeService.img = new Image();
+        resizeService.img.src = this.img.src;
+        resizeService.img.crossOrigin = this.img.crossOrigin;
         resizeService.baseCtx = this.baseCtx;
     }
 
@@ -53,7 +69,9 @@ export class ResizeService extends Command {
     }
 
     drawImage(): void {
-        this.baseCtx.putImageData(this.imgData, 0, 0);
-        this.automaticSavingService.save();
+        setTimeout(() => {
+            this.drawingService.baseCtx.drawImage(this.img, 0, 0);
+            this.automaticSavingService.save();
+        }, 0);
     }
 }
