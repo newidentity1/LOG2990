@@ -21,6 +21,7 @@ export class AutomaticSavingService {
         this.recovering = true;
         const dataURL = localStorage.getItem('savedDrawing');
         const img = new Image();
+        this.undoRedoService.resetUndoRedo();
         img.src = dataURL ? dataURL : '';
         img.onload = () => {
             this.drawingService.clearCanvas(this.drawingService.baseCtx);
@@ -28,7 +29,6 @@ export class AutomaticSavingService {
             this.drawingService.baseCtx.canvas.height = img.height;
             this.drawingService.previewCtx.canvas.width = img.width;
             this.drawingService.previewCtx.canvas.height = img.height;
-            this.undoRedoService.resetUndoRedo();
             this.drawingService.baseCtx.drawImage(img, 0, 0);
         };
     }
