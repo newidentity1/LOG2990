@@ -1,11 +1,14 @@
-import { EventEmitter } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
+import { Command } from '@app/classes/commands/command';
 import { Vec2 } from '@app/classes/vec2';
 import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants/constants';
 import { AutomaticSavingService } from '@app/services/automatic-saving/automatic-saving.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { Command } from './command';
 
-export class ResizeCommand extends Command {
+@Injectable({
+    providedIn: 'root',
+})
+export class ResizeService extends Command {
     newWidth: number = 0;
     newHeight: number = 0;
     canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
@@ -35,18 +38,18 @@ export class ResizeCommand extends Command {
         this.drawingService.previewCtx.canvas.height = this.newHeight;
     }
 
-    copy(resizeCommand: ResizeCommand): void {
-        resizeCommand.newWidth = this.newWidth;
-        resizeCommand.newHeight = this.newHeight;
-        resizeCommand.canvasSize = this.canvasSize;
-        resizeCommand.imgData = this.imgData;
-        resizeCommand.baseCtx = this.baseCtx;
+    copy(resizeService: ResizeService): void {
+        resizeService.newWidth = this.newWidth;
+        resizeService.newHeight = this.newHeight;
+        resizeService.canvasSize = this.canvasSize;
+        resizeService.imgData = this.imgData;
+        resizeService.baseCtx = this.baseCtx;
     }
 
-    clone(): ResizeCommand {
-        const resizeCommandClone = new ResizeCommand(this.drawingService, this.automaticSavingService);
-        this.copy(resizeCommandClone);
-        return resizeCommandClone;
+    clone(): ResizeService {
+        const resizeServiceClone = new ResizeService(this.drawingService, this.automaticSavingService);
+        this.copy(resizeServiceClone);
+        return resizeServiceClone;
     }
 
     drawImage(): void {
