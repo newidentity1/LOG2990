@@ -39,9 +39,10 @@ describe('SelectionService', () => {
 
         drawPreviewSpy = spyOn<any>(service, 'drawPreview').and.callThrough();
         drawSelectionSpy = spyOn<any>(service, 'drawSelection').and.callThrough();
+        service['selectionImageData'] = drawingServiceSpy.baseCtx.getImageData(0, 0, 1, 1);
+        moveSelectionService.imgData = drawingServiceSpy.baseCtx.getImageData(0, 0, 1, 1);
 
         moveSelectionService = TestBed.inject(MoveSelectionService);
-        moveSelectionService.imgData = drawingServiceSpy.baseCtx.getImageData(0, 0, 1, 1);
         copySelectionSpy = spyOn<any>(moveSelectionService, 'copySelection').and.callThrough();
 
         mouseEvent = {
