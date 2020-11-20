@@ -1,7 +1,7 @@
 import { EventEmitter } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
-import { ResizeCommand } from '@app/classes/commands/resize-command';
+import { ResizeService } from '@app/services/resize/resize.service';
 import { ResizerProperties } from '@app/classes/resizer-properties';
 import { Tool } from '@app/classes/tool/tool';
 import { SVGFilterComponent } from '@app/components/tools-options/brush/svgfilter/svgfilter.component';
@@ -62,7 +62,7 @@ describe('DrawingComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(DrawingComponent);
         component = fixture.componentInstance;
-        component.resizeCommand = new ResizeCommand(drawingServiceStub);
+        component.resizeService = new ResizeService(drawingServiceStub);
         component.dimensionsUpdatedEvent = dimensionsUpdatedSubjectStub.asObservable();
         component.requestDrawingContainerDimensions = new EventEmitter();
         fixture.detectChanges();
