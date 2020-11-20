@@ -13,4 +13,8 @@ export class ContinueDrawingComponent {
     continueDrawing(): void {
         this.automaticSavingService.recover();
     }
+
+    canContinueDrawing(): boolean {
+        return this.automaticSavingService.savedDrawingExists();
+    }
 }
