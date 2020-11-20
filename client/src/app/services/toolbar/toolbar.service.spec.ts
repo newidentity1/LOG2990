@@ -61,7 +61,7 @@ describe('ToolbarService', () => {
         eyedropperServiceSpy = jasmine.createSpyObj('EyedropperService', ['onKeyDown']);
         selectionServiceSpy = jasmine.createSpyObj('SelectionService', ['selectAll', 'resetSelection', 'setSelectionType', 'setThickness']);
         bucketServiceSpy = jasmine.createSpyObj('BucketService', ['onMouseDown']);
-        drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setStrokeColor', 'setThickness']);
+        drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setStrokeColor', 'setThickness', 'canvasEmpty']);
         polygonServiceSpy = jasmine.createSpyObj('PolygonService', ['onKeyDown']);
         textServiceSpy = jasmine.createSpyObj('TextService', ['onClick']);
 
