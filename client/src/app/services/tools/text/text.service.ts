@@ -12,15 +12,15 @@ import { ShortcutService } from '@app/services/shortcut/shortcut.service';
     providedIn: 'root',
 })
 export class TextService extends Tool {
-    currentText: string[] = [''];
-    isConfirmText: boolean = false;
+    currentTexts: string[] = [''];
+    textConfirmed: boolean = false;
     isInitialText: boolean = true;
     currentStyle: string = '';
-    cursorPosition: Vec2 = { x: 0, y: 0 };
-    cursorIntervalRef: number;
     actionKeys: Map<string, () => void> = new Map<string, () => void>();
     textAreaDimensions: Vec2 = { x: 0, y: 0 };
     textAreaStartingPoint: Vec2 = { x: 0, y: 0 };
+    cursorPosition: Vec2 = { x: 0, y: 0 };
+    cursorIntervalRef: number;
     cursorColumnIndex: number = 0;
     cursorRowIndex: number = 0;
 
@@ -43,11 +43,9 @@ export class TextService extends Tool {
     onBackspace(): void {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         if (this.cursorColumnIndex !== 0) {
-            this.currentText[this.cursorRowIndex] =
-                this.currentText[this.cursorRowIndex].length !== 0
-                    ? this.currentText[this.cursorRowIndex].substring(0, this.cursorColumnIndex - 1) +
-                      this.currentText[this.cursorRowIndex].substring(this.cursorColumnIndex)
-                    : this.currentText[this.cursorRowIndex];
+            this.currentTexts[this.cursorRowIndex] =
+                this.currentTexts[this.cursorRowIndex].substring(0, this.cursorColumnIndex - 1) +
+                this.currentTexts[this.cursorRowIndex].substring(this.cursorColumnIndex);
             this.cursorColumnIndex -= 1;
         }
         this.writeText(this.drawingService.previewCtx);
@@ -55,24 +53,21 @@ export class TextService extends Tool {
 
     onDelete(): void {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        if (this.cursorColumnIndex !== this.currentText[this.cursorRowIndex].length) {
-            this.currentText[this.cursorRowIndex] =
-                this.currentText[this.cursorRowIndex].substring(0, this.cursorColumnIndex) +
-                this.currentText[this.cursorRowIndex].substring(this.cursorColumnIndex + 1);
+        if (this.cursorColumnIndex !== this.currentTexts[this.cursorRowIndex].length) {
+            this.currentTexts[this.cursorRowIndex] =
+                this.currentTexts[this.cursorRowIndex].substring(0, this.cursorColumnIndex) +
+                this.currentTexts[this.cursorRowIndex].substring(this.cursorColumnIndex + 1);
         }
         this.writeText(this.drawingService.previewCtx);
     }
 
     onEscape(): void {
-        for (let i = 0; i < this.currentText.length; ++i) {
-            this.currentText[i] = '';
-        }
         this.mouseDown = false;
         this.shortcutService.disableShortcuts = false;
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         clearInterval(this.cursorIntervalRef);
         this.isInitialText = true;
-        this.currentText = [''];
+        this.currentTexts = [''];
         this.cursorRowIndex = 0;
         this.cursorColumnIndex = 0;
     }
@@ -84,7 +79,7 @@ export class TextService extends Tool {
 
     onArrowRight(): void {
         this.cursorColumnIndex =
-            this.cursorColumnIndex === this.currentText[this.cursorRowIndex].length ? this.cursorColumnIndex : this.cursorColumnIndex + 1;
+            this.cursorColumnIndex === this.currentTexts[this.cursorRowIndex].length ? this.cursorColumnIndex : this.cursorColumnIndex + 1;
         this.setCursor();
     }
 
@@ -94,21 +89,20 @@ export class TextService extends Tool {
     }
 
     onArrowDown(): void {
-        this.cursorRowIndex = this.cursorRowIndex === this.currentText.length ? this.cursorRowIndex : this.cursorRowIndex + 1;
+        this.cursorRowIndex = this.cursorRowIndex === this.currentTexts.length ? this.cursorRowIndex : this.cursorRowIndex + 1;
         this.setCursor();
     }
 
     onEnter(): void {
-        // TODO cas ou on enter pendant que le cursor nest pas dans la last row
-        this.cursorRowIndex += 1;
-
-        const textRightOfCursor = this.currentText[this.cursorRowIndex - 1].substring(this.cursorColumnIndex);
+        const textRightOfCursor = this.currentTexts[this.cursorRowIndex].substring(this.cursorColumnIndex);
 
         const isTextWithLineJump = textRightOfCursor.length !== 0;
 
-        this.currentText[this.cursorRowIndex - 1] = this.currentText[this.cursorRowIndex - 1].substring(0, this.cursorColumnIndex);
+        this.currentTexts[this.cursorRowIndex] = this.currentTexts[this.cursorRowIndex].substring(0, this.cursorColumnIndex);
 
-        this.currentText[this.cursorRowIndex] = isTextWithLineJump ? textRightOfCursor : '';
+        this.cursorRowIndex += 1;
+
+        this.currentTexts.splice(this.cursorRowIndex, 0, isTextWithLineJump ? textRightOfCursor : '');
 
         this.cursorColumnIndex = textRightOfCursor.length;
 
@@ -117,18 +111,15 @@ export class TextService extends Tool {
 
     onKeyDown(event: KeyboardEvent): void {
         if (this.mouseDown) {
-            const isAction = this.actionKeys.get(event.key) !== undefined;
+            const action = this.actionKeys.get(event.key);
 
-            if (event.key.length > 1 && !isAction) return;
-
-            if (isAction) {
-                const actionFunction = this.actionKeys.get(event.key);
-                if (actionFunction) actionFunction();
-            } else {
-                this.currentText[this.cursorRowIndex] =
-                    this.currentText[this.cursorRowIndex].substring(0, this.cursorColumnIndex) +
+            if (action !== undefined) {
+                action();
+            } else if (event.key.length === 1) {
+                this.currentTexts[this.cursorRowIndex] =
+                    this.currentTexts[this.cursorRowIndex].substring(0, this.cursorColumnIndex) +
                     event.key +
-                    this.currentText[this.cursorRowIndex].substring(this.cursorColumnIndex);
+                    this.currentTexts[this.cursorRowIndex].substring(this.cursorColumnIndex);
                 this.cursorColumnIndex += 1;
                 this.writeText(this.drawingService.previewCtx);
             }
@@ -136,8 +127,7 @@ export class TextService extends Tool {
     }
 
     onClick(event: MouseEvent): void {
-        const previewContext = this.drawingService.previewCtx;
-        this.drawingService.clearCanvas(previewContext);
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.mouseDown = event.button === MouseButton.Left;
         const isInsideTextArea = this.isClickInsideTextArea(event);
 
@@ -146,13 +136,13 @@ export class TextService extends Tool {
         } else if (this.mouseDown) {
             this.shortcutService.disableShortcuts = true;
             if (!isInsideTextArea) {
-                for (let i = 0; i < this.currentText.length; ++i) {
-                    this.currentText[i] = '';
+                for (let i = 0; i < this.currentTexts.length; ++i) {
+                    this.currentTexts[i] = '';
                 }
                 this.mouseDownCoord = this.getPositionFromMouse(event);
             }
+            this.textConfirmed = false;
             this.writeText(this.drawingService.previewCtx);
-            this.isConfirmText = false;
         }
 
         if (this.isInitialText) this.isInitialText = false;
@@ -166,22 +156,22 @@ export class TextService extends Tool {
             this.setCursor();
         }
 
-        for (let i = 0; i < this.currentText.length; ++i) {
-            context.fillText(this.currentText[i], this.calculateXCoord(), this.mouseDownCoord.y - this.textAreaDimensions.y * i);
+        for (let i = 0; i < this.currentTexts.length; ++i) {
+            context.fillText(this.currentTexts[i], this.calculateXCoordText(), this.mouseDownCoord.y - this.textAreaDimensions.y * i);
         }
     }
 
     isTextInProgress(): boolean {
-        return this.mouseDown && !this.isConfirmText && !this.isInitialText;
+        return this.mouseDown && !this.textConfirmed && !this.isInitialText;
     }
 
     confirmText(): void {
         this.writeText(this.drawingService.baseCtx);
-        this.isConfirmText = true;
+        this.textConfirmed = true;
         this.mouseDown = false;
         this.shortcutService.disableShortcuts = false;
         clearInterval(this.cursorIntervalRef);
-        this.currentText = [''];
+        this.currentTexts = [''];
         this.cursorRowIndex = 0;
         this.cursorColumnIndex = 0;
     }
@@ -202,18 +192,16 @@ export class TextService extends Tool {
         context.lineWidth = 1;
         context.strokeRect(
             this.textAreaStartingPoint.x,
-            this.textAreaStartingPoint.y - this.textAreaDimensions.y * (this.currentText.length - 1),
+            this.textAreaStartingPoint.y - this.textAreaDimensions.y * (this.currentTexts.length - 1),
             this.textAreaDimensions.x,
-            this.textAreaDimensions.y * this.currentText.length,
+            this.textAreaDimensions.y * this.currentTexts.length,
         );
         context.setLineDash([]);
     }
 
     setCursor(): void {
         const BLINKING_CURSOR_SPEED = 1200;
-        if (this.cursorIntervalRef) {
-            clearInterval(this.cursorIntervalRef);
-        }
+        if (this.cursorIntervalRef) clearInterval(this.cursorIntervalRef);
 
         this.cursorIntervalRef = window.setInterval(this.drawCursor.bind(this), BLINKING_CURSOR_SPEED);
     }
@@ -240,7 +228,7 @@ export class TextService extends Tool {
         }, BLINKING_CURSOR_SPEED);
     }
 
-    calculateXCoord(): number {
+    calculateXCoordText(): number {
         const properties = this.toolProperties as TextProperties;
         let x = 0;
         switch (properties.textAlignment) {
@@ -259,18 +247,26 @@ export class TextService extends Tool {
 
     calculateXCoordCursor(): number {
         const properties = this.toolProperties as TextProperties;
-        const textWidth = this.drawingService.previewCtx.measureText(this.currentText[this.cursorRowIndex].substring(0, this.cursorColumnIndex))
-            .width;
+        const context = this.drawingService.previewCtx;
+        let cursorTextWidth = 0;
         let x = 0;
         switch (properties.textAlignment) {
             case TextAlignment.Left:
-                x = this.mouseDownCoord.x + Math.floor(textWidth);
+                cursorTextWidth = context.measureText(this.currentTexts[this.cursorRowIndex].substring(0, this.cursorColumnIndex)).width;
+                x = this.mouseDownCoord.x + cursorTextWidth;
                 break;
             case TextAlignment.Middle:
-                x = this.mouseDownCoord.x + this.calculateLongestWidth() / 2 + Math.floor(textWidth / 2);
+                const textWidth = context.measureText(this.currentTexts[this.cursorRowIndex]).width;
+                cursorTextWidth = context.measureText(this.currentTexts[this.cursorRowIndex].substring(0, this.cursorColumnIndex)).width;
+                x = this.calculateXCoordText() - textWidth / 2 + cursorTextWidth;
                 break;
             case TextAlignment.Right:
-                x = this.mouseDownCoord.x + this.calculateLongestWidth();
+                const endPosition = this.currentTexts[this.cursorRowIndex].length;
+                const positionFromEnd = endPosition - this.cursorColumnIndex;
+
+                cursorTextWidth = context.measureText(this.currentTexts[this.cursorRowIndex].substring(endPosition - positionFromEnd, endPosition))
+                    .width;
+                x = this.mouseDownCoord.x + this.calculateLongestWidth() - cursorTextWidth;
                 break;
         }
         return x;
@@ -278,9 +274,9 @@ export class TextService extends Tool {
 
     calculateLongestWidth(): number {
         const context = this.drawingService.previewCtx;
-        let longestWidth = context.measureText(this.currentText[0]).width;
+        let longestWidth = context.measureText(this.currentTexts[0]).width;
         let textWidth = 0;
-        for (const text of this.currentText) {
+        for (const text of this.currentTexts) {
             textWidth = context.measureText(text).width;
             longestWidth = longestWidth < textWidth ? textWidth : longestWidth;
         }
@@ -293,7 +289,7 @@ export class TextService extends Tool {
 
         const isYInsideTextArea =
             event.offsetY >= this.textAreaStartingPoint.y + this.textAreaDimensions.y &&
-            event.offsetY <= this.textAreaStartingPoint.y - this.textAreaDimensions.y * this.currentText.length;
+            event.offsetY <= this.textAreaStartingPoint.y - this.textAreaDimensions.y * this.currentTexts.length;
 
         return isXInsideTextArea && isYInsideTextArea;
     }
