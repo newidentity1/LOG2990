@@ -20,6 +20,7 @@ export class GridComponent implements OnInit {
         this.gridService.draw();
     }
 
+    // tslint:disable: no-any
     onChangeInput(event: any): void {
         this.gridService.setDeltaX(event.target.value);
         event.target.value = this.gridService.getDeltaX();

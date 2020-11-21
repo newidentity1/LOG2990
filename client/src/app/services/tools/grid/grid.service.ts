@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool/tool';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
+import * as CONSTANTS from '@app/constants/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
 @Injectable({
@@ -51,19 +52,19 @@ export class GridService extends Tool {
     }
 
     private roundUp(n: number): number {
-        const dy = n % 5;
-        if (dy >= 3) {
-            n = n - dy + 5;
+        const dy = n % CONSTANTS.GRID_MULTIPLE;
+        if (dy >= CONSTANTS.ROUND_UP) {
+            n = n - dy + CONSTANTS.GRID_MULTIPLE;
         } else {
             n = n - dy;
         }
         return n;
     }
 
-    setCanvasOpacity(n: number) {
+    setCanvasOpacity(n: number): void {
         console.log('slideruse');
         const ctx = this.drawingService.gridCtx;
-        ctx.globalAlpha = n / 255;
+        ctx.globalAlpha = n / CONSTANTS.MAX_COLOR_VALUE;
         this.generateGrid();
     }
 
