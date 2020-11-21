@@ -104,7 +104,7 @@ export class TextService extends Tool {
 
         this.currentTexts.splice(this.cursorRowIndex, 0, isTextWithLineJump ? textRightOfCursor : '');
 
-        this.cursorColumnIndex = textRightOfCursor.length;
+        this.cursorColumnIndex = 0;
 
         this.writeText(this.drawingService.previewCtx);
     }
