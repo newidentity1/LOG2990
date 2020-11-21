@@ -18,5 +18,21 @@
             <mat-icon>select_all</mat-icon>
             <span>Sélectionner tout</span>
         </button>
+        <button mat-button (click)="triggerCopy()" [disabled]="!isAreaSelected()">
+            <mat-icon>content_copy</mat-icon>
+            <span>Copier</span>
+        </button>
+        <button mat-button (click)="triggerCut()" [disabled]="!isAreaSelected()">
+            <mat-icon>content_cut</mat-icon>
+            <span>Couper</span>
+        </button>
+        <button mat-button (click)="triggerPaste()" [disabled]="isClipboardEmpty()">
+            <mat-icon>content_paste</mat-icon>
+            <span>Coller</span>
+        </button>
+        <button mat-button (click)="triggerDelete()" [disabled]="!isAreaSelected()">
+            <mat-icon>clear</mat-icon>
+            <span>Supprimer</span>
+        </button>
     </div>
 </div>
