@@ -28,3 +28,9 @@
     float: right;
     color: yellow;
 }
+
+.options-group {
+  display: flex;
+  flex-direction: column;
+  // margin: 15px 0;
+}

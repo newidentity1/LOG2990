@@ -1,16 +1,16 @@
 <div id="wrap">
+
     <mat-accordion>
         <mat-expansion-panel>
             <mat-expansion-panel-header>
                 <mat-panel-title> Format </mat-panel-title>
             </mat-expansion-panel-header>
 
-            <div>
-                <mat-select [(value)]="selectedFormat" (selectionChange)="onFormatChange()">
-                    <mat-option value="png">PNG</mat-option>
-                    <mat-option value="jpeg">JPG</mat-option>
-                </mat-select>
-            </div>
+            <mat-radio-group aria-labelledby="format-type-group" class="options-group" [(ngModel)]="selectedFormat" (change)="onFormatChange()" ngDefaultControl>
+                <mat-radio-button value="jpeg">JPG</mat-radio-button>
+                <mat-radio-button value="png">PNG</mat-radio-button>
+            </mat-radio-group>
+
         </mat-expansion-panel>
 
         <mat-expansion-panel>
@@ -18,9 +18,11 @@
                 <mat-panel-title> Filtre </mat-panel-title>
             </mat-expansion-panel-header>
             <div id="filter-names">
-                <mat-select [(value)]="selectedFilter" (selectionChange)="setPreviewFilter()">
-                    <mat-option *ngFor="let type of typeExportFilter | keyvalue: keepOriginalOrder" [value]="type.value">{{ type.value }}</mat-option>
-                </mat-select>
+                <mat-radio-group aria-labelledby="type-filter-group" class="options-group" [(ngModel)]="selectedFilter" (change)="setPreviewFilter()" ngDefaultControl>
+                    <mat-radio-button class="type-filter" *ngFor="let type of typeExportFilter | keyvalue: keepOriginalOrder" [value]="type.value">
+                        {{ type.value }}
+                    </mat-radio-button>
+                </mat-radio-group>
             </div>
 
             <!-- filter slider -->
