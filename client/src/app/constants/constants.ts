@@ -64,3 +64,6 @@ export const HUE_CONVERSION = 360;
 
 export const MINIMUM_TEXT_SIZE = 10;
 export const MAXIMUM_TEXT_SIZE = 100;
+
+export const GRID_MULTIPLE = 5;
+export const ROUND_UP = 3;
