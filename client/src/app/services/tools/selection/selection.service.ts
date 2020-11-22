@@ -6,6 +6,7 @@ import * as CONSTANTS from '@app/constants/constants';
 import { MouseButton } from '@app/enums/mouse-button.enum';
 import { SelectionType } from '@app/enums/selection-type.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { MagicWandService } from './magic-wand/magic-wand.service';
 import { MoveSelectionService } from './move-selection/move-selection.service';
 
 interface ClipboardImage {
@@ -26,7 +27,7 @@ export class SelectionService extends ShapeTool {
     private clipboardImage: ClipboardImage;
     private moveSelectionPos: Vec2 = { x: 0, y: 0 };
 
-    constructor(drawingService: DrawingService, private moveSelectionService: MoveSelectionService) {
+    constructor(drawingService: DrawingService, private moveSelectionService: MoveSelectionService, private magicWandSelection: MagicWandService) {
         super(drawingService);
         this.name = 'Selection';
         this.tooltip = 'Selection (r)';
@@ -43,8 +44,8 @@ export class SelectionService extends ShapeTool {
             case SelectionType.EllipseSelection:
                 this.currentType = SelectionType.EllipseSelection;
                 break;
-            case SelectionType.MagicBrushSelection:
-                this.currentType = SelectionType.MagicBrushSelection;
+            case SelectionType.MagicWandSelection:
+                this.currentType = SelectionType.MagicWandSelection;
                 break;
         }
     }
@@ -68,9 +69,14 @@ export class SelectionService extends ShapeTool {
                 this.moveSelectionPos.x = event.clientX;
                 this.moveSelectionPos.y = event.clientY;
                 this.moveSelectionService.moveSelection(moveX, moveY);
+                if (this.currentType === SelectionType.MagicWandSelection)
+                    this.magicWandSelection.drawSelectionOutline(
+                        this.drawingService.previewCtx.canvas.width,
+                        this.drawingService.previewCtx.canvas.height,
+                    );
                 this.drawSelectionBox({ x: 0, y: 0 }, this.drawingService.previewCtx.canvas.width, this.drawingService.previewCtx.canvas.height);
             } else {
-                this.drawPreview();
+                if (this.currentType !== SelectionType.MagicWandSelection) this.drawPreview();
             }
         }
     }
@@ -96,13 +102,28 @@ export class SelectionService extends ShapeTool {
         }
     }
 
-    onContextMenu(event: MouseEvent): boolean {
-        if (this.currentType === SelectionType.MagicBrushSelection) {
+    onClick(event: MouseEvent): void {
+        if (this.currentType === SelectionType.MagicWandSelection) {
             if (!this.isAreaSelected) {
                 this.currentMousePosition = this.getPositionFromMouse(event);
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.isAreaSelected = true;
-                this.moveSelectionService.copyMagicSelection(this.currentMousePosition);
+                this.magicWandSelection.copyMagicSelectionLeft(this.currentMousePosition);
+                this.moveSelectionService.imgData = this.magicWandSelection.imgData;
+                this.selectionImageData = this.moveSelectionService.imgData;
+                // this.drawSelectionBox({ x: 0, y: 0 }, this.drawingService.previewCtx.canvas.width, this.drawingService.previewCtx.canvas.height);
+            }
+        }
+    }
+
+    onContextMenu(event: MouseEvent): boolean {
+        if (this.currentType === SelectionType.MagicWandSelection) {
+            if (!this.isAreaSelected) {
+                this.currentMousePosition = this.getPositionFromMouse(event);
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                this.isAreaSelected = true;
+                this.magicWandSelection.copyMagicSelectionRight(this.currentMousePosition);
+                this.moveSelectionService.imgData = this.magicWandSelection.imgData;
                 this.drawSelectionBox({ x: 0, y: 0 }, this.drawingService.previewCtx.canvas.width, this.drawingService.previewCtx.canvas.height);
             }
         }
@@ -116,9 +137,13 @@ export class SelectionService extends ShapeTool {
 
         if (this.isAreaSelected) {
             if (this.moveSelectionService.checkArrowKeysPressed(event)) {
+                if (event.key === 'Delete') this.deleteSelection();
+                if (this.currentType === SelectionType.MagicWandSelection)
+                    this.magicWandSelection.drawSelectionOutline(
+                        this.drawingService.previewCtx.canvas.width,
+                        this.drawingService.previewCtx.canvas.height,
+                    );
                 this.drawSelectionBox({ x: 0, y: 0 }, this.positiveWidth, this.positiveHeight);
-            } else if (event.key === 'Delete') {
-                this.deleteSelection();
             }
         } else {
             super.onKeyDown(event);
@@ -280,7 +305,11 @@ export class SelectionService extends ShapeTool {
     }
 
     clone(): SelectionService {
-        const selectionClone: SelectionService = new SelectionService(this.drawingService, new MoveSelectionService(this.drawingService));
+        const selectionClone: SelectionService = new SelectionService(
+            this.drawingService,
+            new MoveSelectionService(this.drawingService),
+            new MagicWandService(this.drawingService),
+        );
         this.copySelectionService(selectionClone);
         return selectionClone;
     }

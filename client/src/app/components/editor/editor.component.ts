@@ -88,7 +88,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         );
         this.subscribedShortcuts.push(
             this.shortcutService.addShortcut('v').subscribe(() => {
-                this.toolbarService.changeSelectionTool(SelectionType.MagicBrushSelection);
+                this.toolbarService.changeSelectionTool(SelectionType.MagicWandSelection);
             }),
         );
 
