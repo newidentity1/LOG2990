@@ -145,6 +145,17 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
         this.dialogRef.close();
     }
 
+    isEmailInputEmpty(): boolean {
+        if (this.emailForm.value.length === 0) {
+            this.emailForm.markAsPristine();
+        }
+        return this.emailForm.value.length === 0;
+    }
+
+    // sendByEmail(): void {
+    //     this.emailForm.reset();
+    // }
+
     keepOriginalOrder(): number {
         return 0;
     }

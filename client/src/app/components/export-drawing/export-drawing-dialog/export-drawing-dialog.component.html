@@ -67,9 +67,10 @@
             <mat-form-field>
                 <mat-label>Adresse courriel</mat-label>
                 <input matInput name="emailInput" type="email" [formControl]="emailForm"/>
-                <mat-error>Adresse email non valide</mat-error>
+                <mat-error *ngIf="!isEmailInputEmpty()">Adresse courriel non-valide</mat-error>
+
             </mat-form-field>
-            <button class="buttons" id="emailbutton" mat-raised-button [disabled]="titleForm.value.length === 0">Envoyer par courriel</button>
+            <button class="buttons" id="emailbutton" mat-raised-button [disabled]="titleForm.value.length === 0 || !emailForm.valid">Envoyer par courriel</button>
         </div>
         <div>
             <button class="buttons" id="downloadButton" mat-raised-button (click)="downloadImage()" [disabled]="titleForm.value.length === 0">
@@ -80,4 +81,7 @@
             <h3 id="canvas-size-string">Taille de l'image: {{ drawingService.canvas.width }} x {{ drawingService.canvas.height }} px</h3>
         </div>
     </div>
+
+    <!-- form resetting -->
+    <!-- <mat-error *ngIf="resetEmailFormWhenEmpty()"></mat-error> -->
 </div>
