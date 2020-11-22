@@ -2,7 +2,7 @@
     <h1 class="header-item">PolyDessin</h1>
     <mat-divider id="divider"></mat-divider>
 
-    <button class="button" mat-button routerLink="/editor">Créer un nouveau dessin</button>
+    <app-create-new-drawing [inMenu]="true"></app-create-new-drawing>
     <app-gallery [inMenu]="true"></app-gallery>
     <app-open-guide [inMenu]="true"></app-open-guide>
     <app-continue-drawing [inMenu]="true"></app-continue-drawing>

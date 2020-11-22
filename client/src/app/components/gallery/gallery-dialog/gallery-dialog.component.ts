@@ -4,7 +4,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { Command } from '@app/classes/commands/command';
 import { ImageGallery } from '@app/classes/image-gallery';
 import { WarningDialogComponent } from '@app/components/gallery/warning/warning-dialog.component';
-import { AutomaticSavingService } from '@app/services/automatic-saving/automatic-saving.service';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { FireBaseService } from '@app/services/firebase/fire-base.service';
@@ -34,13 +33,12 @@ export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy 
         private fireBaseService: FireBaseService,
         private communicationService: CommunicationService,
         private undoRedoService: UndoRedoService,
-        private automaticSavingService: AutomaticSavingService,
         private resizeService: ResizeService,
     ) {}
 
     ngOnInit(): void {
         this.tagForm = new FormControl('', [Validators.pattern('^(\\d|[a-zA-ZÀ-ÿ]){0,15}$'), Validators.required]);
-        this.resizeService = new ResizeService(this.drawingService, this.automaticSavingService);
+        this.resizeService = new ResizeService(this.drawingService);
         this.subscribeExecutedCommand = this.resizeService.executedCommand.subscribe((command: Command) => {
             this.undoRedoService.addCommand(command);
         });
