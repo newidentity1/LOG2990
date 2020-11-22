@@ -9,7 +9,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 })
 export class MagicWandService {
     imgData: ImageData;
-    private imgDataWithOutline: ImageData;
+    // private imgDataWithOutline: ImageData;
     private startingPosition: Vec2 = { x: 0, y: 0 };
     private shapeOutlineIndexes: number[] = [];
 
@@ -32,7 +32,7 @@ export class MagicWandService {
                 this.imgData.data[i],
                 this.imgData.data[i + 1],
                 this.imgData.data[i + 2],
-                this.imgData.data[IMAGE_DATA_OPACITY_INDEX],
+                this.imgData.data[i + IMAGE_DATA_OPACITY_INDEX],
             ];
             const pixelToCheck = new Uint8ClampedArray(pixelToCheckData);
             if (this.isColorMatchingStartingColor(pixelToCheck, startingColor)) {
@@ -190,6 +190,7 @@ export class MagicWandService {
     }
 
     drawSelectionOutline(width: number, height: number): void {
-        this.drawingService.previewCtx.putImageData(this.imgDataWithOutline, -this.startingPosition.x, -this.startingPosition.y, 0, 0, width, height);
+        // this.drawingService.previewCtx
+        // .putImageData(this.imgDataWithOutline, -this.startingPosition.x, -this.startingPosition.y, 0, 0, width, height);
     }
 }

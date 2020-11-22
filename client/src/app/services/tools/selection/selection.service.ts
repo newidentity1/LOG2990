@@ -124,6 +124,7 @@ export class SelectionService extends ShapeTool {
                 this.isAreaSelected = true;
                 this.magicWandSelection.copyMagicSelectionRight(this.currentMousePosition);
                 this.moveSelectionService.imgData = this.magicWandSelection.imgData;
+                this.selectionImageData = this.moveSelectionService.imgData;
                 this.drawSelectionBox({ x: 0, y: 0 }, this.drawingService.previewCtx.canvas.width, this.drawingService.previewCtx.canvas.height);
             }
         }
