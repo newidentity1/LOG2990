@@ -1,6 +1,6 @@
 <div id="wrap">
 
-    <mat-accordion>
+    <mat-accordion id="top-elements">
         <mat-expansion-panel>
             <mat-expansion-panel-header>
                 <mat-panel-title> Format </mat-panel-title>
@@ -46,28 +46,38 @@
             </div>
         </mat-expansion-panel>
     </mat-accordion>
-    <form>
-        <mat-form-field>
-            <mat-label>Titre de l'image </mat-label>
-            <input matInput name="drawingTitle" [formControl]="titleForm" />
-            <mat-error>SVP entrez un titre</mat-error>
-        </mat-form-field>
-    </form>
+    <div id="bottom-elements">
+        <form>
+            <mat-form-field>
+                <mat-label>Titre de l'image </mat-label>
+                <input matInput name="drawingTitle" [formControl]="titleForm" />
+                <mat-error>SVP entrez un titre</mat-error>
+            </mat-form-field>
+        </form>
 
-    <h3>Prévisualisation de l'image</h3>
-    <a #drawingImageContainer href="" download=""> </a>
-    <!-- default width and height  -->
-    <canvas id="previewCanvas" #previewCanvas width="250" height="250"></canvas>
+        <h3>Prévisualisation de l'image</h3>
+        <a #drawingImageContainer href="" download=""> </a>
+        <!-- default width and height  -->
+        <canvas id="previewCanvas" #previewCanvas width="250" height="250"></canvas>
 
-    <!-- disabled in css -->
-    <canvas id="exportCanvas" #exportCanvas width="250" height="250"></canvas>
+        <!-- disabled in css -->
+        <canvas id="exportCanvas" #exportCanvas width="250" height="250"></canvas>
 
-    <div>
-        <button class="buttons" id="downloadButton" mat-raised-button (click)="downloadImage()" [disabled]="titleForm.value.length === 0">
-            Télécharger
-        </button>
-        <button class="buttons" id="cancelButton" mat-raised-button mat-dialog-close>Annuler</button>
+        <div>
+            <mat-form-field>
+                <mat-label>Adresse courriel</mat-label>
+                <input matInput name="emailInput" type="email" [formControl]="emailForm"/>
+                <mat-error>Adresse email non valide</mat-error>
+            </mat-form-field>
+            <button class="buttons" id="emailbutton" mat-raised-button [disabled]="titleForm.value.length === 0">Envoyer par courriel</button>
+        </div>
+        <div>
+            <button class="buttons" id="downloadButton" mat-raised-button (click)="downloadImage()" [disabled]="titleForm.value.length === 0">
+                Télécharger
+            </button>
+            <button class="buttons" id="cancelButton" mat-raised-button mat-dialog-close>Annuler</button>
 
-        <h3 id="canvas-size-string">Taille de l'image: {{ drawingService.canvas.width }} x {{ drawingService.canvas.height }} px</h3>
+            <h3 id="canvas-size-string">Taille de l'image: {{ drawingService.canvas.width }} x {{ drawingService.canvas.height }} px</h3>
+        </div>
     </div>
 </div>
