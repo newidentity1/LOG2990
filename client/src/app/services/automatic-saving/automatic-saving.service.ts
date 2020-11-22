@@ -1,15 +1,25 @@
-import { EventEmitter, Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
+import { Subscription } from 'rxjs';
+import { ResizeService } from '../resize/resize.service';
 
 @Injectable({
     providedIn: 'root',
 })
-export class AutomaticSavingService {
+export class AutomaticSavingService implements OnDestroy {
     recovering: boolean = false;
-    recoverImage: EventEmitter<HTMLImageElement> = new EventEmitter<HTMLImageElement>();
+    subscribeImageDrawn: Subscription;
 
-    constructor(private drawingService: DrawingService, private undoRedoService: UndoRedoService) {}
+    constructor(private drawingService: DrawingService, private undoRedoService: UndoRedoService, private resizeService: ResizeService) {
+        this.subscribeImageDrawn = this.resizeService.imageDrawn.subscribe(() => {
+            this.save();
+        });
+    }
+
+    ngOnDestroy(): void {
+        this.subscribeImageDrawn.unsubscribe();
+    }
 
     save(): void {
         const canvas = this.drawingService.canvas;
@@ -26,7 +36,7 @@ export class AutomaticSavingService {
         img.src = dataURL ? dataURL : '';
         img.onload = () => {
             this.drawingService.clearCanvas(this.drawingService.baseCtx);
-            this.recoverImage.emit(img);
+            this.drawingService.baseCtx.drawImage(img, 0, 0);
         };
     }
 
