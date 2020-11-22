@@ -1,8 +1,8 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ResizeService } from '@app/services/resize/resize.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Subscription } from 'rxjs';
-import { ResizeService } from '../resize/resize.service';
 
 @Injectable({
     providedIn: 'root',

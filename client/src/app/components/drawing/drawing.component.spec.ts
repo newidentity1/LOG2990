@@ -5,12 +5,10 @@ import { ResizerProperties } from '@app/classes/resizer-properties';
 import { Tool } from '@app/classes/tool/tool';
 import { SVGFilterComponent } from '@app/components/tools-options/brush/svgfilter/svgfilter.component';
 import { CANVAS_MARGIN_LEFT, CANVAS_MARGIN_TOP, CANVAS_MIN_HEIGHT, CANVAS_MIN_WIDTH, SELECTION_CONTROL_POINT_SIZE } from '@app/constants/constants';
-import { AutomaticSavingService } from '@app/services/automatic-saving/automatic-saving.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ResizeService } from '@app/services/resize/resize.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
-import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { BehaviorSubject } from 'rxjs';
 import { DrawingComponent } from './drawing.component';
 
@@ -19,8 +17,6 @@ describe('DrawingComponent', () => {
     let fixture: ComponentFixture<DrawingComponent>;
     let drawingServiceStub: DrawingService;
     let resizeServiceStub: ResizeService;
-    let automaticSavingServiceStub: AutomaticSavingService;
-    let undoRedoServiceStub: UndoRedoService;
     const width: number = CANVAS_MIN_WIDTH;
     const height: number = CANVAS_MIN_HEIGHT;
     const dimensionsUpdatedSubjectStub: BehaviorSubject<number[]> = new BehaviorSubject([width, height]);
@@ -29,9 +25,7 @@ describe('DrawingComponent', () => {
 
     beforeEach(async(() => {
         drawingServiceStub = new DrawingService();
-        undoRedoServiceStub = new UndoRedoService(drawingServiceStub);
-        automaticSavingServiceStub = new AutomaticSavingService(drawingServiceStub, undoRedoServiceStub);
-        resizeServiceStub = new ResizeService(drawingServiceStub, automaticSavingServiceStub);
+        resizeServiceStub = new ResizeService(drawingServiceStub);
         toolbarServiceSpy = jasmine.createSpyObj('ToolbarService', [
             'onMouseMove',
             'onMouseDown',
