@@ -1,31 +1,21 @@
-import { EventEmitter, Injectable, OnDestroy } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 import { Command } from '@app/classes/commands/command';
 import { Vec2 } from '@app/classes/vec2';
 import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants/constants';
-import { AutomaticSavingService } from '@app/services/automatic-saving/automatic-saving.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { Subscription } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
 })
-export class ResizeService extends Command implements OnDestroy {
+export class ResizeService extends Command {
     newWidth: number = 0;
     newHeight: number = 0;
     canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
     img: HTMLImageElement = new Image();
-    canvasResizedData: EventEmitter<string> = new EventEmitter<string>();
-    private subscribeRecoverImage: Subscription;
+    imageDrawn: EventEmitter<void> = new EventEmitter<void>();
 
-    constructor(private drawingService: DrawingService, private automaticSavingService: AutomaticSavingService) {
+    constructor(private drawingService: DrawingService) {
         super();
-        this.subscribeRecoverImage = this.automaticSavingService.recoverImage.subscribe((img: HTMLImageElement) => {
-            this.resizeFromImage(img);
-        });
-    }
-
-    ngOnDestroy(): void {
-        this.subscribeRecoverImage.unsubscribe();
     }
 
     resizeFromImage(img: HTMLImageElement): void {
@@ -70,7 +60,7 @@ export class ResizeService extends Command implements OnDestroy {
     }
 
     clone(): ResizeService {
-        const resizeServiceClone = new ResizeService(this.drawingService, this.automaticSavingService);
+        const resizeServiceClone = new ResizeService(this.drawingService);
         this.copy(resizeServiceClone);
         return resizeServiceClone;
     }
@@ -78,7 +68,7 @@ export class ResizeService extends Command implements OnDestroy {
     drawImage(): void {
         setTimeout(() => {
             this.drawingService.baseCtx.drawImage(this.img, 0, 0);
-            this.automaticSavingService.save();
+            this.imageDrawn.emit();
         }, 0);
     }
 }
