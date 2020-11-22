@@ -10,7 +10,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 export class MagicWandService {
     imgData: ImageData;
     // private imgDataWithOutline: ImageData;
-    private startingPosition: Vec2 = { x: 0, y: 0 };
+    startingPosition: Vec2 = { x: 0, y: 0 };
     private shapeOutlineIndexes: number[] = [];
 
     constructor(private drawingService: DrawingService) {}

@@ -20,14 +20,14 @@ interface ClipboardImage {
 export class SelectionService extends ShapeTool {
     currentType: SelectionType = SelectionType.RectangleSelection;
     isAreaSelected: boolean;
-    positiveStartingPos: Vec2 = { x: 0, y: 0 };
-    positiveWidth: number;
-    positiveHeight: number;
+    private positiveStartingPos: Vec2 = { x: 0, y: 0 };
+    private positiveWidth: number;
+    private positiveHeight: number;
     private selectionImageData: ImageData;
     private clipboardImage: ClipboardImage;
     private moveSelectionPos: Vec2 = { x: 0, y: 0 };
 
-    constructor(drawingService: DrawingService, private moveSelectionService: MoveSelectionService, private magicWandSelection: MagicWandService) {
+    constructor(drawingService: DrawingService, private moveSelectionService: MoveSelectionService, private magicWandService: MagicWandService) {
         super(drawingService);
         this.name = 'Selection';
         this.tooltip = 'Selection (r)';
@@ -70,7 +70,7 @@ export class SelectionService extends ShapeTool {
                 this.moveSelectionPos.y = event.clientY;
                 this.moveSelectionService.moveSelection(moveX, moveY);
                 if (this.currentType === SelectionType.MagicWandSelection)
-                    this.magicWandSelection.drawSelectionOutline(
+                    this.magicWandService.drawSelectionOutline(
                         this.drawingService.previewCtx.canvas.width,
                         this.drawingService.previewCtx.canvas.height,
                     );
@@ -93,6 +93,7 @@ export class SelectionService extends ShapeTool {
                 ) {
                     this.isAreaSelected = true;
                     this.moveSelectionService.finalPosition = { x: this.positiveStartingPos.x, y: this.positiveStartingPos.y };
+                    console.log('hello');
                     this.moveSelectionService.copySelection(this.positiveStartingPos, this.positiveWidth, this.positiveHeight, this.currentType);
                     this.selectionImageData = this.moveSelectionService.imgData;
                     this.drawSelectionBox({ x: 0, y: 0 }, this.positiveWidth, this.positiveHeight);
@@ -108,8 +109,12 @@ export class SelectionService extends ShapeTool {
                 this.currentMousePosition = this.getPositionFromMouse(event);
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.isAreaSelected = true;
-                this.magicWandSelection.copyMagicSelectionLeft(this.currentMousePosition);
-                this.moveSelectionService.imgData = this.magicWandSelection.imgData;
+                this.magicWandService.copyMagicSelectionLeft(this.currentMousePosition);
+                this.moveSelectionService.finalPosition = {
+                    x: this.magicWandService.startingPosition.x,
+                    y: this.magicWandService.startingPosition.y,
+                };
+                this.moveSelectionService.imgData = this.magicWandService.imgData;
                 this.selectionImageData = this.moveSelectionService.imgData;
                 // this.drawSelectionBox({ x: 0, y: 0 }, this.drawingService.previewCtx.canvas.width, this.drawingService.previewCtx.canvas.height);
             }
@@ -122,8 +127,12 @@ export class SelectionService extends ShapeTool {
                 this.currentMousePosition = this.getPositionFromMouse(event);
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.isAreaSelected = true;
-                this.magicWandSelection.copyMagicSelectionRight(this.currentMousePosition);
-                this.moveSelectionService.imgData = this.magicWandSelection.imgData;
+                this.magicWandService.copyMagicSelectionRight(this.currentMousePosition);
+                this.moveSelectionService.finalPosition = {
+                    x: this.magicWandService.startingPosition.x,
+                    y: this.magicWandService.startingPosition.y,
+                };
+                this.moveSelectionService.imgData = this.magicWandService.imgData;
                 this.selectionImageData = this.moveSelectionService.imgData;
                 this.drawSelectionBox({ x: 0, y: 0 }, this.drawingService.previewCtx.canvas.width, this.drawingService.previewCtx.canvas.height);
             }
@@ -140,7 +149,7 @@ export class SelectionService extends ShapeTool {
             if (this.moveSelectionService.checkArrowKeysPressed(event)) {
                 if (event.key === 'Delete') this.deleteSelection();
                 if (this.currentType === SelectionType.MagicWandSelection)
-                    this.magicWandSelection.drawSelectionOutline(
+                    this.magicWandService.drawSelectionOutline(
                         this.drawingService.previewCtx.canvas.width,
                         this.drawingService.previewCtx.canvas.height,
                     );
