@@ -26,6 +26,7 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
     percentage: number = 1;
     sliderIsVisible: boolean = false;
     titleForm: FormControl = new FormControl('', Validators.required);
+    emailForm: FormControl = new FormControl('', [Validators.pattern(/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/i), Validators.required]);
 
     constructor(public dialogRef: MatDialogRef<ExportDrawingDialogComponent>, public drawingService: DrawingService) {
         this.titleForm.markAsDirty();
