@@ -16,10 +16,12 @@ export class MagicWandService {
     constructor(private drawingService: DrawingService) {}
 
     copyMagicSelectionRight(selectionPixelPosition: Vec2): void {
-        const startingColor = this.drawingService.baseCtx.getImageData(selectionPixelPosition.x, selectionPixelPosition.y, 1, 1).data;
         const selectionCtx = this.drawingService.previewCtx;
         this.startingPosition = { x: this.drawingService.canvas.width, y: this.drawingService.canvas.height } as Vec2;
         const selectionSize = { x: 0, y: 0 } as Vec2;
+
+        const startingColor = this.drawingService.baseCtx.getImageData(selectionPixelPosition.x, selectionPixelPosition.y, 1, 1).data;
+        this.changeTransparentToWhite(startingColor);
 
         this.imgData = this.drawingService.baseCtx.getImageData(0, 0, this.drawingService.canvas.width, this.drawingService.canvas.height);
         const areaToClear = this.drawingService.baseCtx.getImageData(0, 0, this.drawingService.canvas.width, this.drawingService.canvas.height);
@@ -74,9 +76,11 @@ export class MagicWandService {
         this.shapeOutlineIndexes = [];
         const canvasWidth = this.drawingService.canvas.width;
         const canvasHeight = this.drawingService.canvas.height;
-        const startingColor = this.drawingService.baseCtx.getImageData(selectionPixelPosition.x, selectionPixelPosition.y, 1, 1).data;
         this.startingPosition = { x: canvasWidth, y: canvasHeight } as Vec2;
         const selectionSize = { x: 0, y: 0 } as Vec2;
+
+        const startingColor = this.drawingService.baseCtx.getImageData(selectionPixelPosition.x, selectionPixelPosition.y, 1, 1).data;
+        this.changeTransparentToWhite(startingColor);
 
         this.imgData = new ImageData(canvasWidth, canvasHeight);
         const areaToClear = this.drawingService.baseCtx.getImageData(0, 0, canvasWidth, canvasHeight);
@@ -165,19 +169,23 @@ export class MagicWandService {
         return matrix;
     }
 
+    private changeTransparentToWhite(transparentPixel: Uint8ClampedArray) {
+        if (transparentPixel[IMAGE_DATA_OPACITY_INDEX] === 0) {
+            transparentPixel[0] = MAX_COLOR_VALUE;
+            transparentPixel[1] = MAX_COLOR_VALUE;
+            transparentPixel[2] = MAX_COLOR_VALUE;
+            transparentPixel[IMAGE_DATA_OPACITY_INDEX] = MAX_COLOR_VALUE;
+        }
+    }
+
     private isColorMatchingStartingColor(pixelToCheck: Uint8ClampedArray, startingColor: Uint8ClampedArray): boolean {
         // checking white and transparent color
         if (
-            (pixelToCheck[0] === MAX_COLOR_VALUE &&
-                pixelToCheck[1] === MAX_COLOR_VALUE &&
-                pixelToCheck[2] === MAX_COLOR_VALUE &&
-                pixelToCheck[IMAGE_DATA_OPACITY_INDEX] === MAX_COLOR_VALUE &&
-                startingColor[IMAGE_DATA_OPACITY_INDEX] === 0) ||
-            (startingColor[0] === MAX_COLOR_VALUE &&
-                startingColor[1] === MAX_COLOR_VALUE &&
-                startingColor[2] === MAX_COLOR_VALUE &&
-                startingColor[IMAGE_DATA_OPACITY_INDEX] === MAX_COLOR_VALUE &&
-                pixelToCheck[IMAGE_DATA_OPACITY_INDEX] === 0)
+            startingColor[0] === MAX_COLOR_VALUE &&
+            startingColor[1] === MAX_COLOR_VALUE &&
+            startingColor[2] === MAX_COLOR_VALUE &&
+            startingColor[IMAGE_DATA_OPACITY_INDEX] === MAX_COLOR_VALUE &&
+            pixelToCheck[IMAGE_DATA_OPACITY_INDEX] === 0
         ) {
             return true;
         }
