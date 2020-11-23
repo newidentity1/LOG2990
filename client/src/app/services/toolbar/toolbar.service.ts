@@ -16,6 +16,7 @@ import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { PolygonService } from '@app/services/tools/polygon/polygon.service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle.service';
 import { SelectionService } from '@app/services/tools/selection/selection.service';
+import { StampService } from '@app/services/tools/stamp/stamp.service';
 import { TextService } from '@app/services/tools/text/text.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Subscription } from 'rxjs';
@@ -49,6 +50,7 @@ export class ToolbarService {
         protected bucketService: BucketService,
         protected undoRedoService: UndoRedoService,
         protected textService: TextService,
+        protected stampService: StampService,
     ) {
         this.tools = [
             pencilService,
@@ -62,6 +64,7 @@ export class ToolbarService {
             eyedropperService,
             bucketService,
             textService,
+            stampService,
         ];
         this.currentTool = this.tools[0];
         this.keyShortcuts
@@ -76,7 +79,8 @@ export class ToolbarService {
             .set(KeyShortcut.RectangleSelect, selectionService)
             .set(KeyShortcut.EllipseSelect, selectionService)
             .set(KeyShortcut.Bucket, bucketService)
-            .set(KeyShortcut.Text, textService);
+            .set(KeyShortcut.Text, textService)
+            .set(KeyShortcut.Stamp, stampService);
     }
 
     unsubscribeListeners(): void {
