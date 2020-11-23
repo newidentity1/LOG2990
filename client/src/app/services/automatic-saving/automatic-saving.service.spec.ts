@@ -1,12 +1,13 @@
 import { TestBed } from '@angular/core/testing';
-import { MagnetismService } from './magnetism.service';
 
-describe('MagnetismService', () => {
-    let service: MagnetismService;
+import { AutomaticSavingService } from './automatic-saving.service';
+
+describe('AutomaticSavingService', () => {
+    let service: AutomaticSavingService;
 
     beforeEach(() => {
         TestBed.configureTestingModule({});
-        service = TestBed.inject(MagnetismService);
+        service = TestBed.inject(AutomaticSavingService);
     });
 
     it('should be created', () => {
