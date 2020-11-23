@@ -1,5 +1,9 @@
-<div class="new-drawing">
+<div class="new-drawing" *ngIf="!inMenu">
     <button mat-button matTooltip="Nouveau dessin(ctrl+o)" matTooltipPosition="right" id="new-drawing-button" (click)="createNewDrawing()">
         <mat-icon>note_add</mat-icon>
     </button>
+</div>
+
+<div *ngIf="inMenu">
+    <button class="menu" mat-button routerLink="/editor" (click)="createNewDrawing()">Créer un nouveau dessin</button>
 </div>
