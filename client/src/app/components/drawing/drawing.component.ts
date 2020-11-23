@@ -70,7 +70,6 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
     ngAfterViewInit(): void {
         this.previewCtx = this.previewCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.gridCtx = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-
         this.drawingService.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.gridCtx = this.gridCtx;
