@@ -81,6 +81,8 @@ export class GridService extends Tool {
             GridService.dx = this.roundUp(GridService.dx + CONSTANTS.GRID_MULTIPLE);
         } else if (event.code === 'NumpadSubtract' && GridService.dx > CONSTANTS.GRID_MULTIPLE) {
             GridService.dx = this.roundUp(GridService.dx - CONSTANTS.GRID_MULTIPLE);
+        } else if (event.code === 'KeyG') {
+            this.draw();
         }
         this.generateGrid();
     }
