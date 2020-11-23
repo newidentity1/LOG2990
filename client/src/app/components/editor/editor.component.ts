@@ -99,7 +99,6 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             }),
         );
 
-
         this.subscribedShortcuts.push(
             this.shortcutService.addShortcut('control.o').subscribe(() => {
                 this.toolbarRef.createNewDrawing();
