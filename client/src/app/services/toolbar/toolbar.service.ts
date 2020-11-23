@@ -134,6 +134,7 @@ export class ToolbarService {
 
     changeTool(tool: Tool): void {
         if (tool !== this.currentTool) {
+            if (this.currentTool instanceof TextService && this.currentTool.isTextInProgress()) this.currentTool.confirmText();
             this.resetSelection();
             this.currentTool = tool;
             this.applyCurrentTool();
