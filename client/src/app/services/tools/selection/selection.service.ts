@@ -6,6 +6,7 @@ import * as CONSTANTS from '@app/constants/constants';
 import { MouseButton } from '@app/enums/mouse-button.enum';
 import { SelectionType } from '@app/enums/selection-type.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { GridService } from '@app/services/tools/grid/grid.service';
 import { MoveSelectionService } from './move-selection/move-selection.service';
 
 interface ClipboardImage {
@@ -17,6 +18,7 @@ interface ClipboardImage {
     providedIn: 'root',
 })
 export class SelectionService extends ShapeTool {
+    activeMagnet: boolean = false;
     currentType: SelectionType = SelectionType.RectangleSelection;
     isAreaSelected: boolean;
     positiveStartingPos: Vec2 = { x: 0, y: 0 };
@@ -62,14 +64,25 @@ export class SelectionService extends ShapeTool {
             if (this.isAreaSelected) {
                 const moveX = this.moveSelectionPos.x - event.clientX;
                 const moveY = this.moveSelectionPos.y - event.clientY;
-                this.moveSelectionPos.x = event.clientX;
-                this.moveSelectionPos.y = event.clientY;
-                this.moveSelectionService.moveSelection(moveX, moveY);
+                if (this.activeMagnet) {
+                    this.moveSelectionPos.x = this.calculPosition(event.clientX);
+                    this.moveSelectionPos.y = this.calculPosition(event.clientY);
+                    this.moveSelectionService.moveSelection(moveX, moveY);
+                } else {
+                    this.moveSelectionPos.x = event.clientX;
+                    this.moveSelectionPos.y = event.clientY;
+                    this.moveSelectionService.moveSelection(moveX, moveY);
+                }
                 this.drawSelectionBox({ x: 0, y: 0 }, this.positiveWidth, this.positiveHeight);
             } else {
                 this.drawPreview();
             }
         }
+    }
+
+    private calculPosition(position: number): number {
+        position = position - (position % GridService.dx);
+        return position;
     }
 
     onMouseUp(event: MouseEvent): void {

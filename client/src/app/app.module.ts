@@ -52,6 +52,7 @@ import { LineComponent } from './components/tools-options/line/line.component';
 import { PencilComponent } from './components/tools-options/pencil/pencil.component';
 import { PolygonComponent } from './components/tools-options/polygon/polygon.component';
 import { RectangleComponent } from './components/tools-options/rectangle/rectangle.component';
+import { MagnetismComponent } from './components/tools-options/selection/magnetism/magnetism.component';
 import { SelectionComponent } from './components/tools-options/selection/selection.component';
 import { TextComponent } from './components/tools-options/text/text.component';
 import { ThicknessSliderComponent } from './components/tools-options/thickness-slider/thickness-slider.component';
@@ -95,6 +96,7 @@ import { UploadComponent } from './components/upload/upload.component';
         WarningDialogComponent,
         TextComponent,
         GridComponent,
+        MagnetismComponent,
     ],
     imports: [
         NgImageSliderModule,

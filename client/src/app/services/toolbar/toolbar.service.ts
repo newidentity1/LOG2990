@@ -79,7 +79,8 @@ export class ToolbarService {
             .set(KeyShortcut.RectangleSelect, selectionService)
             .set(KeyShortcut.EllipseSelect, selectionService)
             .set(KeyShortcut.Bucket, bucketService)
-            .set(KeyShortcut.Text, textService);
+            .set(KeyShortcut.Text, textService)
+            .set(KeyShortcut.Grid, gridService);
     }
 
     unsubscribeListeners(): void {
