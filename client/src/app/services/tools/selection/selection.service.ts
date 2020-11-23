@@ -69,11 +69,6 @@ export class SelectionService extends ShapeTool {
                 this.moveSelectionPos.x = event.clientX;
                 this.moveSelectionPos.y = event.clientY;
                 this.moveSelectionService.moveSelection(moveX, moveY);
-                if (this.currentType === SelectionType.MagicWandSelection)
-                    this.magicWandService.drawSelectionOutline(
-                        this.drawingService.previewCtx.canvas.width,
-                        this.drawingService.previewCtx.canvas.height,
-                    );
                 this.drawSelectionBox({ x: 0, y: 0 }, this.drawingService.previewCtx.canvas.width, this.drawingService.previewCtx.canvas.height);
             } else {
                 if (this.currentType !== SelectionType.MagicWandSelection) this.drawPreview();
@@ -114,9 +109,8 @@ export class SelectionService extends ShapeTool {
                     x: this.magicWandService.startingPosition.x,
                     y: this.magicWandService.startingPosition.y,
                 };
-                this.moveSelectionService.imgData = this.magicWandService.imgData;
+                this.moveSelectionService.imgData = this.magicWandService.imgDataWithOutline;
                 this.selectionImageData = this.moveSelectionService.imgData;
-                // this.drawSelectionBox({ x: 0, y: 0 }, this.drawingService.previewCtx.canvas.width, this.drawingService.previewCtx.canvas.height);
             }
         }
     }
@@ -148,11 +142,6 @@ export class SelectionService extends ShapeTool {
         if (this.isAreaSelected) {
             if (this.moveSelectionService.checkArrowKeysPressed(event)) {
                 if (event.key === 'Delete') this.deleteSelection();
-                if (this.currentType === SelectionType.MagicWandSelection)
-                    this.magicWandService.drawSelectionOutline(
-                        this.drawingService.previewCtx.canvas.width,
-                        this.drawingService.previewCtx.canvas.height,
-                    );
                 this.drawSelectionBox({ x: 0, y: 0 }, this.positiveWidth, this.positiveHeight);
             }
         } else {
@@ -200,6 +189,7 @@ export class SelectionService extends ShapeTool {
         const selectionCtx = this.drawingService.previewCtx;
 
         this.drawingService.clearCanvas(selectionCtx);
+        if (this.currentType === SelectionType.MagicWandSelection) this.selectionImageData = this.magicWandService.imgData;
         selectionCtx.putImageData(this.selectionImageData, 0, 0);
         this.drawingService.baseCtx.drawImage(
             selectionCtx.canvas,
