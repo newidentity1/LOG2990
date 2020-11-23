@@ -64,22 +64,7 @@ export class DrawingService {
     }
 
     setTextAlignment(alignment: string): void {
-        switch (alignment) {
-            case 'Gauche':
-                this.baseCtx.textAlign = 'left';
-                this.previewCtx.textAlign = 'left';
-                break;
-            case 'Centre':
-                this.baseCtx.textAlign = 'center';
-                this.previewCtx.textAlign = 'center';
-                break;
-            case 'Droite':
-                this.baseCtx.textAlign = 'right';
-                this.previewCtx.textAlign = 'right';
-                break;
-            default:
-                this.baseCtx.textAlign = 'left';
-                this.previewCtx.textAlign = 'left';
-        }
+        this.baseCtx.textAlign = alignment as CanvasTextAlign;
+        this.previewCtx.textAlign = alignment as CanvasTextAlign;
     }
 }
