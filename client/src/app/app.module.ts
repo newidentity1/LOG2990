@@ -27,7 +27,7 @@ import { ColorPickerFormComponent } from './components/color/color-picker-form/c
 import { ColorPickerComponent } from './components/color/color-picker/color-picker.component';
 import { ColorToolComponent } from './components/color/color-tool/color-tool.component';
 import { RecentColorsComponent } from './components/color/recent-colors/recent-colors.component';
-import { ContinueDrawingComponent } from './components/continue-drawing/continue-drawing/continue-drawing.component';
+import { ContinueDrawingComponent } from './components/continue-drawing/continue-drawing.component';
 import { CreateNewDrawingComponent } from './components/create-new-drawing/create-new-drawing.component';
 import { NewDrawingDialogComponent } from './components/create-new-drawing/new-drawing-dialog/new-drawing-dialog.component';
 import { DrawingComponent } from './components/drawing/drawing.component';
