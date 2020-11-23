@@ -142,9 +142,9 @@ export class MagicWandService {
         this.imgDataWithOutline.data.set(this.imgData.data);
         for (const index of this.shapeOutlineIndexes) {
             // TODO: Change colour of outline?
-            this.imgDataWithOutline.data[index] = 0;
-            this.imgDataWithOutline.data[index + 1] = MAX_COLOR_VALUE;
-            this.imgDataWithOutline.data[index + 2] = MAX_COLOR_VALUE;
+            this.imgDataWithOutline.data[index] = (index % 3) * MAX_COLOR_VALUE;
+            this.imgDataWithOutline.data[index + 1] = (index % 3) * MAX_COLOR_VALUE;
+            this.imgDataWithOutline.data[index + 2] = (index % 3) * MAX_COLOR_VALUE;
             this.imgDataWithOutline.data[index + IMAGE_DATA_OPACITY_INDEX] = MAX_COLOR_VALUE;
         }
 
