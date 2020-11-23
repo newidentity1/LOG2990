@@ -56,6 +56,7 @@ import { ThicknessSliderComponent } from './components/tools-options/thickness-s
 import { UndoRedoComponent } from './components/undo-redo/undo-redo.component';
 import { UploadDialogComponent } from './components/upload/upload-dialog/upload-dialog.component';
 import { UploadComponent } from './components/upload/upload.component';
+import { StampComponent } from './components/tools-options/stamp/stamp.component';
 @NgModule({
     declarations: [
         AppComponent,
@@ -92,6 +93,7 @@ import { UploadComponent } from './components/upload/upload.component';
         UploadDialogComponent,
         WarningDialogComponent,
         TextComponent,
+        StampComponent,
     ],
     imports: [
         NgImageSliderModule,
