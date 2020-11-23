@@ -88,7 +88,6 @@ export class SelectionService extends ShapeTool {
                 ) {
                     this.isAreaSelected = true;
                     this.moveSelectionService.finalPosition = { x: this.positiveStartingPos.x, y: this.positiveStartingPos.y };
-                    console.log('hello');
                     this.moveSelectionService.copySelection(this.positiveStartingPos, this.positiveWidth, this.positiveHeight, this.currentType);
                     this.selectionImageData = this.moveSelectionService.imgData;
                     this.drawSelectionBox({ x: 0, y: 0 }, this.positiveWidth, this.positiveHeight);
@@ -126,7 +125,7 @@ export class SelectionService extends ShapeTool {
                     x: this.magicWandService.startingPosition.x,
                     y: this.magicWandService.startingPosition.y,
                 };
-                this.moveSelectionService.imgData = this.magicWandService.imgData;
+                this.moveSelectionService.imgData = this.magicWandService.imgDataWithOutline;
                 this.selectionImageData = this.moveSelectionService.imgData;
                 this.drawSelectionBox({ x: 0, y: 0 }, this.drawingService.previewCtx.canvas.width, this.drawingService.previewCtx.canvas.height);
             }
