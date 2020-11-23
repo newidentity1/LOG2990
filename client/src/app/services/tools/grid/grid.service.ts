@@ -8,7 +8,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
     providedIn: 'root',
 })
 export class GridService extends Tool {
-    private dx: number = 25;
+    static dx: number = 25;
     isGrid: boolean = false;
     constructor(drawingService: DrawingService) {
         super(drawingService);
@@ -26,20 +26,20 @@ export class GridService extends Tool {
     private generateGrid(): void {
         this.drawingService.clearCanvas(this.drawingService.gridCtx);
         if (this.isGrid) {
-            const m: number = (this.drawingService.canvas.height - (this.drawingService.canvas.height % this.dx)) / this.dx;
-            const n: number = (this.drawingService.canvas.width - (this.drawingService.canvas.width % this.dx)) / this.dx;
+            const m: number = (this.drawingService.canvas.height - (this.drawingService.canvas.height % GridService.dx)) / GridService.dx;
+            const n: number = (this.drawingService.canvas.width - (this.drawingService.canvas.width % GridService.dx)) / GridService.dx;
 
             for (let i = 0; i < m + 1; i++) {
                 this.drawingService.gridCtx.beginPath();
-                this.drawingService.gridCtx.lineTo(0, i * this.dx);
-                this.drawingService.gridCtx.lineTo(this.drawingService.canvas.width, i * this.dx);
+                this.drawingService.gridCtx.lineTo(0, i * GridService.dx);
+                this.drawingService.gridCtx.lineTo(this.drawingService.canvas.width, i * GridService.dx);
                 this.drawingService.gridCtx.stroke();
             }
 
             for (let i = 0; i < n + 1; i++) {
                 this.drawingService.gridCtx.beginPath();
-                this.drawingService.gridCtx.lineTo(i * this.dx, 0);
-                this.drawingService.gridCtx.lineTo(i * this.dx, this.drawingService.canvas.height);
+                this.drawingService.gridCtx.lineTo(i * GridService.dx, 0);
+                this.drawingService.gridCtx.lineTo(i * GridService.dx, this.drawingService.canvas.height);
                 this.drawingService.gridCtx.stroke();
             }
         } else {
@@ -47,7 +47,7 @@ export class GridService extends Tool {
         }
     }
     setDeltaX(size: number): void {
-        this.dx = this.roundUp(size);
+        GridService.dx = size;
         this.generateGrid();
     }
 
@@ -73,6 +73,15 @@ export class GridService extends Tool {
     }
 
     getDeltaX(): number {
-        return this.dx;
+        return GridService.dx;
+    }
+
+    onKeyUp(event: KeyboardEvent): void {
+        if (event.code === 'NumpadAdd') {
+            GridService.dx = this.roundUp(GridService.dx + CONSTANTS.GRID_MULTIPLE);
+        } else if (event.code === 'NumpadSubtract' && GridService.dx > CONSTANTS.GRID_MULTIPLE) {
+            GridService.dx = this.roundUp(GridService.dx - CONSTANTS.GRID_MULTIPLE);
+        }
+        this.generateGrid();
     }
 }
