@@ -47,6 +47,12 @@ export class TextService extends Tool {
                 this.currentTexts[this.cursorRowIndex].substring(0, this.cursorColumnIndex - 1) +
                 this.currentTexts[this.cursorRowIndex].substring(this.cursorColumnIndex);
             this.cursorColumnIndex -= 1;
+        } else if (this.cursorRowIndex !== 0) {
+            const textRightOfCursor = this.currentTexts[this.cursorRowIndex];
+            this.currentTexts.splice(this.cursorRowIndex, 1);
+            this.cursorRowIndex -= 1;
+            this.cursorColumnIndex = this.currentTexts[this.cursorRowIndex].length;
+            if (textRightOfCursor.length > 0) this.currentTexts[this.cursorRowIndex] += textRightOfCursor;
         }
         this.writeText(this.drawingService.previewCtx);
     }
