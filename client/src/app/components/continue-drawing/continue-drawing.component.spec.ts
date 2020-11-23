@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ContinueDrawingComponent } from './continue-drawing.component';
+import { ContinueDrawingComponent } from '@app/components/continue-drawing/continue-drawing.component';
 
 describe('ContinueDrawingComponent', () => {
     let component: ContinueDrawingComponent;
