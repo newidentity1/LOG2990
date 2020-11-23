@@ -9,7 +9,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 })
 export class MagicWandService {
     imgData: ImageData;
-    // private imgDataWithOutline: ImageData;
+    imgDataWithOutline: ImageData;
     startingPosition: Vec2 = { x: 0, y: 0 };
     private shapeOutlineIndexes: number[] = [];
 
@@ -105,8 +105,8 @@ export class MagicWandService {
 
                 this.startingPosition.x = Math.min(this.startingPosition.x, pixel.x);
                 this.startingPosition.y = Math.min(this.startingPosition.y, pixel.y);
-                selectionSize.x = Math.max(selectionSize.x, pixel.x - this.startingPosition.x + 1);
-                selectionSize.y = Math.max(selectionSize.y, pixel.y - this.startingPosition.y + 1);
+                selectionSize.x = Math.max(selectionSize.x, pixel.x);
+                selectionSize.y = Math.max(selectionSize.y, pixel.y);
 
                 for (let i = -1; i < 2; i++) {
                     for (let j = -1; j < 2; j++) {
@@ -123,6 +123,7 @@ export class MagicWandService {
                         const neighboorPixel = { x: pixel.x + i, y: pixel.y + j };
                         if (neighboorPixel.x >= 0 && neighboorPixel.x < canvasWidth && neighboorPixel.y >= 0 && neighboorPixel.y < canvasHeight) {
                             if (matrix[neighboorPixel.x][neighboorPixel.y].status === 0) {
+                                matrix[neighboorPixel.x][neighboorPixel.y].status = 1;
                                 if (this.isColorMatchingStartingColor(pixelToCheck, startingColor)) {
                                     queue.push(neighboorPixel);
                                 } else {
@@ -134,24 +135,29 @@ export class MagicWandService {
                 }
             }
         }
-        // this.imgDataWithOutline = new ImageData(selectionSize.x, selectionSize.y);
-        // this.imgDataWithOutline.data.set(this.imgData.data);
-        // for (const index of this.shapeOutlineIndexes) {
-        //     this.imgDataWithOutline.data[index] = MAX_COLOR_VALUE - 255;
-        //     this.imgDataWithOutline.data[index + 1] = MAX_COLOR_VALUE - 0;
-        //     this.imgDataWithOutline.data[index + 2] = MAX_COLOR_VALUE - 0;
-        //     this.imgDataWithOutline.data[index + IMAGE_DATA_OPACITY_INDEX] = MAX_COLOR_VALUE;
-        // }
-        // this.drawSelectionOutline(this.imgData.width, this.imgData.height);
+        selectionSize.x = selectionSize.x - this.startingPosition.x + 1;
+        selectionSize.y = selectionSize.y - this.startingPosition.y + 1;
+
+        this.imgDataWithOutline = new ImageData(canvasWidth, canvasHeight);
+        this.imgDataWithOutline.data.set(this.imgData.data);
+        for (const index of this.shapeOutlineIndexes) {
+            // TODO: Change colour of outline?
+            this.imgDataWithOutline.data[index] = 0;
+            this.imgDataWithOutline.data[index + 1] = MAX_COLOR_VALUE;
+            this.imgDataWithOutline.data[index + 2] = MAX_COLOR_VALUE;
+            this.imgDataWithOutline.data[index + IMAGE_DATA_OPACITY_INDEX] = MAX_COLOR_VALUE;
+        }
 
         const selectionCtx = this.drawingService.previewCtx;
-        selectionCtx.putImageData(this.imgData, 0, 0, 0, 0, this.imgData.width, this.imgData.height);
+        selectionCtx.putImageData(this.imgData, 0, 0, 0, 0, canvasWidth, canvasHeight);
         this.imgData = selectionCtx.getImageData(this.startingPosition.x, this.startingPosition.y, selectionSize.x, selectionSize.y);
+        selectionCtx.putImageData(this.imgDataWithOutline, 0, 0, 0, 0, canvasWidth, canvasHeight);
+        this.imgDataWithOutline = selectionCtx.getImageData(this.startingPosition.x, this.startingPosition.y, selectionSize.x, selectionSize.y);
         selectionCtx.canvas.width = selectionSize.x;
         selectionCtx.canvas.height = selectionSize.y;
         selectionCtx.canvas.style.left = this.startingPosition.x + 'px';
         selectionCtx.canvas.style.top = this.startingPosition.y + 'px';
-        selectionCtx.putImageData(this.imgData, 0, 0, 0, 0, this.imgData.width, this.imgData.height);
+        selectionCtx.putImageData(this.imgDataWithOutline, 0, 0, 0, 0, canvasWidth, canvasHeight);
         this.drawingService.baseCtx.putImageData(areaToClear, 0, 0);
         selectionCtx.canvas.style.cursor = 'move';
     }
@@ -169,7 +175,7 @@ export class MagicWandService {
         return matrix;
     }
 
-    private changeTransparentToWhite(transparentPixel: Uint8ClampedArray) {
+    private changeTransparentToWhite(transparentPixel: Uint8ClampedArray): void {
         if (transparentPixel[IMAGE_DATA_OPACITY_INDEX] === 0) {
             transparentPixel[0] = MAX_COLOR_VALUE;
             transparentPixel[1] = MAX_COLOR_VALUE;
@@ -195,10 +201,5 @@ export class MagicWandService {
             pixelToCheck[2] === startingColor[2] &&
             pixelToCheck[IMAGE_DATA_OPACITY_INDEX] === startingColor[IMAGE_DATA_OPACITY_INDEX]
         );
-    }
-
-    drawSelectionOutline(width: number, height: number): void {
-        // this.drawingService.previewCtx
-        // .putImageData(this.imgDataWithOutline, -this.startingPosition.x, -this.startingPosition.y, 0, 0, width, height);
     }
 }
