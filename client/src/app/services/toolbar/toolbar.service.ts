@@ -4,6 +4,7 @@ import { Command } from '@app/classes/commands/command';
 import { Tool } from '@app/classes/tool/tool';
 import { KeyShortcut } from '@app/enums/key-shortcuts.enum';
 import { SelectionType } from '@app/enums/selection-type.enum';
+import { AutomaticSavingService } from '@app/services/automatic-saving/automatic-saving.service';
 import { ColorPickerService } from '@app/services/color-picker/color-picker.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { BrushService } from '@app/services/tools/brush/brush.service';
@@ -48,6 +49,7 @@ export class ToolbarService {
         protected colorPickerService: ColorPickerService,
         protected bucketService: BucketService,
         protected undoRedoService: UndoRedoService,
+        protected automaticSavingService: AutomaticSavingService,
         protected textService: TextService,
     ) {
         this.tools = [
@@ -154,6 +156,7 @@ export class ToolbarService {
     }
 
     addCommand(command: Command): void {
+        this.automaticSavingService.save();
         this.undoRedoService.addCommand(command);
     }
 
@@ -202,6 +205,19 @@ export class ToolbarService {
     triggerSelectAll(): void {
         this.currentTool = this.selectionService;
         this.selectionService.selectAll();
+    }
+
+    triggerCopySelection(): void {
+        this.selectionService.copySelection();
+    }
+
+    triggerCutSelection(): void {
+        this.selectionService.cutSelection();
+    }
+
+    triggerPasteSelection(): void {
+        this.currentTool = this.selectionService;
+        this.selectionService.pasteSelection();
     }
 
     isDrawing(): boolean {

@@ -3,6 +3,7 @@ import { Tool } from '@app/classes/tool/tool';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants/constants';
 import { SelectionType } from '@app/enums/selection-type.enum';
+import { AutomaticSavingService } from '@app/services/automatic-saving/automatic-saving.service';
 import { ShortcutService } from '@app/services/shortcut/shortcut.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
@@ -23,7 +24,11 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     dimensionsUpdatedSubject: BehaviorSubject<number[]> = new BehaviorSubject([this.width, this.height]);
     private subscribedShortcuts: Subscription[] = [];
 
-    constructor(private shortcutService: ShortcutService, private toolbarService: ToolbarService) {}
+    constructor(
+        private shortcutService: ShortcutService,
+        private toolbarService: ToolbarService,
+        private automaticSavingService: AutomaticSavingService,
+    ) {}
 
     ngOnInit(): void {
         this.initializeShortcuts();
@@ -31,7 +36,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngAfterViewInit(): void {
         setTimeout(() => {
-            this.computeDimensionsDrawingContainer(true);
+            if (!this.automaticSavingService.recovering) this.computeDimensionsDrawingContainer(true);
+            else this.computeDimensionsDrawingContainer(false);
         }, 0);
     }
 
@@ -115,6 +121,24 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.toolbarService.triggerSelectAll();
             }),
         );
+        this.subscribedShortcuts.push(
+            this.shortcutService.addShortcut('control.c').subscribe(() => {
+                this.toolbarService.triggerCopySelection();
+            }),
+        );
+
+        this.subscribedShortcuts.push(
+            this.shortcutService.addShortcut('control.x').subscribe(() => {
+                this.toolbarService.triggerCutSelection();
+            }),
+        );
+
+        this.subscribedShortcuts.push(
+            this.shortcutService.addShortcut('control.v').subscribe(() => {
+                this.toolbarService.triggerPasteSelection();
+            }),
+        );
+
         this.subscribedShortcuts.push(
             this.shortcutService.addShortcut('control.z').subscribe(() => {
                 this.toolbarService.undo();
