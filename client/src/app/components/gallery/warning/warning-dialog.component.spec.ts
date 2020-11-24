@@ -60,7 +60,8 @@ describe('WarningDialogComponent', () => {
     });
 
     it('loadImage should set the image on the canvas and close the dialogue', () => {
-        const drawImageSpy = spyOn(drawingServiceSpy.baseCtx, 'drawImage');
+        // tslint:disable: no-string-literal /reason: waiting for image to load
+        const drawImageSpy = spyOn(component['resizeService'], 'resizeFromImage');
         const spyCancel = spyOn(component, 'cancel');
         const imageSize = 10;
         const image = new Image();
@@ -72,11 +73,7 @@ describe('WarningDialogComponent', () => {
         component.loadImage();
 
         expect(spyCancel).toHaveBeenCalled();
-        expect(drawImageSpy).toHaveBeenCalled();
-        expect(drawingServiceSpy.baseCtx.canvas.width).toEqual(imageSize);
-        expect(drawingServiceSpy.baseCtx.canvas.height).toEqual(imageSize);
-        expect(drawingServiceSpy.previewCtx.canvas.width).toEqual(imageSize);
-        expect(drawingServiceSpy.previewCtx.canvas.height).toEqual(imageSize);
+        expect(drawImageSpy).toHaveBeenCalledWith(image);
     });
 
     it('cancel should close dialog', () => {
