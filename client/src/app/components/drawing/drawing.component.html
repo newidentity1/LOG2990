@@ -4,7 +4,7 @@
     <canvas id="canvas" #baseCanvas [attr.width]="width" [attr.height]="height" (mousedown)="onBaseCanvasMouseDown($event)"></canvas>
     <canvas
         id="previewLayer"
-        [ngClass]="{ showOutline: isResizingWidth || isResizingHeight || isAreaSelected() }"
+        [ngClass]="{ showOutline: isResizing() || isAreaSelected() }"
         #previewCanvas
         [attr.width]="width"
         [attr.height]="height"
@@ -21,34 +21,74 @@
 
 <div class="resizable">
     <div *ngIf="isAreaSelected()">
-        <div class="resizer top-left" [ngStyle]="calculateResizerStyle(0, 0)"></div>
-        <div class="resizer top-center" [ngStyle]="calculateResizerStyle(0, 1)"></div>
-        <div class="resizer top-right" [ngStyle]="calculateResizerStyle(0, 2)"></div>
-        <div class="resizer left-center" [ngStyle]="calculateResizerStyle(1, 0)"></div>
-        <div class="resizer bottom-left" [ngStyle]="calculateResizerStyle(2, 0)"></div>
-        <div class="resizer right-center" [ngStyle]="calculateResizerStyle(1, 2)"></div>
-        <div class="resizer bottom-center" [ngStyle]="calculateResizerStyle(2, 1)"></div>
-        <div class="resizer bottom-right" [ngStyle]="calculateResizerStyle(2, 2)"></div>
+        <div
+            class="resizer top-left"
+            [ngStyle]="calculateResizerStyle(0, 0)"
+            (mousedown)="onResizeStart($event, ControlPoint.TopLeft)"
+            (mousemove)="onResize($event)"
+        ></div>
+        <div
+            class="resizer top-center"
+            [ngStyle]="calculateResizerStyle(0, 1)"
+            (mousedown)="onResizeStart($event, ControlPoint.TopCenter)"
+            (mousemove)="onResize($event)"
+        ></div>
+        <div
+            class="resizer top-right"
+            [ngStyle]="calculateResizerStyle(0, 2)"
+            (mousedown)="onResizeStart($event, ControlPoint.TopRight)"
+            (mousemove)="onResize($event)"
+        ></div>
+        <div
+            class="resizer left-center"
+            [ngStyle]="calculateResizerStyle(1, 0)"
+            (mousedown)="onResizeStart($event, ControlPoint.CenterLeft)"
+            (mousemove)="onResize($event)"
+        ></div>
+        <div
+            class="resizer bottom-left"
+            [ngStyle]="calculateResizerStyle(2, 0)"
+            (mousedown)="onResizeStart($event, ControlPoint.BottomLeft)"
+            (mousemove)="onResize($event)"
+        ></div>
+        <div
+            class="resizer right-center"
+            [ngStyle]="calculateResizerStyle(1, 2)"
+            (mousedown)="onResizeStart($event, ControlPoint.CenterRight)"
+            (mousemove)="onResize($event)"
+        ></div>
+        <div
+            class="resizer bottom-center"
+            [ngStyle]="calculateResizerStyle(2, 1)"
+            (mousedown)="onResizeStart($event, ControlPoint.BottomCenter)"
+            (mousemove)="onResize($event)"
+        ></div>
+        <div
+            class="resizer bottom-right"
+            [ngStyle]="calculateResizerStyle(2, 2)"
+            (mousedown)="onResizeStart($event, ControlPoint.BottomRight)"
+            (mousemove)="onResize($event)"
+        ></div>
     </div>
 
     <div *ngIf="!isAreaSelected()">
         <div
             class="resizer right-center"
             [ngStyle]="calculateResizerStyle(1, 2)"
-            (mousedown)="onResizeWidthStart($event)"
+            (mousedown)="onResizeStart($event, ControlPoint.CenterRight)"
             (mousemove)="onResize($event)"
         ></div>
 
         <div
             class="resizer bottom-center"
             [ngStyle]="calculateResizerStyle(2, 1)"
-            (mousedown)="onResizeHeightStart($event)"
+            (mousedown)="onResizeStart($event, ControlPoint.BottomCenter)"
             (mousemove)="onResize($event)"
         ></div>
         <div
             class="resizer bottom-right"
             [ngStyle]="calculateResizerStyle(2, 2)"
-            (mousedown)="onResizeBothStart($event)"
+            (mousedown)="onResizeStart($event, ControlPoint.BottomRight)"
             (mousemove)="onResize($event)"
         ></div>
     </div>

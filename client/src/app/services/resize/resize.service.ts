@@ -1,7 +1,8 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { Command } from '@app/classes/commands/command';
 import { Vec2 } from '@app/classes/vec2';
-import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants/constants';
+import { CANVAS_MARGIN_LEFT, CANVAS_MIN_HEIGHT, CANVAS_MIN_WIDTH, DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants/constants';
+import { ControlPoint } from '@app/enums/control-point.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
 @Injectable({
@@ -13,6 +14,8 @@ export class ResizeService extends Command {
     canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
     img: HTMLImageElement = new Image();
     imageDrawn: EventEmitter<void> = new EventEmitter<void>();
+    isResizing: boolean = false;
+    controlPoint: ControlPoint | null = null;
 
     constructor(private drawingService: DrawingService) {
         super();
@@ -39,6 +42,44 @@ export class ResizeService extends Command {
             this.drawImage();
             this.executedCommand.emit(this.clone());
         };
+    }
+
+    onResizeStart(controlPoint: ControlPoint): void {
+        this.isResizing = true;
+        this.controlPoint = controlPoint;
+    }
+
+    resetResize(): void {
+        this.isResizing = false;
+        this.controlPoint = null;
+    }
+
+    onResizeWidth(event: MouseEvent, drawingContainerWidth: number): void {
+        if (this.controlPoint !== ControlPoint.BottomCenter && this.controlPoint !== ControlPoint.TopCenter && this.isResizing) {
+            event.preventDefault();
+            let newWidth = event.clientX - this.drawingService.canvas.getBoundingClientRect().x;
+            const widthLimit = drawingContainerWidth - CANVAS_MARGIN_LEFT;
+            if (newWidth < CANVAS_MIN_WIDTH) {
+                newWidth = CANVAS_MIN_WIDTH;
+            } else if (newWidth > widthLimit) {
+                newWidth = widthLimit;
+            }
+            this.drawingService.previewCtx.canvas.width = newWidth;
+        }
+    }
+
+    onResizeHeight(event: MouseEvent, drawingContainerHeight: number): void {
+        if (this.controlPoint !== ControlPoint.CenterLeft && this.controlPoint !== ControlPoint.CenterRight && this.isResizing) {
+            event.preventDefault();
+            let newHeight = event.clientY - this.drawingService.canvas.getBoundingClientRect().y;
+            const heightLimit = drawingContainerHeight - CANVAS_MARGIN_LEFT;
+            if (newHeight < CANVAS_MIN_HEIGHT) {
+                newHeight = CANVAS_MIN_HEIGHT;
+            } else if (newHeight > heightLimit) {
+                newHeight = heightLimit;
+            }
+            this.drawingService.previewCtx.canvas.height = newHeight;
+        }
     }
 
     execute(): void {
