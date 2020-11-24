@@ -19,7 +19,7 @@ interface ClipboardImage {
 })
 export class SelectionService extends ShapeTool {
     currentType: SelectionType = SelectionType.RectangleSelection;
-    isAreaSelected: boolean;
+    isAreaSelected: boolean = false;
     private positiveStartingPos: Vec2 = { x: 0, y: 0 };
     private positiveWidth: number;
     private positiveHeight: number;
