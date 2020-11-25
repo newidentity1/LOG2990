@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
+import { MatSliderChange } from '@angular/material/slider';
 import { GridService } from '@app/services/tools/grid/grid.service';
 
 @Component({
@@ -20,13 +21,12 @@ export class GridComponent implements OnInit {
         this.gridService.draw();
     }
 
-    // tslint:disable: no-any
-    onChangeInput(event: any): void {
-        this.gridService.setDeltaX(event.value);
-        event.target.value = GridService.dx;
+    onChangeGridSize(event: MatSliderChange): void {
+        this.gridService.setGridSize(event.value);
+        event.value = this.gridService.getGridSize();
     }
 
-    onChangeSlider(event: any): void {
+    onChangeGridOpacity(event: MatSliderChange): void {
         this.gridService.setCanvasOpacity(event.value);
     }
 }

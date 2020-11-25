@@ -66,6 +66,7 @@ export const MINIMUM_TEXT_SIZE = 10;
 export const MAXIMUM_TEXT_SIZE = 100;
 
 export const GRID_MULTIPLE = 5;
-export const ROUND_UP = 3;
+export const GRID_BEGIN_SIZE = 25;
+export const ROUND = 3;
 
 export const GRID_INDEX = 11;

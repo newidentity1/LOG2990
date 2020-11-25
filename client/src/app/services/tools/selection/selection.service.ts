@@ -28,7 +28,7 @@ export class SelectionService extends ShapeTool {
     private clipboardImage: ClipboardImage;
     private moveSelectionPos: Vec2 = { x: 0, y: 0 };
 
-    constructor(drawingService: DrawingService, private moveSelectionService: MoveSelectionService) {
+    constructor(drawingService: DrawingService, private moveSelectionService: MoveSelectionService, private gridService: GridService) {
         super(drawingService);
         this.name = 'Selection';
         this.tooltip = 'Selection (r)';
@@ -65,6 +65,7 @@ export class SelectionService extends ShapeTool {
                 const moveX = this.moveSelectionPos.x - event.clientX;
                 const moveY = this.moveSelectionPos.y - event.clientY;
                 if (this.activeMagnet) {
+                    // console.log(this.gridService.dx);
                     this.moveSelectionPos.x = this.calculPosition(event.clientX);
                     this.moveSelectionPos.y = this.calculPosition(event.clientY);
                     this.moveSelectionService.moveSelection(moveX, moveY);
@@ -81,7 +82,7 @@ export class SelectionService extends ShapeTool {
     }
 
     private calculPosition(position: number): number {
-        position = position - (position % GridService.dx);
+        position = position - (position % this.gridService.getGridSize());
         return position;
     }
 
@@ -276,7 +277,11 @@ export class SelectionService extends ShapeTool {
     }
 
     clone(): SelectionService {
-        const selectionClone: SelectionService = new SelectionService(this.drawingService, new MoveSelectionService(this.drawingService));
+        const selectionClone: SelectionService = new SelectionService(
+            this.drawingService,
+            new MoveSelectionService(this.drawingService),
+            this.gridService,
+        );
         this.copySelectionService(selectionClone);
         return selectionClone;
     }
