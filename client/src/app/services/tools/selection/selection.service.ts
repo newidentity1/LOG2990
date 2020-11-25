@@ -3,7 +3,6 @@ import { ShapeTool } from '@app/classes/tool/shape-tool';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 import { Vec2 } from '@app/classes/vec2';
 import * as CONSTANTS from '@app/constants/constants';
-import { ControlPoint } from '@app/enums/control-point.enum';
 import { MouseButton } from '@app/enums/mouse-button.enum';
 import { SelectionType } from '@app/enums/selection-type.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -265,32 +264,10 @@ export class SelectionService extends ShapeTool {
     }
 
     resize(event: MouseEvent): void {
-        // const isControlLeftSide =
-        //     this.resizeSelectionService.controlPoint === ControlPoint.TopLeft ||
-        //     this.resizeSelectionService.controlPoint === ControlPoint.CenterLeft ||
-        //     this.resizeSelectionService.controlPoint === ControlPoint.BottomLeft;
         if (!this.resizeSelectionService.isResizing) return;
-        if (
-            this.resizeSelectionService.controlPoint !== ControlPoint.BottomCenter &&
-            this.resizeSelectionService.controlPoint !== ControlPoint.TopCenter
-        ) {
-            const newWidth = event.clientX - this.drawingService.canvas.getBoundingClientRect().x - this.positiveStartingPos.x;
-            this.positiveWidth = newWidth;
-            this.drawingService.previewCtx.canvas.width = this.positiveWidth;
-            // } else if (isControlLeftSide) {
-            //     console.log(this.positiveStartingPos.x, event);
-            //     this.positiveStartingPos.x = event.clientX;
-            //     this.drawingService.previewCtx.canvas.width = this.positiveWidth;
-        }
-
-        if (
-            this.resizeSelectionService.controlPoint !== ControlPoint.CenterLeft &&
-            this.resizeSelectionService.controlPoint !== ControlPoint.CenterRight
-        ) {
-            const newHeight = event.clientY - this.drawingService.canvas.getBoundingClientRect().y - this.positiveStartingPos.y;
-            this.positiveHeight = newHeight;
-            this.drawingService.previewCtx.canvas.height = this.positiveHeight;
-        }
+        this.positiveStartingPos = this.resizeSelectionService.onResize(event, this.positiveStartingPos);
+        this.positiveWidth = this.drawingService.previewCtx.canvas.width;
+        this.positiveHeight = this.drawingService.previewCtx.canvas.height;
     }
 
     isClipboardEmpty(): boolean {
