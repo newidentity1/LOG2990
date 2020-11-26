@@ -83,8 +83,8 @@ export class ResizeSelectionService {
         const selectionWidth = this.drawingService.previewCtx.canvas.width;
         const selectionHeight = this.drawingService.previewCtx.canvas.height;
 
-        const scaleX = selectionWidth / selectionImage.width;
-        const scaleY = selectionHeight / selectionImage.height;
+        // const scaleX = selectionWidth / selectionImage.width;
+        // const scaleY = selectionHeight / selectionImage.height;
 
         this.selectionImageCanvas.width = selectionImage.width;
         this.selectionImageCanvas.height = selectionImage.height;
@@ -92,8 +92,8 @@ export class ResizeSelectionService {
         context.putImageData(selectionImage, 0, 0);
 
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        this.drawingService.previewCtx.scale(scaleX, scaleY);
-        this.drawingService.previewCtx.drawImage(this.selectionImageCanvas, 0, 0);
+        // this.drawingService.previewCtx.scale(scaleX, scaleY);
+        this.drawingService.previewCtx.drawImage(this.selectionImageCanvas, 0, 0, selectionWidth, selectionHeight);
 
         return this.drawingService.previewCtx.getImageData(0, 0, selectionWidth, selectionHeight);
     }
