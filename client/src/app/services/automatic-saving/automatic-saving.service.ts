@@ -41,6 +41,6 @@ export class AutomaticSavingService implements OnDestroy {
     }
 
     savedDrawingExists(): boolean {
-        return localStorage.getItem('savedDrawing') ? true : false;
+        return Boolean(localStorage.getItem('savedDrawing'));
     }
 }
