@@ -151,11 +151,13 @@ export class SelectionService extends ShapeTool {
         this.moveSelectionService.canMoveSelection = false;
         const selectionCtx = this.drawingService.previewCtx;
 
-        this.selectionImageData = this.resizeSelectionService.scaleImage(this.selectionImageData);
-        this.drawingService.clearCanvas(selectionCtx);
-        selectionCtx.putImageData(this.selectionImageData, 0, 0);
-
         this.drawingService.baseCtx.drawImage(selectionCtx.canvas, this.positiveStartingPos.x, this.positiveStartingPos.y);
+
+        // this.drawingService.baseCtx.drawImage(
+        //     selectionCtx.canvas,
+        //     this.moveSelectionService.finalPosition.x,
+        //     this.moveSelectionService.finalPosition.y,
+        // );
 
         this.drawingService.clearCanvas(selectionCtx);
         selectionCtx.canvas.width = this.drawingService.canvas.width;
@@ -267,7 +269,7 @@ export class SelectionService extends ShapeTool {
         this.positiveStartingPos = this.resizeSelectionService.onResize(event, this.positiveStartingPos);
         this.positiveWidth = this.drawingService.previewCtx.canvas.width;
         this.positiveHeight = this.drawingService.previewCtx.canvas.height;
-        this.selectionImageData = this.resizeSelectionService.scaleImage(this.selectionImageData);
+        this.resizeSelectionService.scaleImage(this.selectionImageData);
     }
 
     isClipboardEmpty(): boolean {
