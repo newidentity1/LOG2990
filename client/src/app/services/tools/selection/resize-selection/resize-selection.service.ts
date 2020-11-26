@@ -80,7 +80,6 @@ export class ResizeSelectionService {
     }
 
     scaleImage(selectionImage: ImageData): ImageData {
-        console.log('scale');
         const selectionWidth = this.drawingService.previewCtx.canvas.width;
         const selectionHeight = this.drawingService.previewCtx.canvas.height;
 
@@ -95,7 +94,6 @@ export class ResizeSelectionService {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.drawingService.previewCtx.scale(scaleX, scaleY);
         this.drawingService.previewCtx.drawImage(this.selectionImageCanvas, 0, 0);
-        this.drawingService.previewCtx.scale(1, 1);
 
         return this.drawingService.previewCtx.getImageData(0, 0, selectionWidth, selectionHeight);
     }
