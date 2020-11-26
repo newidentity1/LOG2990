@@ -268,6 +268,7 @@ export class SelectionService extends ShapeTool {
         this.positiveStartingPos = this.resizeSelectionService.onResize(event, this.positiveStartingPos);
         this.positiveWidth = this.drawingService.previewCtx.canvas.width;
         this.positiveHeight = this.drawingService.previewCtx.canvas.height;
+        this.resizeSelectionService.scaleImage(this.selectionImageData);
     }
 
     isClipboardEmpty(): boolean {
