@@ -53,6 +53,10 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
             this.requestDrawingContainerDimensions.emit();
         });
         this.subscribeDimensionsUpdated = this.dimensionsUpdatedEvent.subscribe((dimensions) => {
+            if (this.toolbarService.automaticSavingService.savedDrawingExists()) {
+                this.toolbarService.automaticSavingService.recover();
+                return;
+            }
             this.drawingContainerWidth = dimensions[0];
             this.drawingContainerHeight = dimensions[1];
             if (!!dimensions[2]) this.newCanvasSetSize();
