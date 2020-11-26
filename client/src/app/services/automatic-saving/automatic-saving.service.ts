@@ -21,11 +21,15 @@ export class AutomaticSavingService implements OnDestroy {
         this.subscribeImageDrawn.unsubscribe();
     }
 
+    clearStorage(): void {
+        localStorage.clear();
+    }
+
     save(): void {
         const canvas = this.drawingService.canvas;
         const isCanvasEmpty = this.drawingService.canvasEmpty(this.drawingService.baseCtx, canvas);
         if (!isCanvasEmpty) localStorage.setItem('savedDrawing', canvas.toDataURL());
-        else localStorage.clear();
+        else this.clearStorage();
     }
 
     recover(): void {
@@ -36,7 +40,7 @@ export class AutomaticSavingService implements OnDestroy {
         img.src = dataURL ? dataURL : '';
         img.onload = () => {
             this.drawingService.clearCanvas(this.drawingService.baseCtx);
-            this.drawingService.baseCtx.drawImage(img, 0, 0);
+            this.resizeService.resizeFromImage(img);
         };
     }
 
