@@ -93,6 +93,10 @@ export class SelectionService extends ShapeTool {
         }
     }
 
+    scroll(event: WheelEvent): void {
+        console.log(event.deltaY);
+    }
+
     onKeyDown(event: KeyboardEvent): void {
         if (event.key === 'Escape' && (this.mouseDown || this.isAreaSelected)) {
             this.drawSelection();
