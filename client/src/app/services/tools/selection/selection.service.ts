@@ -267,12 +267,14 @@ export class SelectionService extends ShapeTool {
     }
 
     resize(event: MouseEvent): void {
+        console.log('resize', this.resizeSelectionService.isResizing);
         if (!this.resizeSelectionService.isResizing) return;
         this.positiveStartingPos = this.resizeSelectionService.onResize(event, this.positiveStartingPos);
         this.positiveWidth = this.drawingService.previewCtx.canvas.width;
         this.positiveHeight = this.drawingService.previewCtx.canvas.height;
         this.resizeSelectionService.scaleImage(this.selectionImageData);
         this.drawSelectionBox({ x: 0, y: 0 }, this.positiveWidth, this.positiveHeight);
+        this.moveSelectionService.finalPosition = this.positiveStartingPos;
     }
 
     isClipboardEmpty(): boolean {

@@ -115,7 +115,6 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
         event.preventDefault();
         if (this.isResizing()) {
             this.toolbarService.mouseDown = false;
-
             if (!this.isAreaSelected()) {
                 this.resizeService.resize(this.previewCanvas.nativeElement.width, this.previewCanvas.nativeElement.height);
             } else {
@@ -124,7 +123,7 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
             }
 
             setTimeout(() => {
-                this.toolbarService.applyCurrentTool();
+                if (!this.isAreaSelected) this.toolbarService.applyCurrentTool();
                 this.resizeService.resetResize();
             }, 0);
         } else {
