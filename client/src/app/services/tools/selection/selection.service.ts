@@ -56,6 +56,7 @@ export class SelectionService extends ShapeTool {
         if (this.mouseDown) {
             if (this.isAreaSelected && !this.resizeSelectionService.isResizing) {
                 this.moveSelectionPos = { x: event.clientX, y: event.clientY };
+                this.moveSelectionService.imgData = this.resizeSelectionService.scaleImage(this.selectionImageData);
             }
         }
     }
@@ -267,7 +268,6 @@ export class SelectionService extends ShapeTool {
     }
 
     resize(event: MouseEvent): void {
-        console.log('resize', this.resizeSelectionService.isResizing);
         if (!this.resizeSelectionService.isResizing) return;
         this.positiveStartingPos = this.resizeSelectionService.onResize(event, this.positiveStartingPos);
         this.positiveWidth = this.drawingService.previewCtx.canvas.width;
