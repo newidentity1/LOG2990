@@ -94,6 +94,8 @@ export class SelectionService extends ShapeTool {
                     this.drawSelectionBox({ x: 0, y: 0 }, this.positiveWidth, this.positiveHeight);
                 }
             }
+            this.resizeSelectionService.isMirrorWidth = false;
+            this.resizeSelectionService.isMirrorHeight = false;
             this.mouseDown = false;
         }
     }
@@ -273,7 +275,6 @@ export class SelectionService extends ShapeTool {
         this.positiveWidth = this.drawingService.previewCtx.canvas.width;
         this.positiveHeight = this.drawingService.previewCtx.canvas.height;
         this.resizeSelectionService.scaleImage(this.selectionImageData);
-        this.drawSelectionBox({ x: 0, y: 0 }, this.positiveWidth, this.positiveHeight);
         this.moveSelectionService.finalPosition = this.positiveStartingPos;
     }
 

@@ -11,21 +11,29 @@ export class ResizeSelectionService {
     private startingPoint: Vec2;
     private renderer: Renderer2;
     private selectionImageCanvas: HTMLCanvasElement;
-    private oppositeControlPoints: Map<ControlPoint, ControlPoint> = new Map<ControlPoint, ControlPoint>();
-    private oppositeTwoAxesDone: boolean = false;
+    private oppositeControlPointsWidth: Map<ControlPoint, ControlPoint> = new Map<ControlPoint, ControlPoint>();
+    private oppositeControlPointsHeight: Map<ControlPoint, ControlPoint> = new Map<ControlPoint, ControlPoint>();
+    isMirrorWidth: boolean = false;
+    isMirrorHeight: boolean = false;
 
     constructor(private resizeService: ResizeService, private drawingService: DrawingService, private rendererFactory: RendererFactory2) {
         this.renderer = this.rendererFactory.createRenderer(null, null);
         this.selectionImageCanvas = this.renderer.createElement('canvas');
-        this.oppositeControlPoints
-            .set(ControlPoint.BottomCenter, ControlPoint.TopCenter)
-            .set(ControlPoint.BottomLeft, ControlPoint.TopRight)
-            .set(ControlPoint.BottomRight, ControlPoint.TopLeft)
+        this.oppositeControlPointsWidth
             .set(ControlPoint.CenterLeft, ControlPoint.CenterRight)
             .set(ControlPoint.CenterRight, ControlPoint.CenterLeft)
+            .set(ControlPoint.BottomLeft, ControlPoint.BottomRight)
+            .set(ControlPoint.BottomRight, ControlPoint.BottomLeft)
+            .set(ControlPoint.TopLeft, ControlPoint.TopRight)
+            .set(ControlPoint.TopRight, ControlPoint.TopLeft);
+
+        this.oppositeControlPointsHeight
+            .set(ControlPoint.BottomCenter, ControlPoint.TopCenter)
             .set(ControlPoint.TopCenter, ControlPoint.BottomCenter)
-            .set(ControlPoint.TopRight, ControlPoint.BottomLeft)
-            .set(ControlPoint.TopLeft, ControlPoint.BottomRight);
+            .set(ControlPoint.BottomLeft, ControlPoint.TopLeft)
+            .set(ControlPoint.BottomRight, ControlPoint.TopRight)
+            .set(ControlPoint.TopLeft, ControlPoint.BottomLeft)
+            .set(ControlPoint.TopRight, ControlPoint.BottomRight);
     }
 
     onResize(event: MouseEvent, startingPoint: Vec2): Vec2 {
@@ -33,7 +41,6 @@ export class ResizeSelectionService {
         this.onResizeWidth(event);
         this.onResizeHeight(event);
         this.onChangeStartingPoint(event);
-        this.oppositeTwoAxesDone = false;
         return this.startingPoint;
     }
 
@@ -48,10 +55,10 @@ export class ResizeSelectionService {
         const widthDiff = event.clientX - this.drawingService.canvas.getBoundingClientRect().x - this.startingPoint.x;
         const oldWidth = this.drawingService.previewCtx.canvas.width;
         let newWidth = isControlLeftSide ? oldWidth - widthDiff : widthDiff;
-
         if (newWidth <= 0) {
             newWidth = 1;
-            if (!this.oppositeTwoAxesDone) this.changeOppositeControlPoint();
+            this.isMirrorWidth = !this.isMirrorWidth;
+            this.changeOppositeControlPointWidth();
         }
 
         this.drawingService.previewCtx.canvas.width = newWidth;
@@ -69,10 +76,10 @@ export class ResizeSelectionService {
         const heightDiff = event.clientY - this.drawingService.canvas.getBoundingClientRect().y - this.startingPoint.y;
         const oldHeight = this.drawingService.previewCtx.canvas.height;
         let newHeight = isControlTopSide ? oldHeight - heightDiff : heightDiff;
-
         if (newHeight <= 0) {
             newHeight = 1;
-            if (!this.oppositeTwoAxesDone) this.changeOppositeControlPoint();
+            this.changeOppositeControlPointHeight();
+            this.isMirrorHeight = !this.isMirrorHeight;
         }
 
         this.drawingService.previewCtx.canvas.height = newHeight;
@@ -107,8 +114,10 @@ export class ResizeSelectionService {
         const selectionWidth = this.drawingService.previewCtx.canvas.width;
         const selectionHeight = this.drawingService.previewCtx.canvas.height;
 
-        // const scaleX = selectionWidth / selectionImage.width;
-        // const scaleY = selectionHeight / selectionImage.height;
+        let scaleX = selectionWidth / selectionImage.width;
+        let scaleY = selectionHeight / selectionImage.height;
+        scaleX = this.isMirrorWidth ? -scaleX : scaleX;
+        scaleY = this.isMirrorHeight ? -scaleY : scaleY;
 
         this.selectionImageCanvas.width = selectionImage.width;
         this.selectionImageCanvas.height = selectionImage.height;
@@ -116,26 +125,25 @@ export class ResizeSelectionService {
         context.putImageData(selectionImage, 0, 0);
 
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        // this.drawingService.previewCtx.scale(scaleX, scaleY);
-        this.drawingService.previewCtx.drawImage(this.selectionImageCanvas, 0, 0, selectionWidth, selectionHeight);
+        this.drawingService.previewCtx.scale(scaleX, scaleY);
+        const posX = this.isMirrorWidth ? -selectionImage.width : 0;
+        const posY = this.isMirrorHeight ? -selectionImage.height : 0;
+        this.drawingService.previewCtx.drawImage(this.selectionImageCanvas, posX, posY);
+        this.drawingService.previewCtx.setTransform(1, 0, 0, 1, 0, 0);
 
         return this.drawingService.previewCtx.getImageData(0, 0, selectionWidth, selectionHeight);
     }
 
-    changeOppositeControlPoint(): void {
+    changeOppositeControlPointWidth(): void {
         if (this.resizeService.controlPoint === null) return;
-        const oppositeControlPoint = this.oppositeControlPoints.get(this.resizeService.controlPoint);
+        const oppositeControlPoint = this.oppositeControlPointsWidth.get(this.resizeService.controlPoint);
         this.resizeService.controlPoint = oppositeControlPoint !== undefined ? oppositeControlPoint : this.resizeService.controlPoint;
+    }
 
-        if (
-            (oppositeControlPoint === ControlPoint.BottomLeft ||
-                oppositeControlPoint === ControlPoint.BottomRight ||
-                oppositeControlPoint === ControlPoint.TopLeft ||
-                oppositeControlPoint === ControlPoint.TopRight) &&
-            this.resizeService.controlPoint === oppositeControlPoint
-        ) {
-            this.oppositeTwoAxesDone = true;
-        }
+    changeOppositeControlPointHeight(): void {
+        if (this.resizeService.controlPoint === null) return;
+        const oppositeControlPoint = this.oppositeControlPointsHeight.get(this.resizeService.controlPoint);
+        this.resizeService.controlPoint = oppositeControlPoint !== undefined ? oppositeControlPoint : this.resizeService.controlPoint;
     }
 
     get isResizing(): boolean {
