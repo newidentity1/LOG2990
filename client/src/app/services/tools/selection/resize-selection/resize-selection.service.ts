@@ -50,7 +50,7 @@ export class ResizeSelectionService {
         let newWidth = isControlLeftSide ? oldWidth - widthDiff : widthDiff;
 
         if (newWidth <= 0) {
-            newWidth = newWidth === 0 ? 1 : newWidth;
+            newWidth = 1;
             if (!this.oppositeTwoAxesDone) this.changeOppositeControlPoint();
         }
 
@@ -71,7 +71,7 @@ export class ResizeSelectionService {
         let newHeight = isControlTopSide ? oldHeight - heightDiff : heightDiff;
 
         if (newHeight <= 0) {
-            newHeight = newHeight === 0 ? 1 : newHeight;
+            newHeight = 1;
             if (!this.oppositeTwoAxesDone) this.changeOppositeControlPoint();
         }
 
@@ -126,7 +126,7 @@ export class ResizeSelectionService {
         if (this.resizeService.controlPoint === null) return;
         const oppositeControlPoint = this.oppositeControlPoints.get(this.resizeService.controlPoint);
         this.resizeService.controlPoint = oppositeControlPoint !== undefined ? oppositeControlPoint : this.resizeService.controlPoint;
-        console.log(this.resizeService.controlPoint, oppositeControlPoint);
+
         if (
             (oppositeControlPoint === ControlPoint.BottomLeft ||
                 oppositeControlPoint === ControlPoint.BottomRight ||
