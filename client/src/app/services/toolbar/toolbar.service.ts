@@ -9,6 +9,7 @@ import { ColorPickerService } from '@app/services/color-picker/color-picker.serv
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { BrushService } from '@app/services/tools/brush/brush.service';
 import { BucketService } from '@app/services/tools/bucket/bucket.service';
+import { CalligraphyService } from '@app/services/tools/calligraphy/calligraphy.service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
 import { EraseService } from '@app/services/tools/erase/erase.service';
 import { EyedropperService } from '@app/services/tools/eyedropper/eyedropper.service';
@@ -51,6 +52,7 @@ export class ToolbarService {
         protected undoRedoService: UndoRedoService,
         protected automaticSavingService: AutomaticSavingService,
         protected textService: TextService,
+        protected calligraphyService: CalligraphyService,
     ) {
         this.tools = [
             pencilService,
@@ -64,6 +66,7 @@ export class ToolbarService {
             eyedropperService,
             bucketService,
             textService,
+            calligraphyService,
         ];
         this.currentTool = this.tools[0];
         this.keyShortcuts
@@ -78,7 +81,8 @@ export class ToolbarService {
             .set(KeyShortcut.RectangleSelect, selectionService)
             .set(KeyShortcut.EllipseSelect, selectionService)
             .set(KeyShortcut.Bucket, bucketService)
-            .set(KeyShortcut.Text, textService);
+            .set(KeyShortcut.Text, textService)
+            .set(KeyShortcut.Calligraphy, calligraphyService);
     }
 
     unsubscribeListeners(): void {
