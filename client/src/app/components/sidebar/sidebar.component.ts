@@ -32,11 +32,7 @@ export class SidebarComponent {
         if (tool !== this.currentTool) {
             this.toolbarService.changeTool(tool);
             this.sidenavProperties.open();
-        } else {
-            this.sidenavProperties.toggle();
         }
-
-        if (tool.name === 'Eyedropper') this.sidenavProperties.close();
     }
 
     createNewDrawing(): void {
