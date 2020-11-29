@@ -4,12 +4,15 @@ import { ShapeTool } from '@app/classes/tool/shape-tool';
 import { MouseButton } from '@app/enums/mouse-button.enum';
 import { SelectionType } from '@app/enums/selection-type.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { GridService } from '@app/services/tools/grid/grid.service';
 import { MoveSelectionService } from './move-selection/move-selection.service';
 import { SelectionService } from './selection.service';
 
 describe('SelectionService', () => {
     let service: SelectionService;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
+    // tslint:disable-next-line:prefer-const
+    let gridServiceSpy: jasmine.SpyObj<GridService>;
     let moveSelectionService: MoveSelectionService;
     // tslint:disable:no-any / reason: spying on function
     let drawPreviewSpy: jasmine.Spy<any>;
@@ -20,7 +23,7 @@ describe('SelectionService', () => {
     beforeEach(() => {
         drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setThickness', 'setStrokeColor']);
 
-        moveSelectionService = new MoveSelectionService(drawingServiceSpy);
+        moveSelectionService = new MoveSelectionService(drawingServiceSpy, gridServiceSpy);
         TestBed.configureTestingModule({
             providers: [
                 { provide: DrawingService, useValue: drawingServiceSpy },

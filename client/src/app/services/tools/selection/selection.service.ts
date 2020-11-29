@@ -3,6 +3,7 @@ import { ShapeTool } from '@app/classes/tool/shape-tool';
 import { BasicShapeProperties } from '@app/classes/tools-properties/basic-shape-properties';
 import { Vec2 } from '@app/classes/vec2';
 import * as CONSTANTS from '@app/constants/constants';
+import { MagnetismOption } from '@app/enums/magnetism-option.enum';
 import { MouseButton } from '@app/enums/mouse-button.enum';
 import { SelectionType } from '@app/enums/selection-type.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -19,6 +20,7 @@ interface ClipboardImage {
 })
 export class SelectionService extends ShapeTool {
     activeMagnet: boolean = false;
+    magnetismOption: MagnetismOption = MagnetismOption.TopLeft;
     currentType: SelectionType = SelectionType.RectangleSelection;
     isAreaSelected: boolean;
     positiveStartingPos: Vec2 = { x: 0, y: 0 };
@@ -62,14 +64,17 @@ export class SelectionService extends ShapeTool {
         this.currentMousePosition = this.getPositionFromMouse(event);
         if (this.mouseDown) {
             if (this.isAreaSelected) {
-                const moveX = this.moveSelectionPos.x - event.clientX;
-                const moveY = this.moveSelectionPos.y - event.clientY;
                 if (this.activeMagnet) {
-                    // console.log(this.gridService.dx);
-                    this.moveSelectionPos.x = this.calculPosition(event.clientX);
-                    this.moveSelectionPos.y = this.calculPosition(event.clientY);
-                    this.moveSelectionService.moveSelection(moveX, moveY);
+                    const position: Vec2 = this.magneticOption({ x: event.x, y: event.y });
+                    const moveX = position.x;
+                    const moveY = position.y;
+                    this.moveSelectionPos.x = moveX;
+                    this.moveSelectionPos.y = moveX;
+                    console.log(this.moveSelectionPos.x, this.moveSelectionPos.y);
+                    this.moveSelectionService.moveSelectionMagnetic(moveX, moveY);
                 } else {
+                    const moveX = this.moveSelectionPos.x - event.clientX;
+                    const moveY = this.moveSelectionPos.y - event.clientY;
                     this.moveSelectionPos.x = event.clientX;
                     this.moveSelectionPos.y = event.clientY;
                     this.moveSelectionService.moveSelection(moveX, moveY);
@@ -81,8 +86,71 @@ export class SelectionService extends ShapeTool {
         }
     }
 
-    private calculPosition(position: number): number {
-        position = position - (position % this.gridService.getGridSize());
+    magneticOption(position: Vec2): Vec2 {
+        let x = 0;
+        let y = 0;
+        switch (this.magnetismOption) {
+            case MagnetismOption.TopLeft:
+                position.x = this.moveSelectionService.calculPosition(position.x);
+                position.y = this.moveSelectionService.calculPosition(position.y);
+                break;
+
+            case MagnetismOption.TopCenter:
+                x = this.moveSelectionService.calculPosition(position.x - this.positiveWidth / 2);
+                y = this.moveSelectionService.calculPosition(position.y);
+                position.x = x - this.positiveWidth / 2;
+                position.y = y;
+                break;
+
+            case MagnetismOption.TopRight:
+                x = this.moveSelectionService.calculPosition(position.x - this.positiveWidth);
+                y = this.moveSelectionService.calculPosition(position.y);
+                position.x = x - this.positiveWidth;
+                position.y = y;
+                break;
+
+            case MagnetismOption.MidleLeft:
+                x = this.moveSelectionService.calculPosition(position.x);
+                y = this.moveSelectionService.calculPosition(position.y - this.positiveHeight / 2);
+                position.x = x;
+                position.y = y - this.positiveHeight / 2;
+                break;
+
+            case MagnetismOption.MidleCenter:
+                x = this.moveSelectionService.calculPosition(position.x - this.positiveWidth / 2);
+                y = this.moveSelectionService.calculPosition(position.y - this.positiveHeight / 2);
+                position.x = x - this.positiveWidth / 2;
+                position.y = y - this.positiveHeight / 2;
+                break;
+
+            case MagnetismOption.MidleRight:
+                x = this.moveSelectionService.calculPosition(position.x - this.positiveWidth);
+                y = this.moveSelectionService.calculPosition(position.y - this.positiveHeight / 2);
+                position.x = x - this.positiveWidth;
+                position.y = y - this.positiveHeight / 2;
+                break;
+
+            case MagnetismOption.BottomLeft:
+                x = this.moveSelectionService.calculPosition(position.x);
+                y = this.moveSelectionService.calculPosition(position.y - this.positiveHeight);
+                position.x = x;
+                position.y = y - this.positiveHeight;
+                break;
+
+            case MagnetismOption.BottomCenter:
+                x = this.moveSelectionService.calculPosition(position.x + this.positiveWidth / 2);
+                y = this.moveSelectionService.calculPosition(position.y + this.positiveHeight);
+                position.x = x - this.positiveWidth / 2;
+                position.y = y - this.positiveHeight;
+                break;
+
+            case MagnetismOption.BottomRight:
+                x = this.moveSelectionService.calculPosition(position.x + this.positiveWidth);
+                y = this.moveSelectionService.calculPosition(position.y + this.positiveHeight);
+                position.x = x - this.positiveWidth;
+                position.y = y - this.positiveHeight;
+                break;
+        }
         return position;
     }
 
@@ -279,7 +347,7 @@ export class SelectionService extends ShapeTool {
     clone(): SelectionService {
         const selectionClone: SelectionService = new SelectionService(
             this.drawingService,
-            new MoveSelectionService(this.drawingService),
+            new MoveSelectionService(this.drawingService, this.gridService),
             this.gridService,
         );
         this.copySelectionService(selectionClone);

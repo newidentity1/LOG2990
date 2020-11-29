@@ -4,6 +4,7 @@ import * as CONSTANTS from '@app/constants/constants';
 import { SelectionArrowIndex } from '@app/enums/selection-arrow-index.enum';
 import { SelectionType } from '@app/enums/selection-type.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { GridService } from '@app/services/tools/grid/grid.service';
 
 @Injectable({
     providedIn: 'root',
@@ -15,7 +16,7 @@ export class MoveSelectionService {
     private canMoveSelectionContiniously: boolean = false;
     private pressedKeys: number[] = [0, 0, 0, 0];
 
-    constructor(private drawingService: DrawingService) {}
+    constructor(private drawingService: DrawingService, private gridService: GridService) {}
 
     checkArrowKeysPressed(event: KeyboardEvent): boolean {
         let arrowKeyPressed = false;
@@ -84,6 +85,34 @@ export class MoveSelectionService {
             this.drawingService.canvas.width - this.finalPosition.x,
             this.drawingService.canvas.height - this.finalPosition.y,
         );
+    }
+
+    moveSelectionMagnetic(moveX: number, moveY: number): void {
+        // const elementOffsetLeft = this.calculPosition(this.drawingService.previewCtx.canvas.offsetLeft);
+        // const elementOffsetTop = this.calculPosition(this.drawingService.previewCtx.canvas.offsetTop);
+
+        this.finalPosition.x = moveX;
+        this.finalPosition.y = moveY;
+        console.log(this.finalPosition.x, this.finalPosition.y);
+
+        this.drawingService.previewCtx.canvas.style.left = this.finalPosition.x + 'px';
+        this.drawingService.previewCtx.canvas.style.top = this.finalPosition.y + 'px';
+
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.drawingService.previewCtx.putImageData(
+            this.imgData,
+            0,
+            0,
+            this.finalPosition.x >= 0 ? 0 : this.finalPosition.x,
+            this.finalPosition.y >= 0 ? 0 : this.finalPosition.y,
+            this.finalPosition.x,
+            this.finalPosition.y,
+        );
+    }
+
+    calculPosition(position: number): number {
+        position = position - (position % this.gridService.getGridSize());
+        return position;
     }
 
     copySelection(startingPos: Vec2, width: number, height: number, currentType: SelectionType): void {
