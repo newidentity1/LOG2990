@@ -1,5 +1,5 @@
 <mat-sidenav-container [hasBackdrop]="false">
-    <mat-sidenav #toolProperties mode="over" [disableClose]="true">
+    <mat-sidenav #toolProperties mode="side" position="end" [disableClose]="true" [opened]="true">
         <div *ngIf="currentTool" [ngSwitch]="currentTool.name">
             <app-pencil-options class="tool-options" *ngSwitchCase="'Crayon'"></app-pencil-options>
             <app-brush-options class="tool-options" *ngSwitchCase="'Brush'"></app-brush-options>
@@ -11,6 +11,7 @@
             <app-selection-option class="tool-options" *ngSwitchCase="'Selection'"></app-selection-option>
             <app-bucket-option class="tool-options" *ngSwitchCase="'Bucket'"></app-bucket-option>
             <app-text class="tool-options" *ngSwitchCase="'Text'"></app-text>
+            <app-eyedropper-option *ngIf="currentTool.name === 'Eyedropper'"></app-eyedropper-option>
         </div>
     </mat-sidenav>
     <mat-sidenav-content>
@@ -22,7 +23,6 @@
                     </button>
                 </li>
             </ul>
-            <app-eyedropper-option *ngIf="currentTool.name === 'Eyedropper'"></app-eyedropper-option>
             <div id="other-tools">
                 <hr />
                 <div id="undo-redo-contaner">
