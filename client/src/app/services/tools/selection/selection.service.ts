@@ -110,6 +110,9 @@ export class SelectionService extends ShapeTool {
                 this.drawSelectionBox({ x: 0, y: 0 }, this.positiveWidth, this.positiveHeight);
             } else if (event.key === 'Delete') {
                 this.deleteSelection();
+            } else if (event.key === 'Shift') {
+                if (!this.shiftDown) this.resizeSelectionService.scaleImageKeepRatio(this.selectionImageData);
+                this.shiftDown = true;
             }
         } else {
             super.onKeyDown(event);
@@ -119,6 +122,10 @@ export class SelectionService extends ShapeTool {
     onKeyUp(event: KeyboardEvent): void {
         if (this.isAreaSelected) {
             this.moveSelectionService.checkArrowKeysReleased(event);
+            if (event.key === 'Shift') {
+                this.shiftDown = false;
+                this.resizeSelectionService.scaleImage(this.selectionImageData);
+            }
         } else {
             super.onKeyUp(event);
         }
@@ -154,7 +161,9 @@ export class SelectionService extends ShapeTool {
         this.moveSelectionService.canMoveSelection = false;
         const selectionCtx = this.drawingService.previewCtx;
 
-        this.selectionImageData = this.resizeSelectionService.scaleImage(this.selectionImageData);
+        this.selectionImageData = this.shiftDown
+            ? this.resizeSelectionService.scaleImageKeepRatio(this.selectionImageData)
+            : this.resizeSelectionService.scaleImage(this.selectionImageData);
         // selectionCtx.putImageData(this.selectionImageData, 0, 0);
         // this.drawingService.baseCtx.drawImage(selectionCtx.canvas, this.positiveStartingPos.x, this.positiveStartingPos.y);
 
@@ -274,7 +283,11 @@ export class SelectionService extends ShapeTool {
         this.positiveStartingPos = this.resizeSelectionService.onResize(event, this.positiveStartingPos);
         this.positiveWidth = this.drawingService.previewCtx.canvas.width;
         this.positiveHeight = this.drawingService.previewCtx.canvas.height;
-        this.resizeSelectionService.scaleImage(this.selectionImageData);
+        if (this.shiftDown) {
+            this.resizeSelectionService.scaleImageKeepRatio(this.selectionImageData);
+        } else {
+            this.resizeSelectionService.scaleImage(this.selectionImageData);
+        }
         this.moveSelectionService.finalPosition = this.positiveStartingPos;
     }
 

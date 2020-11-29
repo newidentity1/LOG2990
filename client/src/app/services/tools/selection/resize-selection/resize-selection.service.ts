@@ -134,6 +134,32 @@ export class ResizeSelectionService {
         return this.drawingService.previewCtx.getImageData(0, 0, selectionWidth, selectionHeight);
     }
 
+    scaleImageKeepRatio(selectionImage: ImageData): ImageData {
+        const selectionWidth = this.drawingService.previewCtx.canvas.width;
+        const selectionHeight = this.drawingService.previewCtx.canvas.height;
+
+        let scaleX = selectionWidth / selectionImage.width;
+        let scaleY = selectionHeight / selectionImage.height;
+        scaleX = this.isMirrorWidth ? -scaleX : scaleX;
+        scaleY = this.isMirrorHeight ? -scaleY : scaleY;
+        scaleX = scaleX > scaleY ? Math.sign(scaleX) * Math.abs(scaleY) : scaleX;
+        scaleY = scaleY > scaleX ? Math.sign(scaleY) * Math.abs(scaleX) : scaleY;
+
+        this.selectionImageCanvas.width = selectionImage.width;
+        this.selectionImageCanvas.height = selectionImage.height;
+        const context = this.selectionImageCanvas.getContext('2d') as CanvasRenderingContext2D;
+        context.putImageData(selectionImage, 0, 0);
+
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.drawingService.previewCtx.scale(scaleX, scaleY);
+        const posX = this.isMirrorWidth ? -selectionImage.width : 0;
+        const posY = this.isMirrorHeight ? -selectionImage.height : 0;
+        this.drawingService.previewCtx.drawImage(this.selectionImageCanvas, posX, posY);
+        this.drawingService.previewCtx.setTransform(1, 0, 0, 1, 0, 0);
+
+        return this.drawingService.previewCtx.getImageData(0, 0, selectionWidth, selectionHeight);
+    }
+
     changeOppositeControlPointWidth(): void {
         if (this.resizeService.controlPoint === null) return;
         const oppositeControlPoint = this.oppositeControlPointsWidth.get(this.resizeService.controlPoint);
