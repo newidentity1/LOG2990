@@ -94,7 +94,25 @@ export class SelectionService extends ShapeTool {
     }
 
     scroll(event: WheelEvent): void {
-        console.log(event.deltaY);
+        const tempCtx = this.drawingService.canvas.getContext('2d');
+        if (!tempCtx) return;
+        const tempCanvas = tempCtx.canvas;
+        const canvas = this.drawingService.previewCtx.canvas;
+        const ctx = this.drawingService.previewCtx;
+
+        tempCtx.putImageData(this.selectionImageData, 0, 0);
+        this.drawingService.clearCanvas(ctx);
+
+        ctx.save();
+        const angle = (CONSTANTS.DEFAULT_ROTATION_ANGLE * Math.PI) / 180;
+        ctx.beginPath();
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+        ctx.rotate(Math.sign(event.deltaY) * angle);
+        ctx.translate(-canvas.width / 2, -canvas.height / 2);
+        ctx.drawImage(tempCanvas, 0, 0);
+        ctx.restore();
+        this.selectionImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        this.moveSelectionService.imgData = this.selectionImageData;
     }
 
     onKeyDown(event: KeyboardEvent): void {

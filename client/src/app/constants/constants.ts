@@ -1,6 +1,7 @@
 export const BLACK = '000000';
 export const WHITE = 'FFFFFF';
 export const DEFAULT_COLOR_OPACITY = 1;
+export const DEFAULT_ROTATION_ANGLE = 15;
 export const MAX_RECENT_COLORS_SIZE = 10;
 export const HEX_BASE = 16;
 export const RED_POSITION_IN_HEX_STRING = 2;
