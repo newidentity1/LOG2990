@@ -71,6 +71,8 @@ export class SelectionService extends ShapeTool {
                 const moveY = this.moveSelectionPos.y - event.clientY;
                 this.moveSelectionPos.x = event.clientX;
                 this.moveSelectionPos.y = event.clientY;
+                this.positiveStartingPos.x -= moveX;
+                this.positiveStartingPos.y -= moveY;
                 this.moveSelectionService.moveSelection(moveX, moveY);
                 this.drawSelectionBox({ x: 0, y: 0 }, this.positiveWidth, this.positiveHeight);
             } else {
@@ -84,6 +86,7 @@ export class SelectionService extends ShapeTool {
             if (!this.isAreaSelected) {
                 this.currentMousePosition = this.getPositionFromMouse(event);
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
+
                 if (
                     (this.currentMousePosition.x !== this.mouseDownCoord.x || this.currentMousePosition.y !== this.mouseDownCoord.y) &&
                     this.width &&
