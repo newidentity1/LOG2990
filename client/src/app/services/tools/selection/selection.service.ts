@@ -55,7 +55,6 @@ export class SelectionService extends ShapeTool {
         this.mouseDownCoord = this.getPositionFromMouse(event);
         if (this.mouseDown) {
             if (this.isAreaSelected && !this.resizeSelectionService.isResizing) {
-                console.log('allo');
                 this.moveSelectionPos = { x: event.clientX, y: event.clientY };
                 this.moveSelectionService.imgData = this.shiftDown
                     ? this.resizeSelectionService.scaleImageKeepRatio(this.selectionImageData)
