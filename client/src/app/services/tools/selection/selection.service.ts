@@ -55,8 +55,11 @@ export class SelectionService extends ShapeTool {
         this.mouseDownCoord = this.getPositionFromMouse(event);
         if (this.mouseDown) {
             if (this.isAreaSelected && !this.resizeSelectionService.isResizing) {
+                console.log('allo');
                 this.moveSelectionPos = { x: event.clientX, y: event.clientY };
-                this.moveSelectionService.imgData = this.resizeSelectionService.scaleImage(this.selectionImageData);
+                this.moveSelectionService.imgData = this.shiftDown
+                    ? this.resizeSelectionService.scaleImageKeepRatio(this.selectionImageData)
+                    : this.resizeSelectionService.scaleImage(this.selectionImageData);
             }
         }
     }
@@ -94,8 +97,6 @@ export class SelectionService extends ShapeTool {
                     this.drawSelectionBox({ x: 0, y: 0 }, this.positiveWidth, this.positiveHeight);
                 }
             }
-            this.resizeSelectionService.isMirrorWidth = false;
-            this.resizeSelectionService.isMirrorHeight = false;
             this.mouseDown = false;
         }
     }
@@ -172,6 +173,9 @@ export class SelectionService extends ShapeTool {
             this.moveSelectionService.finalPosition.x,
             this.moveSelectionService.finalPosition.y,
         );
+
+        this.resizeSelectionService.isMirrorWidth = false;
+        this.resizeSelectionService.isMirrorHeight = false;
 
         this.drawingService.clearCanvas(selectionCtx);
         selectionCtx.canvas.width = this.drawingService.canvas.width;
