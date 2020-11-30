@@ -142,8 +142,8 @@ export class ResizeSelectionService {
         let scaleY = selectionHeight / selectionImage.height;
         scaleX = this.isMirrorWidth ? -scaleX : scaleX;
         scaleY = this.isMirrorHeight ? -scaleY : scaleY;
-        scaleX = scaleX > scaleY ? Math.sign(scaleX) * Math.abs(scaleY) : scaleX;
-        scaleY = scaleY > scaleX ? Math.sign(scaleY) * Math.abs(scaleX) : scaleY;
+        scaleX = Math.abs(scaleX) > Math.abs(scaleY) ? Math.sign(scaleX) * Math.abs(scaleY) : scaleX;
+        scaleY = Math.abs(scaleY) > Math.abs(scaleX) ? Math.sign(scaleY) * Math.abs(scaleX) : scaleY;
 
         this.selectionImageCanvas.width = selectionImage.width;
         this.selectionImageCanvas.height = selectionImage.height;
