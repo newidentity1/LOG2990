@@ -88,12 +88,8 @@ export class MoveSelectionService {
     }
 
     moveSelectionMagnetic(moveX: number, moveY: number): void {
-        // const elementOffsetLeft = this.calculPosition(this.drawingService.previewCtx.canvas.offsetLeft);
-        // const elementOffsetTop = this.calculPosition(this.drawingService.previewCtx.canvas.offsetTop);
-
         this.finalPosition.x = moveX;
         this.finalPosition.y = moveY;
-        console.log(this.finalPosition.x, this.finalPosition.y);
 
         this.drawingService.previewCtx.canvas.style.left = this.finalPosition.x + 'px';
         this.drawingService.previewCtx.canvas.style.top = this.finalPosition.y + 'px';
@@ -105,8 +101,8 @@ export class MoveSelectionService {
             0,
             this.finalPosition.x >= 0 ? 0 : this.finalPosition.x,
             this.finalPosition.y >= 0 ? 0 : this.finalPosition.y,
-            this.finalPosition.x,
-            this.finalPosition.y,
+            this.drawingService.canvas.width - this.finalPosition.x,
+            this.drawingService.canvas.height - this.finalPosition.y,
         );
     }
 

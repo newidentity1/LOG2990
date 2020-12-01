@@ -65,11 +65,14 @@ export class SelectionService extends ShapeTool {
         if (this.mouseDown) {
             if (this.isAreaSelected) {
                 if (this.activeMagnet) {
-                    const position: Vec2 = this.magneticOption({ x: event.x, y: event.y });
+                    const position: Vec2 = this.magneticOption({
+                        x: event.clientX - this.drawingService.baseCtx.canvas.getBoundingClientRect().x,
+                        y: event.clientY - this.drawingService.baseCtx.canvas.getBoundingClientRect().y,
+                    });
                     const moveX = position.x;
                     const moveY = position.y;
                     this.moveSelectionPos.x = moveX;
-                    this.moveSelectionPos.y = moveX;
+                    this.moveSelectionPos.y = moveY;
                     console.log(this.moveSelectionPos.x, this.moveSelectionPos.y);
                     this.moveSelectionService.moveSelectionMagnetic(moveX, moveY);
                 } else {
