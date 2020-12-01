@@ -6,18 +6,18 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
     providedIn: 'root',
 })
 export class RotateSelectionService {
-    private angle: number = 0;
+    angle: number = 0;
+    tempCtx: CanvasRenderingContext2D;
 
     constructor(private drawingService: DrawingService) {}
 
     scroll(event: WheelEvent, selectionImageData: ImageData): void {
-        const tempCtx = this.drawingService.canvas.getContext('2d');
-        if (!tempCtx) return;
-        const tempCanvas = tempCtx.canvas;
+        this.tempCtx = this.drawingService.canvas.getContext('2d') as CanvasRenderingContext2D;
+        const tempCanvas = this.tempCtx.canvas;
         const canvas = this.drawingService.previewCtx.canvas;
         const ctx = this.drawingService.previewCtx;
 
-        tempCtx.putImageData(selectionImageData, 0, 0);
+        this.tempCtx.putImageData(selectionImageData, 0, 0);
         this.drawingService.clearCanvas(ctx);
 
         ctx.save();
@@ -28,5 +28,6 @@ export class RotateSelectionService {
         ctx.translate(-canvas.width / 2, -canvas.height / 2);
         ctx.drawImage(tempCanvas, 0, 0);
         ctx.restore();
+        this.tempCtx.drawImage(ctx.canvas, 0, 0);
     }
 }
