@@ -7,6 +7,7 @@ import { MouseButton } from '@app/enums/mouse-button.enum';
 import { SelectionType } from '@app/enums/selection-type.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { MoveSelectionService } from './move-selection/move-selection.service';
+import { RotateSelectionService } from './rotate-selection/rotate-selection.service';
 
 interface ClipboardImage {
     image: ImageData;
@@ -25,9 +26,12 @@ export class SelectionService extends ShapeTool {
     private selectionImageData: ImageData;
     private clipboardImage: ClipboardImage;
     private moveSelectionPos: Vec2 = { x: 0, y: 0 };
-    private angle: number = 0;
 
-    constructor(drawingService: DrawingService, private moveSelectionService: MoveSelectionService) {
+    constructor(
+        drawingService: DrawingService,
+        private moveSelectionService: MoveSelectionService,
+        private rotateSelectionService: RotateSelectionService,
+    ) {
         super(drawingService);
         this.name = 'Selection';
         this.tooltip = 'Selection (r)';
@@ -95,23 +99,7 @@ export class SelectionService extends ShapeTool {
     }
 
     scroll(event: WheelEvent): void {
-        const tempCtx = this.drawingService.canvas.getContext('2d');
-        if (!tempCtx) return;
-        const tempCanvas = tempCtx.canvas;
-        const canvas = this.drawingService.previewCtx.canvas;
-        const ctx = this.drawingService.previewCtx;
-
-        tempCtx.putImageData(this.selectionImageData, 0, 0);
-        this.drawingService.clearCanvas(ctx);
-
-        ctx.save();
-        this.angle += (Math.sign(event.deltaY) * (CONSTANTS.DEFAULT_ROTATION_ANGLE * Math.PI)) / CONSTANTS.STRAIGHT_ANGLE;
-        ctx.beginPath();
-        ctx.translate(canvas.width / 2, canvas.height / 2);
-        ctx.rotate(this.angle);
-        ctx.translate(-canvas.width / 2, -canvas.height / 2);
-        ctx.drawImage(tempCanvas, 0, 0);
-        ctx.restore();
+        this.rotateSelectionService.scroll(event, this.selectionImageData);
     }
 
     onKeyDown(event: KeyboardEvent): void {
@@ -284,7 +272,11 @@ export class SelectionService extends ShapeTool {
     }
 
     clone(): SelectionService {
-        const selectionClone: SelectionService = new SelectionService(this.drawingService, new MoveSelectionService(this.drawingService));
+        const selectionClone: SelectionService = new SelectionService(
+            this.drawingService,
+            new MoveSelectionService(this.drawingService),
+            this.rotateSelectionService,
+        );
         this.copySelectionService(selectionClone);
         return selectionClone;
     }
