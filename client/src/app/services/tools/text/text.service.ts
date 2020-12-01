@@ -63,6 +63,12 @@ export class TextService extends Tool {
             this.currentTexts[this.cursorRowIndex] =
                 this.currentTexts[this.cursorRowIndex].substring(0, this.cursorColumnIndex) +
                 this.currentTexts[this.cursorRowIndex].substring(this.cursorColumnIndex + 1);
+        } else if (this.cursorRowIndex !== this.currentTexts.length - 1) {
+            const textFromNextLine = this.currentTexts[this.cursorRowIndex + 1];
+            this.currentTexts.splice(this.cursorRowIndex + 1, 1);
+            this.cursorColumnIndex = this.currentTexts[this.cursorRowIndex].length;
+            console.log(this.currentTexts, textFromNextLine, this.cursorRowIndex);
+            if (textFromNextLine.length > 0) this.currentTexts[this.cursorRowIndex] += textFromNextLine;
         }
         this.writeText(this.drawingService.previewCtx);
     }
