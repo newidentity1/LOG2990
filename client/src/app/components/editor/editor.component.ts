@@ -7,6 +7,7 @@ import { AutomaticSavingService } from '@app/services/automatic-saving/automatic
 import { ShortcutService } from '@app/services/shortcut/shortcut.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
+import { DrawingComponent } from '../drawing/drawing.component';
 
 @Component({
     selector: 'app-editor',
@@ -15,6 +16,7 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 })
 export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('drawingContainer', { static: true }) drawingContainer: ElementRef;
+    @ViewChild(DrawingComponent) drawingArea: DrawingComponent;
 
     @ViewChild(SidebarComponent) toolbarRef: SidebarComponent;
 
@@ -49,6 +51,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     @HostListener('window:keydown', ['$event'])
     onKeyDown(event: KeyboardEvent): void {
+        this.drawingArea.previewCanvas.nativeElement.focus();
         this.toolbarService.onKeyDown(event);
     }
 
