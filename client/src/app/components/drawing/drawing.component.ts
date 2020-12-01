@@ -105,6 +105,7 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
 
     onMouseDown(event: MouseEvent): void {
         event.preventDefault();
+        this.previewCanvas.nativeElement.focus();
         if (!this.isResizing()) {
             this.toolbarService.onMouseDown(event);
         }
