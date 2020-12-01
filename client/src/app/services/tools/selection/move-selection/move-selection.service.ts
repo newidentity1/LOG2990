@@ -74,6 +74,13 @@ export class MoveSelectionService {
         this.drawingService.previewCtx.canvas.style.left = this.finalPosition.x + 'px';
         this.drawingService.previewCtx.canvas.style.top = this.finalPosition.y + 'px';
 
+        this.imgData = this.drawingService.previewCtx.getImageData(
+            0,
+            0,
+            this.drawingService.previewCtx.canvas.width,
+            this.drawingService.previewCtx.canvas.height,
+        );
+        console.log(this.imgData);
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.drawingService.previewCtx.putImageData(
             this.imgData,
