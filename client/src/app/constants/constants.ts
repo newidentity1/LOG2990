@@ -38,6 +38,7 @@ export const MAX_COLOR_VALUE = 255;
 export const ANGLE_90 = 90;
 export const ANGLE_45 = 45;
 export const ANGLE_180 = 180;
+export const STRAIGHT_ANGLE = 180;
 
 export const MINIMAL_DISTANCE_PIXEL = 20;
 

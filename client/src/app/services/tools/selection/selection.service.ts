@@ -25,6 +25,7 @@ export class SelectionService extends ShapeTool {
     private selectionImageData: ImageData;
     private clipboardImage: ClipboardImage;
     private moveSelectionPos: Vec2 = { x: 0, y: 0 };
+    private angle: number = 0;
 
     constructor(drawingService: DrawingService, private moveSelectionService: MoveSelectionService) {
         super(drawingService);
@@ -104,15 +105,13 @@ export class SelectionService extends ShapeTool {
         this.drawingService.clearCanvas(ctx);
 
         ctx.save();
-        const angle = (CONSTANTS.DEFAULT_ROTATION_ANGLE * Math.PI) / 180;
+        this.angle += (Math.sign(event.deltaY) * (CONSTANTS.DEFAULT_ROTATION_ANGLE * Math.PI)) / CONSTANTS.STRAIGHT_ANGLE;
         ctx.beginPath();
         ctx.translate(canvas.width / 2, canvas.height / 2);
-        ctx.rotate(Math.sign(event.deltaY) * angle);
+        ctx.rotate(this.angle);
         ctx.translate(-canvas.width / 2, -canvas.height / 2);
         ctx.drawImage(tempCanvas, 0, 0);
         ctx.restore();
-        this.selectionImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        this.moveSelectionService.imgData = this.selectionImageData;
     }
 
     onKeyDown(event: KeyboardEvent): void {
