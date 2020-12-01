@@ -62,5 +62,5 @@ export const MAX_PERCENTAGE = 100;
 export const BLUR_CONVERSION = 10;
 export const HUE_CONVERSION = 360;
 
-export const MINIMUM_TEXT_SIZE = 10;
+export const MINIMUM_TEXT_SIZE = 20;
 export const MAXIMUM_TEXT_SIZE = 100;

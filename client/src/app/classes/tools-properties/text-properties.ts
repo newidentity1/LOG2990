@@ -6,7 +6,7 @@ export class TextProperties extends BasicToolProperties {
     isItalic: boolean = false;
     fonts: string[] = [TextFont.Arial, TextFont.CourierNew, TextFont.SansSerif, TextFont.Serif, TextFont.TimesNewRoman, TextFont.Verdana];
     font: string = TextFont.Arial;
-    size: number = 10;
+    size: number = 20;
     textAlignments: string[] = [TextAlignment.Left, TextAlignment.Middle, TextAlignment.Right];
     textAlignment: string = TextAlignment.Left;
 }

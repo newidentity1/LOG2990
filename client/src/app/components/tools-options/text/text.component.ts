@@ -17,7 +17,7 @@ export class TextComponent {
     isItalic: boolean = false;
     fonts: typeof TextFont = TextFont;
     font: string = TextFont.Arial;
-    size: number = 10;
+    size: number = 20;
     textAlignments: TextAlignment[] = [TextAlignment.Left, TextAlignment.Middle, TextAlignment.Right];
     textAlignment: string = TextAlignment.Left;
 

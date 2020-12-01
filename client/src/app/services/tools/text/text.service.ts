@@ -164,8 +164,8 @@ export class TextService extends Tool {
         const properties = this.toolProperties as TextProperties;
         this.createStyle(properties);
         if (context === this.drawingService.previewCtx) {
-            this.drawTextArea();
             this.setCursor();
+            this.drawTextArea();
         }
 
         for (let i = 0; i < this.currentTexts.length; ++i) {
@@ -190,7 +190,7 @@ export class TextService extends Tool {
 
     drawTextArea(): void {
         const HEIGHT_FACTOR = 5;
-        const CURSOR_WIDTH = 5;
+        const CURSOR_WIDTH = 10;
         const context = this.drawingService.previewCtx;
         const properties = this.toolProperties as TextProperties;
 
@@ -212,7 +212,7 @@ export class TextService extends Tool {
     }
 
     setCursor(): void {
-        const BLINKING_CURSOR_SPEED = 1200;
+        const BLINKING_CURSOR_SPEED = 500;
         if (this.cursorIntervalRef) clearInterval(this.cursorIntervalRef);
 
         this.cursorIntervalRef = window.setInterval(this.drawCursor.bind(this), BLINKING_CURSOR_SPEED);
