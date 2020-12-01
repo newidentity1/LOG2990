@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Tool } from '@app/classes/tool/tool';
+import { DrawingComponent } from '@app/components/drawing/drawing.component';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants/constants';
 import { SelectionType } from '@app/enums/selection-type.enum';
@@ -7,7 +8,6 @@ import { AutomaticSavingService } from '@app/services/automatic-saving/automatic
 import { ShortcutService } from '@app/services/shortcut/shortcut.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { DrawingComponent } from '../drawing/drawing.component';
 
 @Component({
     selector: 'app-editor',
