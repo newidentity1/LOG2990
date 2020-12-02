@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-// import {MagnetismOption} from '@app/enums/magnetism-option.enum'
 import { SelectionService } from '@app/services/tools/selection/selection.service';
 
 @Component({
@@ -20,6 +19,7 @@ export class MagnetismComponent implements OnInit {
 
     activeMagnetism(): void {
         this.selectionService.activeMagnet = !this.selectionService.activeMagnet;
+        this.selectionService.setMoveSelectionMagnet(this.selectionService.activeMagnet);
     }
 
     setMagnetismeOption(option: number): void {

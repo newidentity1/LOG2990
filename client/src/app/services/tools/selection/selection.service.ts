@@ -38,6 +38,10 @@ export class SelectionService extends ShapeTool {
         this.toolProperties = new BasicShapeProperties();
     }
 
+    setMoveSelectionMagnet(state: boolean): void {
+        this.moveSelectionService.isMagnet = state;
+    }
+
     setSelectionType(type: SelectionType): void {
         this.drawSelection();
         switch (type) {
@@ -99,52 +103,52 @@ export class SelectionService extends ShapeTool {
                 break;
 
             case MagnetismOption.TopCenter:
-                x = this.moveSelectionService.calculPosition(position.x - this.positiveWidth / 2);
+                x = this.moveSelectionService.calculPosition(position.x) + this.gridService.getGridSize() - this.positiveWidth / 2;
                 y = this.moveSelectionService.calculPosition(position.y);
-                position.x = x - this.positiveWidth / 2;
+                position.x = x;
                 position.y = y;
                 break;
 
             case MagnetismOption.TopRight:
-                x = this.moveSelectionService.calculPosition(position.x - this.positiveWidth);
+                x = this.moveSelectionService.calculPosition(position.x) + this.gridService.getGridSize() - this.positiveWidth;
                 y = this.moveSelectionService.calculPosition(position.y);
-                position.x = x - this.positiveWidth;
+                position.x = x;
                 position.y = y;
                 break;
 
             case MagnetismOption.MidleLeft:
                 x = this.moveSelectionService.calculPosition(position.x);
-                y = this.moveSelectionService.calculPosition(position.y - this.positiveHeight / 2);
+                y = this.moveSelectionService.calculPosition(position.y) + this.gridService.getGridSize() - this.positiveHeight / 2;
                 position.x = x;
-                position.y = y - this.positiveHeight / 2;
+                position.y = y;
                 break;
 
             case MagnetismOption.MidleCenter:
-                x = this.moveSelectionService.calculPosition(position.x - this.positiveWidth / 2);
-                y = this.moveSelectionService.calculPosition(position.y - this.positiveHeight / 2);
-                position.x = x - this.positiveWidth / 2;
-                position.y = y - this.positiveHeight / 2;
+                x = this.moveSelectionService.calculPosition(position.x) - this.positiveWidth / 2;
+                y = this.moveSelectionService.calculPosition(position.y) - this.positiveHeight / 2;
+                position.x = x;
+                position.y = y;
                 break;
 
             case MagnetismOption.MidleRight:
-                x = this.moveSelectionService.calculPosition(position.x - this.positiveWidth);
-                y = this.moveSelectionService.calculPosition(position.y - this.positiveHeight / 2);
-                position.x = x - this.positiveWidth;
-                position.y = y - this.positiveHeight / 2;
+                x = this.moveSelectionService.calculPosition(position.x) + this.gridService.getGridSize() - this.positiveWidth;
+                y = this.moveSelectionService.calculPosition(position.y) + this.gridService.getGridSize() - this.positiveHeight / 2;
+                position.x = x;
+                position.y = y;
                 break;
 
             case MagnetismOption.BottomLeft:
                 x = this.moveSelectionService.calculPosition(position.x);
-                y = this.moveSelectionService.calculPosition(position.y - this.positiveHeight);
+                y = this.moveSelectionService.calculPosition(position.y) + this.gridService.getGridSize() - this.positiveHeight;
                 position.x = x;
-                position.y = y - this.positiveHeight;
+                position.y = y;
                 break;
 
             case MagnetismOption.BottomCenter:
-                x = this.moveSelectionService.calculPosition(position.x + this.positiveWidth / 2);
-                y = this.moveSelectionService.calculPosition(position.y + this.positiveHeight);
-                position.x = x - this.positiveWidth / 2;
-                position.y = y - this.positiveHeight;
+                x = this.moveSelectionService.calculPosition(position.x) + this.gridService.getGridSize() - this.positiveWidth / 2;
+                y = this.moveSelectionService.calculPosition(position.y) + this.gridService.getGridSize() - this.positiveHeight / 2;
+                position.x = x;
+                position.y = y;
                 break;
 
             case MagnetismOption.BottomRight:

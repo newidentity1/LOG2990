@@ -10,6 +10,7 @@ import { GridService } from '@app/services/tools/grid/grid.service';
     providedIn: 'root',
 })
 export class MoveSelectionService {
+    isMagnet: boolean = false;
     imgData: ImageData;
     canMoveSelection: boolean = false;
     finalPosition: Vec2 = { x: 0, y: 0 };
@@ -31,11 +32,18 @@ export class MoveSelectionService {
             this.pressedKeys[SelectionArrowIndex.Down] =
                 event.key === 'ArrowDown' ? -CONSTANTS.SELECTION_MOVE_STEP : this.pressedKeys[SelectionArrowIndex.Down];
 
-            const moveX = this.pressedKeys[SelectionArrowIndex.Left] + this.pressedKeys[SelectionArrowIndex.Right];
-            const moveY = this.pressedKeys[SelectionArrowIndex.Up] + this.pressedKeys[SelectionArrowIndex.Down];
+            let moveX = this.pressedKeys[SelectionArrowIndex.Left] + this.pressedKeys[SelectionArrowIndex.Right];
+            let moveY = this.pressedKeys[SelectionArrowIndex.Up] + this.pressedKeys[SelectionArrowIndex.Down];
+
             if (moveX !== 0 || moveY !== 0) {
                 arrowKeyPressed = true;
-                this.moveSelection(moveX, moveY);
+                if (!this.isMagnet) {
+                    this.moveSelection(moveX, moveY);
+                } else {
+                    moveX = this.finalPosition.x + this.gridService.getGridSize();
+                    moveY += this.finalPosition.y + this.gridService.getGridSize();
+                    this.moveSelectionMagnetic(moveX, moveY);
+                }
             }
 
             if (!this.canMoveSelectionContiniously) {
