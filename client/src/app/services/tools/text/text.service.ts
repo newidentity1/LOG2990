@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Color } from '@app/classes/color/color';
 import { Tool } from '@app/classes/tool/tool';
 import { TextProperties } from '@app/classes/tools-properties/text-properties';
 import { Vec2 } from '@app/classes/vec2';
@@ -224,7 +225,7 @@ export class TextService extends Tool {
         const BLINKING_CURSOR_SPEED = 800;
         const context = this.drawingService.previewCtx;
 
-        context.fillStyle = '#000000';
+        // context.fillStyle = '#000000';
         context.lineWidth = 1;
 
         const cursorX = Math.round(this.calculateXCoordCursor());
@@ -351,5 +352,10 @@ export class TextService extends Tool {
         this.currentStyle += textProperties.font;
         this.drawingService.setTextStyle(this.currentStyle);
         this.drawingService.setTextAlignment(textProperties.textAlignment);
+    }
+
+    setColors(primaryColor: Color, secondaryColor: Color): void {
+        super.setColors(primaryColor, secondaryColor);
+        this.writeText(this.drawingService.previewCtx);
     }
 }
