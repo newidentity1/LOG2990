@@ -10,7 +10,7 @@
             <app-polygon-option class="tool-options" *ngSwitchCase="'Polygon'"></app-polygon-option>
             <app-selection-option class="tool-options" *ngSwitchCase="'Selection'"></app-selection-option>
             <app-bucket-option class="tool-options" *ngSwitchCase="'Bucket'"></app-bucket-option>
-            <app-text class="tool-options" *ngSwitchCase="'Text'"></app-text>
+            <app-text class="tool-options" *ngSwitchCase="'Text'" (textPropertyChange)="onTextPropertyChange()"></app-text>
             <app-eyedropper-option *ngIf="currentTool.name === 'Eyedropper'"></app-eyedropper-option>
         </div>
     </mat-sidenav>

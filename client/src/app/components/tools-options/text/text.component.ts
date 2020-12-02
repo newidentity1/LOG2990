@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { MatRadioChange } from '@angular/material/radio';
 import { MatSliderChange } from '@angular/material/slider';
 import { TextProperties } from '@app/classes/tools-properties/text-properties';
@@ -20,6 +20,7 @@ export class TextComponent {
     size: number = 20;
     textAlignments: TextAlignment[] = [TextAlignment.Left, TextAlignment.Middle, TextAlignment.Right];
     textAlignment: string = TextAlignment.Left;
+    @Output() textPropertyChange: EventEmitter<void> = new EventEmitter();
 
     constructor(private textService: TextService) {
         const textProperties = this.textService.toolProperties as TextProperties;
@@ -45,6 +46,7 @@ export class TextComponent {
             if (TextFont[value as keyof typeof TextFont] === event.value) {
                 this.font = event.value;
                 this.textService.setFontText(event.value);
+                if (this.textService.isTextInProgress()) this.textPropertyChange.emit();
                 break;
             }
         }
@@ -54,6 +56,7 @@ export class TextComponent {
         if (event.value !== null && event.value >= MINIMUM_TEXT_SIZE && event.value <= MAXIMUM_TEXT_SIZE) {
             this.size = event.value;
             this.textService.setSizeText(event.value);
+            if (this.textService.isTextInProgress()) this.textPropertyChange.emit();
         }
     }
 
