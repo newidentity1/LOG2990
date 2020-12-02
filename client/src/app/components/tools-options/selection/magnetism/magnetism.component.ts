@@ -14,7 +14,7 @@ export class MagnetismComponent implements OnInit {
 
     ngOnInit(): void {
         //
-        this.activateOption = this.selectionService.magnetismOption;
+        this.activateOption = this.selectionService.magnetismService.getMagnetismOption();
     }
 
     activeMagnetism(): void {
@@ -24,7 +24,7 @@ export class MagnetismComponent implements OnInit {
 
     setMagnetismeOption(option: number): void {
         this.activateOption = option;
-        this.selectionService.magnetismOption = option;
+        this.selectionService.magnetismService.setMagnetismOption(option);
     }
 
     getMagnetismeOption(): boolean {
