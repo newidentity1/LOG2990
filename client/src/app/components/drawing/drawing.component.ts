@@ -131,6 +131,11 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
+    @HostListener('mousewheel', ['$event'])
+    scroll(event: WheelEvent): void {
+        this.toolbarService.scroll(event);
+    }
+
     onMouseEnter(event: MouseEvent): void {
         this.toolbarService.onMouseEnter(event);
     }
