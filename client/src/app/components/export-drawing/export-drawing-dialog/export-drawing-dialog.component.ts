@@ -160,3 +160,11 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
         return 0;
     }
 }
+
+/*
+ * EMAIL :
+ * Le serveur est disponible sur l'addresse suivante : [ http://log2990.step.polymtl.ca/ | http://log2990.step.polymtl.ca/ ] (notez le http)
+ * Vous pouvez communiquer avec ce serveur Ã  travers le votre par HTTP.
+ * Seulement la route /email ( [ http://log2990.step.polymtl.ca/email | http://log2990.step.polymtl.ca/email ] )
+ * est disponible et rÃ©pond seulement aux requÃªtes HTTP POST
+ */
