@@ -80,7 +80,6 @@ export class MoveSelectionService {
             this.drawingService.previewCtx.canvas.width,
             this.drawingService.previewCtx.canvas.height,
         );
-        console.log(this.imgData);
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.drawingService.previewCtx.putImageData(
             this.imgData,

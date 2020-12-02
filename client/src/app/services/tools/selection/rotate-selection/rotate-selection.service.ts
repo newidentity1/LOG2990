@@ -7,7 +7,6 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 })
 export class RotateSelectionService {
     angle: number = 0;
-    tempCtx: CanvasRenderingContext2D;
     imgDataUrl: string = '';
 
     constructor(private drawingService: DrawingService) {}
@@ -18,22 +17,21 @@ export class RotateSelectionService {
     }
 
     rotateImage(image: ImageData): void {
-        this.tempCtx = this.drawingService.canvas.getContext('2d') as CanvasRenderingContext2D;
-        const tempCanvas = this.tempCtx.canvas;
+        const tempCanvas = document.createElement('canvas');
+        const tempCtx = tempCanvas.getContext('2d') as CanvasRenderingContext2D;
         const canvas = this.drawingService.previewCtx.canvas;
         const ctx = this.drawingService.previewCtx;
 
-        this.tempCtx.putImageData(image, 0, 0);
+        tempCtx.putImageData(image, 0, 0);
         this.drawingService.clearCanvas(ctx);
 
         ctx.save();
-        ctx.beginPath();
         ctx.translate(canvas.width / 2, canvas.height / 2);
         ctx.rotate(this.angle);
         ctx.translate(-canvas.width / 2, -canvas.height / 2);
         ctx.drawImage(tempCanvas, 0, 0);
         ctx.restore();
 
-        this.drawingService.clearCanvas(this.tempCtx);
+        this.drawingService.clearCanvas(tempCtx);
     }
 }
