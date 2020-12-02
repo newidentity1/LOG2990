@@ -86,23 +86,23 @@ export class TextService extends Tool {
 
     onArrowLeft(): void {
         this.cursorColumnIndex = this.cursorColumnIndex === 0 ? this.cursorColumnIndex : this.cursorColumnIndex - 1;
-        this.setCursor();
+        this.writeText(this.drawingService.previewCtx);
     }
 
     onArrowRight(): void {
         this.cursorColumnIndex =
             this.cursorColumnIndex === this.currentTexts[this.cursorRowIndex].length ? this.cursorColumnIndex : this.cursorColumnIndex + 1;
-        this.setCursor();
+        this.writeText(this.drawingService.previewCtx);
     }
 
     onArrowUp(): void {
         this.cursorRowIndex = this.cursorRowIndex === 0 ? this.cursorRowIndex : this.cursorRowIndex - 1;
-        this.setCursor();
+        this.writeText(this.drawingService.previewCtx);
     }
 
     onArrowDown(): void {
-        this.cursorRowIndex = this.cursorRowIndex === this.currentTexts.length ? this.cursorRowIndex : this.cursorRowIndex + 1;
-        this.setCursor();
+        this.cursorRowIndex = this.cursorRowIndex === this.currentTexts.length - 1 ? this.cursorRowIndex : this.cursorRowIndex + 1;
+        this.writeText(this.drawingService.previewCtx);
     }
 
     onEnter(): void {
@@ -161,6 +161,7 @@ export class TextService extends Tool {
     }
 
     writeText(context: CanvasRenderingContext2D): void {
+        if (!this.mouseDown) return;
         const properties = this.toolProperties as TextProperties;
         this.createStyle(properties);
         if (context === this.drawingService.previewCtx) {
@@ -190,12 +191,12 @@ export class TextService extends Tool {
 
     drawTextArea(): void {
         const HEIGHT_FACTOR = 5;
-        const CURSOR_WIDTH = 10;
+        const SPACE = 10;
         const context = this.drawingService.previewCtx;
         const properties = this.toolProperties as TextProperties;
 
         const dimensions = this.calculateLongestWidth();
-        this.textAreaDimensions = { x: dimensions + CURSOR_WIDTH, y: -properties.size + 2 };
+        this.textAreaDimensions = { x: dimensions + SPACE, y: -properties.size + 2 };
         this.textAreaStartingPoint = { x: this.mouseDownCoord.x - 2, y: this.mouseDownCoord.y + properties.size / HEIGHT_FACTOR };
 
         this.drawingService.clearCanvas(context);
@@ -204,9 +205,9 @@ export class TextService extends Tool {
         context.lineWidth = 1;
         context.strokeRect(
             this.textAreaStartingPoint.x,
-            this.textAreaStartingPoint.y - this.textAreaDimensions.y * (this.currentTexts.length - 1),
+            this.textAreaStartingPoint.y - this.textAreaDimensions.y * (this.currentTexts.length - 1) + SPACE / 2,
             this.textAreaDimensions.x,
-            this.textAreaDimensions.y * this.currentTexts.length,
+            this.textAreaDimensions.y * this.currentTexts.length - SPACE,
         );
         context.setLineDash([]);
     }

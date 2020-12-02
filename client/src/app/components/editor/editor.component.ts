@@ -51,7 +51,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     @HostListener('window:keydown', ['$event'])
     onKeyDown(event: KeyboardEvent): void {
-        this.drawingArea.previewCanvas.nativeElement.focus();
+        // this.drawingArea.previewCanvas.nativeElement.focus();
         this.toolbarService.onKeyDown(event);
     }
 
