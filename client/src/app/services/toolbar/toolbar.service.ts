@@ -141,6 +141,12 @@ export class ToolbarService {
         this.currentTool.onKeyUp(event);
     }
 
+    scroll(event: WheelEvent): void {
+        if (this.currentTool instanceof SelectionService) {
+            this.currentTool.scroll(event);
+        }
+    }
+
     onMouseMove(event: MouseEvent): void {
         this.currentTool.onMouseMove(event);
     }
