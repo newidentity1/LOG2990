@@ -1,5 +1,5 @@
 <div class="container">
-    <app-sidebar #toolbar id="sidebar"></app-sidebar>
+    <app-sidebar #toolbar id="sidebar" (requestCanvasFocus)="focusCanvas()"></app-sidebar>
     <div #drawingContainer class="drawing-container">
         <app-drawing
             (requestDrawingContainerDimensions)="computeDimensionsDrawingContainer(true)"
