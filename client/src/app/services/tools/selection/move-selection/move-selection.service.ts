@@ -114,11 +114,6 @@ export class MoveSelectionService {
         );
     }
 
-    calculPosition(position: number): number {
-        position = position - (position % this.gridService.getGridSize());
-        return position;
-    }
-
     copySelection(startingPos: Vec2, width: number, height: number, currentType: SelectionType): void {
         const selectionCtx = this.drawingService.previewCtx;
         selectionCtx.canvas.style.left = startingPos.x + 'px';
