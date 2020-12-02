@@ -157,8 +157,9 @@ export class SelectionService extends ShapeTool {
         const selectionCtx = this.drawingService.previewCtx;
 
         this.drawingService.clearCanvas(selectionCtx);
-        selectionCtx.putImageData(this.selectionImageData, 0, 0);
-        if (this.rotateSelectionService.angle !== 0) selectionCtx.drawImage(this.rotateSelectionService.tempCtx.canvas, 0, 0);
+        if (this.rotateSelectionService.angle !== 0) {
+            this.rotateSelectionService.rotateImage(this.selectionImageData);
+        } else selectionCtx.putImageData(this.selectionImageData, 0, 0);
         this.drawingService.baseCtx.drawImage(
             selectionCtx.canvas,
             this.moveSelectionService.finalPosition.x,
