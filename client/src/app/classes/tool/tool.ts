@@ -23,6 +23,8 @@ export abstract class Tool extends Command {
 
     setTypeDrawing(value: string): void {}
 
+    onMouseScroll(event: WheelEvent): void {}
+
     onMouseDown(event: MouseEvent): void {}
 
     onMouseUp(event: MouseEvent): void {}

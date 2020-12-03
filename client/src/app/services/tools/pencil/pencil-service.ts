@@ -9,6 +9,8 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
     providedIn: 'root',
 })
 export class PencilService extends Tool {
+    mousePosition: Vec2;
+
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.name = 'Crayon';
@@ -38,17 +40,17 @@ export class PencilService extends Tool {
     }
 
     onMouseMove(event: MouseEvent): void {
-        const mousePosition = this.getPositionFromMouse(event);
+        this.mousePosition = this.getPositionFromMouse(event);
         if (this.mouseDown) {
-            this.pathData.push(mousePosition);
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.pathData.push(this.mousePosition);
             this.draw(this.drawingService.previewCtx);
         } else {
-            this.drawCursor(mousePosition);
+            this.drawCursor(this.mousePosition);
         }
     }
 
     draw(ctx: CanvasRenderingContext2D): void {
+        if (this.mouseDown) this.drawingService.clearCanvas(this.drawingService.previewCtx);
         ctx.beginPath();
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
