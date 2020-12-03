@@ -178,6 +178,8 @@ export class SelectionService extends ShapeTool {
         this.moveSelectionService.canMoveSelection = false;
         const selectionCtx = this.drawingService.previewCtx;
 
+        if (this.rotateSelectionService.angle !== 0) this.selectionImageData = this.rotateSelectionService.rotatedImage.image;
+
         this.selectionImageData = this.shiftDown
             ? this.resizeSelectionService.scaleImageKeepRatio(this.selectionImageData)
             : this.resizeSelectionService.scaleImage(this.selectionImageData);
@@ -185,9 +187,7 @@ export class SelectionService extends ShapeTool {
         // this.drawingService.baseCtx.drawImage(selectionCtx.canvas, this.positiveStartingPos.x, this.positiveStartingPos.y);
 
         this.drawingService.clearCanvas(selectionCtx);
-        if (this.rotateSelectionService.angle !== 0) {
-            this.rotateSelectionService.rotateImage(this.selectionImageData);
-        } else selectionCtx.putImageData(this.selectionImageData, 0, 0);
+        selectionCtx.putImageData(this.selectionImageData, 0, 0);
         this.drawingService.baseCtx.drawImage(
             selectionCtx.canvas,
             this.moveSelectionService.finalPosition.x,
