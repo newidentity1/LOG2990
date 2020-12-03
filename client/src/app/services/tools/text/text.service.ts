@@ -97,13 +97,35 @@ export class TextService extends Tool {
     }
 
     onArrowUp(): void {
-        this.cursorRowIndex = this.cursorRowIndex === 0 ? this.cursorRowIndex : this.cursorRowIndex - 1;
+        if (this.cursorRowIndex === 0) return;
+        this.cursorColumnIndex = this.calculateColumnIndex(true);
+        this.cursorRowIndex = this.cursorRowIndex - 1;
         this.writeText(this.drawingService.previewCtx);
     }
 
     onArrowDown(): void {
-        this.cursorRowIndex = this.cursorRowIndex === this.currentTexts.length - 1 ? this.cursorRowIndex : this.cursorRowIndex + 1;
+        if (this.cursorRowIndex === this.currentTexts.length - 1) return;
+        this.cursorColumnIndex = this.calculateColumnIndex(false);
+        this.cursorRowIndex = this.cursorRowIndex + 1;
         this.writeText(this.drawingService.previewCtx);
+    }
+
+    calculateColumnIndex(isArrowUp: boolean): number {
+        const currentLineTextWidth = this.drawingService.previewCtx.measureText(
+            this.currentTexts[this.cursorRowIndex].substring(0, this.cursorColumnIndex),
+        ).width;
+        const textIndex = isArrowUp ? this.cursorRowIndex - 1 : this.cursorRowIndex + 1;
+
+        for (let i = 0; i < this.currentTexts[textIndex].length; ++i) {
+            const charactersTextWidth = this.drawingService.previewCtx.measureText(this.currentTexts[textIndex].substring(0, i)).width;
+
+            if (charactersTextWidth > currentLineTextWidth) {
+                const previousCharactersTextWidth = this.drawingService.previewCtx.measureText(this.currentTexts[textIndex].substring(0, i - 1))
+                    .width;
+                return currentLineTextWidth - previousCharactersTextWidth > charactersTextWidth - currentLineTextWidth ? i : i - 1;
+            }
+        }
+        return this.currentTexts[textIndex].length;
     }
 
     onEnter(): void {
@@ -225,7 +247,6 @@ export class TextService extends Tool {
         const BLINKING_CURSOR_SPEED = 800;
         const context = this.drawingService.previewCtx;
 
-        // context.fillStyle = '#000000';
         context.lineWidth = 1;
 
         const cursorX = Math.round(this.calculateXCoordCursor());
