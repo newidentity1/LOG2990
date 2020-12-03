@@ -1,7 +1,8 @@
+import { MINIMUM_DIAMETER_DROPS, MINIMUM_DIAMETER_SPRAY, MINIMUM_DROPS_PER_SECOND } from '@app/constants/constants';
 import { BasicToolProperties } from './basic-tool-properties';
 
 export class SprayProperties extends BasicToolProperties {
-    diameterSpray: number = 100;
-    diameterDrops: number = 10;
-    dropsPerSecond: number = 500;
+    diameterSpray: number = MINIMUM_DIAMETER_SPRAY;
+    diameterDrops: number = MINIMUM_DIAMETER_DROPS;
+    dropsPerSecond: number = MINIMUM_DROPS_PER_SECOND;
 }

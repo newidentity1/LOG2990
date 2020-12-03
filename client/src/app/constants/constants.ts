@@ -64,3 +64,10 @@ export const HUE_CONVERSION = 360;
 
 export const MINIMUM_TEXT_SIZE = 10;
 export const MAXIMUM_TEXT_SIZE = 100;
+
+export const MINIMUM_DIAMETER_SPRAY = 10;
+export const MAXIMUM_DIAMETER_SPRAY = 100;
+export const MINIMUM_DIAMETER_DROPS = 10;
+export const MAXIMUM_DIAMETER_DROPS = 100;
+export const MINIMUM_DROPS_PER_SECOND = 100;
+export const MAXIMUM_DROPS_PER_SECOND = 1000;
