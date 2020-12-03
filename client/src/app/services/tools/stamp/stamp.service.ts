@@ -22,8 +22,15 @@ export class StampService extends Tool {
 
     onClick(event: MouseEvent): void {
         console.log('on est ici');
-        //
-        // this.drawingService.baseCtx.putImageData(this.image, 0, 0, 0, 0, this.image.width, this.image.height);
+        this.drawingService.baseCtx.putImageData(
+            this.imageData,
+            this.finalPosition.x,
+            this.finalPosition.y,
+            0,
+            0,
+            this.imageData.width,
+            this.imageData.height,
+        );
     }
 
     getImageData(): void {
@@ -40,16 +47,18 @@ export class StampService extends Tool {
     }
 
     onMouseMove(event: MouseEvent): void {
-        this.moveSelection(event.x, event.y);
+        const x = event.clientX - this.drawingService.baseCtx.canvas.getBoundingClientRect().x;
+        const y = event.clientY - this.drawingService.baseCtx.canvas.getBoundingClientRect().y;
+        this.moveSelection(x, y);
     }
 
     moveSelection(moveX: number, moveY: number): void {
         this.getImageData();
-        this.finalPosition.x = moveX;
-        this.finalPosition.y = moveY;
+        this.finalPosition.x = moveX - this.imageData.width / 2;
+        this.finalPosition.y = moveY - this.imageData.height / 2;
 
-        this.drawingService.previewCtx.canvas.style.left = moveX + 'px';
-        this.drawingService.previewCtx.canvas.style.top = moveY + 'px';
+        this.drawingService.previewCtx.canvas.style.left = moveX - this.imageData.width / 2 + 'px';
+        this.drawingService.previewCtx.canvas.style.top = moveY - this.imageData.height / 2 + 'px';
 
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.drawingService.previewCtx.putImageData(
@@ -61,5 +70,18 @@ export class StampService extends Tool {
             this.drawingService.canvas.width - this.finalPosition.x,
             this.drawingService.canvas.height - this.finalPosition.y,
         );
+        const selectionCtx = this.drawingService.previewCtx;
+        selectionCtx.canvas.style.cursor = 'none';
+    }
+
+    resetContext(): void {
+        console.log('Reset');
+        const previewCtx = this.drawingService.previewCtx;
+        const baseCtx = this.drawingService.baseCtx;
+        previewCtx.lineCap = baseCtx.lineCap = 'butt';
+        previewCtx.lineJoin = baseCtx.lineJoin = 'miter';
+        this.mouseDown = false;
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.setThickness(this.toolProperties.thickness);
     }
 }
