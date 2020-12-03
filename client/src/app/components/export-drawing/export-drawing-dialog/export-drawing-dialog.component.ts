@@ -4,6 +4,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { BLUR_CONVERSION, HUE_CONVERSION, MAX_PREVIEW_SIZE } from '@app/constants/constants.ts';
 import { ExportFilterType } from '@app/enums/export-filter.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { EmailService } from '@app/services/email/email.service';
 
 @Component({
     selector: 'app-export-drawing-dialog',
@@ -28,7 +29,14 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
     titleForm: FormControl = new FormControl('', Validators.required);
     emailForm: FormControl = new FormControl('', [Validators.pattern(/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/i), Validators.required]);
 
-    constructor(public dialogRef: MatDialogRef<ExportDrawingDialogComponent>, public drawingService: DrawingService) {
+    // Email
+    img: ImageData;
+
+    constructor(
+        public dialogRef: MatDialogRef<ExportDrawingDialogComponent>,
+        public drawingService: DrawingService,
+        public emailService: EmailService,
+    ) {
         this.titleForm.markAsDirty();
     }
 
@@ -133,6 +141,13 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
         this.setImageUrl();
     }
 
+    setExport(): void {
+        this.exportCtx.filter = this.exportFilter;
+        this.setWhiteBackground(this.exportCtx);
+        this.exportCtx.drawImage(this.drawingService.canvas, 0, 0);
+        this.exportCtx.filter = 'none';
+    }
+
     downloadImage(): void {
         this.exportCtx.filter = this.exportFilter;
         this.setWhiteBackground(this.exportCtx);
@@ -152,9 +167,16 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
         return this.emailForm.value.length === 0;
     }
 
-    // sendByEmail(): void {
-    //     this.emailForm.reset();
-    // }
+    sendByEmail(): void {
+        // Set sent image
+        this.setExport();
+        this.emailService.address = this.emailForm.value;
+        this.emailService.data = this.exportCtx.getImageData(0, 0, this.exportCanvas.nativeElement.width, this.exportCanvas.nativeElement.height);
+
+        this.emailService.postEmail();
+        // reset input
+        this.emailForm.reset();
+    }
 
     keepOriginalOrder(): number {
         return 0;
