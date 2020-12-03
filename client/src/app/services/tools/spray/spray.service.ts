@@ -37,7 +37,7 @@ export class SprayService extends Tool {
         if (this.mouseDown) {
             this.draw(this.drawingService.baseCtx);
             this.executedCommand.emit(this.clone());
-            clearInterval(this.sprayIntervalRef);
+            this.clearSpray();
         }
         this.mouseDown = false;
         this.clearPath();
@@ -68,23 +68,23 @@ export class SprayService extends Tool {
         }
     }
 
+    clearSpray(): void {
+        clearInterval(this.sprayIntervalRef);
+    }
+
     clearPath(): void {
         this.sprayCoords = [];
     }
 
-    // setFilter(value: string): void {
-    //     const brushProperties = this.toolProperties as SprayProperties;
-    //     if (brushProperties.filterType.includes(value)) {
-    //         brushProperties.currentFilter = value;
-    //     }
-    // }
+    resetContext(): void {
+        super.resetContext();
+        this.clearPath();
+        this.clearSpray();
+    }
 
     clone(): SprayService {
         const sprayClone: SprayService = new SprayService(this.drawingService);
         this.copyTool(sprayClone);
-        // const brushCloneProperties = sprayClone.toolProperties as BrushProperties;
-        // const brushProperties = this.toolProperties as BrushProperties;
-        // brushCloneProperties.currentFilter = brushProperties.currentFilter;
         return sprayClone;
     }
 }
