@@ -92,7 +92,6 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.onResize(event);
             } else {
                 this.toolbarService.resizeSelection(event);
-                // TODO: resize selection event
             }
         }
     }
