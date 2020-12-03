@@ -2,12 +2,17 @@ import { Injectable } from '@angular/core';
 import { DEFAULT_ROTATION_ANGLE, STRAIGHT_ANGLE } from '@app/constants/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
+interface RotatedImage {
+    image: ImageData;
+    angle: number;
+}
+
 @Injectable({
     providedIn: 'root',
 })
 export class RotateSelectionService {
     angle: number = 0;
-    imgDataUrl: string = '';
+    rotatedImage: RotatedImage;
 
     constructor(private drawingService: DrawingService) {}
 
@@ -31,6 +36,15 @@ export class RotateSelectionService {
         ctx.drawImage(tempCanvas, 0, 0);
         ctx.setTransform(1, 0, 0, 1, 0, 0);
 
+        this.rotatedImage = {
+            angle: this.angle,
+            image: this.drawingService.previewCtx.getImageData(
+                0,
+                0,
+                this.drawingService.previewCtx.canvas.width,
+                this.drawingService.previewCtx.canvas.height,
+            ),
+        };
         this.drawingService.clearCanvas(tempCtx);
     }
 }
