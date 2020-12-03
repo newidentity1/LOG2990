@@ -70,7 +70,11 @@
                 <mat-error *ngIf="!isEmailInputEmpty()">Adresse courriel non-valide</mat-error>
 
             </mat-form-field>
-            <button class="buttons" id="emailbutton" mat-raised-button [disabled]="titleForm.value.length === 0 || !emailForm.valid">Envoyer par courriel</button>
+            <button
+		class="buttons"
+		id="emailbutton"
+		mat-raised-button [disabled]="titleForm.value.length === 0 || !emailForm.valid"
+		(click)="sendByEmail()">Envoyer par courriel</button>
         </div>
         <div>
             <button class="buttons" id="downloadButton" mat-raised-button (click)="downloadImage()" [disabled]="titleForm.value.length === 0">
