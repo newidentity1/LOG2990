@@ -59,9 +59,11 @@ export class SelectionService extends ShapeTool {
         if (this.mouseDown) {
             if (this.isAreaSelected && !this.resizeSelectionService.isResizing) {
                 this.moveSelectionPos = { x: event.clientX, y: event.clientY };
-                this.moveSelectionService.imgData = this.shiftDown
-                    ? this.resizeSelectionService.scaleImageKeepRatio(this.selectionImageData)
-                    : this.resizeSelectionService.scaleImage(this.selectionImageData);
+                if (this.rotateSelectionService.angle !== 0) this.moveSelectionService.imgData = this.rotateSelectionService.rotatedImage.image;
+                else
+                    this.moveSelectionService.imgData = this.shiftDown
+                        ? this.resizeSelectionService.scaleImageKeepRatio(this.selectionImageData)
+                        : this.resizeSelectionService.scaleImage(this.selectionImageData);
             }
         }
     }
@@ -178,6 +180,8 @@ export class SelectionService extends ShapeTool {
         this.moveSelectionService.canMoveSelection = false;
         const selectionCtx = this.drawingService.previewCtx;
 
+        if (this.rotateSelectionService.angle !== 0) this.selectionImageData = this.rotateSelectionService.rotatedImage.image;
+
         this.selectionImageData = this.shiftDown
             ? this.resizeSelectionService.scaleImageKeepRatio(this.selectionImageData)
             : this.resizeSelectionService.scaleImage(this.selectionImageData);
@@ -185,9 +189,7 @@ export class SelectionService extends ShapeTool {
         // this.drawingService.baseCtx.drawImage(selectionCtx.canvas, this.positiveStartingPos.x, this.positiveStartingPos.y);
 
         this.drawingService.clearCanvas(selectionCtx);
-        if (this.rotateSelectionService.angle !== 0) {
-            this.rotateSelectionService.rotateImage(this.selectionImageData);
-        } else selectionCtx.putImageData(this.selectionImageData, 0, 0);
+        selectionCtx.putImageData(this.selectionImageData, 0, 0);
         this.drawingService.baseCtx.drawImage(
             selectionCtx.canvas,
             this.moveSelectionService.finalPosition.x,
@@ -305,16 +307,17 @@ export class SelectionService extends ShapeTool {
 
     resize(event: MouseEvent): void {
         if (!this.resizeSelectionService.isResizing) return;
+        let image = this.selectionImageData;
+        if (this.rotateSelectionService.angle !== 0) {
+            // this.rotateSelectionService.rotateImage(this.selectionImageData);
+            image = this.rotateSelectionService.rotatedImage.image;
+        }
         this.positiveStartingPos = this.resizeSelectionService.onResize(event, this.positiveStartingPos);
         this.positiveWidth = this.drawingService.previewCtx.canvas.width;
         this.positiveHeight = this.drawingService.previewCtx.canvas.height;
-        const image = this.shiftDown
-            ? this.resizeSelectionService.scaleImageKeepRatio(this.selectionImageData)
-            : this.resizeSelectionService.scaleImage(this.selectionImageData);
+        if (this.shiftDown) this.resizeSelectionService.scaleImageKeepRatio(image);
+        else this.resizeSelectionService.scaleImage(image);
         this.moveSelectionService.finalPosition = this.positiveStartingPos;
-        if (this.rotateSelectionService.angle !== 0) {
-            this.rotateSelectionService.rotateImage(image);
-        }
     }
 
     isClipboardEmpty(): boolean {
