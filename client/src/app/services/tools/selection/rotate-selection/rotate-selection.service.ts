@@ -1,4 +1,4 @@
-import { Injectable, RendererFactory2, Renderer2 } from '@angular/core';
+import { Injectable, Renderer2, RendererFactory2 } from '@angular/core';
 import { DEFAULT_ROTATION_ANGLE, STRAIGHT_ANGLE } from '@app/constants/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
@@ -34,7 +34,6 @@ export class RotateSelectionService {
         tempCtx.putImageData(image, 0, 0);
         this.drawingService.clearCanvas(ctx);
 
-        ctx.save();
         ctx.translate(this.selectionImageCanvas.width / 2, this.selectionImageCanvas.height / 2);
         ctx.rotate(this.angle);
         ctx.translate(-this.selectionImageCanvas.width / 2, -this.selectionImageCanvas.height / 2);

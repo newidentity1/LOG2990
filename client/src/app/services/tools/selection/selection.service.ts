@@ -59,9 +59,11 @@ export class SelectionService extends ShapeTool {
         if (this.mouseDown) {
             if (this.isAreaSelected && !this.resizeSelectionService.isResizing) {
                 this.moveSelectionPos = { x: event.clientX, y: event.clientY };
-                this.moveSelectionService.imgData = this.shiftDown
-                    ? this.resizeSelectionService.scaleImageKeepRatio(this.selectionImageData)
-                    : this.resizeSelectionService.scaleImage(this.selectionImageData);
+                if (this.rotateSelectionService.angle !== 0) this.moveSelectionService.imgData = this.rotateSelectionService.rotatedImage.image;
+                else
+                    this.moveSelectionService.imgData = this.shiftDown
+                        ? this.resizeSelectionService.scaleImageKeepRatio(this.selectionImageData)
+                        : this.resizeSelectionService.scaleImage(this.selectionImageData);
             }
         }
     }
