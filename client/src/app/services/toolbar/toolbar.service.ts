@@ -145,6 +145,10 @@ export class ToolbarService {
         this.currentTool.onKeyUp(event);
     }
 
+    onMouseScroll(event: WheelEvent): void {
+        this.currentTool.onMouseScroll(event);
+    }
+
     onMouseMove(event: MouseEvent): void {
         this.currentTool.onMouseMove(event);
     }
