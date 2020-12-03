@@ -40,7 +40,7 @@ export class StampService extends Tool {
     }
 
     onMouseMove(event: MouseEvent): void {
-        this.moveSelection(event.offsetX, event.offsetY);
+        this.moveSelection(event.x, event.y);
     }
 
     moveSelection(moveX: number, moveY: number): void {
