@@ -8,6 +8,7 @@ import { MouseButton } from '@app/enums/mouse-button.enum';
 import { TextAlignment } from '@app/enums/text-alignment.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ShortcutService } from '@app/services/shortcut/shortcut.service';
+import { TextActionKeysService } from './text-action-keys/text-action-keys.service';
 
 @Injectable({
     providedIn: 'root',
@@ -17,7 +18,6 @@ export class TextService extends Tool {
     textConfirmed: boolean = false;
     isInitialText: boolean = true;
     currentStyle: string = '';
-    actionKeys: Map<string, () => void> = new Map<string, () => void>();
     textAreaDimensions: Vec2 = { x: 0, y: 0 };
     textAreaStartingPoint: Vec2 = { x: 0, y: 0 };
     cursorPosition: Vec2 = { x: 0, y: 0 };
@@ -25,131 +25,38 @@ export class TextService extends Tool {
     cursorColumnIndex: number = 0;
     cursorRowIndex: number = 0;
 
-    constructor(drawingService: DrawingService, private shortcutService: ShortcutService) {
+    constructor(drawingService: DrawingService, private shortcutService: ShortcutService, private textActionKeysService: TextActionKeysService) {
         super(drawingService);
         this.name = 'Text';
         this.tooltip = 'Texte(t)';
         this.iconName = 'title';
         this.toolProperties = new TextProperties();
-        this.actionKeys.set('Backspace', this.onBackspace.bind(this));
-        this.actionKeys.set('Delete', this.onDelete.bind(this));
-        this.actionKeys.set('Escape', this.onEscape.bind(this));
-        this.actionKeys.set('ArrowLeft', this.onArrowLeft.bind(this));
-        this.actionKeys.set('ArrowRight', this.onArrowRight.bind(this));
-        this.actionKeys.set('ArrowUp', this.onArrowUp.bind(this));
-        this.actionKeys.set('ArrowDown', this.onArrowDown.bind(this));
-        this.actionKeys.set('Enter', this.onEnter.bind(this));
+        this.textActionKeysService.actionKeys.set('Escape', this.onEscape.bind(this));
     }
 
-    onBackspace(): void {
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        if (this.cursorColumnIndex !== 0) {
-            this.currentTexts[this.cursorRowIndex] =
-                this.currentTexts[this.cursorRowIndex].substring(0, this.cursorColumnIndex - 1) +
-                this.currentTexts[this.cursorRowIndex].substring(this.cursorColumnIndex);
-            this.cursorColumnIndex -= 1;
-        } else if (this.cursorRowIndex !== 0) {
-            const textRightOfCursor = this.currentTexts[this.cursorRowIndex];
-            this.currentTexts.splice(this.cursorRowIndex, 1);
-            this.cursorRowIndex -= 1;
-            this.cursorColumnIndex = this.currentTexts[this.cursorRowIndex].length;
-            if (textRightOfCursor.length > 0) this.currentTexts[this.cursorRowIndex] += textRightOfCursor;
-        }
-        this.writeText(this.drawingService.previewCtx);
-    }
-
-    onDelete(): void {
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        if (this.cursorColumnIndex !== this.currentTexts[this.cursorRowIndex].length) {
-            this.currentTexts[this.cursorRowIndex] =
-                this.currentTexts[this.cursorRowIndex].substring(0, this.cursorColumnIndex) +
-                this.currentTexts[this.cursorRowIndex].substring(this.cursorColumnIndex + 1);
-        } else if (this.cursorRowIndex !== this.currentTexts.length - 1) {
-            const textFromNextLine = this.currentTexts[this.cursorRowIndex + 1];
-            this.currentTexts.splice(this.cursorRowIndex + 1, 1);
-            this.cursorColumnIndex = this.currentTexts[this.cursorRowIndex].length;
-            console.log(this.currentTexts, textFromNextLine, this.cursorRowIndex);
-            if (textFromNextLine.length > 0) this.currentTexts[this.cursorRowIndex] += textFromNextLine;
-        }
-        this.writeText(this.drawingService.previewCtx);
-    }
-
-    onEscape(): void {
+    onEscape(): [number, number, string[]] {
         this.mouseDown = false;
         this.shortcutService.disableShortcuts = false;
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         clearInterval(this.cursorIntervalRef);
         this.isInitialText = true;
-        this.currentTexts = [''];
+        this.cursorColumnIndex = 0;
         this.cursorRowIndex = 0;
-        this.cursorColumnIndex = 0;
-    }
-
-    onArrowLeft(): void {
-        this.cursorColumnIndex = this.cursorColumnIndex === 0 ? this.cursorColumnIndex : this.cursorColumnIndex - 1;
-        this.writeText(this.drawingService.previewCtx);
-    }
-
-    onArrowRight(): void {
-        this.cursorColumnIndex =
-            this.cursorColumnIndex === this.currentTexts[this.cursorRowIndex].length ? this.cursorColumnIndex : this.cursorColumnIndex + 1;
-        this.writeText(this.drawingService.previewCtx);
-    }
-
-    onArrowUp(): void {
-        if (this.cursorRowIndex === 0) return;
-        this.cursorColumnIndex = this.calculateColumnIndex(true);
-        this.cursorRowIndex = this.cursorRowIndex - 1;
-        this.writeText(this.drawingService.previewCtx);
-    }
-
-    onArrowDown(): void {
-        if (this.cursorRowIndex === this.currentTexts.length - 1) return;
-        this.cursorColumnIndex = this.calculateColumnIndex(false);
-        this.cursorRowIndex = this.cursorRowIndex + 1;
-        this.writeText(this.drawingService.previewCtx);
-    }
-
-    calculateColumnIndex(isArrowUp: boolean): number {
-        const currentLineTextWidth = this.drawingService.previewCtx.measureText(
-            this.currentTexts[this.cursorRowIndex].substring(0, this.cursorColumnIndex),
-        ).width;
-        const textIndex = isArrowUp ? this.cursorRowIndex - 1 : this.cursorRowIndex + 1;
-
-        for (let i = 0; i < this.currentTexts[textIndex].length; ++i) {
-            const charactersTextWidth = this.drawingService.previewCtx.measureText(this.currentTexts[textIndex].substring(0, i)).width;
-
-            if (charactersTextWidth > currentLineTextWidth) {
-                const previousCharactersTextWidth = this.drawingService.previewCtx.measureText(this.currentTexts[textIndex].substring(0, i - 1))
-                    .width;
-                return currentLineTextWidth - previousCharactersTextWidth > charactersTextWidth - currentLineTextWidth ? i : i - 1;
-            }
-        }
-        return this.currentTexts[textIndex].length;
-    }
-
-    onEnter(): void {
-        const textRightOfCursor = this.currentTexts[this.cursorRowIndex].substring(this.cursorColumnIndex);
-
-        const isTextWithLineJump = textRightOfCursor.length !== 0;
-
-        this.currentTexts[this.cursorRowIndex] = this.currentTexts[this.cursorRowIndex].substring(0, this.cursorColumnIndex);
-
-        this.cursorRowIndex += 1;
-
-        this.currentTexts.splice(this.cursorRowIndex, 0, isTextWithLineJump ? textRightOfCursor : '');
-
-        this.cursorColumnIndex = 0;
-
-        this.writeText(this.drawingService.previewCtx);
+        this.currentTexts = [''];
+        return [this.cursorColumnIndex, this.cursorRowIndex, this.currentTexts];
     }
 
     onKeyDown(event: KeyboardEvent): void {
         if (this.mouseDown) {
-            const action = this.actionKeys.get(event.key);
+            const action = this.textActionKeysService.actionKeys.get(event.key);
 
             if (action !== undefined) {
-                action();
+                [this.cursorColumnIndex, this.cursorRowIndex, this.currentTexts] = action(
+                    this.cursorColumnIndex,
+                    this.cursorRowIndex,
+                    this.currentTexts,
+                );
+                this.writeText(this.drawingService.previewCtx);
             } else if (event.key.length === 1) {
                 this.currentTexts[this.cursorRowIndex] =
                     this.currentTexts[this.cursorRowIndex].substring(0, this.cursorColumnIndex) +
@@ -285,6 +192,7 @@ export class TextService extends Tool {
         const context = this.drawingService.previewCtx;
         let cursorTextWidth = 0;
         let x = 0;
+
         switch (properties.textAlignment) {
             case TextAlignment.Left:
                 cursorTextWidth = context.measureText(this.currentTexts[this.cursorRowIndex].substring(0, this.cursorColumnIndex)).width;
