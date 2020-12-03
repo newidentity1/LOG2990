@@ -29,7 +29,7 @@ export class SprayService extends Tool {
             this.clearSpray();
             this.currentMouseCoord = mousePosition;
             this.mouseDownCoord = mousePosition;
-            this.sprayIntervalRef = setInterval(this.draw.bind(this), 100, this.drawingService.previewCtx);
+            this.sprayIntervalRef = setInterval(this.draw.bind(this), 20, this.drawingService.previewCtx);
         }
     }
 
@@ -53,9 +53,9 @@ export class SprayService extends Tool {
     draw(ctx: CanvasRenderingContext2D): void {
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
-        ctx.lineWidth = 1;
+
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        const SPRAY_PER_SECOND = 10;
+        const SPRAY_PER_SECOND = 50;
         const properties = this.toolProperties as SprayProperties;
         for (const sprayCoord of this.sprayCoords) {
             ctx.fillRect(sprayCoord.x, sprayCoord.y, properties.diameterDrops, properties.diameterDrops);
@@ -83,6 +83,11 @@ export class SprayService extends Tool {
         super.resetContext();
         this.clearPath();
         this.clearSpray();
+    }
+
+    getPositionFromMouse(event: MouseEvent): Vec2 {
+        const canvasBoundingRect = this.drawingService.canvas.getBoundingClientRect();
+        return { x: event.clientX - canvasBoundingRect.x, y: event.clientY - canvasBoundingRect.y };
     }
 
     clone(): SprayService {
