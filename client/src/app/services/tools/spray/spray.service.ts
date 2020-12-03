@@ -26,10 +26,10 @@ export class SprayService extends Tool {
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
             this.clearPath();
+            this.clearSpray();
             this.currentMouseCoord = mousePosition;
             this.mouseDownCoord = mousePosition;
             this.sprayIntervalRef = setInterval(this.draw.bind(this), 100, this.drawingService.previewCtx);
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
         }
     }
 
@@ -37,9 +37,9 @@ export class SprayService extends Tool {
         if (this.mouseDown) {
             this.draw(this.drawingService.baseCtx);
             this.executedCommand.emit(this.clone());
-            this.clearSpray();
         }
         this.mouseDown = false;
+        this.clearSpray();
         this.clearPath();
     }
 
@@ -53,23 +53,26 @@ export class SprayService extends Tool {
     draw(ctx: CanvasRenderingContext2D): void {
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
+        ctx.lineWidth = 1;
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        const SPRAY_PER_SECOND = 10;
         const properties = this.toolProperties as SprayProperties;
         for (const sprayCoord of this.sprayCoords) {
-            ctx.fillRect(sprayCoord.x, sprayCoord.y, 1, 1);
+            ctx.fillRect(sprayCoord.x, sprayCoord.y, properties.diameterDrops, properties.diameterDrops);
         }
         if (ctx === this.drawingService.baseCtx) return;
-        for (let i = 0; i < properties.dropsPerSecond; ++i) {
+        for (let i = 0; i < properties.dropsPerSecond / SPRAY_PER_SECOND; ++i) {
             const radius = (Math.random() * properties.diameterSpray) / 2;
             const angle = Math.random() * (2 * Math.PI);
             const sprayXCoord = this.currentMouseCoord.x + radius * Math.cos(angle);
             const sprayYCoord = this.currentMouseCoord.y + radius * Math.sin(angle);
-            ctx.fillRect(sprayXCoord, sprayYCoord, 1, 1);
+            ctx.fillRect(sprayXCoord, sprayYCoord, properties.diameterDrops, properties.diameterDrops);
             this.sprayCoords.push({ x: sprayXCoord, y: sprayYCoord } as Vec2);
         }
     }
 
     clearSpray(): void {
-        clearInterval(this.sprayIntervalRef);
+        if (this.sprayIntervalRef) clearInterval(this.sprayIntervalRef);
     }
 
     clearPath(): void {
@@ -85,6 +88,12 @@ export class SprayService extends Tool {
     clone(): SprayService {
         const sprayClone: SprayService = new SprayService(this.drawingService);
         this.copyTool(sprayClone);
+        const properties = this.toolProperties as SprayProperties;
+        const cloneProperties = sprayClone.toolProperties as SprayProperties;
+        cloneProperties.diameterDrops = properties.diameterDrops;
+        cloneProperties.diameterSpray = properties.diameterSpray;
+        cloneProperties.dropsPerSecond = properties.dropsPerSecond;
+        sprayClone.sprayCoords = this.sprayCoords;
         return sprayClone;
     }
 }
