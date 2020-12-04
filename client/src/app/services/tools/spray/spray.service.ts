@@ -36,8 +36,9 @@ export class SprayService extends Tool {
 
     onMouseUp(event: MouseEvent): void {
         if (this.mouseDown) {
-            this.draw(this.drawingService.baseCtx);
+            this.drawingService.baseCtx.drawImage(this.drawingService.previewCtx.canvas, 0, 0);
             this.executedCommand.emit(this.clone());
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
         }
         this.mouseDown = false;
         this.clearSpray();
@@ -60,6 +61,7 @@ export class SprayService extends Tool {
         const properties = this.toolProperties as SprayProperties;
 
         for (const sprayCoord of this.sprayCoords) {
+            // TODO: use arc
             ctx.fillRect(sprayCoord.x, sprayCoord.y, properties.diameterDrops, properties.diameterDrops);
         }
         if (ctx === this.drawingService.baseCtx) return;
