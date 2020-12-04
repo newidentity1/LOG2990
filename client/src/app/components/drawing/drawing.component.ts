@@ -117,12 +117,11 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
             if (!this.isAreaSelected()) {
                 this.resizeService.resize(this.previewCanvas.nativeElement.width, this.previewCanvas.nativeElement.height);
             } else {
-                // TODO: resize selection event
                 this.toolbarService.resizeSelection(event);
             }
 
             setTimeout(() => {
-                if (!this.isAreaSelected) this.toolbarService.applyCurrentTool();
+                if (!this.isAreaSelected()) this.toolbarService.applyCurrentTool();
                 this.resizeService.resetResize();
             }, 0);
         } else {
