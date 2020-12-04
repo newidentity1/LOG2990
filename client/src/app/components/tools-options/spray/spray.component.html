@@ -9,11 +9,11 @@
 
     <label class="label">Choisissez le diamètre des goutelettes:</label>
     <div class="sliderWrapper">
-        <mat-slider thumbLabel (change)="onDiameterDropsChange($event)" tickInterval="1" min="1" max="10" [value]="this.diameterDrops"> </mat-slider>
+        <mat-slider thumbLabel (change)="onDiameterDropsChange($event)" tickInterval="1" min="1" max="5" [value]="this.diameterDrops"> </mat-slider>
     </div>
 
     <label class="label">Choisissez le nombre d'émission par seconde:</label>
     <div class="sliderWrapper">
-        <mat-slider thumbLabel (change)="onDropsPerSecondeChange($event)" step="100" min="500" max="1500" [value]="this.dropsPerSecond"> </mat-slider>
+        <mat-slider thumbLabel (change)="onDropsPerSecondeChange($event)" step="100" min="500" max="3000" [value]="this.dropsPerSecond"> </mat-slider>
     </div>
 </div>

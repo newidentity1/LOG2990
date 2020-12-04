@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool/tool';
 import { SprayProperties } from '@app/classes/tools-properties/spray-properties';
 import { Vec2 } from '@app/classes/vec2';
+import { SPRAY_INTERVAL } from '@app/constants/constants';
 import { MouseButton } from '@app/enums/mouse-button.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
@@ -29,7 +30,7 @@ export class SprayService extends Tool {
             this.clearSpray();
             this.currentMouseCoord = mousePosition;
             this.mouseDownCoord = mousePosition;
-            this.sprayIntervalRef = setInterval(this.draw.bind(this), 20, this.drawingService.previewCtx);
+            this.sprayIntervalRef = setInterval(this.draw.bind(this), SPRAY_INTERVAL, this.drawingService.previewCtx);
         }
     }
 
@@ -57,6 +58,7 @@ export class SprayService extends Tool {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         const SPRAY_PER_SECOND = 50;
         const properties = this.toolProperties as SprayProperties;
+
         for (const sprayCoord of this.sprayCoords) {
             ctx.fillRect(sprayCoord.x, sprayCoord.y, properties.diameterDrops, properties.diameterDrops);
         }

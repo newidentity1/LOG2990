@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { MatSliderChange } from '@angular/material/slider';
 import { SprayProperties } from '@app/classes/tools-properties/spray-properties';
 import {
+    MAXIMUM_DIAMETER_DROPS,
     MAXIMUM_DIAMETER_SPRAY,
     MAXIMUM_DROPS_PER_SECOND,
     MINIMUM_DIAMETER_DROPS,
@@ -35,7 +36,7 @@ export class SprayComponent {
     }
 
     onDiameterDropsChange(event: MatSliderChange): void {
-        if (event.value !== null && event.value >= MINIMUM_DIAMETER_DROPS && event.value <= MINIMUM_DIAMETER_DROPS) {
+        if (event.value !== null && event.value >= MINIMUM_DIAMETER_DROPS && event.value <= MAXIMUM_DIAMETER_DROPS) {
             const properties = this.sprayService.toolProperties as SprayProperties;
             properties.diameterDrops = event.value;
         }
