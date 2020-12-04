@@ -54,10 +54,12 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
         this.subscribeDimensionsUpdated = this.dimensionsUpdatedEvent.subscribe((dimensions) => {
             this.drawingContainerWidth = dimensions[0];
             this.drawingContainerHeight = dimensions[1];
-            if (!!dimensions[2]) this.newCanvasSetSize();
-            setTimeout(() => {
-                this.toolbarService.applyCurrentTool();
-            }, 0);
+            if (!!dimensions[2]) {
+                this.newCanvasSetSize();
+                setTimeout(() => {
+                    this.toolbarService.applyCurrentTool();
+                }, 0);
+            }
         });
         this.subscribeExecutedCommand = this.resizeService.executedCommand.subscribe((command: Command) => {
             this.toolbarService.addCommand(command);
