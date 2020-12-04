@@ -15,17 +15,16 @@ export class StampComponent implements OnInit {
         { id: 3, src: '../../../../assets/stamp/4.png', srcPriview: '../../../assets/stamp/4.png' },
         { id: 4, src: '../../../../assets/stamp/5.png', srcPriview: '../../../assets/stamp/5.png' },
         { id: 5, src: '../../../../assets/stamp/6.png', srcPriview: '../../../assets/stamp/6.png' },
+        { id: 6, src: '../../../../assets/stamp/7.png', srcPriview: '../../../assets/stamp/7.png' },
+        { id: 7, src: '../../../../assets/stamp/8.png', srcPriview: '../../../assets/stamp/8.png' },
     ];
     constructor(private stampService: StampService) {}
-
-    useSticker(id: number): void {
-        console.log('sticker');
-    }
 
     ngOnInit(): void {}
 
     onClick(src: string): void {
         console.log(src);
         this.stampService.src = src;
+        //this.stampService.getImageData();
     }
 }
