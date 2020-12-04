@@ -4,5 +4,4 @@ export enum TextFont {
     TimesNewRoman = 'Times New Roman',
     Georgia = 'Georgia',
     CourierNew = 'Courier New',
-    LucidaConsole = 'Lucida Console',
 }

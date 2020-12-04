@@ -94,18 +94,22 @@ export class TextService extends Tool {
         if (!this.mouseDown) return;
         const properties = this.toolProperties as TextProperties;
         this.createStyle(properties);
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.writeTexts(context);
         if (context === this.drawingService.previewCtx) {
             this.setCursor();
             this.drawTextArea();
-        }
-
-        for (let i = 0; i < this.currentTexts.length; ++i) {
-            context.fillText(this.currentTexts[i], this.calculateXCoordText(), this.mouseDownCoord.y - this.textAreaDimensions.y * i);
         }
     }
 
     isTextInProgress(): boolean {
         return this.mouseDown && !this.textConfirmed && !this.isInitialText;
+    }
+
+    writeTexts(context: CanvasRenderingContext2D): void {
+        for (let i = 0; i < this.currentTexts.length; ++i) {
+            context.fillText(this.currentTexts[i], this.calculateXCoordText(), this.mouseDownCoord.y - this.textAreaDimensions.y * i);
+        }
     }
 
     confirmText(): void {
@@ -129,14 +133,12 @@ export class TextService extends Tool {
         this.textAreaDimensions = { x: dimensions + SPACE, y: -properties.size + 2 };
         this.textAreaStartingPoint = { x: this.mouseDownCoord.x - 2, y: this.mouseDownCoord.y + properties.size / HEIGHT_FACTOR };
 
-        this.drawingService.clearCanvas(context);
-
         context.setLineDash([DASHED_SEGMENTS]);
         context.lineWidth = 1;
         context.strokeRect(
-            this.textAreaStartingPoint.x,
+            this.textAreaStartingPoint.x - SPACE / 2,
             this.textAreaStartingPoint.y - this.textAreaDimensions.y * (this.currentTexts.length - 1) + SPACE / 2,
-            this.textAreaDimensions.x,
+            this.textAreaDimensions.x + SPACE / 2,
             this.textAreaDimensions.y * this.currentTexts.length - SPACE,
         );
         context.setLineDash([]);
@@ -162,11 +164,11 @@ export class TextService extends Tool {
         );
         const cursorWidth = 2;
         const cursorHeight = Math.round(this.textAreaDimensions.y);
-
         context.fillRect(cursorX, cursorY, cursorWidth, cursorHeight);
 
         setTimeout(() => {
             context.clearRect(cursorX, cursorY, cursorWidth, cursorHeight);
+            this.writeTexts(this.drawingService.previewCtx);
         }, BLINKING_CURSOR_SPEED);
     }
 
