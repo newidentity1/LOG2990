@@ -5,6 +5,7 @@ import { BLUR_CONVERSION, HUE_CONVERSION, MAX_PREVIEW_SIZE } from '@app/constant
 import { ExportFilterType } from '@app/enums/export-filter.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { EmailService } from '@app/services/email/email.service';
+import { Email } from '@common/communication/email';
 
 @Component({
     selector: 'app-export-drawing-dialog',
@@ -28,9 +29,6 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
     sliderIsVisible: boolean = false;
     titleForm: FormControl = new FormControl('', Validators.required);
     emailForm: FormControl = new FormControl('', [Validators.pattern(/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/i), Validators.required]);
-
-    // Email
-    img: ImageData;
 
     constructor(
         public dialogRef: MatDialogRef<ExportDrawingDialogComponent>,
@@ -141,13 +139,6 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
         this.setImageUrl();
     }
 
-    setExport(): void {
-        this.exportCtx.filter = this.exportFilter;
-        this.setWhiteBackground(this.exportCtx);
-        this.exportCtx.drawImage(this.drawingService.canvas, 0, 0);
-        this.exportCtx.filter = 'none';
-    }
-
     downloadImage(): void {
         this.exportCtx.filter = this.exportFilter;
         this.setWhiteBackground(this.exportCtx);
@@ -168,13 +159,12 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
     }
 
     sendByEmail(): void {
-        // Set sent image
-        this.setExport();
-        this.emailService.address = this.emailForm.value;
-        this.emailService.data = this.exportCtx.getImageData(0, 0, this.exportCanvas.nativeElement.width, this.exportCanvas.nativeElement.height);
-
-        this.emailService.postEmail();
-        // reset input
+        // Have to use form-data
+        const email: Email = {
+            emailAddress: this.emailForm.value,
+            image: this.exportCtx.getImageData(0, 0, this.exportCanvas.nativeElement.width, this.exportCanvas.nativeElement.height),
+        };
+        this.emailService.onSubmit(email);
         this.emailForm.reset();
     }
 

@@ -1,31 +1,48 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-//import { Drawing } from '@common/communication/drawing';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { Injectable, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { OnInit } from '@angular/core';
+import { CommunicationService } from '@app/services/communication/communication.service';
+import { Email } from '@common/communication/email';
 
 @Injectable({
     providedIn: 'root',
 })
 export class EmailService implements OnInit {
     private emailUrl: string = 'http://localhost:3000/api/email/';
+    apiKey: string = 'f6cd41ef-636d-45ae-9e07-47dd97cff25e';
     address: string = '';
     data: ImageData;
     emailUploadForm: FormGroup;
-    constructor(private formBuilder: FormBuilder, private http: HttpClient) {}
+    constructor(private formBuilder: FormBuilder, private http: HttpClient, private communicationService: CommunicationService) {}
 
-    ngOnInit() {
+    ngOnInit(): void {
         this.emailUploadForm = this.formBuilder.group({ profile: [''] });
     }
 
-    onSubmit() {
+    onSubmit(email: Email): void {
         const formData = new FormData();
-        formData.append('email', this.emailUploadForm.get('').value);
-        this.http.post(this.emailUrl, formData, { responseType: 'text' });
-    }
+        formData.append('to', email.emailAddress);
+        formData.append('payload', email.emailAddress);
 
-    postEmail(photo: Image): Observable<string> {
-        return this.http.post(this.emailUrl, photo, { responseType: 'text' });
+        // Will be used for Server to API
+        // axios.post('http://httpbin.org/post', data);
+
+        const httpHeaders = new HttpHeaders({ 'Content-Type': 'multipart/form-data', 'X-Team-Key': this.apiKey });
+        const options = { headers: httpHeaders };
+
+        this.http.post(this.emailUrl, formData, options);
+
+        this.communicationService.postEmail(email).subscribe({
+            next: (response: string) => {
+                // this.isDrawingSaving = false;
+                // this.emitSaveDrawingSubjectEvent(new ResponseResult(true, 'Votre dessin a été enregistré avec succès'));
+            },
+            error: (error: HttpErrorResponse) => {
+                const message = error.status === 0 ? "Le serveur est indisponible, le courriel n'a pas ete envoye!" : error.error;
+
+                // this.emitSaveDrawingSubjectEvent(new ResponseResult(false, message));
+                // this.isDrawingSaving = false;
+            },
+        });
     }
 }
