@@ -30,7 +30,7 @@ export class SprayService extends Tool {
             this.clearSpray();
             this.currentMouseCoord = mousePosition;
             this.mouseDownCoord = mousePosition;
-            this.sprayIntervalRef = setInterval(this.draw.bind(this), SPRAY_INTERVAL, this.drawingService.previewCtx);
+            this.sprayIntervalRef = window.setInterval(this.draw.bind(this), SPRAY_INTERVAL, this.drawingService.previewCtx);
         }
     }
 
@@ -61,8 +61,9 @@ export class SprayService extends Tool {
         const properties = this.toolProperties as SprayProperties;
 
         for (const sprayCoord of this.sprayCoords) {
-            // TODO: use arc
-            ctx.fillRect(sprayCoord.x, sprayCoord.y, properties.diameterDrops, properties.diameterDrops);
+            ctx.beginPath();
+            ctx.arc(sprayCoord.x, sprayCoord.y, properties.diameterDrops / 2, 0, 2 * Math.PI);
+            ctx.fill();
         }
         if (ctx === this.drawingService.baseCtx) return;
         for (let i = 0; i < properties.dropsPerSecond / SPRAY_PER_SECOND; ++i) {
@@ -70,7 +71,9 @@ export class SprayService extends Tool {
             const angle = Math.random() * (2 * Math.PI);
             const sprayXCoord = this.currentMouseCoord.x + radius * Math.cos(angle);
             const sprayYCoord = this.currentMouseCoord.y + radius * Math.sin(angle);
-            ctx.fillRect(sprayXCoord, sprayYCoord, properties.diameterDrops, properties.diameterDrops);
+            ctx.beginPath();
+            ctx.arc(sprayXCoord, sprayYCoord, properties.diameterDrops / 2, angle, 2 * Math.PI + angle);
+            ctx.fill();
             this.sprayCoords.push({ x: sprayXCoord, y: sprayYCoord } as Vec2);
         }
     }
