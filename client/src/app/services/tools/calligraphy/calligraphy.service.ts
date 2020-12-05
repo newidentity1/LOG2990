@@ -68,7 +68,13 @@ export class CalligraphyService extends PencilService {
         }
     }
 
-    drawStrokeToNextPoint(ctx: CanvasRenderingContext2D, currentPoint: Vec2, lastPoint: Vec2, lineAngle: number): void {
+    draw(ctx: CanvasRenderingContext2D): void {
+        for (let i = 1; i < this.pathData.length; i++) {
+            this.drawStrokeToNextPoint(ctx, this.pathData[i], this.pathData[i - 1], this.pathDataAngle[i]);
+        }
+    }
+
+    private drawStrokeToNextPoint(ctx: CanvasRenderingContext2D, currentPoint: Vec2, lastPoint: Vec2, lineAngle: number): void {
         const distanceToNextPoint = this.distanceBetweenPoints(currentPoint, lastPoint);
         const angleToNextPoint = this.angleBetweenPoints(currentPoint, lastPoint);
 
@@ -86,12 +92,6 @@ export class CalligraphyService extends PencilService {
                 y + (this.lineLength / 2) * Math.sin((lineAngle * Math.PI) / 180),
             );
             ctx.stroke();
-        }
-    }
-
-    draw(ctx: CanvasRenderingContext2D): void {
-        for (let i = 1; i < this.pathData.length; i++) {
-            this.drawStrokeToNextPoint(ctx, this.pathData[i], this.pathData[i - 1], this.pathDataAngle[i]);
         }
     }
 
