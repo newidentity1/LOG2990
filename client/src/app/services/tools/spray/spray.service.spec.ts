@@ -130,6 +130,7 @@ describe('SprayService', () => {
     });
 
     it('draw should clear canvas, draw previous points and draw new points', () => {
+        service.currentMouseCoord = { x: 0, y: 0 } as Vec2;
         service.draw(drawingServiceSpy.previewCtx);
         expect(drawingServiceSpy.clearCanvas).toHaveBeenCalled();
         expect(service.sprayCoords.length).toBeGreaterThan(0);
