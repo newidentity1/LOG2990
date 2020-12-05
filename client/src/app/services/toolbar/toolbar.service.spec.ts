@@ -19,6 +19,7 @@ import { PolygonService } from '@app/services/tools/polygon/polygon.service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle.service';
 import { SelectionService } from '@app/services/tools/selection/selection.service';
 import { TextService } from '@app/services/tools/text/text.service';
+import { CalligraphyService } from '../tools/calligraphy/calligraphy.service';
 
 // tslint:disable:no-string-literal
 describe('ToolbarService', () => {
@@ -34,6 +35,7 @@ describe('ToolbarService', () => {
     let selectionServiceSpy: jasmine.SpyObj<SelectionService>;
     let bucketServiceSpy: jasmine.SpyObj<BucketService>;
     let textServiceSpy: jasmine.SpyObj<TextService>;
+    let calligraphyServiceSpy: jasmine.SpyObj<CalligraphyService>;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
 
     beforeEach(() => {
@@ -64,6 +66,7 @@ describe('ToolbarService', () => {
         drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setStrokeColor', 'setThickness', 'canvasEmpty']);
         polygonServiceSpy = jasmine.createSpyObj('PolygonService', ['onKeyDown']);
         textServiceSpy = jasmine.createSpyObj('TextService', ['onClick']);
+        calligraphyServiceSpy = jasmine.createSpyObj('TextService', ['onClick']);
 
         TestBed.configureTestingModule({
             providers: [
@@ -77,6 +80,7 @@ describe('ToolbarService', () => {
                 { provide: EyedropperService, useValue: eyedropperServiceSpy },
                 { provide: BucketService, useValue: bucketServiceSpy },
                 { provide: TextService, useValue: textServiceSpy },
+                { provide: CalligraphyService, useValue: calligraphyServiceSpy },
                 { provide: DrawingService, useValue: drawingServiceSpy },
             ],
         });
@@ -93,6 +97,7 @@ describe('ToolbarService', () => {
         drawingServiceSpy = TestBed.inject(DrawingService) as jasmine.SpyObj<DrawingService>;
         bucketServiceSpy = TestBed.inject(BucketService) as jasmine.SpyObj<BucketService>;
         textServiceSpy = TestBed.inject(TextService) as jasmine.SpyObj<TextService>;
+        calligraphyServiceSpy = TestBed.inject(CalligraphyService) as jasmine.SpyObj<CalligraphyService>;
 
         drawingServiceSpy.canvas = canvasTestHelper.canvas;
         drawingServiceSpy.baseCtx = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
@@ -152,6 +157,7 @@ describe('ToolbarService', () => {
             eyedropperServiceSpy,
             bucketServiceSpy,
             textServiceSpy,
+            calligraphyServiceSpy,
         ]);
     });
 
