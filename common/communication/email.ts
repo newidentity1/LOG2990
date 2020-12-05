@@ -1,4 +1,4 @@
 export interface Email {
     emailAddress: string;
-    image: ImageData;
+    image: Blob;
 }

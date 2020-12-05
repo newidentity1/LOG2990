@@ -158,15 +158,32 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
         return this.emailForm.value.length === 0;
     }
 
+    // Case if png or jpeg
     sendByEmail(): void {
-        // Have to use form-data
-        const email: Email = {
-            emailAddress: this.emailForm.value,
-            image: this.exportCtx.getImageData(0, 0, this.exportCanvas.nativeElement.width, this.exportCanvas.nativeElement.height),
-        };
-        this.emailService.onSubmit(email);
-        this.emailForm.reset();
+        // png
+        //         if (this.selectedFormat === 'png') {
+        this.exportCtx.canvas.toBlob(
+            (blob: Blob) => {
+                // success
+                const email: Email = {
+                    emailAddress: this.emailForm.value,
+                    image: blob,
+                    // image: this.exportCtx.getImageData(0, 0, this.exportCanvas.nativeElement.width, this.exportCanvas.nativeElement.height),
+                };
+                this.emailService.onSubmit(email);
+                this.emailForm.reset();
+                // echec
+            },
+            'image/png',
+            1,
+        );
+        //     }
     }
+
+    // // createBlob
+    // createBlob() : void {
+
+    // }
 
     keepOriginalOrder(): number {
         return 0;
