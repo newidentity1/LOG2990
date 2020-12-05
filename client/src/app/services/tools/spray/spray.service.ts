@@ -46,10 +46,7 @@ export class SprayService extends Tool {
     }
 
     onMouseMove(event: MouseEvent): void {
-        const mousePosition = this.getPositionFromMouse(event);
-        if (this.mouseDown) {
-            this.currentMouseCoord = mousePosition;
-        }
+        if (this.mouseDown) this.currentMouseCoord = this.getPositionFromMouse(event);
     }
 
     draw(ctx: CanvasRenderingContext2D): void {
@@ -65,7 +62,7 @@ export class SprayService extends Tool {
             ctx.arc(sprayCoord.x, sprayCoord.y, properties.diameterDrops / 2, 0, 2 * Math.PI);
             ctx.fill();
         }
-        if (ctx === this.drawingService.baseCtx) return;
+
         for (let i = 0; i < properties.dropsPerSecond / SPRAY_PER_SECOND; ++i) {
             const radius = (Math.random() * properties.diameterSpray) / 2;
             const angle = Math.random() * (2 * Math.PI);
@@ -79,7 +76,7 @@ export class SprayService extends Tool {
     }
 
     clearSpray(): void {
-        if (this.sprayIntervalRef) clearInterval(this.sprayIntervalRef);
+        if (this.sprayIntervalRef) window.clearInterval(this.sprayIntervalRef);
     }
 
     clearPath(): void {
