@@ -64,3 +64,5 @@ export const HUE_CONVERSION = 360;
 
 export const MINIMUM_TEXT_SIZE = 10;
 export const MAXIMUM_TEXT_SIZE = 100;
+
+export const DEFAULT_CALLIGRAPHY_LINE_LENGTH = 10;
