@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { BrushProperties } from '@app/classes/tools-properties/brush-properties';
-import { Vec2 } from '@app/classes/vec2';
 import { BrushType } from '@app/enums/brush-filters.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
@@ -18,12 +17,12 @@ export class BrushService extends PencilService {
         this.clearPath();
     }
 
-    protected drawCursor(position: Vec2): void {
+    protected drawCursor(): void {
         const cursorCtx = this.drawingService.previewCtx;
         this.drawingService.clearCanvas(cursorCtx);
         cursorCtx.beginPath();
         this.switchFilter(cursorCtx);
-        cursorCtx.arc(position.x, position.y, this.toolProperties.thickness / 2, 0, Math.PI * 2);
+        cursorCtx.arc(this.currentMousePosition.x, this.currentMousePosition.y, this.toolProperties.thickness / 2, 0, Math.PI * 2);
         cursorCtx.fill();
         cursorCtx.filter = 'none';
     }
