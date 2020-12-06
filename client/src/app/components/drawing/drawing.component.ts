@@ -96,9 +96,6 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
                         this.toolbarService.onMouseMove(event);
                     }
                 }
-                if (this.toolbarService.currentTool instanceof PencilService) {
-                    this.toolbarService.onMouseMove(event);
-                }
             }
         } else {
             this.onResize(event);
