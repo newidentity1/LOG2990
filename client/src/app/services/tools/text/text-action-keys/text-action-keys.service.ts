@@ -48,12 +48,22 @@ export class TextActionKeysService {
     }
 
     onArrowLeft(cursorColumnIndex: number, cursorRowIndex: number, currentTexts: string[]): [number, number, string[]] {
-        cursorColumnIndex = cursorColumnIndex === 0 ? cursorColumnIndex : cursorColumnIndex - 1;
+        if (cursorColumnIndex === 0 && cursorRowIndex !== 0) {
+            cursorRowIndex -= 1;
+            cursorColumnIndex = currentTexts[cursorRowIndex].length;
+        } else if (cursorColumnIndex !== 0) {
+            cursorColumnIndex -= 1;
+        }
         return [cursorColumnIndex, cursorRowIndex, currentTexts];
     }
 
     onArrowRight(cursorColumnIndex: number, cursorRowIndex: number, currentTexts: string[]): [number, number, string[]] {
-        cursorColumnIndex = cursorColumnIndex === currentTexts[cursorRowIndex].length ? cursorColumnIndex : cursorColumnIndex + 1;
+        if (cursorColumnIndex === currentTexts[cursorRowIndex].length && cursorRowIndex !== currentTexts.length - 1) {
+            cursorRowIndex += 1;
+            cursorColumnIndex = 0;
+        } else if (cursorColumnIndex !== currentTexts[cursorRowIndex].length) {
+            cursorColumnIndex += 1;
+        }
         return [cursorColumnIndex, cursorRowIndex, currentTexts];
     }
 
