@@ -25,7 +25,17 @@ export class CommunicationService {
         return this.http.post(this.drawingUrl, drawing, { responseType: 'text' });
     }
 
+    // post with email
     postEmail(email: Email): Observable<string> {
-        return this.http.post(this.emailUrl, email, { 'Content-Type': 'multipart/form-data' });
+        // POST request to Express Server
+        console.log(this.emailUrl, email);
+        return this.http.post(this.emailUrl, email, { responseType: 'text' });
     }
+
+    // post with formdata
+    // postEmail(form: FormData): Observable<string> {
+    //     // POST request to Express Server
+    //     console.log(this.emailUrl, form.get('to'), form.get('payload'));
+    //     return this.http.post(this.emailUrl, form, { responseType: 'text' });
+    // }
 }
