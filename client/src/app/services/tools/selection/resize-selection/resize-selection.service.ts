@@ -58,7 +58,7 @@ export class ResizeSelectionService {
         if (newWidth <= 0) {
             newWidth = 1;
             this.isMirrorWidth = !this.isMirrorWidth;
-            this.changeOppositeControlPointWidth();
+            this.changeOppositeControlPoint(true);
         }
 
         this.drawingService.previewCtx.canvas.width = newWidth;
@@ -78,7 +78,7 @@ export class ResizeSelectionService {
         let newHeight = isControlTopSide ? oldHeight - heightDiff : heightDiff;
         if (newHeight <= 0) {
             newHeight = 1;
-            this.changeOppositeControlPointHeight();
+            this.changeOppositeControlPoint(false);
             this.isMirrorHeight = !this.isMirrorHeight;
         }
 
@@ -119,19 +119,7 @@ export class ResizeSelectionService {
         scaleX = this.isMirrorWidth ? -scaleX : scaleX;
         scaleY = this.isMirrorHeight ? -scaleY : scaleY;
 
-        this.selectionImageCanvas.width = selectionImage.width;
-        this.selectionImageCanvas.height = selectionImage.height;
-        const context = this.selectionImageCanvas.getContext('2d') as CanvasRenderingContext2D;
-        context.putImageData(selectionImage, 0, 0);
-
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        this.drawingService.previewCtx.scale(scaleX, scaleY);
-        const posX = this.isMirrorWidth ? -selectionImage.width : 0;
-        const posY = this.isMirrorHeight ? -selectionImage.height : 0;
-        this.drawingService.previewCtx.drawImage(this.selectionImageCanvas, posX, posY);
-        this.drawingService.previewCtx.setTransform(1, 0, 0, 1, 0, 0);
-
-        return this.drawingService.previewCtx.getImageData(0, 0, selectionWidth, selectionHeight);
+        return this.applyScaleToImage(scaleX, scaleY, selectionImage);
     }
 
     scaleImageKeepRatio(selectionImage: ImageData): ImageData {
@@ -145,6 +133,10 @@ export class ResizeSelectionService {
         scaleX = Math.abs(scaleX) > Math.abs(scaleY) ? Math.sign(scaleX) * Math.abs(scaleY) : scaleX;
         scaleY = Math.abs(scaleY) > Math.abs(scaleX) ? Math.sign(scaleY) * Math.abs(scaleX) : scaleY;
 
+        return this.applyScaleToImage(scaleX, scaleY, selectionImage);
+    }
+
+    applyScaleToImage(scaleX: number, scaleY: number, selectionImage: ImageData): ImageData {
         this.selectionImageCanvas.width = selectionImage.width;
         this.selectionImageCanvas.height = selectionImage.height;
         const context = this.selectionImageCanvas.getContext('2d') as CanvasRenderingContext2D;
@@ -157,18 +149,19 @@ export class ResizeSelectionService {
         this.drawingService.previewCtx.drawImage(this.selectionImageCanvas, posX, posY);
         this.drawingService.previewCtx.setTransform(1, 0, 0, 1, 0, 0);
 
-        return this.drawingService.previewCtx.getImageData(0, 0, selectionWidth, selectionHeight);
+        return this.drawingService.previewCtx.getImageData(
+            0,
+            0,
+            this.drawingService.previewCtx.canvas.width,
+            this.drawingService.previewCtx.canvas.height,
+        );
     }
 
-    changeOppositeControlPointWidth(): void {
+    changeOppositeControlPoint(isWidth: boolean): void {
         if (this.resizeService.controlPoint === null) return;
-        const oppositeControlPoint = this.oppositeControlPointsWidth.get(this.resizeService.controlPoint);
-        this.resizeService.controlPoint = oppositeControlPoint !== undefined ? oppositeControlPoint : this.resizeService.controlPoint;
-    }
-
-    changeOppositeControlPointHeight(): void {
-        if (this.resizeService.controlPoint === null) return;
-        const oppositeControlPoint = this.oppositeControlPointsHeight.get(this.resizeService.controlPoint);
+        const oppositeControlPoint = isWidth
+            ? this.oppositeControlPointsWidth.get(this.resizeService.controlPoint)
+            : this.oppositeControlPointsHeight.get(this.resizeService.controlPoint);
         this.resizeService.controlPoint = oppositeControlPoint !== undefined ? oppositeControlPoint : this.resizeService.controlPoint;
     }
 
