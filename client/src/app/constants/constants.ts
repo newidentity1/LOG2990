@@ -37,6 +37,9 @@ export const MAX_COLOR_VALUE = 255;
 export const ANGLE_90 = 90;
 export const ANGLE_45 = 45;
 export const ANGLE_180 = 180;
+export const MINIMUM_ROTATION_ANGLE = 0;
+export const MAXIMUM_ROTATION_ANGLE = 360;
+export const DEFAULT_ROTATION_ANGLE = 15;
 
 export const MINIMAL_DISTANCE_PIXEL = 20;
 
@@ -65,6 +68,8 @@ export const HUE_CONVERSION = 360;
 
 export const MINIMUM_TEXT_SIZE = 10;
 export const MAXIMUM_TEXT_SIZE = 100;
+
+export const DEFAULT_CALLIGRAPHY_LINE_LENGTH = 10;
 
 export const MINIMUM_DIAMETER_SPRAY = 10;
 export const MAXIMUM_DIAMETER_SPRAY = 100;
