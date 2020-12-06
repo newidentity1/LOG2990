@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { MagicWandService } from './magic-wand.service';
 
-describe('MagicWandService', () => {
+fdescribe('MagicWandService', () => {
     let service: MagicWandService;
 
     beforeEach(() => {
