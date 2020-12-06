@@ -9,7 +9,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
     providedIn: 'root',
 })
 export class PencilService extends Tool {
-    mousePosition: Vec2;
+    currentMousePosition: Vec2;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
@@ -40,12 +40,12 @@ export class PencilService extends Tool {
     }
 
     onMouseMove(event: MouseEvent): void {
-        this.mousePosition = this.getPositionFromMouse(event);
+        this.currentMousePosition = this.getPositionFromMouse(event);
         if (this.mouseDown) {
-            this.pathData.push(this.mousePosition);
+            this.pathData.push(this.currentMousePosition);
             this.draw(this.drawingService.previewCtx);
         } else {
-            this.drawCursor(this.mousePosition);
+            this.drawCursor();
         }
     }
 
@@ -60,11 +60,11 @@ export class PencilService extends Tool {
         ctx.stroke();
     }
 
-    protected drawCursor(position: Vec2): void {
+    protected drawCursor(): void {
         const cursorCtx = this.drawingService.previewCtx;
         this.drawingService.clearCanvas(cursorCtx);
         cursorCtx.beginPath();
-        cursorCtx.arc(position.x, position.y, this.toolProperties.thickness / 2, 0, Math.PI * 2);
+        cursorCtx.arc(this.currentMousePosition.x, this.currentMousePosition.y, this.toolProperties.thickness / 2, 0, Math.PI * 2);
         cursorCtx.fill();
     }
 
