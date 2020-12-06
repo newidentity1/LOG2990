@@ -52,6 +52,7 @@ import { PencilComponent } from './components/tools-options/pencil/pencil.compon
 import { PolygonComponent } from './components/tools-options/polygon/polygon.component';
 import { RectangleComponent } from './components/tools-options/rectangle/rectangle.component';
 import { SelectionComponent } from './components/tools-options/selection/selection.component';
+import { SprayComponent } from './components/tools-options/spray/spray.component';
 import { TextComponent } from './components/tools-options/text/text.component';
 import { ThicknessSliderComponent } from './components/tools-options/thickness-slider/thickness-slider.component';
 import { UndoRedoComponent } from './components/undo-redo/undo-redo.component';
@@ -94,6 +95,7 @@ import { UploadComponent } from './components/upload/upload.component';
         WarningDialogComponent,
         TextComponent,
         ContinueDrawingComponent,
+        SprayComponent,
     ],
     imports: [
         NgImageSliderModule,
