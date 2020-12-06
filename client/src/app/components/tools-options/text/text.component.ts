@@ -60,7 +60,7 @@ export class TextComponent {
         }
     }
 
-    onTextAlignment(event: MatRadioChange): void {
+    onTextAlignmentChange(event: MatRadioChange): void {
         for (const value in TextAlignment) {
             if (TextAlignment[value as keyof typeof TextAlignment] === event.value) {
                 this.textAlignment = event.value;
