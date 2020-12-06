@@ -22,7 +22,14 @@ describe('TextComponent', () => {
     let matRadioSource: _MatRadioButtonBase;
 
     beforeEach(async(() => {
-        textServiceSpy = jasmine.createSpyObj('TextService', ['setBold', 'setItalic', 'setFontText', 'isTextInProgress', 'setTextAlignment']);
+        textServiceSpy = jasmine.createSpyObj('TextService', [
+            'setBold',
+            'setItalic',
+            'setFontText',
+            'isTextInProgress',
+            'setTextAlignment',
+            'setSizeText',
+        ]);
 
         TestBed.configureTestingModule({
             declarations: [TextComponent],
@@ -59,16 +66,25 @@ describe('TextComponent', () => {
         expect(textServiceSpy.setItalic).toHaveBeenCalled();
     });
 
-    it('onFontChange should call setFontText of text service if value is in Enum TextFont', () => {
+    it('onFontChange should call setFontText of text service if value is in Enum TextFont and emit textPropertyChange is TextInProgress', () => {
+        spyOn(component.textPropertyChange, 'emit');
+        textServiceSpy.isTextInProgress.and.callFake(() => {
+            return false;
+        });
         matRadioEvent = { source: matRadioSource, value: TextFont.Arial };
         component.onFontChange(matRadioEvent);
         expect(textServiceSpy.setFontText).toHaveBeenCalledWith(matRadioEvent.value);
         expect(component.font).toEqual(matRadioEvent.value);
+        expect(component.textPropertyChange.emit).not.toHaveBeenCalled();
 
+        textServiceSpy.isTextInProgress.and.callFake(() => {
+            return true;
+        });
         matRadioEvent = { source: matRadioSource, value: TextFont.CourierNew };
         component.onFontChange(matRadioEvent);
         expect(textServiceSpy.setFontText).toHaveBeenCalledWith(matRadioEvent.value);
         expect(component.font).toEqual(matRadioEvent.value);
+        expect(component.textPropertyChange.emit).toHaveBeenCalled();
 
         matRadioEvent = { source: matRadioSource, value: TextFont.Georgia };
         component.onFontChange(matRadioEvent);
@@ -92,38 +108,54 @@ describe('TextComponent', () => {
         expect(textServiceSpy.setFontText).not.toHaveBeenCalled();
     });
 
-    it('onSizeChange should call setSizeText of text service if value is inside scope', () => {
+    it('onSizeChange should call setSizeText of text service if value is inside scope and emit textPropertyChange if text in progress', () => {
+        spyOn(component.textPropertyChange, 'emit');
+        textServiceSpy.isTextInProgress.and.callFake(() => {
+            return true;
+        });
         matSliderEvent = { source: matSliderSource, value: MAXIMUM_TEXT_SIZE / 2 };
         component.onSizeChange(matSliderEvent);
         expect(textServiceSpy.setSizeText).toHaveBeenCalledWith(matSliderEvent.value);
+        expect(component.textPropertyChange.emit).toHaveBeenCalled();
     });
 
-    it('onSizeChange should call setSizeText of text service if value is inside scope', () => {
+    it('onSizeChange should call setSizeText of text service if value is inside scope and not emit if text isnt in progress', () => {
+        spyOn(component.textPropertyChange, 'emit');
+        textServiceSpy.isTextInProgress.and.callFake(() => {
+            return false;
+        });
+        matSliderEvent = { source: matSliderSource, value: MAXIMUM_TEXT_SIZE / 2 };
+        component.onSizeChange(matSliderEvent);
+        expect(textServiceSpy.setSizeText).toHaveBeenCalledWith(matSliderEvent.value);
+        expect(component.textPropertyChange.emit).not.toHaveBeenCalled();
+    });
+
+    it('onSizeChange should not call setSizeText of text service if value is outside scope', () => {
         matSliderEvent = { source: matSliderSource, value: MINIMUM_TEXT_SIZE - 1 };
         component.onSizeChange(matSliderEvent);
         expect(textServiceSpy.setSizeText).not.toHaveBeenCalled();
     });
 
-    it('onTextAlignment should call setTextAlignment of text service if value is in Enum TextAlignment', () => {
+    it('onTextAlignmentChange should call setTextAlignment of text service if value is in Enum TextAlignment', () => {
         matRadioEvent = { source: matRadioSource, value: TextAlignment.Left };
-        component.onFontChange(matRadioEvent);
-        expect(textServiceSpy.setFontText).toHaveBeenCalledWith(matRadioEvent.value);
-        expect(component.font).toEqual(matRadioEvent.value);
+        component.onTextAlignmentChange(matRadioEvent);
+        expect(textServiceSpy.setTextAlignment).toHaveBeenCalledWith(matRadioEvent.value);
+        expect(component.textAlignment).toEqual(matRadioEvent.value);
 
         matRadioEvent = { source: matRadioSource, value: TextAlignment.Middle };
-        component.onFontChange(matRadioEvent);
-        expect(textServiceSpy.setFontText).toHaveBeenCalledWith(matRadioEvent.value);
-        expect(component.font).toEqual(matRadioEvent.value);
+        component.onTextAlignmentChange(matRadioEvent);
+        expect(textServiceSpy.setTextAlignment).toHaveBeenCalledWith(matRadioEvent.value);
+        expect(component.textAlignment).toEqual(matRadioEvent.value);
 
         matRadioEvent = { source: matRadioSource, value: TextAlignment.Right };
-        component.onFontChange(matRadioEvent);
-        expect(textServiceSpy.setFontText).toHaveBeenCalledWith(matRadioEvent.value);
-        expect(component.font).toEqual(matRadioEvent.value);
+        component.onTextAlignmentChange(matRadioEvent);
+        expect(textServiceSpy.setTextAlignment).toHaveBeenCalledWith(matRadioEvent.value);
+        expect(component.textAlignment).toEqual(matRadioEvent.value);
     });
 
-    it('onTextAlignment should not call setTextAlignment of text service if value is not in Enum TextAlignment', () => {
+    it('onTextAlignmentChange should not call setTextAlignment of text service if value is not in Enum TextAlignment', () => {
         matRadioEvent = { source: matRadioSource, value: '' };
-        component.onFontChange(matRadioEvent);
+        component.onTextAlignmentChange(matRadioEvent);
         expect(textServiceSpy.setFontText).not.toHaveBeenCalled();
     });
 
