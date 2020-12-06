@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool/tool';
 import { BrushProperties } from '@app/classes/tools-properties/brush-properties';
 import { Vec2 } from '@app/classes/vec2';
-import { DEFAULT_CALLIGRAPHY_LINE_LENGTH } from '@app/constants/constants';
+import { ANGLE_180, DEFAULT_CALLIGRAPHY_LINE_LENGTH, DEFAULT_ROTATION_ANGLE, MAXIMUM_ROTATION_ANGLE } from '@app/constants/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
 
@@ -34,15 +34,15 @@ export class CalligraphyService extends PencilService {
     }
 
     onMouseScroll(event: WheelEvent): void {
-        // TODO default rotation angle
-        this.lineAngle = (this.lineAngle + Math.sign(event.deltaY) * (this.atlDown ? 1 : 15)) % 360;
-        if (this.lineAngle < 0) this.lineAngle = 360 + this.lineAngle;
-        this.drawCursor(this.mousePosition);
+        this.lineAngle = (this.lineAngle + Math.sign(event.deltaY) * (this.atlDown ? 1 : DEFAULT_ROTATION_ANGLE)) % MAXIMUM_ROTATION_ANGLE;
+        if (this.lineAngle < 0) this.lineAngle = MAXIMUM_ROTATION_ANGLE + this.lineAngle;
+        this.drawCursor();
     }
 
     onMouseDown(event: MouseEvent): void {
         super.onMouseDown(event);
         if (this.mouseDown) {
+            this.clearPathAngle();
             this.pathDataAngle.push(this.lineAngle);
         }
     }
@@ -51,20 +51,25 @@ export class CalligraphyService extends PencilService {
         if (this.mouseDown) {
             this.draw(this.drawingService.baseCtx);
             this.executedCommand.emit(this.clone());
+            this.mouseDown = false;
+            this.clearPath();
+            this.clearPathAngle();
         }
-        this.mouseDown = false;
-        this.clearPath();
-        this.clearPathAngle();
     }
 
     onMouseMove(event: MouseEvent): void {
-        this.mousePosition = this.getPositionFromMouse(event);
+        this.currentMousePosition = this.getPositionFromMouse(event);
         if (this.mouseDown) {
-            this.pathData.push(this.mousePosition);
+            this.pathData.push(this.currentMousePosition);
             this.pathDataAngle.push(this.lineAngle);
-            this.drawStrokeToNextPoint(this.drawingService.previewCtx, this.mousePosition, this.pathData[this.pathData.length - 2], this.lineAngle);
+            this.drawStrokeToNextPoint(
+                this.drawingService.previewCtx,
+                this.currentMousePosition,
+                this.pathData[this.pathData.length - 2],
+                this.lineAngle,
+            );
         } else {
-            this.drawCursor(this.mousePosition);
+            this.drawCursor();
         }
     }
 
@@ -75,47 +80,40 @@ export class CalligraphyService extends PencilService {
     }
 
     private drawStrokeToNextPoint(ctx: CanvasRenderingContext2D, currentPoint: Vec2, lastPoint: Vec2, lineAngle: number): void {
-        const distanceToNextPoint = this.distanceBetweenPoints(currentPoint, lastPoint);
-        const angleToNextPoint = this.angleBetweenPoints(currentPoint, lastPoint);
+        const distanceToNextPoint = this.calculateDistanceBetweenPoints(currentPoint, lastPoint);
+        const angleToNextPoint = this.calculateAngleBetweenPoints(currentPoint, lastPoint);
 
         for (let j = 0; j < distanceToNextPoint; j++) {
-            const x = currentPoint.x + Math.sin(angleToNextPoint) * j;
-            const y = currentPoint.y + Math.cos(angleToNextPoint) * j;
-
-            ctx.beginPath();
-            ctx.lineTo(
-                x - (this.lineLength / 2) * Math.cos((lineAngle * Math.PI) / 180),
-                y - (this.lineLength / 2) * Math.sin((lineAngle * Math.PI) / 180),
-            );
-            ctx.lineTo(
-                x + (this.lineLength / 2) * Math.cos((lineAngle * Math.PI) / 180),
-                y + (this.lineLength / 2) * Math.sin((lineAngle * Math.PI) / 180),
-            );
-            ctx.stroke();
+            const position: Vec2 = { x: currentPoint.x + Math.sin(angleToNextPoint) * j, y: currentPoint.y + Math.cos(angleToNextPoint) * j };
+            this.drawStroke(ctx, position, lineAngle);
         }
     }
 
-    protected drawCursor(position: Vec2): void {
+    protected drawCursor(): void {
         if (this.mouseDown) return;
         const cursorCtx = this.drawingService.previewCtx;
         this.drawingService.clearCanvas(cursorCtx);
-        cursorCtx.beginPath();
-        cursorCtx.lineTo(
-            position.x - (this.lineLength / 2) * Math.cos((this.lineAngle * Math.PI) / 180),
-            position.y - (this.lineLength / 2) * Math.sin((this.lineAngle * Math.PI) / 180),
-        );
-        cursorCtx.lineTo(
-            position.x + (this.lineLength / 2) * Math.cos((this.lineAngle * Math.PI) / 180),
-            position.y + (this.lineLength / 2) * Math.sin((this.lineAngle * Math.PI) / 180),
-        );
-        cursorCtx.stroke();
+        this.drawStroke(cursorCtx, this.currentMousePosition, this.lineAngle);
     }
 
-    private distanceBetweenPoints(point1: Vec2, point2: Vec2): number {
+    private drawStroke(ctx: CanvasRenderingContext2D, position: Vec2, lineAngle: number): void {
+        ctx.beginPath();
+        ctx.lineTo(
+            position.x - (this.lineLength / 2) * Math.cos((lineAngle * Math.PI) / ANGLE_180),
+            position.y - (this.lineLength / 2) * Math.sin((lineAngle * Math.PI) / ANGLE_180),
+        );
+        ctx.lineTo(
+            position.x + (this.lineLength / 2) * Math.cos((lineAngle * Math.PI) / ANGLE_180),
+            position.y + (this.lineLength / 2) * Math.sin((lineAngle * Math.PI) / ANGLE_180),
+        );
+        ctx.stroke();
+    }
+
+    private calculateDistanceBetweenPoints(point1: Vec2, point2: Vec2): number {
         return Math.sqrt(Math.pow(point2.x - point1.x, 2) + Math.pow(point2.y - point1.y, 2));
     }
 
-    private angleBetweenPoints(point1: Vec2, point2: Vec2): number {
+    private calculateAngleBetweenPoints(point1: Vec2, point2: Vec2): number {
         return Math.atan2(point2.x - point1.x, point2.y - point1.y);
     }
 
@@ -124,9 +122,7 @@ export class CalligraphyService extends PencilService {
     }
 
     copyTool(tool: CalligraphyService): void {
-        tool.mouseDownCoord = this.mouseDownCoord;
         tool.lineLength = this.lineLength;
-        tool.lineAngle = this.lineAngle;
         tool.pathData = this.pathData;
         tool.pathDataAngle = this.pathDataAngle;
     }
