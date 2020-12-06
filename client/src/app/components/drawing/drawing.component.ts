@@ -54,10 +54,12 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
         this.subscribeDimensionsUpdated = this.dimensionsUpdatedEvent.subscribe((dimensions) => {
             this.drawingContainerWidth = dimensions[0];
             this.drawingContainerHeight = dimensions[1];
-            if (!!dimensions[2]) this.newCanvasSetSize();
-            setTimeout(() => {
-                this.toolbarService.applyCurrentTool();
-            }, 0);
+            if (!!dimensions[2]) {
+                this.newCanvasSetSize();
+                setTimeout(() => {
+                    this.toolbarService.applyCurrentTool();
+                }, 0);
+            }
         });
         this.subscribeExecutedCommand = this.resizeService.executedCommand.subscribe((command: Command) => {
             this.toolbarService.addCommand(command);
@@ -92,7 +94,6 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.onResize(event);
             } else {
                 this.toolbarService.resizeSelection(event);
-                // TODO: resize selection event
             }
         }
     }
@@ -119,17 +120,21 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
             if (!this.isAreaSelected()) {
                 this.resizeService.resize(this.previewCanvas.nativeElement.width, this.previewCanvas.nativeElement.height);
             } else {
-                // TODO: resize selection event
                 this.toolbarService.resizeSelection(event);
             }
 
             setTimeout(() => {
-                if (!this.isAreaSelected) this.toolbarService.applyCurrentTool();
+                if (!this.isAreaSelected()) this.toolbarService.applyCurrentTool();
                 this.resizeService.resetResize();
             }, 0);
         } else {
             this.toolbarService.onMouseUp(event);
         }
+    }
+
+    @HostListener('mousewheel', ['$event'])
+    scroll(event: WheelEvent): void {
+        this.toolbarService.scroll(event);
     }
 
     onMouseEnter(event: MouseEvent): void {
