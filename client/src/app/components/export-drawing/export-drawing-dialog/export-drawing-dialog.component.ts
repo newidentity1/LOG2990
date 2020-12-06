@@ -5,7 +5,7 @@ import { BLUR_CONVERSION, HUE_CONVERSION, MAX_PREVIEW_SIZE } from '@app/constant
 import { ExportFilterType } from '@app/enums/export-filter.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { EmailService } from '@app/services/email/email.service';
-import { Email } from '@common/communication/email';
+// import { Email } from '@common/communication/email';
 
 @Component({
     selector: 'app-export-drawing-dialog',
@@ -160,40 +160,24 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
 
     // Case if png or jpeg
     sendByEmail(): void {
-        // png
-        //         if (this.selectedFormat === 'png') {
+        // TODO: png or jpeg
+        // if (this.selectedFormat === 'png')
+
         this.exportCtx.canvas.toBlob(
             (blob: Blob) => {
                 // success
-                const email: Email = {
-                    emailAddress: this.emailForm.value,
-                    image: blob,
-                    // image: this.exportCtx.getImageData(0, 0, this.exportCanvas.nativeElement.width, this.exportCanvas.nativeElement.height),
-                };
-                this.emailService.onSubmit(email);
-                this.emailForm.reset();
-                // echec
+                this.emailService.setupPost(this.emailForm.value, blob);
+                // fail
             },
             'image/png',
             1,
         );
-        //     }
+
+        // Will show an error in console : "input is null"
+        // this.emailForm.reset();
     }
-
-    // // createBlob
-    // createBlob() : void {
-
-    // }
 
     keepOriginalOrder(): number {
         return 0;
     }
 }
-
-/*
- * EMAIL :
- * Le serveur est disponible sur l'addresse suivante : [ http://log2990.step.polymtl.ca/ | http://log2990.step.polymtl.ca/ ] (notez le http)
- * Vous pouvez communiquer avec ce serveur Ã  travers le votre par HTTP.
- * Seulement la route /email ( [ http://log2990.step.polymtl.ca/email | http://log2990.step.polymtl.ca/email ] )
- * est disponible et rÃ©pond seulement aux requÃªtes HTTP POST
- */

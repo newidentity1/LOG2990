@@ -6,6 +6,7 @@ import { inject, injectable } from 'inversify';
 import * as logger from 'morgan';
 import { DateController } from './controllers/date.controller';
 import { DrawingController } from './controllers/drawing.controller';
+import { EmailController } from './controllers/email.controller';
 import { IndexController } from './controllers/index.controller';
 import { TYPES } from './types';
 
@@ -18,6 +19,7 @@ export class Application {
         @inject(TYPES.IndexController) private indexController: IndexController,
         @inject(TYPES.DateController) private dateController: DateController,
         @inject(TYPES.DrawingController) private drawingController: DrawingController,
+        @inject(TYPES.EmailController) private emailController: EmailController,
     ) {
         this.app = express();
 
@@ -40,6 +42,7 @@ export class Application {
         this.app.use('/api/index', this.indexController.router);
         this.app.use('/api/date', this.dateController.router);
         this.app.use('/api/drawings', this.drawingController.router);
+        this.app.use('/api/email', this.emailController.router);
         this.errorHandling();
     }
 
