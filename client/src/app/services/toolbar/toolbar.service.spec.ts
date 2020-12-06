@@ -10,6 +10,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 import { BrushService } from '@app/services/tools/brush/brush.service';
 import { BucketService } from '@app/services/tools/bucket/bucket.service';
+import { CalligraphyService } from '@app/services/tools/calligraphy/calligraphy.service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
 import { EraseService } from '@app/services/tools/erase/erase.service';
 import { EyedropperService } from '@app/services/tools/eyedropper/eyedropper.service';
@@ -35,6 +36,7 @@ describe('ToolbarService', () => {
     let selectionServiceSpy: jasmine.SpyObj<SelectionService>;
     let bucketServiceSpy: jasmine.SpyObj<BucketService>;
     let textServiceSpy: jasmine.SpyObj<TextService>;
+    let calligraphyServiceSpy: jasmine.SpyObj<CalligraphyService>;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
     let sprayServiceSpy: jasmine.SpyObj<SprayService>;
 
@@ -66,6 +68,7 @@ describe('ToolbarService', () => {
         drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setStrokeColor', 'setThickness', 'canvasEmpty']);
         polygonServiceSpy = jasmine.createSpyObj('PolygonService', ['onKeyDown']);
         textServiceSpy = jasmine.createSpyObj('TextService', ['onClick']);
+        calligraphyServiceSpy = jasmine.createSpyObj('CalligraphyService', ['onClick']);
         sprayServiceSpy = jasmine.createSpyObj('SprayService', ['onMouseDown']);
 
         TestBed.configureTestingModule({
@@ -80,6 +83,7 @@ describe('ToolbarService', () => {
                 { provide: EyedropperService, useValue: eyedropperServiceSpy },
                 { provide: BucketService, useValue: bucketServiceSpy },
                 { provide: TextService, useValue: textServiceSpy },
+                { provide: CalligraphyService, useValue: calligraphyServiceSpy },
                 { provide: DrawingService, useValue: drawingServiceSpy },
                 { provide: SprayService, useValue: sprayServiceSpy },
             ],
@@ -97,6 +101,7 @@ describe('ToolbarService', () => {
         drawingServiceSpy = TestBed.inject(DrawingService) as jasmine.SpyObj<DrawingService>;
         bucketServiceSpy = TestBed.inject(BucketService) as jasmine.SpyObj<BucketService>;
         textServiceSpy = TestBed.inject(TextService) as jasmine.SpyObj<TextService>;
+        calligraphyServiceSpy = TestBed.inject(CalligraphyService) as jasmine.SpyObj<CalligraphyService>;
         sprayServiceSpy = TestBed.inject(SprayService) as jasmine.SpyObj<SprayService>;
 
         drawingServiceSpy.canvas = canvasTestHelper.canvas;
@@ -157,6 +162,7 @@ describe('ToolbarService', () => {
             eyedropperServiceSpy,
             bucketServiceSpy,
             textServiceSpy,
+            calligraphyServiceSpy,
             sprayServiceSpy,
         ]);
     });
