@@ -109,7 +109,7 @@ describe('DrawingComponent', () => {
         dimensionsUpdatedSubjectStub.next([0, 0, +false]);
         jasmine.clock().tick(delay);
         expect(spyNewCanvasSetSize).not.toHaveBeenCalled();
-        expect(toolbarServiceSpy.applyCurrentTool).toHaveBeenCalled();
+        expect(toolbarServiceSpy.applyCurrentTool).not.toHaveBeenCalled();
         jasmine.clock().uninstall();
     });
 
