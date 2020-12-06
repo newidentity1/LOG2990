@@ -7,6 +7,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ResizeService } from '@app/services/resize/resize.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
+import { SprayService } from '@app/services/tools/spray/spray.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Observable, Subscription } from 'rxjs';
 
@@ -85,7 +86,7 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
     @HostListener('window:mousemove', ['$event'])
     onMouseMoveWindow(event: MouseEvent): void {
         if (!this.isResizingWidth && !this.isResizingHeight) {
-            if (this.toolbarService.currentTool instanceof PencilService) {
+            if (this.toolbarService.currentTool instanceof PencilService || this.toolbarService.currentTool instanceof SprayService) {
                 this.toolbarService.onMouseMove(event);
             }
         } else {
@@ -94,7 +95,7 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     onMouseMove(event: MouseEvent): void {
-        if (!(this.toolbarService.currentTool instanceof PencilService)) {
+        if (!(this.toolbarService.currentTool instanceof PencilService || this.toolbarService.currentTool instanceof SprayService)) {
             this.toolbarService.onMouseMove(event);
         }
     }

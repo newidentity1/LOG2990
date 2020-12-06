@@ -12,4 +12,5 @@ export enum KeyShortcut {
     Bucket = 'b',
     Text = 't',
     Calligraphy = 'p',
+    Spray = 'a',
 }
