@@ -14,7 +14,7 @@ export class BucketService extends Tool {
     private image: ImageData;
     private width: number = 0;
     private height: number = 0;
-    mouseLeft: boolean = true;
+    private mouseLeft: boolean = true;
 
     private startPixelColor: Uint8ClampedArray;
     protected tolerance: number = 1;
@@ -33,6 +33,7 @@ export class BucketService extends Tool {
         this.image = this.drawingService.baseCtx.getImageData(0, 0, this.width, this.height);
         this.mouseDownCoord = this.getPositionFromMouse(event);
         this.startPixelColor = this.drawingService.baseCtx.getImageData(this.mouseDownCoord.x, this.mouseDownCoord.y, 1, 1).data;
+        this.changeTransparentToWhite(this.startPixelColor);
         this.mouseDown = true;
         this.mouseLeft = event.button === MouseButton.Left;
         if (this.mouseLeft) {
@@ -43,37 +44,30 @@ export class BucketService extends Tool {
         this.draw(this.drawingService.baseCtx);
     }
 
-    onMouseUp(event: MouseEvent): void {
+    onMouseUp(): void {
         if (this.mouseDown) {
             this.mouseDown = false;
             this.executedCommand.emit(this.clone());
         }
     }
 
-    floodFillLeft(): void {
+    private floodFillLeft(): void {
         const queue = [this.mouseDownCoord];
         while (queue.length > 0) {
-            const pixel = queue.pop();
-            if (pixel) {
-                let offset = (pixel.y * this.width + pixel.x) * (CONSTANTS.IMAGE_DATA_OPACITY_INDEX + 1);
-                this.colorPixel(offset);
-
-                offset = (pixel.y * this.width + pixel.x + 1) * (CONSTANTS.IMAGE_DATA_OPACITY_INDEX + 1);
-                if (this.checkColor(offset)) queue.push({ x: pixel.x + 1, y: pixel.y });
-
-                offset = (pixel.y * this.width + pixel.x - 1) * (CONSTANTS.IMAGE_DATA_OPACITY_INDEX + 1);
-                if (this.checkColor(offset)) queue.push({ x: pixel.x - 1, y: pixel.y });
-
-                offset = ((pixel.y + 1) * this.width + pixel.x) * (CONSTANTS.IMAGE_DATA_OPACITY_INDEX + 1);
-                if (this.checkColor(offset)) queue.push({ x: pixel.x, y: pixel.y + 1 });
-
-                offset = ((pixel.y - 1) * this.width + pixel.x) * (CONSTANTS.IMAGE_DATA_OPACITY_INDEX + 1);
-                if (this.checkColor(offset)) queue.push({ x: pixel.x, y: pixel.y - 1 });
+            const pixel = queue[queue.length - 1];
+            queue.pop();
+            let offset = (pixel.y * this.width + pixel.x) * (CONSTANTS.IMAGE_DATA_OPACITY_INDEX + 1);
+            this.colorPixel(offset);
+            for (let i = -1; i < 2; i++) {
+                for (let j = -1; j < 2; j++) {
+                    offset = ((pixel.y + j) * this.width + pixel.x + i) * (CONSTANTS.IMAGE_DATA_OPACITY_INDEX + 1);
+                    if (this.checkColor(offset)) queue.push({ x: pixel.x + i, y: pixel.y + j });
+                }
             }
         }
     }
 
-    floodFillRight(): void {
+    private floodFillRight(): void {
         const targetColor: Color = this.colorPickerService.primaryColor.getValue().clone();
         for (let i = 0; i < this.image.data.length; i += CONSTANTS.IMAGE_DATA_OPACITY_INDEX + 1) {
             if (this.checkColor(i)) {
@@ -101,6 +95,15 @@ export class BucketService extends Tool {
     }
 
     private checkColor(index: number): boolean {
+        if (
+            this.startPixelColor[0] === CONSTANTS.MAX_COLOR_VALUE &&
+            this.startPixelColor[1] === CONSTANTS.MAX_COLOR_VALUE &&
+            this.startPixelColor[2] === CONSTANTS.MAX_COLOR_VALUE &&
+            this.startPixelColor[CONSTANTS.IMAGE_DATA_OPACITY_INDEX] === CONSTANTS.MAX_COLOR_VALUE &&
+            this.image.data[index + CONSTANTS.IMAGE_DATA_OPACITY_INDEX] === 0
+        ) {
+            return true;
+        }
         return (
             this.image.data[index] >= this.startPixelColor[0] - this.tolerance &&
             this.image.data[index] < this.startPixelColor[0] + this.tolerance &&
@@ -135,5 +138,14 @@ export class BucketService extends Tool {
         const bucketClone: BucketService = new BucketService(this.drawingService, this.colorPickerService);
         this.copyBucket(bucketClone);
         return bucketClone;
+    }
+
+    private changeTransparentToWhite(transparentPixel: Uint8ClampedArray): void {
+        if (transparentPixel[CONSTANTS.IMAGE_DATA_OPACITY_INDEX] === 0) {
+            transparentPixel[0] = CONSTANTS.MAX_COLOR_VALUE;
+            transparentPixel[1] = CONSTANTS.MAX_COLOR_VALUE;
+            transparentPixel[2] = CONSTANTS.MAX_COLOR_VALUE;
+            transparentPixel[CONSTANTS.IMAGE_DATA_OPACITY_INDEX] = CONSTANTS.MAX_COLOR_VALUE;
+        }
     }
 }
