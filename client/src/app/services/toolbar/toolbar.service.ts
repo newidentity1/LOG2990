@@ -18,6 +18,7 @@ import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { PolygonService } from '@app/services/tools/polygon/polygon.service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle.service';
 import { SelectionService } from '@app/services/tools/selection/selection.service';
+import { SprayService } from '@app/services/tools/spray/spray.service';
 import { TextService } from '@app/services/tools/text/text.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Subscription } from 'rxjs';
@@ -53,6 +54,7 @@ export class ToolbarService {
         protected automaticSavingService: AutomaticSavingService,
         protected textService: TextService,
         protected calligraphyService: CalligraphyService,
+        protected sprayService: SprayService,
     ) {
         this.tools = [
             pencilService,
@@ -67,6 +69,7 @@ export class ToolbarService {
             bucketService,
             textService,
             calligraphyService,
+            sprayService,
         ];
         this.currentTool = this.tools[0];
         this.keyShortcuts
@@ -82,7 +85,8 @@ export class ToolbarService {
             .set(KeyShortcut.EllipseSelect, selectionService)
             .set(KeyShortcut.Bucket, bucketService)
             .set(KeyShortcut.Text, textService)
-            .set(KeyShortcut.Calligraphy, calligraphyService);
+            .set(KeyShortcut.Calligraphy, calligraphyService)
+            .set(KeyShortcut.Spray, sprayService);
     }
 
     unsubscribeListeners(): void {
@@ -131,6 +135,7 @@ export class ToolbarService {
     changeTool(tool: Tool): void {
         if (tool !== this.currentTool) {
             if (this.currentTool instanceof TextService && this.currentTool.isTextInProgress()) this.currentTool.confirmText();
+            if (this.currentTool instanceof SprayService) this.currentTool.clearSpray();
             this.resetSelection();
             this.currentTool = tool;
             this.applyCurrentTool();
