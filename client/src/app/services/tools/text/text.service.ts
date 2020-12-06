@@ -96,6 +96,7 @@ export class TextService extends Tool {
         this.createStyle(properties);
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.writeTexts(context);
+        console.log('context', context.canvas);
         if (context === this.drawingService.previewCtx) {
             this.setCursor();
             this.drawTextArea();
@@ -114,10 +115,11 @@ export class TextService extends Tool {
 
     confirmText(): void {
         this.writeText(this.drawingService.baseCtx);
+        clearInterval(this.cursorIntervalRef);
+        this.executedCommand.emit(this.clone());
         this.textConfirmed = true;
         this.mouseDown = false;
         this.shortcutService.disableShortcuts = false;
-        clearInterval(this.cursorIntervalRef);
         this.currentTexts = [''];
         this.cursorRowIndex = 0;
         this.cursorColumnIndex = 0;
@@ -288,5 +290,42 @@ export class TextService extends Tool {
     setColors(primaryColor: Color, secondaryColor: Color): void {
         super.setColors(primaryColor, secondaryColor);
         this.writeText(this.drawingService.previewCtx);
+    }
+
+    applyCurrentSettings(): void {
+        super.applyCurrentSettings();
+        const properties = this.toolProperties as TextProperties;
+        this.setFontText(properties.font);
+        this.setItalic(properties.isItalic);
+        this.setBold(properties.isBold);
+        this.setSizeText(properties.size);
+        this.setTextAlignment(properties.textAlignment);
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+    }
+
+    execute(): void {
+        this.writeText(this.drawingService.baseCtx);
+    }
+
+    copyTool(tool: Tool): void {
+        super.copyTool(tool);
+        const cloneProperties = tool.toolProperties as TextProperties;
+        const properties = this.toolProperties as TextProperties;
+        cloneProperties.font = properties.font;
+        cloneProperties.isBold = properties.isBold;
+        cloneProperties.isItalic = properties.isItalic;
+        cloneProperties.size = properties.size;
+        cloneProperties.textAlignment = properties.textAlignment;
+        const cloneTool = tool as TextService;
+        cloneTool.currentTexts = this.currentTexts;
+        cloneTool.textAreaDimensions = this.textAreaDimensions;
+        cloneTool.textAreaStartingPoint = this.textAreaStartingPoint;
+        cloneTool.mouseDown = this.mouseDown;
+    }
+
+    clone(): Tool {
+        const textServiceClone = new TextService(this.drawingService, this.shortcutService, this.textActionKeysService);
+        this.copyTool(textServiceClone);
+        return textServiceClone;
     }
 }
