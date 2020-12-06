@@ -103,7 +103,7 @@ export class SelectionService extends ShapeTool {
                 this.currentMousePosition = this.getPositionFromMouse(event);
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.isAreaSelected = true;
-                this.magicWandService.copyMagicSelectionLeft(this.currentMousePosition);
+                this.magicWandService.copyMagicSelection(this.currentMousePosition, true);
                 this.moveSelectionService.finalPosition = {
                     x: this.magicWandService.startingPosition.x,
                     y: this.magicWandService.startingPosition.y,
@@ -120,7 +120,7 @@ export class SelectionService extends ShapeTool {
                 this.currentMousePosition = this.getPositionFromMouse(event);
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.isAreaSelected = true;
-                this.magicWandService.copyMagicSelectionRight(this.currentMousePosition);
+                this.magicWandService.copyMagicSelection(this.currentMousePosition, false);
                 this.moveSelectionService.finalPosition = {
                     x: this.magicWandService.startingPosition.x,
                     y: this.magicWandService.startingPosition.y,
