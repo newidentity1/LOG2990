@@ -2,7 +2,6 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { CommunicationService } from '@app/services/communication/communication.service';
-// import { Email } from '@common/communication/email';
 
 @Injectable({
     providedIn: 'root',
