@@ -86,6 +86,7 @@ export class ToolbarService {
             .set(KeyShortcut.Eyedropper, eyedropperService)
             .set(KeyShortcut.RectangleSelect, selectionService)
             .set(KeyShortcut.EllipseSelect, selectionService)
+            .set(KeyShortcut.MagicBrushSelect, selectionService)
             .set(KeyShortcut.Bucket, bucketService)
             .set(KeyShortcut.Text, textService)
             .set(KeyShortcut.Grid, gridService)
@@ -199,6 +200,10 @@ export class ToolbarService {
     onClick(event: MouseEvent): void {
         this.mouseDown = this.currentTool === this.lineService;
         this.currentTool.onClick(event);
+    }
+
+    onContextMenu(event: MouseEvent): void {
+        this.currentTool.onContextMenu(event);
     }
 
     undo(): void {

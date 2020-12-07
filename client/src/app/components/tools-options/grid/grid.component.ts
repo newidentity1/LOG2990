@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
 import { MatSliderChange } from '@angular/material/slider';
 import { GridService } from '@app/services/tools/grid/grid.service';
 
@@ -9,12 +8,11 @@ import { GridService } from '@app/services/tools/grid/grid.service';
     styleUrls: ['../../sidebar/sidebar.component.scss'],
 })
 export class GridComponent implements OnInit {
-    titleForm: FormControl;
     opacity: number = 255;
     constructor(public gridService: GridService) {}
 
     ngOnInit(): void {
-        this.titleForm = new FormControl('', [Validators.pattern('^[a-zA-ZÀ-ÿ](\\d|[a-zA-ZÀ-ÿ ]){0,20}$'), Validators.required]);
+        //
     }
 
     showGrid(): void {
