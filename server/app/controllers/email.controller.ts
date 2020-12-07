@@ -21,10 +21,12 @@ export class EmailController {
             // prevent error
 
             // Request
+            console.log(req.body.to, req.files);
             this.emailService.sendEmail(req.body.to, fs.createReadStream(req.files[0].path));
 
             // check body
-            console.log(req.body, req.file.path);
+            console.log('HERE');
+            // console.log(req.body, req.file.path);
 
             // Response
             //     this.emailService
