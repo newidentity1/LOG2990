@@ -9,7 +9,8 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 })
 export class GridService extends Tool {
     private size: number;
-    isGrid: boolean = false;
+    private firstUse: boolean = true;
+    isGrid: boolean = true;
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.name = 'Grid';
@@ -52,16 +53,6 @@ export class GridService extends Tool {
         this.generateGrid();
     }
 
-    private round(n: number): number {
-        const dy = n % CONSTANTS.GRID_MULTIPLE;
-        if (dy >= CONSTANTS.ROUND) {
-            n = n - dy + CONSTANTS.GRID_MULTIPLE;
-        } else {
-            n = n - dy;
-        }
-        return n;
-    }
-
     setCanvasOpacity(n: number | null): void {
         if (n !== null) {
             console.log('slideruse');
@@ -72,7 +63,13 @@ export class GridService extends Tool {
     }
 
     resetContext(): void {
+        if (!this.firstUse) {
+            this.isGrid = !this.isGrid;
+        } else {
+            this.firstUse = false;
+        }
         this.generateGrid();
+        this.draw();
     }
 
     getGridSize(): number {
@@ -81,9 +78,9 @@ export class GridService extends Tool {
 
     onKeyUp(event: KeyboardEvent): void {
         if (event.code === 'NumpadAdd') {
-            this.size = this.round(this.size + CONSTANTS.GRID_MULTIPLE);
-        } else if (event.code === 'NumpadSubtract' && this.size > CONSTANTS.GRID_MULTIPLE) {
-            this.size = this.round(this.size - CONSTANTS.GRID_MULTIPLE);
+            this.size = this.size + CONSTANTS.GRID_MULTIPLE_OPACITY_AND_SIZE;
+        } else if (event.code === 'NumpadSubtract' && this.size > CONSTANTS.GRID_MULTIPLE_OPACITY_AND_SIZE) {
+            this.size = this.size - CONSTANTS.GRID_MULTIPLE_OPACITY_AND_SIZE;
         } else if (event.code === 'KeyG') {
             this.draw();
         }
