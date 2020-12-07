@@ -98,8 +98,8 @@ export class MoveSelectionService {
 
         for (let i = 0; i < this.imgData.data.length; i += CONSTANTS.IMAGE_DATA_OPACITY_INDEX + 1) {
             if (currentType === SelectionType.EllipseSelection) {
-                const x = (i / 4) % this.imgData.width;
-                const y = Math.floor(i / 4 / this.imgData.width);
+                const x = (i / (CONSTANTS.IMAGE_DATA_OPACITY_INDEX + 1)) % this.imgData.width;
+                const y = Math.floor(i / (CONSTANTS.IMAGE_DATA_OPACITY_INDEX + 1) / this.imgData.width);
 
                 if (!this.isPositionInEllipse({ x, y }, width, height)) {
                     this.imgData.data[i] = 0;
