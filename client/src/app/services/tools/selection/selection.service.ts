@@ -25,13 +25,14 @@ export class SelectionService extends ShapeTool {
     activeMagnet: boolean = false;
     currentType: SelectionType = SelectionType.RectangleSelection;
     isAreaSelected: boolean = false;
-    private deletePressed = false;
+    private deletePressed: boolean = false;
     private positiveStartingPos: Vec2 = { x: 0, y: 0 };
     private positiveWidth: number;
     private positiveHeight: number;
     private selectionImageData: ImageData;
     private clipboardImage: ClipboardImage;
     private moveSelectionPos: Vec2 = { x: 0, y: 0 };
+    private atlDown: boolean = false;
 
     constructor(
         drawingService: DrawingService,
@@ -110,6 +111,8 @@ export class SelectionService extends ShapeTool {
                 this.positiveStartingPos.y -= moveY;
                 this.moveSelectionService.moveSelection(moveX, moveY);
             }
+            this.rotateSelectionService.originalOffsetLeft = this.moveSelectionService.finalPosition.x + this.rotateSelectionService.leftOffset;
+            this.rotateSelectionService.originalOffsetTop = this.moveSelectionService.finalPosition.y + this.rotateSelectionService.topOffset;
             this.drawSelectionBox({ x: 0, y: 0 }, this.positiveWidth, this.positiveHeight);
         } else {
             if (this.currentType !== SelectionType.MagicWandSelection) this.drawPreview();
@@ -135,6 +138,7 @@ export class SelectionService extends ShapeTool {
                 this.rotateSelectionService.originalHeight = this.positiveHeight;
                 this.rotateSelectionService.originalOffsetLeft = this.drawingService.previewCtx.canvas.offsetLeft;
                 this.rotateSelectionService.originalOffsetTop = this.drawingService.previewCtx.canvas.offsetTop;
+                this.rotateSelectionService.angle = 0;
             }
         }
         this.mouseDown = false;
@@ -175,8 +179,12 @@ export class SelectionService extends ShapeTool {
         const image = this.shiftDown
             ? this.resizeSelectionService.scaleImageKeepRatio(this.selectionImageData)
             : this.resizeSelectionService.scaleImage(this.selectionImageData);
-        this.rotateSelectionService.scroll(event, image);
-        this.drawSelectionBox({ x: 0, y: 0 }, this.drawingService.previewCtx.canvas.width, this.drawingService.previewCtx.canvas.height);
+        this.rotateSelectionService.scroll(event, image, this.atlDown);
+        this.moveSelectionService.finalPosition.x = this.drawingService.previewCtx.canvas.offsetLeft;
+        this.moveSelectionService.finalPosition.y = this.drawingService.previewCtx.canvas.offsetTop;
+        this.positiveWidth = this.drawingService.previewCtx.canvas.width;
+        this.positiveHeight = this.drawingService.previewCtx.canvas.height;
+        this.drawSelectionBox({ x: 0, y: 0 }, this.positiveWidth, this.positiveHeight);
     }
 
     onKeyDown(event: KeyboardEvent): void {
@@ -187,14 +195,22 @@ export class SelectionService extends ShapeTool {
         if (this.isAreaSelected) {
             if (this.moveSelectionService.checkArrowKeysPressed(event)) {
                 this.drawSelectionBox({ x: 0, y: 0 }, this.positiveWidth, this.positiveHeight);
-            } else if (event.key === 'Delete') {
-                this.deleteSelection();
-            } else if (event.key === 'Shift') {
-                if (!this.shiftDown) {
-                    const image = this.resizeSelectionService.scaleImageKeepRatio(this.selectionImageData);
-                    this.rotateSelectionService.rotateImage(image);
+            } else {
+                switch (event.key) {
+                    case 'Delete':
+                        this.deleteSelection();
+                        break;
+                    case 'Shift':
+                        if (!this.shiftDown) {
+                            const image = this.resizeSelectionService.scaleImageKeepRatio(this.selectionImageData);
+                            this.rotateSelectionService.rotateImage(image);
+                        }
+                        this.shiftDown = true;
+                        break;
+                    case 'Alt':
+                        this.atlDown = true;
+                        break;
                 }
-                this.shiftDown = true;
             }
         } else {
             super.onKeyDown(event);
@@ -208,6 +224,8 @@ export class SelectionService extends ShapeTool {
                 this.shiftDown = false;
                 const image = this.resizeSelectionService.scaleImage(this.selectionImageData);
                 this.rotateSelectionService.rotateImage(image);
+            } else if (event.key === 'Alt') {
+                this.atlDown = false;
             }
         } else {
             super.onKeyUp(event);
