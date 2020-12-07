@@ -28,6 +28,8 @@ export class BrushService extends PencilService {
     }
 
     draw(ctx: CanvasRenderingContext2D): void {
+        if (this.mouseDown) this.drawingService.clearCanvas(this.drawingService.previewCtx);
+
         ctx.beginPath();
 
         ctx.lineCap = 'round';

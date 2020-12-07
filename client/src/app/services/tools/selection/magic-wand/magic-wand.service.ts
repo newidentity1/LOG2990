@@ -18,16 +18,6 @@ export class MagicWandService {
 
     constructor(private drawingService: DrawingService) {}
 
-    private initializeSelectionProperties(selectionPixelPosition: Vec2): void {
-        this.startingPosition = { x: this.drawingService.canvas.width, y: this.drawingService.canvas.height };
-        this.shapeOutlineIndexes = [];
-        this.selectionSize = { x: 0, y: 0 };
-
-        this.startingColor = this.drawingService.baseCtx.getImageData(selectionPixelPosition.x, selectionPixelPosition.y, 1, 1).data;
-        this.changeTransparentToWhite(this.startingColor);
-        this.areaToClear = this.drawingService.baseCtx.getImageData(0, 0, this.drawingService.canvas.width, this.drawingService.canvas.height);
-    }
-
     copyMagicSelection(selectionPixelPosition: Vec2, isLeftClick: boolean): void {
         this.initializeSelectionProperties(selectionPixelPosition);
 
@@ -38,6 +28,16 @@ export class MagicWandService {
         this.selectionSize.y = this.selectionSize.y - this.startingPosition.y + 1;
         this.drawOutline();
         this.copySelectionToPreviewCtx();
+    }
+
+    private initializeSelectionProperties(selectionPixelPosition: Vec2): void {
+        this.startingPosition = { x: this.drawingService.canvas.width, y: this.drawingService.canvas.height };
+        this.shapeOutlineIndexes = [];
+        this.selectionSize = { x: 0, y: 0 };
+
+        this.startingColor = this.drawingService.baseCtx.getImageData(selectionPixelPosition.x, selectionPixelPosition.y, 1, 1).data;
+        this.changeTransparentToWhite(this.startingColor);
+        this.areaToClear = this.drawingService.baseCtx.getImageData(0, 0, this.drawingService.canvas.width, this.drawingService.canvas.height);
     }
 
     private copyMagicSelectionRight(): void {
