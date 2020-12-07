@@ -23,6 +23,8 @@ export abstract class Tool extends Command {
 
     setTypeDrawing(value: string): void {}
 
+    onMouseScroll(event: WheelEvent): void {}
+
     onMouseDown(event: MouseEvent): void {}
 
     onMouseUp(event: MouseEvent): void {}
@@ -40,6 +42,8 @@ export abstract class Tool extends Command {
     onDoubleClick(event: MouseEvent): void {}
 
     onClick(event: MouseEvent): void {}
+
+    onContextMenu(event: MouseEvent): void {}
 
     draw(ctx: CanvasRenderingContext2D): void {}
 

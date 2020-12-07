@@ -1,7 +1,6 @@
 export const BLACK = '000000';
 export const WHITE = 'FFFFFF';
 export const DEFAULT_COLOR_OPACITY = 1;
-export const DEFAULT_ROTATION_ANGLE = 15;
 export const MAX_RECENT_COLORS_SIZE = 10;
 export const HEX_BASE = 16;
 export const RED_POSITION_IN_HEX_STRING = 2;
@@ -38,7 +37,9 @@ export const MAX_COLOR_VALUE = 255;
 export const ANGLE_90 = 90;
 export const ANGLE_45 = 45;
 export const ANGLE_180 = 180;
-export const STRAIGHT_ANGLE = 180;
+export const MINIMUM_ROTATION_ANGLE = 0;
+export const MAXIMUM_ROTATION_ANGLE = 360;
+export const DEFAULT_ROTATION_ANGLE = 15;
 
 export const MINIMAL_DISTANCE_PIXEL = 20;
 
@@ -58,6 +59,7 @@ export const SELECTION_BOX_THICKNESS = 2;
 export const SELECTION_MOVE_STEP = 3;
 export const SELECTION_MOVE_START_DELAY = 500;
 export const SELECTION_MOVE_DELAY = 100;
+export const MAGIC_WAND_OUTLINE_COLOR_ALTERNATION_VALUE = 3;
 
 export const MAX_PERCENTAGE = 100;
 
@@ -66,3 +68,18 @@ export const HUE_CONVERSION = 360;
 
 export const MINIMUM_TEXT_SIZE = 10;
 export const MAXIMUM_TEXT_SIZE = 100;
+
+export const GRID_MULTIPLE_OPACITY_AND_SIZE = 5;
+export const GRID_BEGIN_SIZE = 25;
+
+export const DEFAULT_CALLIGRAPHY_LINE_LENGTH = 10;
+
+export const MINIMUM_DIAMETER_SPRAY = 10;
+export const MAXIMUM_DIAMETER_SPRAY = 100;
+export const MINIMUM_DIAMETER_DROPS = 1;
+export const MAXIMUM_DIAMETER_DROPS = 5;
+export const MINIMUM_DROPS_PER_SECOND = 500;
+export const MAXIMUM_DROPS_PER_SECOND = 3000;
+export const SPRAY_INTERVAL = 20;
+const ONE_SECOND_IN_MS = 1000;
+export const SPRAY_PER_SECOND = ONE_SECOND_IN_MS / SPRAY_INTERVAL;
