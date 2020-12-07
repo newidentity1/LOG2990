@@ -1,18 +1,15 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Injectable, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Injectable } from '@angular/core';
+import { ResponseResult } from '@app/classes/response-result';
 import { CommunicationService } from '@app/services/communication/communication.service';
+import { Subject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
 })
-export class EmailService implements OnInit {
-    emailUploadForm: FormGroup;
-    constructor(private formBuilder: FormBuilder, private communicationService: CommunicationService) {}
-
-    ngOnInit(): void {
-        this.emailUploadForm = this.formBuilder.group({ profile: [''] });
-    }
+export class EmailService {
+    sendEmailSubject: Subject<ResponseResult> = new Subject<ResponseResult>();
+    constructor(private communicationService: CommunicationService) {}
 
     setupPost(emailAddress: string, image: Blob, filename: string): void {
         // Creates Form
@@ -25,14 +22,18 @@ export class EmailService implements OnInit {
         this.communicationService.postEmail(formData).subscribe({
             next: (response: string) => {
                 console.log(response);
-                // this.emitSaveDrawingSubjectEvent(new ResponseResult(true, 'Votre dessin a été enregistré avec succès'));
+                // this.emitSendEmailSubjectEvent(new ResponseResult(true, 'Votre courriel a été envoyé avec succès'));
             },
             error: (error: HttpErrorResponse) => {
                 console.log(error);
-                // const message = error.status === 0 ? "Le serveur est indisponible, le courriel n'a pas ete envoye!" : error.error;
+                // const message = error.status === 0 ? "Une erreur s'est produite, le courriel n'a pas été envoyé!" : error.error;
 
-                // this.emitSaveDrawingSubjectEvent(new ResponseResult(false, message));
+                // this.emitSendEmailSubjectEvent(new ResponseResult(false, message));
             },
         });
     }
+
+    // emitSendEmailSubjectEvent(response: ResponseResult): void {
+    //     this.sendEmailSubject.next(response);
+    // }
 }
