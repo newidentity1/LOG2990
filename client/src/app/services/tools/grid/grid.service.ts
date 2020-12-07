@@ -28,24 +28,22 @@ export class GridService extends Tool {
     private generateGrid(): void {
         this.drawingService.clearCanvas(this.drawingService.gridCtx);
         if (this.isGrid) {
-            const m: number = (this.drawingService.canvas.height - (this.drawingService.canvas.height % this.size)) / this.size;
-            const n: number = (this.drawingService.canvas.width - (this.drawingService.canvas.width % this.size)) / this.size;
+            const row: number = (this.drawingService.canvas.height - (this.drawingService.canvas.height % this.size)) / this.size;
+            const column: number = (this.drawingService.canvas.width - (this.drawingService.canvas.width % this.size)) / this.size;
 
-            for (let i = 0; i < m + 1; i++) {
+            for (let i = 0; i <= row; i++) {
                 this.drawingService.gridCtx.beginPath();
                 this.drawingService.gridCtx.lineTo(0, i * this.size);
                 this.drawingService.gridCtx.lineTo(this.drawingService.canvas.width, i * this.size);
                 this.drawingService.gridCtx.stroke();
             }
 
-            for (let i = 0; i < n + 1; i++) {
+            for (let i = 0; i <= column; i++) {
                 this.drawingService.gridCtx.beginPath();
                 this.drawingService.gridCtx.lineTo(i * this.size, 0);
                 this.drawingService.gridCtx.lineTo(i * this.size, this.drawingService.canvas.height);
                 this.drawingService.gridCtx.stroke();
             }
-        } else {
-            this.drawingService.clearCanvas(this.drawingService.gridCtx);
         }
     }
     setGridSize(size: number | null): void {
@@ -55,7 +53,6 @@ export class GridService extends Tool {
 
     setCanvasOpacity(n: number | null): void {
         if (n !== null) {
-            console.log('slideruse');
             const ctx = this.drawingService.gridCtx;
             ctx.globalAlpha = (n * CONSTANTS.MAX_COLOR_VALUE) / (CONSTANTS.MAXIMUM_THICKNESS * CONSTANTS.MAX_COLOR_VALUE);
             this.generateGrid();

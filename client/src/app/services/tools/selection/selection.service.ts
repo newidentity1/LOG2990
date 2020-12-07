@@ -85,7 +85,6 @@ export class SelectionService extends ShapeTool {
                     const moveY = position.y;
                     this.moveSelectionPos.x = moveX;
                     this.moveSelectionPos.y = moveY;
-                    console.log(this.moveSelectionPos.x, this.moveSelectionPos.y);
                     this.moveSelectionService.moveSelectionMagnetic(moveX, moveY);
                 } else {
                     const moveX = this.moveSelectionPos.x - event.clientX;
