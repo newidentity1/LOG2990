@@ -12,6 +12,7 @@ export enum KeyShortcut {
     MagicBrushSelect = 'v',
     Bucket = 'b',
     Text = 't',
+    Grid = 'g',
     Calligraphy = 'p',
     Spray = 'a',
 }
