@@ -50,21 +50,21 @@ export class MagnetismService {
                 position.y = y;
                 break;
 
-            case MagnetismOption.MidleLeft:
+            case MagnetismOption.MiddleLeft:
                 x = this.calculPosition(position.x);
                 y = this.calculPosition(position.y) + this.gridService.getGridSize() - positiveHeight / 2;
                 position.x = x;
                 position.y = y;
                 break;
 
-            case MagnetismOption.MidleCenter:
+            case MagnetismOption.MiddleCenter:
                 x = this.calculPosition(position.x) - positiveWidth / 2;
                 y = this.calculPosition(position.y) - positiveHeight / 2;
                 position.x = x;
                 position.y = y;
                 break;
 
-            case MagnetismOption.MidleRight:
+            case MagnetismOption.MiddleRight:
                 x = this.calculPosition(position.x) + this.gridService.getGridSize() - positiveWidth;
                 y = this.calculPosition(position.y) + this.gridService.getGridSize() - positiveHeight / 2;
                 position.x = x;
