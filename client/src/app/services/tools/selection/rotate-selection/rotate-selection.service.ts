@@ -19,14 +19,16 @@ export class RotateSelectionService {
     originalHeight: number;
     originalOffsetLeft: number;
     originalOffsetTop: number;
+    leftOffset: number = 0;
+    topOffset: number = 0;
 
     constructor(private drawingService: DrawingService, private rendererFactory: RendererFactory2) {
         this.renderer = this.rendererFactory.createRenderer(null, null);
         this.selectionImageCanvas = this.renderer.createElement('canvas');
     }
 
-    scroll(event: WheelEvent, selectionImageData: ImageData): void {
-        this.angle = (this.angle + (Math.sign(event.deltaY) * (DEFAULT_ROTATION_ANGLE * Math.PI)) / ANGLE_180) % (Math.PI * 2);
+    scroll(event: WheelEvent, selectionImageData: ImageData, altDown: boolean): void {
+        this.angle = (this.angle + (Math.sign(event.deltaY) * (altDown ? 1 : DEFAULT_ROTATION_ANGLE * Math.PI)) / ANGLE_180) % (Math.PI * 2);
         if (this.angle < 0) this.angle += Math.PI * 2;
         this.rotateImage(selectionImageData);
     }
@@ -41,28 +43,27 @@ export class RotateSelectionService {
 
         const width = this.originalWidth;
         const height = this.originalHeight;
-        const diag = Math.sqrt(width * width + height * height);
-        const angleInitiale = Math.atan(height / width);
+        const diagonale = Math.sqrt(width * width + height * height);
+        const diagonaleStartingAngle = Math.atan(height / width);
 
-        let w2 = (diag / 2) * Math.cos(angleInitiale - (this.angle % (Math.PI / 2))) * 2;
-        let h2 = (diag / 2) * Math.sin(angleInitiale + (this.angle % (Math.PI / 2))) * 2;
+        let newWidth = (diagonale / 2) * Math.cos(diagonaleStartingAngle - (this.angle % (Math.PI / 2))) * 2;
+        let newHeight = (diagonale / 2) * Math.sin(diagonaleStartingAngle + (this.angle % (Math.PI / 2))) * 2;
 
         if ((this.angle >= Math.PI / 2 && this.angle < Math.PI) || (this.angle >= (3 * Math.PI) / 2 && this.angle < Math.PI * 2)) {
-            [w2, h2] = [h2, w2];
+            [newWidth, newHeight] = [newHeight, newWidth];
         }
 
-        const depHor = (w2 - width) / 2;
-        const depVer = (h2 - height) / 2;
-        ctx.canvas.width = w2;
-        ctx.canvas.height = h2;
+        this.leftOffset = (newWidth - width) / 2;
+        this.topOffset = (newHeight - height) / 2;
+        ctx.canvas.width = newWidth;
+        ctx.canvas.height = newHeight;
 
-        ctx.canvas.style.left = this.originalOffsetLeft - depHor + 'px';
-        ctx.canvas.style.top = this.originalOffsetTop - depVer + 'px';
-
+        ctx.canvas.style.left = this.originalOffsetLeft - this.leftOffset + 'px';
+        ctx.canvas.style.top = this.originalOffsetTop - this.topOffset + 'px';
         ctx.translate(ctx.canvas.width / 2, ctx.canvas.height / 2);
         ctx.rotate(this.angle);
-        ctx.translate(-ctx.canvas.width / 2 + depHor, -ctx.canvas.height / 2 + depVer);
-        ctx.drawImage(this.selectionImageCanvas, 0, 0, this.originalWidth, this.originalHeight);
+        ctx.translate(-ctx.canvas.width / 2 + this.leftOffset, -ctx.canvas.height / 2 + this.topOffset);
+        ctx.drawImage(this.selectionImageCanvas, 0, 0, width, height);
         ctx.setTransform(1, 0, 0, 1, 0, 0);
 
         this.rotatedImage = {
@@ -74,6 +75,17 @@ export class RotateSelectionService {
                 this.drawingService.previewCtx.canvas.height,
             ),
         };
+
+        this.drawingService.clearCanvas(ctx);
+        ctx.putImageData(
+            this.rotatedImage.image,
+            0,
+            0,
+            this.originalOffsetLeft - this.leftOffset >= 0 ? 0 : -(this.originalOffsetLeft - this.leftOffset),
+            this.originalOffsetTop - this.topOffset >= 0 ? 0 : -(this.originalOffsetTop - this.topOffset),
+            this.drawingService.canvas.width - (this.originalOffsetLeft - this.leftOffset),
+            this.drawingService.canvas.height - (this.originalOffsetTop - this.topOffset),
+        );
         this.drawingService.clearCanvas(tempCtx);
     }
 }
