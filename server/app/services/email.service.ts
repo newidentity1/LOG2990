@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 import * as FormData from 'form-data';
+import { ReadStream } from 'fs';
 import { injectable } from 'inversify';
 import 'reflect-metadata';
 
@@ -8,7 +9,7 @@ export class EmailService {
     apiKey: string = 'f6cd41ef-636d-45ae-9e07-47dd97cff25e';
     apiUrl: string = 'http://log2990.step.polymtl.ca/email';
 
-    sendEmail(to: string, payload: any): void {
+    sendEmail(to: string, payload: ReadStream): void {
         // Will be used for Server to API
         // axios.post('http://httpbin.org/post', data);
         const bodyFormData = new FormData();

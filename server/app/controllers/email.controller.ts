@@ -1,6 +1,5 @@
 // import { HTTP_STATUS_BAD_REQUEST, HTTP_STATUS_CREATED, HTTP_STATUS_NOT_FOUND, HTTP_STATUS_NO_CONTENT } from '@app/constants';
 import { EmailService } from '@app/services/email.service';
-// import { Email } from '@common/communication/email';
 import { NextFunction, Request, Response, Router } from 'express';
 import * as fs from 'fs';
 import { inject, injectable } from 'inversify';
@@ -18,10 +17,7 @@ export class EmailController {
         this.router = Router();
 
         this.router.post('/', async (req: Request, res: Response, next: NextFunction) => {
-            // prevent error
-
-            // Request
-            console.log(req.body.to, req.files[0].path);
+            // Request to API
             this.emailService.sendEmail(req.body.to, fs.createReadStream(req.files[0].path));
 
             // check body

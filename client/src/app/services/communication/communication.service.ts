@@ -2,7 +2,6 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Drawing } from '@common/communication/drawing';
 import { Observable } from 'rxjs';
-// import { HttpHeaders } from '@angular/common/http';
 
 @Injectable({
     providedIn: 'root',
@@ -25,10 +24,7 @@ export class CommunicationService {
         return this.http.post(this.drawingUrl, drawing, { responseType: 'text' });
     }
 
-    // post with formdata
     postEmail(form: FormData): Observable<string> {
-        // POST request to Express Server
-        // console.log(this.emailUrl, form.get('to'), form.get('payload'));
         return this.http.post(this.emailUrl, form, { responseType: 'text' });
     }
 }

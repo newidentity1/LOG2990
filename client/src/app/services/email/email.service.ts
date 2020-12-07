@@ -14,7 +14,6 @@ export class EmailService implements OnInit {
         this.emailUploadForm = this.formBuilder.group({ profile: [''] });
     }
 
-    // Send a FormData to Express Server
     setupPost(emailAddress: string, image: Blob, filename: string): void {
         // Creates Form
         const formData = new FormData();
