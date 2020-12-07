@@ -1,0 +1,11 @@
+<div class="property">
+    <h3 class="title-property">Propriété de la plume</h3>
+    <div>
+        <label>Choisissez la longueur de la ligne:</label>
+        <mat-slider (change)="onLineLengthChange($event)" tickInterval="1" [min]="1" [max]="100" [value]="lineLength"> </mat-slider>
+    </div>
+    <div>
+        <label>Choisissez l'angle de la ligne:</label>
+        <mat-slider thumbLabel (change)="onLineAngleChange($event)" tickInterval="1" [min]="0" [max]="360" [value]="lineAngle"> </mat-slider>
+    </div>
+</div>

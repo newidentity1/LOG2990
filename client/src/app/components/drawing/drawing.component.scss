@@ -34,6 +34,7 @@ canvas {
 .resizable {
     position: absolute;
     margin: $margin-canvas;
+    z-index: 100;
 }
 
 .resizer {

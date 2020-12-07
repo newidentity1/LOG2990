@@ -1,7 +1,6 @@
 <div id="canvas-container">
     <svgfilter id="filters" (contextmenu)="(false)" #drawing [attr.width]="width" [attr.height]="height"> </svgfilter>
-
-    <canvas id="canvas" #baseCanvas [attr.width]="width" [attr.height]="height" (mousedown)="onBaseCanvasMouseDown($event)"></canvas>
+    <canvas id="canvas" #baseCanvas [attr.width]="width" [attr.height]="height"></canvas>
     <canvas
         id="previewLayer"
         [ngClass]="{ showOutline: isResizing() || isAreaSelected() }"
@@ -15,8 +14,9 @@
         (mouseleave)="onMouseLeave($event)"
         (dblclick)="onDoubleClick($event)"
         (click)="onClick($event)"
-        (contextmenu)="onContextMenu()"
+        (contextmenu)="onContextMenu($event)"
     ></canvas>
+    <canvas id="gridLayer" #gridCanvas [attr.width]="width" [attr.height]="height" (mousedown)="onBaseCanvasMouseDown($event)"></canvas>
 </div>
 
 <div class="resizable">

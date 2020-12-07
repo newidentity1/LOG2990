@@ -8,6 +8,8 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ResizeService } from '@app/services/resize/resize.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
+import { SelectionService } from '@app/services/tools/selection/selection.service';
+import { SprayService } from '@app/services/tools/spray/spray.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Observable, Subscription } from 'rxjs';
 
@@ -19,6 +21,7 @@ import { Observable, Subscription } from 'rxjs';
 export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('baseCanvas', { static: false }) baseCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
+    @ViewChild('gridCanvas', { static: false }) gridCanvas: ElementRef<HTMLCanvasElement>;
 
     @Input() drawingContainerWidth: number;
     @Input() drawingContainerHeight: number;
@@ -27,6 +30,7 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
     @Output() requestDrawingContainerDimensions: EventEmitter<void> = new EventEmitter();
 
     previewCtx: CanvasRenderingContext2D;
+    gridCtx: CanvasRenderingContext2D;
     private subscribeCreateNewDrawing: Subscription;
     private subscribeResetCanvasSize: Subscription;
     private subscribeDimensionsUpdated: Subscription;
@@ -68,8 +72,10 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngAfterViewInit(): void {
         this.previewCtx = this.previewCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.gridCtx = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.drawingService.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.drawingService.previewCtx = this.previewCtx;
+        this.drawingService.gridCtx = this.gridCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
 
         this.toolbarService.initializeListeners();
@@ -86,7 +92,11 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
     @HostListener('window:mousemove', ['$event'])
     onMouseMoveWindow(event: MouseEvent): void {
         if (!this.isResizing()) {
-            if (this.toolbarService.currentTool instanceof PencilService) {
+            if (
+                (this.toolbarService.currentTool instanceof SelectionService && this.toolbarService.isAreaSelected()) ||
+                this.toolbarService.currentTool instanceof PencilService ||
+                this.toolbarService.currentTool instanceof SprayService
+            ) {
                 this.toolbarService.onMouseMove(event);
             }
         } else {
@@ -99,8 +109,12 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     onMouseMove(event: MouseEvent): void {
-        if (!(this.toolbarService.currentTool instanceof PencilService)) {
+        if (this.toolbarService.currentTool instanceof SelectionService && !this.toolbarService.currentTool.activeMagnet) {
             this.toolbarService.onMouseMove(event);
+        } else if (!(this.toolbarService.currentTool instanceof PencilService)) {
+            if (!(this.toolbarService.currentTool instanceof PencilService || this.toolbarService.currentTool instanceof SprayService)) {
+                this.toolbarService.onMouseMove(event);
+            }
         }
     }
 
@@ -132,8 +146,8 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     @HostListener('mousewheel', ['$event'])
-    scroll(event: WheelEvent): void {
-        this.toolbarService.scroll(event);
+    onMouseWheel(event: WheelEvent): void {
+        this.toolbarService.onMouseScroll(event);
     }
 
     onMouseEnter(event: MouseEvent): void {
@@ -152,7 +166,8 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
         this.toolbarService.onClick(event);
     }
 
-    onContextMenu(): boolean {
+    onContextMenu(event: MouseEvent): boolean {
+        this.toolbarService.onContextMenu(event);
         return false;
     }
 
