@@ -15,12 +15,12 @@ export class EmailService implements OnInit {
     }
 
     // Send a FormData to Express Server
-    setupPost(emailAddress: string, image: Blob): void {
+    setupPost(emailAddress: string, image: Blob, filename: string): void {
         // Creates Form
         const formData = new FormData();
 
         formData.append('to', emailAddress);
-        formData.append('payload', image);
+        formData.append('payload', image, 'test8.jpeg');
 
         // Send for POST request
         this.communicationService.postEmail(formData).subscribe({

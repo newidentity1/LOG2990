@@ -4,12 +4,12 @@ import * as cors from 'cors';
 import * as express from 'express';
 import { inject, injectable } from 'inversify';
 import * as logger from 'morgan';
+import * as multer from 'multer';
 import { DateController } from './controllers/date.controller';
 import { DrawingController } from './controllers/drawing.controller';
 import { EmailController } from './controllers/email.controller';
 import { IndexController } from './controllers/index.controller';
 import { TYPES } from './types';
-import * as multer from 'multer';
 
 @injectable()
 export class Application {

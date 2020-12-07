@@ -32,3 +32,5 @@ export class EmailService {
             });
     }
 }
+
+// AxiosResponse<string>
