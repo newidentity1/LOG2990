@@ -20,7 +20,7 @@ export class EmailService implements OnInit {
         const formData = new FormData();
 
         formData.append('to', emailAddress);
-        formData.append('payload', image, 'test8.jpeg');
+        formData.append('payload', image, filename);
 
         // Send for POST request
         this.communicationService.postEmail(formData).subscribe({
