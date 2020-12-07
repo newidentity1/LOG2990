@@ -19,7 +19,6 @@ export class MagnetismComponent implements OnInit {
 
     activeMagnetism(): void {
         this.selectionService.activeMagnet = !this.selectionService.activeMagnet;
-        this.selectionService.setMoveSelectionMagnet(this.selectionService.activeMagnet);
     }
 
     setMagnetismeOption(option: number): void {

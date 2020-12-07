@@ -28,8 +28,6 @@ export class MagnetismService {
     }
 
     magneticOption(position: Vec2, positiveWidth: number, positiveHeight: number): Vec2 {
-        let x = 0;
-        let y = 0;
         switch (this.magnetismOption) {
             case MagnetismOption.TopLeft:
                 position.x = this.calculPosition(position.x);
@@ -37,59 +35,43 @@ export class MagnetismService {
                 break;
 
             case MagnetismOption.TopCenter:
-                x = this.calculPosition(position.x) - positiveWidth / 2;
-                y = this.calculPosition(position.y);
-                position.x = x;
-                position.y = y;
+                position.x = this.calculPosition(position.x) - positiveWidth / 2;
+                position.y = this.calculPosition(position.y);
                 break;
 
             case MagnetismOption.TopRight:
-                x = this.calculPosition(position.x) - positiveWidth;
-                y = this.calculPosition(position.y);
-                position.x = x;
-                position.y = y;
+                position.x = this.calculPosition(position.x) - positiveWidth + this.gridService.getGridSize();
+                position.y = this.calculPosition(position.y);
                 break;
 
             case MagnetismOption.MiddleLeft:
-                x = this.calculPosition(position.x);
-                y = this.calculPosition(position.y) - positiveHeight / 2;
-                position.x = x;
-                position.y = y;
+                position.x = this.calculPosition(position.x);
+                position.y = this.calculPosition(position.y) - positiveHeight / 2;
                 break;
 
             case MagnetismOption.MiddleCenter:
-                x = this.calculPosition(position.x) - positiveWidth / 2;
-                y = this.calculPosition(position.y) - positiveHeight / 2;
-                position.x = x;
-                position.y = y;
+                position.x = this.calculPosition(position.x) - positiveWidth / 2;
+                position.y = this.calculPosition(position.y) - positiveHeight / 2;
                 break;
 
             case MagnetismOption.MiddleRight:
-                x = this.calculPosition(position.x) - positiveWidth;
-                y = this.calculPosition(position.y) - positiveHeight / 2;
-                position.x = x;
-                position.y = y;
+                position.x = this.calculPosition(position.x) - positiveWidth + this.gridService.getGridSize();
+                position.y = this.calculPosition(position.y) - positiveHeight / 2 + this.gridService.getGridSize();
                 break;
 
             case MagnetismOption.BottomLeft:
-                x = this.calculPosition(position.x);
-                y = this.calculPosition(position.y) - positiveHeight;
-                position.x = x;
-                position.y = y;
+                position.x = this.calculPosition(position.x);
+                position.y = this.calculPosition(position.y) - positiveHeight + this.gridService.getGridSize();
                 break;
 
             case MagnetismOption.BottomCenter:
-                x = this.calculPosition(position.x) - positiveWidth / 2;
-                y = this.calculPosition(position.y) + positiveHeight;
-                position.x = x;
-                position.y = y;
+                position.x = this.calculPosition(position.x) - positiveWidth / 2;
+                position.y = this.calculPosition(position.y) + this.gridService.getGridSize() - positiveHeight;
                 break;
 
             case MagnetismOption.BottomRight:
-                x = this.calculPosition(position.x + positiveWidth);
-                y = this.calculPosition(position.y + positiveHeight);
-                position.x = x - positiveWidth;
-                position.y = y - positiveHeight;
+                position.x = this.calculPosition(position.x) + this.gridService.getGridSize() - positiveWidth;
+                position.y = this.calculPosition(position.y) + this.gridService.getGridSize() - positiveHeight;
                 break;
         }
         return position;

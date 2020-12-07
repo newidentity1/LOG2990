@@ -36,11 +36,7 @@ export class MoveSelectionService {
 
             if (moveX !== 0 || moveY !== 0) {
                 arrowKeyPressed = true;
-                if (!this.isMagnet) {
-                    this.moveSelection(moveX, moveY);
-                } else {
-                    //
-                }
+                this.moveSelection(moveX, moveY);
             }
 
             if (!this.canMoveSelectionContiniously) {
@@ -104,8 +100,8 @@ export class MoveSelectionService {
             this.imgData,
             0,
             0,
-            this.finalPosition.x >= 0 ? 0 : this.finalPosition.x,
-            this.finalPosition.y >= 0 ? 0 : this.finalPosition.y,
+            0,
+            0,
             this.drawingService.canvas.width - this.finalPosition.x,
             this.drawingService.canvas.height - this.finalPosition.y,
         );

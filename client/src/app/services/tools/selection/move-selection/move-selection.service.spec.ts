@@ -195,6 +195,16 @@ describe('MoveSelectionService', () => {
         expect(drawingServiceSpy.previewCtx.canvas.style.top).toEqual('20px');
     });
 
+    it('moveSelectionMagnetic should use a magnetic position', () => {
+        drawingServiceSpy.previewCtx.canvas.width = 0;
+        drawingServiceSpy.previewCtx.canvas.height = 0;
+        drawingServiceSpy.previewCtx.canvas.style.left = '0px';
+        drawingServiceSpy.previewCtx.canvas.style.top = '0px';
+        service.moveSelectionMagnetic(25, 25);
+        expect(service.finalPosition.x).toEqual(25);
+        expect(service.finalPosition.y).toEqual(25);
+    });
+
     it('copySelection should call isPositionInEllipse if selection is ellipse', () => {
         drawingServiceSpy.previewCtx.canvas.width = 0;
         drawingServiceSpy.previewCtx.canvas.height = 0;
