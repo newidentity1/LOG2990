@@ -65,7 +65,6 @@ export class GridService extends Tool {
         } else {
             this.firstUse = false;
         }
-        this.generateGrid();
         this.draw();
     }
 
@@ -74,9 +73,9 @@ export class GridService extends Tool {
     }
 
     onKeyUp(event: KeyboardEvent): void {
-        if (event.code === 'NumpadAdd') {
+        if (event.key === '=') {
             this.size = this.size + CONSTANTS.GRID_MULTIPLE_OPACITY_AND_SIZE;
-        } else if (event.code === 'NumpadSubtract' && this.size > CONSTANTS.GRID_MULTIPLE_OPACITY_AND_SIZE) {
+        } else if (event.key === '-' && this.size > CONSTANTS.GRID_MULTIPLE_OPACITY_AND_SIZE) {
             this.size = this.size - CONSTANTS.GRID_MULTIPLE_OPACITY_AND_SIZE;
         } else if (event.code === 'KeyG') {
             this.draw();

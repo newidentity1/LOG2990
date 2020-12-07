@@ -37,14 +37,14 @@ export class MagnetismService {
                 break;
 
             case MagnetismOption.TopCenter:
-                x = this.calculPosition(position.x) + this.gridService.getGridSize() - positiveWidth / 2;
+                x = this.calculPosition(position.x) - positiveWidth / 2;
                 y = this.calculPosition(position.y);
                 position.x = x;
                 position.y = y;
                 break;
 
             case MagnetismOption.TopRight:
-                x = this.calculPosition(position.x) + this.gridService.getGridSize() - positiveWidth;
+                x = this.calculPosition(position.x) - positiveWidth;
                 y = this.calculPosition(position.y);
                 position.x = x;
                 position.y = y;
@@ -52,7 +52,7 @@ export class MagnetismService {
 
             case MagnetismOption.MiddleLeft:
                 x = this.calculPosition(position.x);
-                y = this.calculPosition(position.y) + this.gridService.getGridSize() - positiveHeight / 2;
+                y = this.calculPosition(position.y) - positiveHeight / 2;
                 position.x = x;
                 position.y = y;
                 break;
@@ -65,22 +65,22 @@ export class MagnetismService {
                 break;
 
             case MagnetismOption.MiddleRight:
-                x = this.calculPosition(position.x) + this.gridService.getGridSize() - positiveWidth;
-                y = this.calculPosition(position.y) + this.gridService.getGridSize() - positiveHeight / 2;
+                x = this.calculPosition(position.x) - positiveWidth;
+                y = this.calculPosition(position.y) - positiveHeight / 2;
                 position.x = x;
                 position.y = y;
                 break;
 
             case MagnetismOption.BottomLeft:
                 x = this.calculPosition(position.x);
-                y = this.calculPosition(position.y) + this.gridService.getGridSize() - positiveHeight;
+                y = this.calculPosition(position.y) - positiveHeight;
                 position.x = x;
                 position.y = y;
                 break;
 
             case MagnetismOption.BottomCenter:
-                x = this.calculPosition(position.x) + this.gridService.getGridSize() - positiveWidth / 2;
-                y = this.calculPosition(position.y) + this.gridService.getGridSize() - positiveHeight / 2;
+                x = this.calculPosition(position.x) - positiveWidth / 2;
+                y = this.calculPosition(position.y) + positiveHeight;
                 position.x = x;
                 position.y = y;
                 break;
@@ -97,6 +97,27 @@ export class MagnetismService {
 
     private calculPosition(position: number): number {
         position = position - (position % this.gridService.getGridSize());
+        return position;
+    }
+
+    moveKeyBord(key: string, position: Vec2): Vec2 {
+        switch (key) {
+            case 'ArrowLeft':
+                position.x -= this.gridService.getGridSize();
+                break;
+
+            case 'ArrowRight':
+                position.x += this.gridService.getGridSize();
+                break;
+
+            case 'ArrowUp':
+                position.y -= this.gridService.getGridSize();
+                break;
+
+            case 'ArrowDown':
+                position.y += 2 * this.gridService.getGridSize();
+                break;
+        }
         return position;
     }
 }

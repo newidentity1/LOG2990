@@ -122,6 +122,7 @@ export class SelectionService extends ShapeTool {
     }
 
     onKeyDown(event: KeyboardEvent): void {
+        console.log(event.key, this.moveSelectionService.finalPosition.x, this.positiveHeight);
         if (event.key === 'Escape' && (this.mouseDown || this.isAreaSelected)) {
             this.drawSelection();
         }
@@ -134,6 +135,28 @@ export class SelectionService extends ShapeTool {
             }
         } else {
             super.onKeyDown(event);
+        }
+
+        if (this.activeMagnet) {
+            let position: Vec2 = { x: 0, y: 0 };
+            if (this.moveSelectionPos.x === 0) {
+                position = { x: this.positiveStartingPos.x, y: this.positiveStartingPos.y };
+            } else {
+                position = { x: this.moveSelectionPos.x, y: this.moveSelectionPos.y };
+            }
+
+            position = this.magnetismService.moveKeyBord(event.key, position);
+            position = this.magnetismService.magneticOption(
+                {
+                    x: position.x,
+                    y: position.y,
+                },
+                this.positiveWidth,
+                this.positiveHeight,
+            );
+            this.moveSelectionPos.x = position.x;
+            this.moveSelectionPos.y = position.y;
+            this.moveSelectionService.moveSelectionMagnetic(position.x, position.y);
         }
     }
 
@@ -293,7 +316,7 @@ export class SelectionService extends ShapeTool {
     clone(): SelectionService {
         const selectionClone: SelectionService = new SelectionService(
             this.drawingService,
-            new MoveSelectionService(this.drawingService, this.gridService),
+            new MoveSelectionService(this.drawingService),
             this.gridService,
             this.magnetismService,
         );

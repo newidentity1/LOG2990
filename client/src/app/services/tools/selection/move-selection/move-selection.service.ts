@@ -4,7 +4,6 @@ import * as CONSTANTS from '@app/constants/constants';
 import { SelectionArrowIndex } from '@app/enums/selection-arrow-index.enum';
 import { SelectionType } from '@app/enums/selection-type.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { GridService } from '@app/services/tools/grid/grid.service';
 
 @Injectable({
     providedIn: 'root',
@@ -17,7 +16,7 @@ export class MoveSelectionService {
     private canMoveSelectionContiniously: boolean = false;
     private pressedKeys: number[] = [0, 0, 0, 0];
 
-    constructor(private drawingService: DrawingService, private gridService: GridService) {}
+    constructor(private drawingService: DrawingService) {}
 
     checkArrowKeysPressed(event: KeyboardEvent): boolean {
         let arrowKeyPressed = false;
@@ -32,17 +31,15 @@ export class MoveSelectionService {
             this.pressedKeys[SelectionArrowIndex.Down] =
                 event.key === 'ArrowDown' ? -CONSTANTS.SELECTION_MOVE_STEP : this.pressedKeys[SelectionArrowIndex.Down];
 
-            let moveX = this.pressedKeys[SelectionArrowIndex.Left] + this.pressedKeys[SelectionArrowIndex.Right];
-            let moveY = this.pressedKeys[SelectionArrowIndex.Up] + this.pressedKeys[SelectionArrowIndex.Down];
+            const moveX = this.pressedKeys[SelectionArrowIndex.Left] + this.pressedKeys[SelectionArrowIndex.Right];
+            const moveY = this.pressedKeys[SelectionArrowIndex.Up] + this.pressedKeys[SelectionArrowIndex.Down];
 
             if (moveX !== 0 || moveY !== 0) {
                 arrowKeyPressed = true;
                 if (!this.isMagnet) {
                     this.moveSelection(moveX, moveY);
                 } else {
-                    moveX = this.finalPosition.x + this.gridService.getGridSize();
-                    moveY += this.finalPosition.y + this.gridService.getGridSize();
-                    this.moveSelectionMagnetic(moveX, moveY);
+                    //
                 }
             }
 
