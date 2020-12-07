@@ -6,6 +6,8 @@ import * as CONSTANTS from '@app/constants/constants';
 import { MouseButton } from '@app/enums/mouse-button.enum';
 import { SelectionType } from '@app/enums/selection-type.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { GridService } from '@app/services/tools/grid/grid.service';
+import { MagnetismService } from '@app/services/tools/selection/magnetism/magnetism.service';
 import { MoveSelectionService } from './move-selection/move-selection.service';
 
 interface ClipboardImage {
@@ -17,6 +19,7 @@ interface ClipboardImage {
     providedIn: 'root',
 })
 export class SelectionService extends ShapeTool {
+    activeMagnet: boolean = false;
     currentType: SelectionType = SelectionType.RectangleSelection;
     isAreaSelected: boolean;
     positiveStartingPos: Vec2 = { x: 0, y: 0 };
@@ -26,12 +29,21 @@ export class SelectionService extends ShapeTool {
     private clipboardImage: ClipboardImage;
     private moveSelectionPos: Vec2 = { x: 0, y: 0 };
 
-    constructor(drawingService: DrawingService, private moveSelectionService: MoveSelectionService) {
+    constructor(
+        drawingService: DrawingService,
+        private moveSelectionService: MoveSelectionService,
+        private gridService: GridService,
+        public magnetismService: MagnetismService,
+    ) {
         super(drawingService);
         this.name = 'Selection';
         this.tooltip = 'Selection (r)';
         this.iconName = 'highlight_alt';
         this.toolProperties = new BasicShapeProperties();
+    }
+
+    setMoveSelectionMagnet(state: boolean): void {
+        this.moveSelectionService.isMagnet = state;
     }
 
     setSelectionType(type: SelectionType): void {
@@ -60,11 +72,27 @@ export class SelectionService extends ShapeTool {
         this.currentMousePosition = this.getPositionFromMouse(event);
         if (this.mouseDown) {
             if (this.isAreaSelected) {
-                const moveX = this.moveSelectionPos.x - event.clientX;
-                const moveY = this.moveSelectionPos.y - event.clientY;
-                this.moveSelectionPos.x = event.clientX;
-                this.moveSelectionPos.y = event.clientY;
-                this.moveSelectionService.moveSelection(moveX, moveY);
+                if (this.activeMagnet) {
+                    const position: Vec2 = this.magnetismService.magneticOption(
+                        {
+                            x: event.clientX - this.drawingService.baseCtx.canvas.getBoundingClientRect().x,
+                            y: event.clientY - this.drawingService.baseCtx.canvas.getBoundingClientRect().y,
+                        },
+                        this.positiveWidth,
+                        this.positiveHeight,
+                    );
+                    const moveX = position.x;
+                    const moveY = position.y;
+                    this.moveSelectionPos.x = moveX;
+                    this.moveSelectionPos.y = moveY;
+                    this.moveSelectionService.moveSelectionMagnetic(moveX, moveY);
+                } else {
+                    const moveX = this.moveSelectionPos.x - event.clientX;
+                    const moveY = this.moveSelectionPos.y - event.clientY;
+                    this.moveSelectionPos.x = event.clientX;
+                    this.moveSelectionPos.y = event.clientY;
+                    this.moveSelectionService.moveSelection(moveX, moveY);
+                }
                 this.drawSelectionBox({ x: 0, y: 0 }, this.positiveWidth, this.positiveHeight);
             } else {
                 this.drawPreview();
@@ -133,13 +161,12 @@ export class SelectionService extends ShapeTool {
 
     drawSelection(): void {
         if (this.isAreaSelected) {
+            this.resetSelection();
             if (
                 this.positiveStartingPos.x !== this.moveSelectionService.finalPosition.x ||
                 this.positiveStartingPos.y !== this.moveSelectionService.finalPosition.y
             )
                 this.executedCommand.emit(this.clone());
-
-            this.resetSelection();
         }
     }
 
@@ -264,7 +291,12 @@ export class SelectionService extends ShapeTool {
     }
 
     clone(): SelectionService {
-        const selectionClone: SelectionService = new SelectionService(this.drawingService, new MoveSelectionService(this.drawingService));
+        const selectionClone: SelectionService = new SelectionService(
+            this.drawingService,
+            new MoveSelectionService(this.drawingService, this.gridService),
+            this.gridService,
+            this.magnetismService,
+        );
         this.copySelectionService(selectionClone);
         return selectionClone;
     }

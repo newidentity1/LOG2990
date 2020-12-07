@@ -9,6 +9,8 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
     providedIn: 'root',
 })
 export class PencilService extends Tool {
+    currentMousePosition: Vec2;
+
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.name = 'Crayon';
@@ -38,17 +40,17 @@ export class PencilService extends Tool {
     }
 
     onMouseMove(event: MouseEvent): void {
-        const mousePosition = this.getPositionFromMouse(event);
+        this.currentMousePosition = this.getPositionFromMouse(event);
         if (this.mouseDown) {
-            this.pathData.push(mousePosition);
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.pathData.push(this.currentMousePosition);
             this.draw(this.drawingService.previewCtx);
         } else {
-            this.drawCursor(mousePosition);
+            this.drawCursor();
         }
     }
 
     draw(ctx: CanvasRenderingContext2D): void {
+        if (this.mouseDown) this.drawingService.clearCanvas(this.drawingService.previewCtx);
         ctx.beginPath();
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
@@ -58,11 +60,11 @@ export class PencilService extends Tool {
         ctx.stroke();
     }
 
-    protected drawCursor(position: Vec2): void {
+    protected drawCursor(): void {
         const cursorCtx = this.drawingService.previewCtx;
         this.drawingService.clearCanvas(cursorCtx);
         cursorCtx.beginPath();
-        cursorCtx.arc(position.x, position.y, this.toolProperties.thickness / 2, 0, Math.PI * 2);
+        cursorCtx.arc(this.currentMousePosition.x, this.currentMousePosition.y, this.toolProperties.thickness / 2, 0, Math.PI * 2);
         cursorCtx.fill();
     }
 

@@ -20,11 +20,12 @@ export class StampComponent implements OnInit {
     ];
     constructor(private stampService: StampService) {}
 
-    ngOnInit(): void {}
+    ngOnInit(): void {
+        //
+    }
 
     onClick(src: string): void {
         console.log(src);
         this.stampService.src = src;
-        //this.stampService.getImageData();
     }
 }

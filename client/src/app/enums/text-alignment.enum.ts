@@ -1,5 +1,5 @@
 export enum TextAlignment {
-    Left = 'Gauche',
-    Middle = 'Centre',
-    Right = 'Droite',
+    Left = 'left',
+    Middle = 'center',
+    Right = 'right',
 }
