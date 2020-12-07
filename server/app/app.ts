@@ -9,11 +9,13 @@ import { DrawingController } from './controllers/drawing.controller';
 import { EmailController } from './controllers/email.controller';
 import { IndexController } from './controllers/index.controller';
 import { TYPES } from './types';
+import * as multer from 'multer';
 
 @injectable()
 export class Application {
     private readonly internalError: number = 500;
     app: express.Application;
+    upload: multer.Multer;
 
     constructor(
         @inject(TYPES.IndexController) private indexController: IndexController,
@@ -22,6 +24,14 @@ export class Application {
         @inject(TYPES.EmailController) private emailController: EmailController,
     ) {
         this.app = express();
+
+        const storage = multer.diskStorage({
+            filename: (req, file, cb) => {
+                cb(null, file.originalname);
+            },
+        });
+
+        this.upload = multer({ storage });
 
         this.config();
 
@@ -35,6 +45,7 @@ export class Application {
         this.app.use(bodyParser.urlencoded({ extended: true }));
         this.app.use(cookieParser());
         this.app.use(cors());
+        this.app.use(this.upload.any());
     }
 
     bindRoutes(): void {
