@@ -161,7 +161,8 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
         this.toolbarService.onClick(event);
     }
 
-    onContextMenu(): boolean {
+    onContextMenu(event: MouseEvent): boolean {
+        this.toolbarService.onContextMenu(event);
         return false;
     }
 

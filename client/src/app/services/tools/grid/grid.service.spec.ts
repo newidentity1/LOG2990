@@ -8,6 +8,7 @@ describe('GridService', () => {
     let service: GridService;
     let keyboardEventPlus: KeyboardEvent;
     let keyboardEventMinus: KeyboardEvent;
+    let keyboardEvent5: KeyboardEvent;
     let keyboardEventG: KeyboardEvent;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     let baseCtxStub: CanvasRenderingContext2D;
@@ -31,6 +32,7 @@ describe('GridService', () => {
 
         keyboardEventPlus = new KeyboardEvent('keyUp', { key: '=' });
         keyboardEventMinus = new KeyboardEvent('keyUp', { key: '-' });
+        keyboardEvent5 = new KeyboardEvent('keyUp', { key: '5' });
         keyboardEventG = new KeyboardEvent('keyUp', { code: 'KeyG' });
     });
 
@@ -46,11 +48,15 @@ describe('GridService', () => {
     it('onKeyUp set +5 or -5 to the gridSize', () => {
         service.onKeyUp(keyboardEventPlus);
         expect(service.getGridSize()).toEqual(CONSTANTS.GRID_BEGIN_SIZE + CONSTANTS.GRID_MULTIPLE_OPACITY_AND_SIZE);
+
         service.onKeyUp(keyboardEventMinus);
         expect(service.getGridSize()).toEqual(CONSTANTS.GRID_BEGIN_SIZE);
-        const generateGridSpy = spyOn<any>(service, 'generateGrid').and.callThrough();
+
+        const generateGridSpy = spyOn<any>(service, 'draw').and.callThrough();
         service.onKeyUp(keyboardEventG);
         expect(generateGridSpy).toHaveBeenCalled();
+
+        service.onKeyUp(keyboardEvent5);
     });
 
     it('draw should active/unactive the grid', () => {
