@@ -8,6 +8,7 @@ import { SelectionType } from '@app/enums/selection-type.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { GridService } from '@app/services/tools/grid/grid.service';
 import { MagnetismService } from '@app/services/tools/selection/magnetism/magnetism.service';
+import { MagicWandService } from './magic-wand/magic-wand.service';
 import { MoveSelectionService } from './move-selection/move-selection.service';
 
 interface ClipboardImage {
@@ -21,10 +22,10 @@ interface ClipboardImage {
 export class SelectionService extends ShapeTool {
     activeMagnet: boolean = false;
     currentType: SelectionType = SelectionType.RectangleSelection;
-    isAreaSelected: boolean;
-    positiveStartingPos: Vec2 = { x: 0, y: 0 };
-    positiveWidth: number;
-    positiveHeight: number;
+    isAreaSelected: boolean = false;
+    private positiveStartingPos: Vec2 = { x: 0, y: 0 };
+    private positiveWidth: number;
+    private positiveHeight: number;
     private selectionImageData: ImageData;
     private clipboardImage: ClipboardImage;
     private moveSelectionPos: Vec2 = { x: 0, y: 0 };
@@ -32,6 +33,7 @@ export class SelectionService extends ShapeTool {
     constructor(
         drawingService: DrawingService,
         private moveSelectionService: MoveSelectionService,
+        private magicWandService: MagicWandService,
         private gridService: GridService,
         public magnetismService: MagnetismService,
     ) {
@@ -55,6 +57,9 @@ export class SelectionService extends ShapeTool {
             case SelectionType.EllipseSelection:
                 this.currentType = SelectionType.EllipseSelection;
                 break;
+            case SelectionType.MagicWandSelection:
+                this.currentType = SelectionType.MagicWandSelection;
+                break;
         }
     }
 
@@ -70,55 +75,83 @@ export class SelectionService extends ShapeTool {
 
     onMouseMove(event: MouseEvent): void {
         this.currentMousePosition = this.getPositionFromMouse(event);
-        if (this.mouseDown) {
-            if (this.isAreaSelected) {
-                if (this.activeMagnet) {
-                    const position: Vec2 = this.magnetismService.magneticOption(
-                        {
-                            x: event.clientX - this.drawingService.baseCtx.canvas.getBoundingClientRect().x,
-                            y: event.clientY - this.drawingService.baseCtx.canvas.getBoundingClientRect().y,
-                        },
-                        this.positiveWidth,
-                        this.positiveHeight,
-                    );
-                    const moveX = position.x;
-                    const moveY = position.y;
-                    this.moveSelectionPos.x = moveX;
-                    this.moveSelectionPos.y = moveY;
-                    this.moveSelectionService.moveSelectionMagnetic(moveX, moveY);
-                } else {
-                    const moveX = this.moveSelectionPos.x - event.clientX;
-                    const moveY = this.moveSelectionPos.y - event.clientY;
-                    this.moveSelectionPos.x = event.clientX;
-                    this.moveSelectionPos.y = event.clientY;
-                    this.moveSelectionService.moveSelection(moveX, moveY);
-                }
-                this.drawSelectionBox({ x: 0, y: 0 }, this.positiveWidth, this.positiveHeight);
+        if (!this.mouseDown) return;
+        if (this.isAreaSelected) {
+            if (this.activeMagnet) {
+                const position: Vec2 = this.magnetismService.magneticOption(
+                    {
+                        x: event.clientX - this.drawingService.baseCtx.canvas.getBoundingClientRect().x,
+                        y: event.clientY - this.drawingService.baseCtx.canvas.getBoundingClientRect().y,
+                    },
+                    this.positiveWidth,
+                    this.positiveHeight,
+                );
+                const moveX = position.x;
+                const moveY = position.y;
+                this.moveSelectionPos.x = moveX;
+                this.moveSelectionPos.y = moveY;
+                this.moveSelectionService.moveSelectionMagnetic(moveX, moveY);
             } else {
-                this.drawPreview();
+                const moveX = this.moveSelectionPos.x - event.clientX;
+                const moveY = this.moveSelectionPos.y - event.clientY;
+                this.moveSelectionPos.x = event.clientX;
+                this.moveSelectionPos.y = event.clientY;
+                this.moveSelectionService.moveSelection(moveX, moveY);
             }
+            this.drawSelectionBox({ x: 0, y: 0 }, this.positiveWidth, this.positiveHeight);
+        } else {
+            if (this.currentType !== SelectionType.MagicWandSelection) this.drawPreview();
         }
     }
 
     onMouseUp(event: MouseEvent): void {
-        if (this.mouseDown) {
-            if (!this.isAreaSelected) {
-                this.currentMousePosition = this.getPositionFromMouse(event);
-                this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                if (
-                    (this.currentMousePosition.x !== this.mouseDownCoord.x || this.currentMousePosition.y !== this.mouseDownCoord.y) &&
-                    this.width &&
-                    this.height
-                ) {
-                    this.isAreaSelected = true;
-                    this.moveSelectionService.finalPosition = { x: this.positiveStartingPos.x, y: this.positiveStartingPos.y };
-                    this.moveSelectionService.copySelection(this.positiveStartingPos, this.positiveWidth, this.positiveHeight, this.currentType);
-                    this.selectionImageData = this.moveSelectionService.imgData;
-                    this.drawSelectionBox({ x: 0, y: 0 }, this.positiveWidth, this.positiveHeight);
-                }
+        if (!this.mouseDown) return;
+        if (!this.isAreaSelected) {
+            this.currentMousePosition = this.getPositionFromMouse(event);
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            if (
+                (this.currentMousePosition.x !== this.mouseDownCoord.x || this.currentMousePosition.y !== this.mouseDownCoord.y) &&
+                this.width &&
+                this.height
+            ) {
+                this.isAreaSelected = true;
+                this.moveSelectionService.finalPosition = { x: this.positiveStartingPos.x, y: this.positiveStartingPos.y };
+                this.moveSelectionService.copySelection(this.positiveStartingPos, this.positiveWidth, this.positiveHeight, this.currentType);
+                this.selectionImageData = this.moveSelectionService.imgData;
+                this.drawSelectionBox({ x: 0, y: 0 }, this.positiveWidth, this.positiveHeight);
             }
-            this.mouseDown = false;
         }
+        this.mouseDown = false;
+    }
+
+    onClick(event: MouseEvent): void {
+        if (this.currentType !== SelectionType.MagicWandSelection || this.isAreaSelected) return;
+        this.currentMousePosition = this.getPositionFromMouse(event);
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.isAreaSelected = true;
+        this.magicWandService.copyMagicSelection(this.currentMousePosition, true);
+        this.moveSelectionService.finalPosition = {
+            x: this.magicWandService.startingPosition.x,
+            y: this.magicWandService.startingPosition.y,
+        };
+        this.moveSelectionService.imgData = this.magicWandService.imgDataWithOutline;
+        this.selectionImageData = this.moveSelectionService.imgData;
+    }
+
+    onContextMenu(event: MouseEvent): void {
+        if (this.currentType !== SelectionType.MagicWandSelection || this.isAreaSelected) return;
+
+        this.currentMousePosition = this.getPositionFromMouse(event);
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.isAreaSelected = true;
+        this.magicWandService.copyMagicSelection(this.currentMousePosition, false);
+        this.moveSelectionService.finalPosition = {
+            x: this.magicWandService.startingPosition.x,
+            y: this.magicWandService.startingPosition.y,
+        };
+        this.moveSelectionService.imgData = this.magicWandService.imgDataWithOutline;
+        this.selectionImageData = this.moveSelectionService.imgData;
+        this.drawSelectionBox({ x: 0, y: 0 }, this.drawingService.previewCtx.canvas.width, this.drawingService.previewCtx.canvas.height);
     }
 
     onKeyDown(event: KeyboardEvent): void {
@@ -128,9 +161,8 @@ export class SelectionService extends ShapeTool {
 
         if (this.isAreaSelected) {
             if (this.moveSelectionService.checkArrowKeysPressed(event)) {
+                if (event.key === 'Delete') this.deleteSelection();
                 this.drawSelectionBox({ x: 0, y: 0 }, this.positiveWidth, this.positiveHeight);
-            } else if (event.key === 'Delete') {
-                this.deleteSelection();
             }
         } else {
             super.onKeyDown(event);
@@ -160,14 +192,13 @@ export class SelectionService extends ShapeTool {
     }
 
     drawSelection(): void {
-        if (this.isAreaSelected) {
-            this.resetSelection();
-            if (
-                this.positiveStartingPos.x !== this.moveSelectionService.finalPosition.x ||
-                this.positiveStartingPos.y !== this.moveSelectionService.finalPosition.y
-            )
-                this.executedCommand.emit(this.clone());
-        }
+        if (!this.isAreaSelected) return;
+        this.resetSelection();
+        if (
+            this.positiveStartingPos.x !== this.moveSelectionService.finalPosition.x ||
+            this.positiveStartingPos.y !== this.moveSelectionService.finalPosition.y
+        )
+            this.executedCommand.emit(this.clone());
     }
 
     resetSelection(): void {
@@ -176,6 +207,7 @@ export class SelectionService extends ShapeTool {
         const selectionCtx = this.drawingService.previewCtx;
 
         this.drawingService.clearCanvas(selectionCtx);
+        if (this.currentType === SelectionType.MagicWandSelection) this.selectionImageData = this.magicWandService.imgData;
         selectionCtx.putImageData(this.selectionImageData, 0, 0);
         this.drawingService.baseCtx.drawImage(
             selectionCtx.canvas,
@@ -244,33 +276,32 @@ export class SelectionService extends ShapeTool {
     }
 
     copySelection(): void {
-        if (this.isAreaSelected) {
-            this.clipboardImage = {
-                image: new ImageData(this.selectionImageData.width, this.selectionImageData.height),
-                selectionType: this.currentType,
-            };
-            const dataCopy = new Uint8ClampedArray(this.selectionImageData.data);
-            this.clipboardImage.image.data.set(dataCopy);
-        }
+        if (!this.isAreaSelected) return;
+        this.clipboardImage = {
+            image: new ImageData(this.selectionImageData.width, this.selectionImageData.height),
+            selectionType: this.currentType,
+        };
+        const dataCopy = new Uint8ClampedArray(this.selectionImageData.data);
+        this.clipboardImage.image.data.set(dataCopy);
     }
 
     pasteSelection(): void {
         // TODO make this better
-        if (this.clipboardImage) {
-            this.setSelectionType(this.clipboardImage.selectionType);
-            this.isAreaSelected = true;
-            this.moveSelectionService.imgData = this.clipboardImage.image;
-            this.selectionImageData = this.clipboardImage.image;
-            this.drawingService.previewCtx.canvas.width = this.clipboardImage.image.width;
-            this.drawingService.previewCtx.canvas.height = this.clipboardImage.image.height;
-            this.positiveWidth = this.clipboardImage.image.width;
-            this.positiveHeight = this.clipboardImage.image.height;
-            this.drawingService.previewCtx.putImageData(this.clipboardImage.image, 0, 0);
-            this.moveSelectionService.finalPosition.x = 0;
-            this.moveSelectionService.finalPosition.y = 0;
-            this.drawingService.previewCtx.canvas.style.cursor = 'move';
-            this.drawSelectionBox({ x: 0, y: 0 }, this.clipboardImage.image.width, this.clipboardImage.image.height);
-        }
+        if (!this.clipboardImage) return;
+
+        this.setSelectionType(this.clipboardImage.selectionType);
+        this.isAreaSelected = true;
+        this.moveSelectionService.imgData = this.clipboardImage.image;
+        this.selectionImageData = this.clipboardImage.image;
+        this.drawingService.previewCtx.canvas.width = this.clipboardImage.image.width;
+        this.drawingService.previewCtx.canvas.height = this.clipboardImage.image.height;
+        this.positiveWidth = this.clipboardImage.image.width;
+        this.positiveHeight = this.clipboardImage.image.height;
+        this.drawingService.previewCtx.putImageData(this.clipboardImage.image, 0, 0);
+        this.moveSelectionService.finalPosition.x = 0;
+        this.moveSelectionService.finalPosition.y = 0;
+        this.drawingService.previewCtx.canvas.style.cursor = 'move';
+        this.drawSelectionBox({ x: 0, y: 0 }, this.clipboardImage.image.width, this.clipboardImage.image.height);
     }
 
     cutSelection(): void {
@@ -294,6 +325,7 @@ export class SelectionService extends ShapeTool {
         const selectionClone: SelectionService = new SelectionService(
             this.drawingService,
             new MoveSelectionService(this.drawingService, this.gridService),
+            new MagicWandService(this.drawingService),
             this.gridService,
             this.magnetismService,
         );

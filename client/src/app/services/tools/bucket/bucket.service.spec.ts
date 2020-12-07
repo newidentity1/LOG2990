@@ -3,7 +3,9 @@ import { canvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Color } from '@app/classes/color/color';
 import { Pixel } from '@app/classes/pixel';
 import * as CONSTANTS from '@app/constants/constants';
+import { ColorPickerService } from '@app/services/color-picker/color-picker.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { BehaviorSubject } from 'rxjs';
 import { BucketService } from './bucket.service';
 
 describe('BucketService', () => {
@@ -11,16 +13,26 @@ describe('BucketService', () => {
     let service: BucketService;
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
-    let mouseEventclickLeft: MouseEvent;
-    let mouseEventclickRight: MouseEvent;
+    let mouseEventClickLeft: MouseEvent;
+    let mouseEventClickRight: MouseEvent;
+    let colorPickerServiceSpy: jasmine.SpyObj<ColorPickerService>;
 
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setColor', 'setThickness']);
+        colorPickerServiceSpy = jasmine.createSpyObj('ColorPickerService', ['swapColors', 'resetSelectedColor']);
 
         TestBed.configureTestingModule({
-            providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
+            providers: [
+                { provide: DrawingService, useValue: drawServiceSpy },
+                { provide: ColorPickerService, useValue: colorPickerServiceSpy },
+            ],
         });
         service = TestBed.inject(BucketService);
+
+        colorPickerServiceSpy = TestBed.inject(ColorPickerService) as jasmine.SpyObj<ColorPickerService>;
+        colorPickerServiceSpy.primaryColor = new BehaviorSubject<Color>(new Color(CONSTANTS.BLACK));
+        colorPickerServiceSpy.secondaryColor = new BehaviorSubject<Color>(new Color(CONSTANTS.WHITE));
+
         // tslint:disable:no-string-literal
         const drawingCanvas = document.createElement('canvas');
         drawingCanvas.width = canvasTestHelper.canvas.width;
@@ -31,13 +43,13 @@ describe('BucketService', () => {
         service['drawingService'].previewCtx = previewCtxStub;
         service['drawingService'].canvas = drawingCanvas;
 
-        mouseEventclickLeft = {
+        mouseEventClickLeft = {
             offsetX: 25,
             offsetY: 25,
             button: 0,
         } as MouseEvent;
 
-        mouseEventclickRight = {
+        mouseEventClickRight = {
             offsetX: 25,
             offsetY: 25,
             button: 2,
@@ -56,59 +68,69 @@ describe('BucketService', () => {
         expect(drawServiceSpy.setColor).toHaveBeenCalled();
     });
 
-    it('onMouseUp should set mouse Down to false)', () => {
-        service.onMouseUp(mouseEventclickLeft);
-        expect(service.mouseDown).toBeFalse();
-    });
-
-    it('onMouseUp should set mouse Down to false)', () => {
-        service.mouseDown = true;
-        service.onMouseUp(mouseEventclickLeft);
-        expect(service.mouseDown).toBeFalse();
-    });
-
-    it('checkColor should return false if pixel is out ', () => {
-        service.onMouseDown(mouseEventclickLeft);
-        service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(2, 2, 1, 1).data;
-        service['generateMatrice']();
-        const p1: Pixel = { x: -1, y: -1, status: 0 };
-        const index = (p1.y * drawServiceSpy.canvas.width + p1.x) * (CONSTANTS.IMAGE_DATA_OPACITY_INDEX + 1);
-        expect(service['checkColor'](index)).toEqual(false);
-    });
-
-    it('GenerateMatrice should generate a matrice of Pixel with a status of 0', () => {
-        service['generateMatrice']();
-        const expectedResult: Pixel = { x: 0, y: 0, status: 0 };
-        expect(service['matrice'][0][0].status).toEqual(expectedResult.status);
-        expect(service['matrice'][0][0].y).toEqual(expectedResult.y);
-        expect(service['matrice'][0][0].x).toEqual(expectedResult.x);
-    });
-
     it('onMouseDown with a left click should call floodFillLeft algorithme', () => {
-        const floodFillLeftSpy = spyOn(service, 'floodFillLeft').and.callThrough();
-        service.onMouseDown(mouseEventclickLeft);
+        // tslint:disable: no-any / reason: spying on private function
+        drawServiceSpy.baseCtx.clearRect(0, 0, drawServiceSpy.canvas.width, drawServiceSpy.canvas.height);
+        colorPickerServiceSpy.primaryColor = new BehaviorSubject<Color>(new Color('ff0000'));
+        const floodFillLeftSpy = spyOn<any>(service, 'floodFillLeft').and.callThrough();
+        service.onMouseDown(mouseEventClickLeft);
+
         expect(floodFillLeftSpy).toHaveBeenCalled();
+        expect(service['image'].data[0]).toEqual(CONSTANTS.MAX_COLOR_VALUE);
+        expect(service['image'].data[1]).toEqual(0);
+        expect(service['image'].data[2]).toEqual(0);
+        expect(service['image'].data[CONSTANTS.IMAGE_DATA_OPACITY_INDEX]).toEqual(CONSTANTS.MAX_COLOR_VALUE);
     });
 
     it('onMouseDown with a right click should call floodFillRight algorithme', () => {
         service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(2, 2, 1, 1).data;
-        service['generateMatrice']();
-        const floodFillRightSpy = spyOn(service, 'floodFillRight').and.callThrough();
-        service.onMouseDown(mouseEventclickRight);
+        const floodFillRightSpy = spyOn<any>(service, 'floodFillRight').and.callThrough();
+        service.onMouseDown(mouseEventClickRight);
         expect(floodFillRightSpy).toHaveBeenCalled();
     });
 
     it('onMouseDown with a right click should call floodFillRight algorithme', () => {
-        const floodFillRightSpy = spyOn(service, 'floodFillRight').and.callThrough();
-        service.onMouseDown(mouseEventclickRight);
+        const floodFillRightSpy = spyOn<any>(service, 'floodFillRight').and.callThrough();
+        service.onMouseDown(mouseEventClickRight);
         service['image'].data[0] = 1;
         service['image'].data[1] = 1;
         service['image'].data[2] = 1;
-        // tslint:disable-next-line:no-magic-numbers
-        service['image'].data[3] = 1;
+        service['image'].data[CONSTANTS.IMAGE_DATA_OPACITY_INDEX] = 1;
         service['drawingService'].baseCtx.putImageData(service['image'], 0, 0);
-        service.onMouseDown(mouseEventclickRight);
+        service.onMouseDown(mouseEventClickRight);
         expect(floodFillRightSpy).toHaveBeenCalled();
+    });
+
+    it('onMouseUp should set mouse Down to false if mouse was down)', () => {
+        service.mouseDown = true;
+        service.onMouseUp();
+        expect(service.mouseDown).toBeFalse();
+    });
+
+    it('onMouseUp should set mouseDown to false and emit a command', () => {
+        const emitSpy = spyOn(service.executedCommand, 'emit');
+        service.mouseDown = true;
+        service.onMouseUp();
+        expect(emitSpy).toHaveBeenCalled();
+        expect(service.mouseDown).toEqual(false);
+    });
+
+    it('onMouseUp should do nothing if mouseDown was false', () => {
+        const emitSpy = spyOn(service.executedCommand, 'emit');
+        service.mouseDown = false;
+        service.onMouseUp();
+        expect(emitSpy).not.toHaveBeenCalled();
+        expect(service.mouseDown).toEqual(false);
+    });
+
+    it('floodFillRight should change pixel if matching starting color', () => {
+        drawServiceSpy.baseCtx.clearRect(0, 0, drawServiceSpy.canvas.width, drawServiceSpy.canvas.height);
+        colorPickerServiceSpy.primaryColor = new BehaviorSubject<Color>(new Color('ff0000'));
+        service.onMouseDown(mouseEventClickRight);
+        expect(service['image'].data[0]).toEqual(CONSTANTS.MAX_COLOR_VALUE);
+        expect(service['image'].data[1]).toEqual(0);
+        expect(service['image'].data[2]).toEqual(0);
+        expect(service['image'].data[CONSTANTS.IMAGE_DATA_OPACITY_INDEX]).toEqual(CONSTANTS.MAX_COLOR_VALUE);
     });
 
     it('setTolerance should change toleranceValue', () => {
@@ -127,149 +149,34 @@ describe('BucketService', () => {
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
     });
 
-    it('clearList should clearCurentList', () => {
-        const p1: Pixel = { x: 0, y: 0, status: 0 };
-        const p2: Pixel = { x: 1, y: 1, status: 0 };
-        const list: Pixel[] = [];
-        list.push(p1);
-        list.push(p2);
-        service['clearList'](list);
-        expect(list.length).toEqual(0);
-    });
-
-    it('copyList should copy a list', () => {
-        const p1: Pixel = { x: 0, y: 0, status: 0 };
-        const p2: Pixel = { x: 1, y: 1, status: 0 };
-        const list: Pixel[] = [];
-        list.push(p1);
-        list.push(p2);
-        const newList: Pixel[] = service['copyList'](list);
-        expect(newList.length).toEqual(2);
-    });
-
-    it('AddNeighboors should add the 2 neighboors pixels if the pixel is on left top corner', () => {
-        // tslint:disable-next-line: no-any / reason spying on functions
-        const checkPixelSpy = spyOn<any>(service, 'checkPixel').and.callThrough();
-        service.onMouseDown(mouseEventclickRight);
-        service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(2, 2, 1, 1).data;
-        service['generateMatrice']();
-        const p1: Pixel = { x: 0, y: 0, status: 0 };
-        service['openList'].push(p1);
-        service['addNeighbours'](service['openList']);
-        expect(checkPixelSpy).toHaveBeenCalled();
-    });
-
-    it('AddNeighboors should add the 4 neighboors pixels if status = 0', () => {
-        // tslint:disable-next-line: no-any / reason spying on functions
-        const checkPixelSpy = spyOn<any>(service, 'checkPixel').and.callThrough();
-        service.onMouseDown(mouseEventclickRight);
-        service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(
-            CONSTANTS.MAX_RECENT_COLORS_SIZE,
-            CONSTANTS.MAX_RECENT_COLORS_SIZE,
-            1,
-            1,
-        ).data;
-        service['generateMatrice']();
-        const p1: Pixel = { x: 10, y: 10, status: 0 };
-        service['openList'].push(p1);
-        service['addNeighbours'](service['openList']);
-        expect(checkPixelSpy).toHaveBeenCalled();
-    });
-
-    it('AddNeighboors should add the 0 neighboors pixels if status = 1 ', () => {
-        // tslint:disable-next-line: no-any / reason spying on functions
-        const checkPixelSpy = spyOn<any>(service, 'checkPixel').and.callThrough();
-        service.onMouseDown(mouseEventclickRight);
-        service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(2, 2, 1, 1).data;
-        service['generateMatrice']();
-        const p1: Pixel = { x: 2, y: 2, status: 1 };
-        service['matrice'][2][2].status = 1;
-        service['matrice'][1][2].status = 1;
-        service['matrice'][CONSTANTS.IMAGE_DATA_OPACITY_INDEX][2].status = 1;
-        service['matrice'][2][1].status = 1;
-        service['matrice'][2][CONSTANTS.IMAGE_DATA_OPACITY_INDEX].status = 1;
-        service['openList'].push(p1);
-        service['addNeighbours'](service['openList']);
-        expect(checkPixelSpy).toHaveBeenCalled();
-    });
-
-    it('AddNeighboors should add 1 neighboors pixels if status = 1 ', () => {
-        service.onMouseDown(mouseEventclickRight);
-        service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(2, 2, 1, 1).data;
-        service['generateMatrice']();
-        // tslint:disable-next-line: no-any / reason spying on functions
-        const checkPixelSpy = spyOn<any>(service, 'checkPixel').and.callThrough();
-        const p1: Pixel = { x: 2, y: 2, status: 0 };
-        service['matrice'][2][2].status = 0;
-        service['matrice'][1][2].status = 0;
-        service['matrice'][CONSTANTS.IMAGE_DATA_OPACITY_INDEX][2].status = 1;
-        service['matrice'][2][1].status = 1;
-        service['matrice'][2][CONSTANTS.IMAGE_DATA_OPACITY_INDEX].status = 1;
-        service['openList'].push(p1);
-        service['addNeighbours'](service['openList']);
-        expect(checkPixelSpy).toHaveBeenCalled();
-    });
-
-    it('checkPosition should return true if the pixel is in the canvas', () => {
-        const p1: Pixel = { x: 0, y: 0, status: 1 };
-        expect(service['checkPosition'](p1)).toEqual(true);
-    });
-
-    it('checkPosition should return false if the pixel is out of the canvas', () => {
-        const p1: Pixel = { x: -1, y: -1, status: 1 };
-        expect(service['checkPosition'](p1)).toEqual(false);
-    });
-
-    it('checkPixel should do nothing if there is no pixel', () => {
-        service.onMouseDown(mouseEventclickRight);
-        // tslint:disable-next-line: no-any / reason spying on functions
-        const colorPixelSpy = spyOn<any>(service, 'colorPixel').and.callThrough();
-        service['checkPixel'](null);
-        expect(colorPixelSpy).not.toHaveBeenCalled();
-    });
-
-    it('checkPixel should not call colorPixel if the pixel status = 1', () => {
-        service.onMouseDown(mouseEventclickRight);
-        // tslint:disable-next-line: no-any / reason spying on functions
-        const colorPixelSpy = spyOn<any>(service, 'colorPixel').and.callThrough();
-        service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(2, 2, 1, 1).data;
-        service['generateMatrice']();
-        const p1: Pixel = { x: 2, y: 2, status: 0 };
-        service['checkPixel'](p1);
-        expect(colorPixelSpy).toHaveBeenCalled();
-    });
-
-    it('checkPixel should call colorPixel if the pixel status = 0', () => {
-        // tslint:disable-next-line: no-any / reason spying on functions
-        const colorPixelSpy = spyOn<any>(service, 'colorPixel').and.callThrough();
-        drawServiceSpy.baseCtx.fillStyle = 'black';
-        drawServiceSpy.baseCtx.fillRect(0, 0, drawServiceSpy.canvas.width, drawServiceSpy.canvas.height);
-        service['image'] = drawServiceSpy.baseCtx.getImageData(0, 0, drawServiceSpy.canvas.width, drawServiceSpy.canvas.height);
-        service['startPixelColor'] = drawServiceSpy.baseCtx.getImageData(0, 0, 1, 1).data;
-        const p1: Pixel = { x: 2, y: 2, status: 0 };
-        service['checkPixel'](p1);
-        expect(colorPixelSpy).toHaveBeenCalled();
-    });
-
-    it('checkPixel should call colorPixel if the pixel status = 1', () => {
-        service.onMouseDown(mouseEventclickRight);
-        service['image'] = service['drawingService'].baseCtx.getImageData(0, 0, service['width'], service['height']);
-        // tslint:disable-next-line: no-any / reason spying on functions
-        const colorPixelSpy = spyOn<any>(service, 'colorPixel').and.callThrough();
-        service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(2, 2, 1, 1).data;
-        service['generateMatrice']();
-        const p1: Pixel = { x: 2, y: 2, status: 1 };
-        service['checkPixel'](p1);
-        expect(colorPixelSpy).not.toHaveBeenCalled();
-    });
-
     it('checkColor should verify if the color have to change', () => {
-        service.onMouseDown(mouseEventclickRight);
+        service.onMouseDown(mouseEventClickRight);
         service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(2, 2, 1, 1).data;
-        service['generateMatrice']();
         const p1: Pixel = { x: 2, y: 2, status: 1 };
         const index = (p1.y * drawServiceSpy.canvas.width + p1.x) * (CONSTANTS.IMAGE_DATA_OPACITY_INDEX + 1);
         expect(service['checkColor'](index)).toBeTrue();
+    });
+
+    it('checkColor should return false if pixel is out ', () => {
+        // tslint:disable-next-line: no-empty / reason: spying on fake function to avoid performance issues during test
+        spyOn<any>(service, 'floodFillLeft').and.callFake(() => {});
+        service.onMouseDown(mouseEventClickLeft);
+        service['startPixelColor'] = service['drawingService'].baseCtx.getImageData(2, 2, 1, 1).data;
+        const p1: Pixel = { x: -1, y: -1, status: 0 };
+        const index = (p1.y * drawServiceSpy.canvas.width + p1.x) * (CONSTANTS.IMAGE_DATA_OPACITY_INDEX + 1);
+        expect(service['checkColor'](index)).toEqual(false);
+    });
+
+    it('colorPixel should change pixel to primary color ', () => {
+        colorPickerServiceSpy.primaryColor = new BehaviorSubject<Color>(new Color('ff0000'));
+        // tslint:disable-next-line: no-empty / reason: spying on fake function to avoid performance issues during test
+        spyOn<any>(service, 'floodFillLeft').and.callFake(() => {});
+        service.onMouseDown(mouseEventClickLeft);
+        service['colorPixel'](0);
+        expect(service['image'].data[0]).toEqual(CONSTANTS.MAX_COLOR_VALUE);
+        expect(service['image'].data[1]).toEqual(0);
+        expect(service['image'].data[2]).toEqual(0);
+        expect(service['image'].data[CONSTANTS.IMAGE_DATA_OPACITY_INDEX]).toEqual(CONSTANTS.MAX_COLOR_VALUE);
     });
 
     it('clone should return a clone of the tool', () => {
@@ -291,19 +198,21 @@ describe('BucketService', () => {
         expect(bucket).toEqual(bucketCopy);
     });
 
-    it('onMouseUp should set mouseDown to false and emit a command', () => {
-        const emitSpy = spyOn(service.executedCommand, 'emit');
-        service.mouseDown = true;
-        service.onMouseUp(mouseEventclickLeft);
-        expect(emitSpy).toHaveBeenCalled();
-        expect(service.mouseDown).toEqual(false);
+    it('changeTransparentToWhite should change pixel to white if transparent', () => {
+        const pixel: Uint8ClampedArray = new Uint8ClampedArray([0, 0, 0, 0]);
+        service['changeTransparentToWhite'](pixel);
+        expect(pixel[0]).toEqual(CONSTANTS.MAX_COLOR_VALUE);
+        expect(pixel[1]).toEqual(CONSTANTS.MAX_COLOR_VALUE);
+        expect(pixel[2]).toEqual(CONSTANTS.MAX_COLOR_VALUE);
+        expect(pixel[CONSTANTS.IMAGE_DATA_OPACITY_INDEX]).toEqual(CONSTANTS.MAX_COLOR_VALUE);
     });
 
-    it('onMouseUp should do nothing if mouseDown was false', () => {
-        const emitSpy = spyOn(service.executedCommand, 'emit');
-        service.mouseDown = false;
-        service.onMouseUp(mouseEventclickLeft);
-        expect(emitSpy).not.toHaveBeenCalled();
-        expect(service.mouseDown).toEqual(false);
+    it('changeTransparentToWhite should not change pixel to white if not transparent', () => {
+        const pixel: Uint8ClampedArray = new Uint8ClampedArray([CONSTANTS.MAX_COLOR_VALUE, 0, 0, CONSTANTS.MAX_COLOR_VALUE]);
+        service['changeTransparentToWhite'](pixel);
+        expect(pixel[0]).toEqual(CONSTANTS.MAX_COLOR_VALUE);
+        expect(pixel[1]).toEqual(0);
+        expect(pixel[2]).toEqual(0);
+        expect(pixel[CONSTANTS.IMAGE_DATA_OPACITY_INDEX]).toEqual(CONSTANTS.MAX_COLOR_VALUE);
     });
 });
