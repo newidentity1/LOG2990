@@ -29,7 +29,7 @@ export class LineService extends Tool {
     onClick(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
         const mousePosition = this.getPositionFromMouse(event);
-        if (this.pathData.length > 1 && this.shift) {
+        if (this.pathData.length > 0 && this.shift) {
             this.angleTransform(mousePosition);
             this.draw(this.drawingService.previewCtx);
         }
