@@ -18,21 +18,18 @@ export class EmailController {
 
         this.router.post('/', async (req: Request, res: Response, next: NextFunction) => {
             // Request to API
+            // console.log(req.body, req.files[0].path);
             this.emailService.sendEmail(req.body.to, fs.createReadStream(req.files[0].path));
 
-            // check body
-            // console.log('HERE');
-            // console.log(req.body, req.file.path);
-
-            // Response
-            //     this.emailService
-            //         .sendEmail()
-            //         .then(() => {
-            //             res.sendStatus(HTTP_STATUS_CREATED);
-            //         })
-            //         .catch((error) => {
-            //             res.status(HTTP_STATUS_BAD_REQUEST).send(error.message);
-            //         });
+            // // Response
+            // this.emailService
+            //     .sendEmail()
+            //     .then((res) => {
+            //         res.sendStatus(HTTP_STATUS_CREATED);
+            //     })
+            //     .catch((error) => {
+            //         res.status(HTTP_STATUS_BAD_REQUEST).send(error.message);
+            //     });
         });
     }
 }
