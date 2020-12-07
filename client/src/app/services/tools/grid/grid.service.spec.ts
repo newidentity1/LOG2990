@@ -14,7 +14,7 @@ describe('GridService', () => {
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
     // let gridCtxStub: CanvasRenderingContext2D;
-
+    // tslint:disable:no-any // use only for testing
     beforeEach(() => {
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
@@ -51,7 +51,6 @@ describe('GridService', () => {
 
         service.onKeyUp(keyboardEventMinus);
         expect(service.getGridSize()).toEqual(CONSTANTS.GRID_BEGIN_SIZE);
-
         const generateGridSpy = spyOn<any>(service, 'draw').and.callThrough();
         service.onKeyUp(keyboardEventG);
         expect(generateGridSpy).toHaveBeenCalled();

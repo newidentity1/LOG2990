@@ -11,6 +11,7 @@ import { MagnetismService } from '@app/services/tools/selection/magnetism/magnet
 import { MagicWandService } from './magic-wand/magic-wand.service';
 import { MoveSelectionService } from './move-selection/move-selection.service';
 
+// tslint:disable:max-file-line-count
 interface ClipboardImage {
     image: ImageData;
     selectionType: SelectionType;
@@ -42,10 +43,6 @@ export class SelectionService extends ShapeTool {
         this.tooltip = 'Selection (r)';
         this.iconName = 'highlight_alt';
         this.toolProperties = new BasicShapeProperties();
-    }
-
-    setMoveSelectionMagnet(state: boolean): void {
-        this.moveSelectionService.isMagnet = state;
     }
 
     setSelectionType(type: SelectionType): void {
