@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import * as FormData from 'form-data';
 import { injectable } from 'inversify';
 import 'reflect-metadata';
@@ -22,15 +22,13 @@ export class EmailService {
             params: { address_validation: false, quick_return: false, dry_run: false },
             headers: { 'Content-Type': 'multipart/form-data', 'X-Team-Key': this.apiKey, ...bodyFormData.getHeaders() },
         })
-            .then((response: any) => {
+            .then((response: AxiosResponse<string>) => {
                 // handle success
                 console.log(response);
             })
-            .catch((response: any) => {
+            .catch((response: AxiosResponse<string>) => {
                 // handle error
                 console.log(response);
             });
     }
 }
-
-// AxiosResponse<string>

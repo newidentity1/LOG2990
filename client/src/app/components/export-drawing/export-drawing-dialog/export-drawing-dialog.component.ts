@@ -139,14 +139,17 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
         this.setImageUrl();
     }
 
-    downloadImage(): void {
+    setupExportContext(): void {
         this.exportCtx.filter = this.exportFilter;
         this.setWhiteBackground(this.exportCtx);
         this.exportCtx.drawImage(this.drawingService.canvas, 0, 0);
         this.exportCtx.filter = 'none';
+    }
 
+    downloadImage(): void {
+        this.setupExportContext();
         this.setImageUrl();
-        this.drawingImageContainer.nativeElement.download = this.titleForm.value + '.' + this.selectedFormat;
+        this.drawingImageContainer.nativeElement.download = this.fullFileName();
         this.drawingImageContainer.nativeElement.click();
         this.dialogRef.close();
     }
@@ -158,18 +161,13 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
         return this.emailForm.value.length === 0;
     }
 
-    // Case if png or jpeg
     sendByEmail(): void {
-        // TODO: png or jpeg
-        // if (this.selectedFormat === 'png')
-
-        this.previewCtx.canvas.toBlob(
+        this.setupExportContext();
+        this.exportCtx.canvas.toBlob(
             (blob: Blob) => {
-                // success
-                this.emailService.setupPost(this.emailForm.value, blob, this.titleForm.value);
-                // fail
+                this.emailService.setupPost(this.emailForm.value, blob, this.fullFileName());
             },
-            'image/jpeg',
+            'image/' + this.selectedFormat,
             1,
         );
 
@@ -177,6 +175,11 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
         // this.emailForm.reset();
     }
 
+    fullFileName(): string {
+        return this.titleForm.value + '.' + this.selectedFormat;
+    }
+
+    // Keeps the filters ordered
     keepOriginalOrder(): number {
         return 0;
     }
