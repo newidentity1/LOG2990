@@ -7,6 +7,7 @@ import { Observable, Subject } from 'rxjs';
 export class DrawingService {
     baseCtx: CanvasRenderingContext2D;
     previewCtx: CanvasRenderingContext2D;
+    gridCtx: CanvasRenderingContext2D;
     canvas: HTMLCanvasElement;
     createNewDrawingSubject: Subject<void> = new Subject<void>();
     resetCanvasSizeSubject: Subject<void> = new Subject<void>();

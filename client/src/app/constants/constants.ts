@@ -69,6 +69,9 @@ export const HUE_CONVERSION = 360;
 export const MINIMUM_TEXT_SIZE = 10;
 export const MAXIMUM_TEXT_SIZE = 100;
 
+export const GRID_MULTIPLE_OPACITY_AND_SIZE = 5;
+export const GRID_BEGIN_SIZE = 25;
+
 export const DEFAULT_CALLIGRAPHY_LINE_LENGTH = 10;
 
 export const MINIMUM_DIAMETER_SPRAY = 10;

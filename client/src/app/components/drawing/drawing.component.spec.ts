@@ -34,6 +34,7 @@ describe('DrawingComponent', () => {
             'onMouseLeave',
             'onDoubleClick',
             'onClick',
+            'onContextMenu',
             'setColors',
             'setColors',
             'createNewDrawingEventListener',
@@ -238,10 +239,11 @@ describe('DrawingComponent', () => {
         expect(toolbarServiceSpy.onClick).toHaveBeenCalled();
     });
 
-    // it(' onContextMenu should return false to prevent context menu from showing', () => {
-    //     const result = component.onContextMenu();
-    //     expect(result).toBeFalse();
-    // });
+    it(' onContextMenu should return false to prevent context menu from showing', () => {
+        const result = component.onContextMenu(mouseEvent);
+        expect(toolbarServiceSpy.onContextMenu).toHaveBeenCalled();
+        expect(result).toBeFalse();
+    });
 
     it('onResize should set the width of preview canvas to CANVAS_MIN_WIDTH if its below CANVAS_MIN_WIDTH', () => {
         component.isResizingWidth = true;

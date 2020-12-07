@@ -13,6 +13,7 @@ import { CalligraphyService } from '@app/services/tools/calligraphy/calligraphy.
 import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
 import { EraseService } from '@app/services/tools/erase/erase.service';
 import { EyedropperService } from '@app/services/tools/eyedropper/eyedropper.service';
+import { GridService } from '@app/services/tools/grid/grid.service';
 import { LineService } from '@app/services/tools/line/line.service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { PolygonService } from '@app/services/tools/polygon/polygon.service';
@@ -51,6 +52,7 @@ export class ToolbarService {
         protected colorPickerService: ColorPickerService,
         protected bucketService: BucketService,
         protected undoRedoService: UndoRedoService,
+        protected gridService: GridService,
         protected automaticSavingService: AutomaticSavingService,
         protected textService: TextService,
         protected calligraphyService: CalligraphyService,
@@ -68,6 +70,7 @@ export class ToolbarService {
             eyedropperService,
             bucketService,
             textService,
+            gridService,
             calligraphyService,
             sprayService,
         ];
@@ -86,6 +89,7 @@ export class ToolbarService {
             .set(KeyShortcut.MagicBrushSelect, selectionService)
             .set(KeyShortcut.Bucket, bucketService)
             .set(KeyShortcut.Text, textService)
+            .set(KeyShortcut.Grid, gridService)
             .set(KeyShortcut.Calligraphy, calligraphyService)
             .set(KeyShortcut.Spray, sprayService);
     }
@@ -120,6 +124,10 @@ export class ToolbarService {
 
     getTools(): Tool[] {
         return this.tools;
+    }
+
+    setGrid(): void {
+        this.gridService.draw();
     }
 
     setColors(primaryColor: Color, secondaryColor: Color): void {
