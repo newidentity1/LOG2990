@@ -90,7 +90,7 @@ export class TextService extends Tool {
         if (this.isInitialText) this.isInitialText = false;
     }
 
-    writeText(context: CanvasRenderingContext2D): void {
+    writeText(context: CanvasRenderingContext2D, callCursor: boolean = true): void {
         if (!this.mouseDown) return;
         const properties = this.toolProperties as TextProperties;
         this.createStyle(properties);
@@ -98,7 +98,7 @@ export class TextService extends Tool {
         this.writeTexts(context);
         console.log('context', context.canvas);
         if (context === this.drawingService.previewCtx) {
-            this.setCursor();
+            if (callCursor) this.setCursor();
             this.drawTextArea();
         }
     }
@@ -170,7 +170,7 @@ export class TextService extends Tool {
 
         setTimeout(() => {
             context.clearRect(cursorX, cursorY, cursorWidth, cursorHeight);
-            this.writeTexts(this.drawingService.previewCtx);
+            this.writeText(this.drawingService.previewCtx, false);
         }, BLINKING_CURSOR_SPEED);
     }
 
