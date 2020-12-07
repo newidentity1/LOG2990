@@ -163,13 +163,13 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
         // TODO: png or jpeg
         // if (this.selectedFormat === 'png')
 
-        this.exportCtx.canvas.toBlob(
+        this.previewCtx.canvas.toBlob(
             (blob: Blob) => {
                 // success
-                this.emailService.setupPost(this.emailForm.value, blob);
+                this.emailService.setupPost(this.emailForm.value, blob, this.titleForm.value);
                 // fail
             },
-            'image/png',
+            'image/jpeg',
             1,
         );
 
