@@ -9,7 +9,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 })
 export class MagicWandService {
     imgData: ImageData;
-    imgDataWithOutline: ImageData;
+    private imgDataWithOutline: ImageData;
     startingPosition: Vec2 = { x: 0, y: 0 };
     selectionSize: Vec2 = { x: 0, y: 0 };
     private areaToClear: ImageData;

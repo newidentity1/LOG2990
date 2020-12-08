@@ -154,7 +154,7 @@ export class SelectionService extends ShapeTool {
             x: this.magicWandService.startingPosition.x,
             y: this.magicWandService.startingPosition.y,
         };
-        this.moveSelectionService.imgData = this.magicWandService.imgDataWithOutline;
+        this.moveSelectionService.imgData = this.magicWandService.imgData;
         this.selectionImageData = this.moveSelectionService.imgData;
         this.rotateSelectionService.originalWidth = this.magicWandService.selectionSize.x;
         this.rotateSelectionService.originalHeight = this.magicWandService.selectionSize.y;
@@ -174,7 +174,7 @@ export class SelectionService extends ShapeTool {
             x: this.magicWandService.startingPosition.x,
             y: this.magicWandService.startingPosition.y,
         };
-        this.moveSelectionService.imgData = this.magicWandService.imgDataWithOutline;
+        this.moveSelectionService.imgData = this.magicWandService.imgData;
         this.selectionImageData = this.moveSelectionService.imgData;
         this.drawSelectionBox({ x: 0, y: 0 }, this.drawingService.previewCtx.canvas.width, this.drawingService.previewCtx.canvas.height);
         this.rotateSelectionService.originalWidth = this.magicWandService.selectionSize.x;
@@ -273,25 +273,22 @@ export class SelectionService extends ShapeTool {
         this.moveSelectionService.canMoveSelection = false;
         const selectionCtx = this.drawingService.previewCtx;
 
-        if (this.currentType === SelectionType.MagicWandSelection) this.selectionImageData = this.magicWandService.imgData;
+        // if (this.currentType === SelectionType.MagicWandSelection) this.selectionImageData = this.magicWandService.imgData;
         if (this.rotateSelectionService.angle !== 0 && !this.deletePressed) {
-            this.rotateSelectionService.rotateImage(this.selectionImageData);
+            // this.rotateSelectionService.rotateImage(this.selectionImageData);
             this.selectionImageData = this.rotateSelectionService.rotatedImage.image;
         }
+
         this.deletePressed = false;
         this.selectionImageData = this.shiftDown
             ? this.resizeSelectionService.scaleImageKeepRatio(this.selectionImageData)
             : this.resizeSelectionService.scaleImage(this.selectionImageData);
-        selectionCtx.putImageData(this.selectionImageData, 0, 0);
-        this.drawingService.baseCtx.drawImage(selectionCtx.canvas, this.positiveStartingPos.x, this.positiveStartingPos.y);
+        // selectionCtx.putImageData(this.selectionImageData, 0, 0);
+        // this.drawingService.baseCtx.drawImage(selectionCtx.canvas, this.positiveStartingPos.x, this.positiveStartingPos.y);
 
         this.drawingService.clearCanvas(selectionCtx);
         selectionCtx.putImageData(this.selectionImageData, 0, 0);
-        this.drawingService.baseCtx.drawImage(
-            selectionCtx.canvas,
-            this.moveSelectionService.finalPosition.x,
-            this.moveSelectionService.finalPosition.y,
-        );
+        this.drawingService.baseCtx.drawImage(selectionCtx.canvas, selectionCtx.canvas.offsetLeft, selectionCtx.canvas.offsetTop);
 
         this.resizeSelectionService.isMirrorWidth = false;
         this.resizeSelectionService.isMirrorHeight = false;
