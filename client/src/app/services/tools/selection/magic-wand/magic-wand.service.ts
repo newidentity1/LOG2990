@@ -34,7 +34,6 @@ export class MagicWandService {
         this.startingPosition = { x: this.drawingService.canvas.width, y: this.drawingService.canvas.height };
         this.shapeOutlineIndexes = [];
         this.selectionSize = { x: 0, y: 0 };
-
         this.startingColor = this.drawingService.baseCtx.getImageData(selectionPixelPosition.x, selectionPixelPosition.y, 1, 1).data;
         this.changeTransparentToWhite(this.startingColor);
         this.areaToClear = this.drawingService.baseCtx.getImageData(0, 0, this.drawingService.canvas.width, this.drawingService.canvas.height);
@@ -203,7 +202,6 @@ export class MagicWandService {
         this.imgDataWithOutline = new ImageData(this.drawingService.canvas.width, this.drawingService.canvas.height);
         this.imgDataWithOutline.data.set(this.imgData.data);
         for (const index of this.shapeOutlineIndexes) {
-            // TODO: Change colour of outline?
             this.imgDataWithOutline.data[index] = (index % MAGIC_WAND_OUTLINE_COLOR_ALTERNATION_VALUE) * MAX_COLOR_VALUE;
             this.imgDataWithOutline.data[index + 1] = (index % MAGIC_WAND_OUTLINE_COLOR_ALTERNATION_VALUE) * MAX_COLOR_VALUE;
             this.imgDataWithOutline.data[index + 2] = (index % MAGIC_WAND_OUTLINE_COLOR_ALTERNATION_VALUE) * MAX_COLOR_VALUE;

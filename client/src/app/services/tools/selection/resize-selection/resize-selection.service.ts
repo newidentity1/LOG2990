@@ -184,7 +184,7 @@ export class ResizeSelectionService {
         this.resizeService.controlPoint = oppositeControlPoint !== undefined ? oppositeControlPoint : this.resizeService.controlPoint;
     }
 
-    get isResizing(): boolean {
+    isResizing(): boolean {
         return this.resizeService.isResizing;
     }
 }
