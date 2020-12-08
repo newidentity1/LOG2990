@@ -6,3 +6,7 @@
         </mat-grid-tile>
     </mat-grid-list>
 </div>
+
+<hr />
+<label class="label">Choisissez la taille de votre sicker: </label>
+<mat-slider id="sliderSize" thumbLabel (change)="onImageChange($event.value)" tickInterval="10" step="10" min="50" max="300"> </mat-slider>

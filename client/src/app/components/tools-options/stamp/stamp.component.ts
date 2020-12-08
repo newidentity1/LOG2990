@@ -18,6 +18,7 @@ export class StampComponent implements OnInit {
         { id: 6, src: '../../../../assets/stamp/7.png', srcPriview: '../../../assets/stamp/7.png' },
         { id: 7, src: '../../../../assets/stamp/8.png', srcPriview: '../../../assets/stamp/8.png' },
     ];
+    size: number = 100;
     constructor(private stampService: StampService) {}
 
     ngOnInit(): void {
@@ -27,5 +28,8 @@ export class StampComponent implements OnInit {
     onClick(src: string): void {
         console.log(src);
         this.stampService.src = src;
+    }
+    onImageChange(size: number): void {
+        //
     }
 }
