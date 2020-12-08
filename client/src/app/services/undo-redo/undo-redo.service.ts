@@ -17,6 +17,7 @@ export class UndoRedoService {
         this.drawingService.clearCanvas(this.drawingService.baseCtx);
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         for (let i = 0; i <= this.undoIndex; i++) {
+            console.log(this.commands);
             setTimeout(() => {
                 this.commands[i].applyCurrentSettings();
                 this.commands[i].execute();

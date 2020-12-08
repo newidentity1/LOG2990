@@ -2,17 +2,22 @@ import { TestBed } from '@angular/core/testing';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
 import { ShapeTool } from '@app/classes/tool/shape-tool';
 import { MouseButton } from '@app/enums/mouse-button.enum';
+import { SelectionAction } from '@app/enums/selection-action.enum';
 import { SelectionType } from '@app/enums/selection-type.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { GridService } from '@app/services/tools/grid/grid.service';
 import { MoveSelectionService } from './move-selection/move-selection.service';
+import { ResizeSelectionService } from './resize-selection/resize-selection.service';
+import { RotateSelectionService } from './rotate-selection/rotate-selection.service';
 import { SelectionService } from './selection.service';
 
-describe('SelectionService', () => {
+fdescribe('SelectionService', () => {
     let service: SelectionService;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
     let gridServiceSpy: jasmine.SpyObj<GridService>;
     let moveSelectionService: MoveSelectionService;
+    let resizeSelectionService: ResizeSelectionService;
+    let rotateSelectionService: RotateSelectionService;
     // tslint:disable:no-any / reason: spying on function
     let drawPreviewSpy: jasmine.Spy<any>;
     let drawSelectionSpy: jasmine.Spy<any>;
@@ -22,12 +27,16 @@ describe('SelectionService', () => {
     beforeEach(() => {
         drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setThickness', 'setStrokeColor']);
         gridServiceSpy = jasmine.createSpyObj('GridServiceSpy', ['clearCanvas', 'setThickness', 'setStrokeColor']);
+        resizeSelectionService = jasmine.createSpyObj('ResizeSelectionService', ['applyScaleToImage']);
+        rotateSelectionService = jasmine.createSpyObj('RotateSelectionService', ['initializeRotation']);
 
         moveSelectionService = new MoveSelectionService(drawingServiceSpy, gridServiceSpy);
         TestBed.configureTestingModule({
             providers: [
                 { provide: DrawingService, useValue: drawingServiceSpy },
                 { provide: MoveSelectionService, useValue: moveSelectionService },
+                { provide: ResizeSelectionService, useValue: resizeSelectionService },
+                { provide: RotateSelectionService, useValue: rotateSelectionService },
             ],
         });
         service = TestBed.inject(SelectionService);
@@ -46,6 +55,17 @@ describe('SelectionService', () => {
         moveSelectionService.imgData = drawingServiceSpy.baseCtx.getImageData(0, 0, 1, 1);
 
         moveSelectionService = TestBed.inject(MoveSelectionService);
+        resizeSelectionService = TestBed.inject(ResizeSelectionService);
+        rotateSelectionService = TestBed.inject(RotateSelectionService);
+        rotateSelectionService.rotatedImage = {
+            angle: 0,
+            image: drawingServiceSpy.previewCtx.getImageData(
+                0,
+                0,
+                drawingServiceSpy.previewCtx.canvas.width,
+                drawingServiceSpy.previewCtx.canvas.height,
+            ),
+        };
         copySelectionSpy = spyOn<any>(moveSelectionService, 'copySelection').and.callThrough();
 
         mouseEvent = {
@@ -61,6 +81,12 @@ describe('SelectionService', () => {
         expect(service).toBeTruthy();
     });
 
+    it('setMoveSelectionMagnet should change value of isMagnet of move selection service', () => {
+        moveSelectionService['isMagnet'] = false;
+        service.setMoveSelectionMagnet(true);
+        expect(moveSelectionService['isMagnet']).toBeTrue();
+    });
+
     it('setSelectionType should change selection type to rectangel if rectangle was selected and call resetSelection', () => {
         service.currentType = SelectionType.EllipseSelection;
         service.setSelectionType(SelectionType.RectangleSelection);
@@ -72,6 +98,13 @@ describe('SelectionService', () => {
         service.currentType = SelectionType.RectangleSelection;
         service.setSelectionType(SelectionType.EllipseSelection);
         expect(service.currentType).toEqual(SelectionType.EllipseSelection);
+        expect(drawSelectionSpy).toHaveBeenCalled();
+    });
+
+    it('setSelectionType should change selection type to ellipse if ellipse was selected and call resetSelection', () => {
+        service.currentType = SelectionType.RectangleSelection;
+        service.setSelectionType(SelectionType.MagicWandSelection);
+        expect(service.currentType).toEqual(SelectionType.MagicWandSelection);
         expect(drawSelectionSpy).toHaveBeenCalled();
     });
 
@@ -101,6 +134,54 @@ describe('SelectionService', () => {
         expect(service['moveSelectionPos']).toEqual({ x: mouseEvent.offsetX, y: mouseEvent.offsetY });
     });
 
+    it('onMouseDown should should use scaled image if last action was resize', () => {
+        drawingServiceSpy.previewCtx.clearRect(0, 0, drawingServiceSpy.previewCtx.canvas.width, drawingServiceSpy.previewCtx.canvas.height);
+        resizeSelectionService.scaledImage = drawingServiceSpy.previewCtx.getImageData(
+            0,
+            0,
+            drawingServiceSpy.previewCtx.canvas.width,
+            drawingServiceSpy.previewCtx.canvas.height,
+        );
+
+        drawingServiceSpy.previewCtx.fillRect(0, 0, 10, 10);
+        rotateSelectionService.rotatedImage.image = drawingServiceSpy.previewCtx.getImageData(
+            0,
+            0,
+            drawingServiceSpy.previewCtx.canvas.width,
+            drawingServiceSpy.previewCtx.canvas.height,
+        );
+        service.mouseDown = false;
+        service.isAreaSelected = true;
+        service['lastAction'] = SelectionAction.Resize;
+        service.onMouseDown(mouseEvent);
+        expect(moveSelectionService.imgData).toEqual(resizeSelectionService.scaledImage);
+        expect(moveSelectionService.imgData).not.toEqual(rotateSelectionService.rotatedImage.image);
+    });
+
+    it('onMouseDown should use rotated image if last action was rotation', () => {
+        drawingServiceSpy.previewCtx.clearRect(0, 0, drawingServiceSpy.previewCtx.canvas.width, drawingServiceSpy.previewCtx.canvas.height);
+        resizeSelectionService.scaledImage = drawingServiceSpy.previewCtx.getImageData(
+            0,
+            0,
+            drawingServiceSpy.previewCtx.canvas.width,
+            drawingServiceSpy.previewCtx.canvas.height,
+        );
+
+        drawingServiceSpy.previewCtx.fillRect(0, 0, 10, 10);
+        rotateSelectionService.rotatedImage.image = drawingServiceSpy.previewCtx.getImageData(
+            0,
+            0,
+            drawingServiceSpy.previewCtx.canvas.width,
+            drawingServiceSpy.previewCtx.canvas.height,
+        );
+        service.mouseDown = false;
+        service.isAreaSelected = true;
+        service['lastAction'] = SelectionAction.Rotate;
+        service.onMouseDown(mouseEvent);
+        expect(moveSelectionService.imgData).not.toEqual(resizeSelectionService.scaledImage);
+        expect(moveSelectionService.imgData).toEqual(rotateSelectionService.rotatedImage.image);
+    });
+
     it('onMouseMove should not call drawPreview if mouse was not already down', () => {
         service.mouseDown = false;
         service.onMouseMove(mouseEvent);
@@ -123,6 +204,17 @@ describe('SelectionService', () => {
         service.onMouseMove(mouseEvent);
         expect(service['moveSelectionPos']).toEqual({ x: mouseEvent.offsetX, y: mouseEvent.offsetY });
         expect(moveSelectionSpy).toHaveBeenCalled();
+    });
+
+    it('onMouseMove should call moveSelectionMagnetic if magnetism is active', () => {
+        const moveSelectionMagneticSpy = spyOn<any>(moveSelectionService, 'moveSelectionMagnetic').and.callThrough();
+        service.mouseDown = true;
+        service.isAreaSelected = true;
+        service['moveSelectionPos'] = { x: 0, y: 0 };
+        service.activeMagnet = true;
+        service.onMouseMove(mouseEvent);
+        expect(service['moveSelectionPos']).toEqual({ x: mouseEvent.offsetX, y: mouseEvent.offsetY });
+        expect(moveSelectionMagneticSpy).toHaveBeenCalled();
     });
 
     it('onMouseUp should set mouse down to false if mouse was down', () => {
