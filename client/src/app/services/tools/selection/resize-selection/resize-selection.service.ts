@@ -149,12 +149,28 @@ export class ResizeSelectionService {
         this.drawingService.previewCtx.drawImage(this.selectionImageCanvas, posX, posY);
         this.drawingService.previewCtx.setTransform(1, 0, 0, 1, 0, 0);
 
-        return this.drawingService.previewCtx.getImageData(
+        const scaledImageData = this.drawingService.previewCtx.getImageData(
             0,
             0,
             this.drawingService.previewCtx.canvas.width,
             this.drawingService.previewCtx.canvas.height,
         );
+
+        const selectionCanvasOffsetLeft = this.drawingService.previewCtx.canvas.offsetLeft;
+        const selectionCanvasOffsetTop = this.drawingService.previewCtx.canvas.offsetTop;
+
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.drawingService.previewCtx.putImageData(
+            scaledImageData,
+            0,
+            0,
+            selectionCanvasOffsetLeft >= 0 ? 0 : -selectionCanvasOffsetLeft,
+            selectionCanvasOffsetTop >= 0 ? 0 : -selectionCanvasOffsetTop,
+            this.drawingService.canvas.width - selectionCanvasOffsetLeft,
+            this.drawingService.canvas.height - selectionCanvasOffsetTop,
+        );
+
+        return scaledImageData;
     }
 
     changeOppositeControlPoint(isWidth: boolean): void {
