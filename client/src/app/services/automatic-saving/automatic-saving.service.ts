@@ -34,10 +34,10 @@ export class AutomaticSavingService implements OnDestroy {
 
     recover(): void {
         this.recovering = true;
-        const dataURL = localStorage.getItem('savedDrawing');
+        const dataURL = localStorage.getItem('savedDrawing') as string;
         const img = new Image();
         this.undoRedoService.resetUndoRedo();
-        img.src = dataURL ? dataURL : '';
+        img.src = dataURL;
         img.onload = () => {
             this.drawingService.clearCanvas(this.drawingService.baseCtx);
             this.resizeService.resizeFromImage(img);
