@@ -156,6 +156,11 @@ export class SelectionService extends ShapeTool {
         };
         this.moveSelectionService.imgData = this.magicWandService.imgDataWithOutline;
         this.selectionImageData = this.moveSelectionService.imgData;
+        this.rotateSelectionService.originalWidth = this.magicWandService.selectionSize.x;
+        this.rotateSelectionService.originalHeight = this.magicWandService.selectionSize.y;
+        this.rotateSelectionService.originalOffsetLeft = this.drawingService.previewCtx.canvas.offsetLeft;
+        this.rotateSelectionService.originalOffsetTop = this.drawingService.previewCtx.canvas.offsetTop;
+        this.rotateSelectionService.angle = 0;
     }
 
     onContextMenu(event: MouseEvent): void {
@@ -172,6 +177,11 @@ export class SelectionService extends ShapeTool {
         this.moveSelectionService.imgData = this.magicWandService.imgDataWithOutline;
         this.selectionImageData = this.moveSelectionService.imgData;
         this.drawSelectionBox({ x: 0, y: 0 }, this.drawingService.previewCtx.canvas.width, this.drawingService.previewCtx.canvas.height);
+        this.rotateSelectionService.originalWidth = this.magicWandService.selectionSize.x;
+        this.rotateSelectionService.originalHeight = this.magicWandService.selectionSize.y;
+        this.rotateSelectionService.originalOffsetLeft = this.drawingService.previewCtx.canvas.offsetLeft;
+        this.rotateSelectionService.originalOffsetTop = this.drawingService.previewCtx.canvas.offsetTop;
+        this.rotateSelectionService.angle = 0;
     }
 
     onMouseScroll(event: WheelEvent): void {
@@ -261,7 +271,11 @@ export class SelectionService extends ShapeTool {
         this.moveSelectionService.canMoveSelection = false;
         const selectionCtx = this.drawingService.previewCtx;
 
-        if (this.rotateSelectionService.angle !== 0 && !this.deletePressed) this.selectionImageData = this.rotateSelectionService.rotatedImage.image;
+        if (this.currentType === SelectionType.MagicWandSelection) this.selectionImageData = this.magicWandService.imgData;
+        if (this.rotateSelectionService.angle !== 0 && !this.deletePressed) {
+            this.rotateSelectionService.rotateImage(this.selectionImageData);
+            this.selectionImageData = this.rotateSelectionService.rotatedImage.image;
+        }
         this.deletePressed = false;
         // this.selectionImageData = this.shiftDown
         //     ? this.resizeSelectionService.scaleImageKeepRatio(this.selectionImageData)
@@ -270,7 +284,6 @@ export class SelectionService extends ShapeTool {
         // this.drawingService.baseCtx.drawImage(selectionCtx.canvas, this.positiveStartingPos.x, this.positiveStartingPos.y);
 
         this.drawingService.clearCanvas(selectionCtx);
-        if (this.currentType === SelectionType.MagicWandSelection) this.selectionImageData = this.magicWandService.imgData;
         selectionCtx.putImageData(this.selectionImageData, 0, 0);
         this.drawingService.baseCtx.drawImage(
             selectionCtx.canvas,

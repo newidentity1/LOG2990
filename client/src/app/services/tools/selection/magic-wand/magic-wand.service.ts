@@ -11,9 +11,9 @@ export class MagicWandService {
     imgData: ImageData;
     imgDataWithOutline: ImageData;
     startingPosition: Vec2 = { x: 0, y: 0 };
+    selectionSize: Vec2 = { x: 0, y: 0 };
     private areaToClear: ImageData;
     private shapeOutlineIndexes: number[] = [];
-    private selectionSize: Vec2 = { x: 0, y: 0 };
     private startingColor: Uint8ClampedArray;
 
     constructor(private drawingService: DrawingService) {}

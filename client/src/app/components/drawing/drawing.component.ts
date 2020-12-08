@@ -138,8 +138,8 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
 
             setTimeout(() => {
                 if (!this.isAreaSelected()) this.toolbarService.applyCurrentTool();
-                this.resizeService.resetResize();
             }, 0);
+            this.resizeService.resetResize();
         } else {
             this.toolbarService.onMouseUp(event);
         }
