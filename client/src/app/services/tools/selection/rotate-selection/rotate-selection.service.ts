@@ -1,5 +1,5 @@
 import { Injectable, Renderer2, RendererFactory2 } from '@angular/core';
-import { ANGLE_180, DEFAULT_ROTATION_ANGLE } from '@app/constants/constants';
+import { ANGLE_180, ANGLE_180_RAD, ANGLE_270_RAD, ANGLE_360_RAD, ANGLE_90_RAD, DEFAULT_ROTATION_ANGLE } from '@app/constants/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
 interface RotatedImage {
@@ -45,8 +45,8 @@ export class RotateSelectionService {
     }
 
     scroll(event: WheelEvent, selectionImageData: ImageData, altDown: boolean): void {
-        this.angle = (this.angle + (Math.sign(event.deltaY) * (altDown ? 1 : DEFAULT_ROTATION_ANGLE * Math.PI)) / ANGLE_180) % (Math.PI * 2);
-        if (this.angle < 0) this.angle += Math.PI * 2;
+        this.angle = (this.angle + (Math.sign(event.deltaY) * (altDown ? 1 : DEFAULT_ROTATION_ANGLE * Math.PI)) / ANGLE_180) % ANGLE_360_RAD;
+        if (this.angle < 0) this.angle += ANGLE_360_RAD;
         this.rotateImage(selectionImageData);
     }
 
@@ -63,10 +63,10 @@ export class RotateSelectionService {
         const diagonale = Math.sqrt(width * width + height * height);
         const diagonaleStartingAngle = Math.atan(height / width);
 
-        let newWidth = (diagonale / 2) * Math.cos(diagonaleStartingAngle - (this.angle % (Math.PI / 2))) * 2;
-        let newHeight = (diagonale / 2) * Math.sin(diagonaleStartingAngle + (this.angle % (Math.PI / 2))) * 2;
+        let newWidth = (diagonale / 2) * Math.cos(diagonaleStartingAngle - (this.angle % ANGLE_90_RAD)) * 2;
+        let newHeight = (diagonale / 2) * Math.sin(diagonaleStartingAngle + (this.angle % ANGLE_90_RAD)) * 2;
 
-        if ((this.angle >= Math.PI / 2 && this.angle < Math.PI) || (this.angle >= (3 * Math.PI) / 2 && this.angle < Math.PI * 2)) {
+        if ((this.angle >= ANGLE_90_RAD && this.angle < ANGLE_180_RAD) || (this.angle >= ANGLE_270_RAD && this.angle < ANGLE_360_RAD)) {
             [newWidth, newHeight] = [newHeight, newWidth];
         }
 
