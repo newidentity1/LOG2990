@@ -44,7 +44,7 @@ describe('DrawingComponent', () => {
             'resetSelection',
             'unsubscribeListeners',
             'addCommand',
-            'scroll',
+            'onMouseScroll',
             'resizeSelection',
         ]);
 
@@ -258,8 +258,8 @@ describe('DrawingComponent', () => {
 
     it(' should call the toolbarService onMouseEnter when scroll event', () => {
         const wheelEvent = {} as WheelEvent;
-        component.scroll(wheelEvent);
-        expect(toolbarServiceSpy.scroll).toHaveBeenCalled();
+        component.onMouseWheel(wheelEvent);
+        expect(toolbarServiceSpy.onMouseScroll).toHaveBeenCalled();
     });
 
     it(' should call the toolbarService onMouseEnter when mouseEnter', () => {

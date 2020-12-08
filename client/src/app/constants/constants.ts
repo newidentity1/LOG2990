@@ -83,3 +83,9 @@ export const MAXIMUM_DROPS_PER_SECOND = 3000;
 export const SPRAY_INTERVAL = 20;
 const ONE_SECOND_IN_MS = 1000;
 export const SPRAY_PER_SECOND = ONE_SECOND_IN_MS / SPRAY_INTERVAL;
+
+export const ANGLE_90_RAD = Math.PI / 2;
+export const ANGLE_180_RAD = Math.PI;
+// tslint:disable-next-line: no-magic-numbers / reason: using as a constant
+export const ANGLE_270_RAD = (3 * Math.PI) / 2;
+export const ANGLE_360_RAD = Math.PI * 2;
