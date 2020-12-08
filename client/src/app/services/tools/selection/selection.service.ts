@@ -413,6 +413,10 @@ export class SelectionService extends ShapeTool {
         if (this.shiftDown) this.resizeSelectionService.scaleImageKeepRatio(image);
         else this.resizeSelectionService.scaleImage(image);
         this.moveSelectionService.finalPosition = this.positiveStartingPos;
+        this.rotateSelectionService.originalWidth = this.drawingService.previewCtx.canvas.width;
+        this.rotateSelectionService.originalHeight = this.drawingService.previewCtx.canvas.height;
+        this.rotateSelectionService.originalOffsetLeft = this.positiveStartingPos.x;
+        this.rotateSelectionService.originalOffsetTop = this.positiveStartingPos.y;
     }
 
     isClipboardEmpty(): boolean {
