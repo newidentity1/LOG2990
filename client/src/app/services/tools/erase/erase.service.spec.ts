@@ -131,7 +131,8 @@ describe('EraseService', () => {
             previewCtxStub.fillStyle = color;
         });
         service.toolProperties.thickness = 10;
-        service['drawCursor']({ x: 10, y: 10 });
+        service.currentMousePosition = { x: 10, y: 10 };
+        service['drawCursor']();
 
         const imageData = previewCtxStub.getImageData(10, 10, 1, 1);
         expect(imageData.data[0]).toEqual(MAX_COLOR_VALUE); // R

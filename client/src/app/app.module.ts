@@ -14,6 +14,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -44,14 +45,18 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { BrushComponent } from './components/tools-options/brush/brush.component';
 import { SVGFilterComponent } from './components/tools-options/brush/svgfilter/svgfilter.component';
 import { BucketComponent } from './components/tools-options/bucket/bucket.component';
+import { CalligraphyComponent } from './components/tools-options/calligraphy/calligraphy/calligraphy.component';
 import { EllipseComponent } from './components/tools-options/ellipse/ellipse.component';
 import { EraseComponent } from './components/tools-options/erase/erase.component';
 import { EyedropperComponent } from './components/tools-options/eyedropper/eyedropper.component';
+import { GridComponent } from './components/tools-options/grid/grid.component';
 import { LineComponent } from './components/tools-options/line/line.component';
 import { PencilComponent } from './components/tools-options/pencil/pencil.component';
 import { PolygonComponent } from './components/tools-options/polygon/polygon.component';
 import { RectangleComponent } from './components/tools-options/rectangle/rectangle.component';
+import { MagnetismComponent } from './components/tools-options/selection/magnetism/magnetism.component';
 import { SelectionComponent } from './components/tools-options/selection/selection.component';
+import { SprayComponent } from './components/tools-options/spray/spray.component';
 import { TextComponent } from './components/tools-options/text/text.component';
 import { ThicknessSliderComponent } from './components/tools-options/thickness-slider/thickness-slider.component';
 import { UndoRedoComponent } from './components/undo-redo/undo-redo.component';
@@ -93,7 +98,11 @@ import { UploadComponent } from './components/upload/upload.component';
         UploadDialogComponent,
         WarningDialogComponent,
         TextComponent,
+        GridComponent,
+        MagnetismComponent,
         ContinueDrawingComponent,
+        CalligraphyComponent,
+        SprayComponent,
     ],
     imports: [
         NgImageSliderModule,
@@ -107,6 +116,7 @@ import { UploadComponent } from './components/upload/upload.component';
             appId: '1:408322091008:web:920757c8a7e33e14d910e5',
             measurementId: 'G-9X4P4RJB02',
         }),
+        MatSlideToggleModule,
         BrowserModule,
         HttpClientModule,
         AppRoutingModule,

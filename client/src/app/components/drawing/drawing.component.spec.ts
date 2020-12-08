@@ -34,6 +34,7 @@ describe('DrawingComponent', () => {
             'onMouseLeave',
             'onDoubleClick',
             'onClick',
+            'onContextMenu',
             'setColors',
             'setColors',
             'createNewDrawingEventListener',
@@ -241,7 +242,8 @@ describe('DrawingComponent', () => {
     });
 
     it(' onContextMenu should return false to prevent context menu from showing', () => {
-        const result = component.onContextMenu();
+        const result = component.onContextMenu(mouseEvent);
+        expect(toolbarServiceSpy.onContextMenu).toHaveBeenCalled();
         expect(result).toBeFalse();
     });
 
