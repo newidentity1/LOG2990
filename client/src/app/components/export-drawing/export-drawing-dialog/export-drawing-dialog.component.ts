@@ -1,18 +1,20 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ResponseResult } from '@app/classes/response-result';
 import { BLUR_CONVERSION, HUE_CONVERSION, MAX_PREVIEW_SIZE } from '@app/constants/constants.ts';
 import { ExportFilterType } from '@app/enums/export-filter.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { EmailService } from '@app/services/email/email.service';
-// import { Email } from '@common/communication/email';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-export-drawing-dialog',
     templateUrl: './export-drawing-dialog.component.html',
     styleUrls: ['./export-drawing-dialog.component.scss'],
 })
-export class ExportDrawingDialogComponent implements AfterViewInit {
+export class ExportDrawingDialogComponent implements AfterViewInit, OnInit, OnDestroy {
     @ViewChild('drawingImageContainer') drawingImageContainer: ElementRef;
     @ViewChild('previewCanvas') previewCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('exportCanvas') exportCanvas: ElementRef<HTMLCanvasElement>;
@@ -30,12 +32,30 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
     titleForm: FormControl = new FormControl('', Validators.required);
     emailForm: FormControl = new FormControl('', [Validators.pattern(/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/i), Validators.required]);
 
+    subscribeSendEmail: Subscription;
+
     constructor(
         public dialogRef: MatDialogRef<ExportDrawingDialogComponent>,
         public drawingService: DrawingService,
         public emailService: EmailService,
+        private snackBar: MatSnackBar,
     ) {
         this.titleForm.markAsDirty();
+    }
+
+    ngOnInit(): void {
+        this.subscribeSendEmail = this.emailService.sendEmailEventListener().subscribe((result: ResponseResult) => {
+            this.snackBar.open(result.message, 'Fermer', {
+                duration: 4000,
+                verticalPosition: 'top',
+                horizontalPosition: 'center',
+                panelClass: result.isSuccess ? ['sucess-snackbar'] : ['error-snackbar'],
+            });
+        });
+    }
+
+    ngOnDestroy(): void {
+        this.subscribeSendEmail.unsubscribe();
     }
 
     ngAfterViewInit(): void {
