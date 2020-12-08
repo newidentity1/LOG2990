@@ -96,7 +96,7 @@ export class TextService extends Tool {
         this.createStyle(properties);
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.writeTexts(context);
-        console.log('context', context.canvas);
+
         if (context === this.drawingService.previewCtx) {
             if (callCursor) this.setCursor();
             this.drawTextArea();
@@ -241,12 +241,16 @@ export class TextService extends Tool {
         return isXInsideTextArea && isYInsideTextArea;
     }
 
+    private rewriteText(): void {
+        if (this.isTextInProgress()) this.writeText(this.drawingService.previewCtx);
+    }
+
     setFontText(value: string): void {
         const testProperties = this.toolProperties as TextProperties;
         if (testProperties.fonts.includes(value)) {
             testProperties.font = value;
         }
-        this.writeText(this.drawingService.previewCtx);
+        this.rewriteText();
     }
 
     setTextAlignment(value: string): void {
@@ -254,7 +258,7 @@ export class TextService extends Tool {
         if (testProperties.textAlignments.includes(value)) {
             testProperties.textAlignment = value;
         }
-        this.writeText(this.drawingService.previewCtx);
+        this.rewriteText();
     }
 
     setSizeText(value: number | null): void {
@@ -262,19 +266,19 @@ export class TextService extends Tool {
         value = value === null ? 1 : value;
         testProperties.size = value;
         this.drawingService.setThickness(value);
-        this.writeText(this.drawingService.previewCtx);
+        this.rewriteText();
     }
 
     setBold(value: boolean): void {
         const testProperties = this.toolProperties as TextProperties;
         testProperties.isBold = value;
-        this.writeText(this.drawingService.previewCtx);
+        this.rewriteText();
     }
 
     setItalic(value: boolean): void {
         const testProperties = this.toolProperties as TextProperties;
         testProperties.isItalic = value;
-        this.writeText(this.drawingService.previewCtx);
+        this.rewriteText();
     }
 
     createStyle(textProperties: TextProperties): void {
@@ -289,7 +293,7 @@ export class TextService extends Tool {
 
     setColors(primaryColor: Color, secondaryColor: Color): void {
         super.setColors(primaryColor, secondaryColor);
-        this.writeText(this.drawingService.previewCtx);
+        this.rewriteText();
     }
 
     applyCurrentSettings(): void {
