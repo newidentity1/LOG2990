@@ -30,6 +30,6 @@ export class StampComponent implements OnInit {
         this.stampService.src = src;
     }
     onImageChange(size: number): void {
-        //
+        this.stampService.size = size;
     }
 }
