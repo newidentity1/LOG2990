@@ -68,6 +68,8 @@ describe('DrawingComponent', () => {
         component = fixture.componentInstance;
         component.dimensionsUpdatedEvent = dimensionsUpdatedSubjectStub.asObservable();
         component.requestDrawingContainerDimensions = new EventEmitter();
+        // tslint:disable:no-string-literal / reason : access private members
+        component['automaticSavingService'].clearStorage();
         fixture.detectChanges();
     });
 
