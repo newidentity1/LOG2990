@@ -9,7 +9,7 @@ import { Subscription } from 'rxjs';
 })
 export class AutomaticSavingService implements OnDestroy {
     recovering: boolean = false;
-    subscribeImageDrawn: Subscription;
+    private subscribeImageDrawn: Subscription;
 
     constructor(private drawingService: DrawingService, private undoRedoService: UndoRedoService, private resizeService: ResizeService) {
         this.subscribeImageDrawn = this.resizeService.imageDrawn.subscribe(() => {
