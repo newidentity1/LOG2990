@@ -75,11 +75,10 @@ export class SelectionService extends ShapeTool {
         if (this.mouseDown) {
             if (this.isAreaSelected && !this.resizeSelectionService.isResizing) {
                 this.moveSelectionPos = { x: event.clientX, y: event.clientY };
+                this.moveSelectionService.imgData = this.shiftDown
+                    ? this.resizeSelectionService.scaleImageKeepRatio(this.moveSelectionService.imgData)
+                    : this.resizeSelectionService.scaleImage(this.moveSelectionService.imgData);
                 if (this.rotateSelectionService.angle !== 0) this.moveSelectionService.imgData = this.rotateSelectionService.rotatedImage.image;
-                else
-                    this.moveSelectionService.imgData = this.shiftDown
-                        ? this.resizeSelectionService.scaleImageKeepRatio(this.selectionImageData)
-                        : this.resizeSelectionService.scaleImage(this.selectionImageData);
             }
         }
     }
@@ -274,15 +273,15 @@ export class SelectionService extends ShapeTool {
         const selectionCtx = this.drawingService.previewCtx;
 
         // if (this.currentType === SelectionType.MagicWandSelection) this.selectionImageData = this.magicWandService.imgData;
+        this.selectionImageData = this.shiftDown
+            ? this.resizeSelectionService.scaleImageKeepRatio(this.selectionImageData)
+            : this.resizeSelectionService.scaleImage(this.selectionImageData);
         if (this.rotateSelectionService.angle !== 0 && !this.deletePressed) {
             // this.rotateSelectionService.rotateImage(this.selectionImageData);
             this.selectionImageData = this.rotateSelectionService.rotatedImage.image;
         }
 
         this.deletePressed = false;
-        this.selectionImageData = this.shiftDown
-            ? this.resizeSelectionService.scaleImageKeepRatio(this.selectionImageData)
-            : this.resizeSelectionService.scaleImage(this.selectionImageData);
         // selectionCtx.putImageData(this.selectionImageData, 0, 0);
         // this.drawingService.baseCtx.drawImage(selectionCtx.canvas, this.positiveStartingPos.x, this.positiveStartingPos.y);
 
