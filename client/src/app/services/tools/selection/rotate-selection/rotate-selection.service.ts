@@ -27,6 +27,23 @@ export class RotateSelectionService {
         this.selectionImageCanvas = this.renderer.createElement('canvas');
     }
 
+    initializeRotation(): void {
+        this.originalWidth = this.drawingService.previewCtx.canvas.width;
+        this.originalHeight = this.drawingService.previewCtx.canvas.height;
+        this.originalOffsetLeft = this.drawingService.previewCtx.canvas.offsetLeft;
+        this.originalOffsetTop = this.drawingService.previewCtx.canvas.offsetTop;
+        this.angle = 0;
+        this.rotatedImage = {
+            angle: 0,
+            image: this.drawingService.previewCtx.getImageData(
+                0,
+                0,
+                this.drawingService.previewCtx.canvas.width,
+                this.drawingService.previewCtx.canvas.height,
+            ),
+        };
+    }
+
     scroll(event: WheelEvent, selectionImageData: ImageData, altDown: boolean): void {
         this.angle = (this.angle + (Math.sign(event.deltaY) * (altDown ? 1 : DEFAULT_ROTATION_ANGLE * Math.PI)) / ANGLE_180) % (Math.PI * 2);
         if (this.angle < 0) this.angle += Math.PI * 2;
@@ -76,15 +93,18 @@ export class RotateSelectionService {
             ),
         };
 
+        const selectionCanvasOffsetLeft = this.drawingService.previewCtx.canvas.offsetLeft;
+        const selectionCanvasOffsetTop = this.drawingService.previewCtx.canvas.offsetTop;
+
         this.drawingService.clearCanvas(ctx);
-        ctx.putImageData(
+        this.drawingService.previewCtx.putImageData(
             this.rotatedImage.image,
             0,
             0,
-            this.originalOffsetLeft - this.leftOffset >= 0 ? 0 : -(this.originalOffsetLeft - this.leftOffset),
-            this.originalOffsetTop - this.topOffset >= 0 ? 0 : -(this.originalOffsetTop - this.topOffset),
-            this.drawingService.canvas.width - (this.originalOffsetLeft - this.leftOffset),
-            this.drawingService.canvas.height - (this.originalOffsetTop - this.topOffset),
+            selectionCanvasOffsetLeft >= 0 ? 0 : -selectionCanvasOffsetLeft,
+            selectionCanvasOffsetTop >= 0 ? 0 : -selectionCanvasOffsetTop,
+            this.drawingService.canvas.width - selectionCanvasOffsetLeft,
+            this.drawingService.canvas.height - selectionCanvasOffsetTop,
         );
         this.drawingService.clearCanvas(tempCtx);
     }

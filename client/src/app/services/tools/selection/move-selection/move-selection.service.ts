@@ -89,15 +89,29 @@ export class MoveSelectionService {
         //     this.drawingService.previewCtx.canvas.width,
         //     this.drawingService.previewCtx.canvas.height,
         // );
+        // this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        // this.drawingService.previewCtx.putImageData(
+        //     this.imgData,
+        //     0,
+        //     0,
+        //     this.finalPosition.x >= 0 ? 0 : -this.finalPosition.x,
+        //     this.finalPosition.y >= 0 ? 0 : -this.finalPosition.y,
+        //     this.drawingService.canvas.width - this.finalPosition.x,
+        //     this.drawingService.canvas.height - this.finalPosition.y,
+        // );
+
+        const selectionCanvasOffsetLeft = this.drawingService.previewCtx.canvas.offsetLeft;
+        const selectionCanvasOffsetTop = this.drawingService.previewCtx.canvas.offsetTop;
+
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.drawingService.previewCtx.putImageData(
             this.imgData,
             0,
             0,
-            this.finalPosition.x >= 0 ? 0 : -this.finalPosition.x,
-            this.finalPosition.y >= 0 ? 0 : -this.finalPosition.y,
-            this.drawingService.canvas.width - this.finalPosition.x,
-            this.drawingService.canvas.height - this.finalPosition.y,
+            selectionCanvasOffsetLeft >= 0 ? 0 : -selectionCanvasOffsetLeft,
+            selectionCanvasOffsetTop >= 0 ? 0 : -selectionCanvasOffsetTop,
+            this.drawingService.canvas.width - selectionCanvasOffsetLeft,
+            this.drawingService.canvas.height - selectionCanvasOffsetTop,
         );
     }
 
