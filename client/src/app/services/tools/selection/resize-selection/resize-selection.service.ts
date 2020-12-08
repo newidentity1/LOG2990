@@ -15,6 +15,9 @@ export class ResizeSelectionService {
     private oppositeControlPointsHeight: Map<ControlPoint, ControlPoint> = new Map<ControlPoint, ControlPoint>();
     isMirrorWidth: boolean = false;
     isMirrorHeight: boolean = false;
+    scaledImage: ImageData;
+    scaleX: number = 1;
+    scaleY: number = 1;
 
     constructor(private resizeService: ResizeService, private drawingService: DrawingService, private rendererFactory: RendererFactory2) {
         this.renderer = this.rendererFactory.createRenderer(null, null);
@@ -114,42 +117,42 @@ export class ResizeSelectionService {
         const selectionWidth = this.drawingService.previewCtx.canvas.width;
         const selectionHeight = this.drawingService.previewCtx.canvas.height;
 
-        let scaleX = selectionWidth / selectionImage.width;
-        let scaleY = selectionHeight / selectionImage.height;
-        scaleX = this.isMirrorWidth ? -scaleX : scaleX;
-        scaleY = this.isMirrorHeight ? -scaleY : scaleY;
+        this.scaleX = selectionWidth / selectionImage.width;
+        this.scaleY = selectionHeight / selectionImage.height;
+        this.scaleX = this.isMirrorWidth ? -this.scaleX : this.scaleX;
+        this.scaleY = this.isMirrorHeight ? -this.scaleY : this.scaleY;
 
-        return this.applyScaleToImage(scaleX, scaleY, selectionImage);
+        return this.applyScaleToImage(selectionImage);
     }
 
     scaleImageKeepRatio(selectionImage: ImageData): ImageData {
         const selectionWidth = this.drawingService.previewCtx.canvas.width;
         const selectionHeight = this.drawingService.previewCtx.canvas.height;
 
-        let scaleX = selectionWidth / selectionImage.width;
-        let scaleY = selectionHeight / selectionImage.height;
-        scaleX = this.isMirrorWidth ? -scaleX : scaleX;
-        scaleY = this.isMirrorHeight ? -scaleY : scaleY;
-        scaleX = Math.abs(scaleX) > Math.abs(scaleY) ? Math.sign(scaleX) * Math.abs(scaleY) : scaleX;
-        scaleY = Math.abs(scaleY) > Math.abs(scaleX) ? Math.sign(scaleY) * Math.abs(scaleX) : scaleY;
+        this.scaleX = selectionWidth / selectionImage.width;
+        this.scaleY = selectionHeight / selectionImage.height;
+        this.scaleX = this.isMirrorWidth ? -this.scaleX : this.scaleX;
+        this.scaleY = this.isMirrorHeight ? -this.scaleY : this.scaleY;
+        this.scaleX = Math.abs(this.scaleX) > Math.abs(this.scaleY) ? Math.sign(this.scaleX) * Math.abs(this.scaleY) : this.scaleX;
+        this.scaleY = Math.abs(this.scaleY) > Math.abs(this.scaleX) ? Math.sign(this.scaleY) * Math.abs(this.scaleX) : this.scaleY;
 
-        return this.applyScaleToImage(scaleX, scaleY, selectionImage);
+        return this.applyScaleToImage(selectionImage);
     }
 
-    applyScaleToImage(scaleX: number, scaleY: number, selectionImage: ImageData): ImageData {
+    applyScaleToImage(selectionImage: ImageData): ImageData {
         this.selectionImageCanvas.width = selectionImage.width;
         this.selectionImageCanvas.height = selectionImage.height;
         const context = this.selectionImageCanvas.getContext('2d') as CanvasRenderingContext2D;
         context.putImageData(selectionImage, 0, 0);
 
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        this.drawingService.previewCtx.scale(scaleX, scaleY);
+        this.drawingService.previewCtx.scale(this.scaleX, this.scaleY);
         const posX = this.isMirrorWidth ? -selectionImage.width : 0;
         const posY = this.isMirrorHeight ? -selectionImage.height : 0;
         this.drawingService.previewCtx.drawImage(this.selectionImageCanvas, posX, posY);
         this.drawingService.previewCtx.setTransform(1, 0, 0, 1, 0, 0);
 
-        const scaledImageData = this.drawingService.previewCtx.getImageData(
+        this.scaledImage = this.drawingService.previewCtx.getImageData(
             0,
             0,
             this.drawingService.previewCtx.canvas.width,
@@ -161,7 +164,7 @@ export class ResizeSelectionService {
 
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.drawingService.previewCtx.putImageData(
-            scaledImageData,
+            this.scaledImage,
             0,
             0,
             selectionCanvasOffsetLeft >= 0 ? 0 : -selectionCanvasOffsetLeft,
@@ -170,7 +173,7 @@ export class ResizeSelectionService {
             this.drawingService.canvas.height - selectionCanvasOffsetTop,
         );
 
-        return scaledImageData;
+        return this.scaledImage;
     }
 
     changeOppositeControlPoint(isWidth: boolean): void {
