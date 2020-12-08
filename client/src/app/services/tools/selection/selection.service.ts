@@ -211,11 +211,11 @@ export class SelectionService extends ShapeTool {
                         this.deleteSelection();
                         break;
                     case 'Shift':
-                        if (!this.shiftDown) {
+                        if (!this.shiftDown && this.resizeSelectionService.isResizing) {
                             const image = this.resizeSelectionService.scaleImageKeepRatio(this.selectionImageData);
                             this.rotateSelectionService.rotateImage(image);
+                            this.shiftDown = true;
                         }
-                        this.shiftDown = true;
                         break;
                     case 'Alt':
                         this.atlDown = true;
@@ -231,9 +231,11 @@ export class SelectionService extends ShapeTool {
         if (this.isAreaSelected) {
             this.moveSelectionService.checkArrowKeysReleased(event);
             if (event.key === 'Shift') {
-                this.shiftDown = false;
-                const image = this.resizeSelectionService.scaleImage(this.selectionImageData);
-                this.rotateSelectionService.rotateImage(image);
+                if (this.resizeSelectionService.isResizing) {
+                    this.shiftDown = false;
+                    const image = this.resizeSelectionService.scaleImage(this.selectionImageData);
+                    this.rotateSelectionService.rotateImage(image);
+                }
             } else if (event.key === 'Alt') {
                 this.atlDown = false;
             }
@@ -277,11 +279,11 @@ export class SelectionService extends ShapeTool {
             this.selectionImageData = this.rotateSelectionService.rotatedImage.image;
         }
         this.deletePressed = false;
-        // this.selectionImageData = this.shiftDown
-        //     ? this.resizeSelectionService.scaleImageKeepRatio(this.selectionImageData)
-        //     : this.resizeSelectionService.scaleImage(this.selectionImageData);
-        // selectionCtx.putImageData(this.selectionImageData, 0, 0);
-        // this.drawingService.baseCtx.drawImage(selectionCtx.canvas, this.positiveStartingPos.x, this.positiveStartingPos.y);
+        this.selectionImageData = this.shiftDown
+            ? this.resizeSelectionService.scaleImageKeepRatio(this.selectionImageData)
+            : this.resizeSelectionService.scaleImage(this.selectionImageData);
+        selectionCtx.putImageData(this.selectionImageData, 0, 0);
+        this.drawingService.baseCtx.drawImage(selectionCtx.canvas, this.positiveStartingPos.x, this.positiveStartingPos.y);
 
         this.drawingService.clearCanvas(selectionCtx);
         selectionCtx.putImageData(this.selectionImageData, 0, 0);
@@ -301,6 +303,7 @@ export class SelectionService extends ShapeTool {
         selectionCtx.canvas.style.left = '0px';
         selectionCtx.canvas.style.top = '0px';
         selectionCtx.canvas.style.cursor = '';
+        this.shiftDown = false;
     }
 
     draw(): void {
