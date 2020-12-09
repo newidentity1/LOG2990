@@ -101,8 +101,8 @@ export class RotateSelectionService {
             this.rotatedImage.image,
             0,
             0,
-            selectionCanvasOffsetLeft >= 0 ? 0 : -selectionCanvasOffsetLeft,
-            selectionCanvasOffsetTop >= 0 ? 0 : -selectionCanvasOffsetTop,
+            +(selectionCanvasOffsetLeft < 0) * -selectionCanvasOffsetLeft,
+            +(selectionCanvasOffsetTop < 0) * -selectionCanvasOffsetTop,
             this.drawingService.canvas.width - selectionCanvasOffsetLeft,
             this.drawingService.canvas.height - selectionCanvasOffsetTop,
         );
