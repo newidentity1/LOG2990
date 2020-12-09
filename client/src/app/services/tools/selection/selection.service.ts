@@ -70,24 +70,28 @@ export class SelectionService extends ShapeTool {
         }
     }
 
+    magneticMove(x: number, y: number): void {
+        const position: Vec2 = this.magnetismService.magneticOption(
+            {
+                x: x - this.drawingService.baseCtx.canvas.getBoundingClientRect().x,
+                y: y - this.drawingService.baseCtx.canvas.getBoundingClientRect().y,
+            },
+            this.positiveWidth,
+            this.positiveHeight,
+        );
+        const moveX = position.x;
+        const moveY = position.y;
+        this.moveSelectionPos.x = moveX;
+        this.moveSelectionPos.y = moveY;
+        this.moveSelectionService.moveSelectionMagnetic(moveX, moveY);
+    }
+
     onMouseMove(event: MouseEvent): void {
         this.currentMousePosition = this.getPositionFromMouse(event);
         if (!this.mouseDown) return;
         if (this.isAreaSelected) {
             if (this.activeMagnet) {
-                const position: Vec2 = this.magnetismService.magneticOption(
-                    {
-                        x: event.clientX - this.drawingService.baseCtx.canvas.getBoundingClientRect().x,
-                        y: event.clientY - this.drawingService.baseCtx.canvas.getBoundingClientRect().y,
-                    },
-                    this.positiveWidth,
-                    this.positiveHeight,
-                );
-                const moveX = position.x;
-                const moveY = position.y;
-                this.moveSelectionPos.x = moveX;
-                this.moveSelectionPos.y = moveY;
-                this.moveSelectionService.moveSelectionMagnetic(moveX, moveY);
+                this.magneticMove(event.clientX, event.clientY);
             } else {
                 const moveX = this.moveSelectionPos.x - event.clientX;
                 const moveY = this.moveSelectionPos.y - event.clientY;
@@ -156,36 +160,27 @@ export class SelectionService extends ShapeTool {
         if (event.key === 'Escape' && (this.mouseDown || this.isAreaSelected)) {
             this.drawSelection();
         }
-
         if (this.isAreaSelected) {
-            if (this.moveSelectionService.checkArrowKeysPressed(event)) {
+            if (this.activeMagnet) {
+                this.magneticMoveKeyboard(event.key);
+            } else if (this.moveSelectionService.checkArrowKeysPressed(event)) {
                 if (event.key === 'Delete') this.deleteSelection();
                 this.drawSelectionBox({ x: 0, y: 0 }, this.positiveWidth, this.positiveHeight);
             }
         } else {
             super.onKeyDown(event);
         }
+    }
 
-        if (this.activeMagnet) {
-            let position: Vec2 = { x: 0, y: 0 };
-            if (this.moveSelectionPos.x === 0) {
-                position = { x: this.positiveStartingPos.x, y: this.positiveStartingPos.y };
-            } else {
-                position = { x: this.moveSelectionPos.x, y: this.moveSelectionPos.y };
-            }
-
-            position = this.magnetismService.moveKeyBord(event.key, position);
-            position = this.magnetismService.magneticOption(
-                {
-                    x: position.x,
-                    y: position.y,
-                },
-                this.positiveWidth,
-                this.positiveHeight,
-            );
-            this.moveSelectionPos.x = position.x;
-            this.moveSelectionPos.y = position.y;
-            this.moveSelectionService.moveSelectionMagnetic(position.x, position.y);
+    magneticMoveKeyboard(key: string): void {
+        let position: Vec2 = { x: 0, y: 0 };
+        if (this.magnetismService.firstmove) {
+            position.x = this.moveSelectionService.finalPosition.x + this.drawingService.baseCtx.canvas.getBoundingClientRect().x;
+            position.y = this.moveSelectionService.finalPosition.y + this.drawingService.baseCtx.canvas.getBoundingClientRect().y;
+            this.magneticMove(position.x, position.y);
+        } else {
+            position = this.magnetismService.moveKeyBord(key, this.moveSelectionService.finalPosition);
+            this.moveSelectionService.move(position.x, position.y);
         }
     }
 

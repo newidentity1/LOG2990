@@ -9,6 +9,7 @@ import { GridService } from '@app/services/tools/grid/grid.service';
 export class MagnetismService {
     private activeMagnet: boolean = false;
     private magnetismOption: MagnetismOption = MagnetismOption.TopLeft;
+    firstmove: boolean = true;
     constructor(private gridService: GridService) {}
 
     getActiveMagnet(): boolean {
@@ -28,6 +29,7 @@ export class MagnetismService {
     }
 
     magneticOption(position: Vec2, positiveWidth: number, positiveHeight: number): Vec2 {
+        this.firstmove = false;
         switch (this.magnetismOption) {
             case MagnetismOption.TopLeft:
                 position.x = this.calculPosition(position.x);
@@ -97,9 +99,10 @@ export class MagnetismService {
                 break;
 
             case 'ArrowDown':
-                position.y += 2 * this.gridService.getGridSize();
+                position.y += this.gridService.getGridSize();
                 break;
         }
+
         return position;
     }
 }
