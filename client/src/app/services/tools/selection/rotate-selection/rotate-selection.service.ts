@@ -45,7 +45,7 @@ export class RotateSelectionService {
     }
 
     scroll(event: WheelEvent, selectionImageData: ImageData, altDown: boolean): void {
-        this.angle = (this.angle + (Math.sign(event.deltaY) * (altDown ? 1 : DEFAULT_ROTATION_ANGLE * Math.PI)) / ANGLE_180) % ANGLE_360_RAD;
+        this.angle = (this.angle + (Math.sign(event.deltaY) * ((altDown ? 1 : DEFAULT_ROTATION_ANGLE) * Math.PI)) / ANGLE_180) % ANGLE_360_RAD;
         if (this.angle < 0) this.angle += ANGLE_360_RAD;
         this.rotateImage(selectionImageData);
     }
