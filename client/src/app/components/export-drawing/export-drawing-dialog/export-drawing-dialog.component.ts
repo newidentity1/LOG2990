@@ -47,8 +47,8 @@ export class ExportDrawingDialogComponent implements AfterViewInit, OnInit, OnDe
         this.subscribeSendEmail = this.emailService.sendEmailEventListener().subscribe((result: ResponseResult) => {
             this.snackBar.open(result.message, 'Fermer', {
                 duration: 4000,
-                verticalPosition: 'top',
                 horizontalPosition: 'center',
+                verticalPosition: 'top',
                 panelClass: result.isSuccess ? ['sucess-snackbar'] : ['error-snackbar'],
             });
         });
@@ -175,24 +175,18 @@ export class ExportDrawingDialogComponent implements AfterViewInit, OnInit, OnDe
     }
 
     isEmailInputEmpty(): boolean {
-        if (this.emailForm.value.length === 0) {
-            this.emailForm.markAsPristine();
-        }
-        return this.emailForm.value.length === 0;
+        const isFormEmpty = this.emailForm.value.length === 0;
+        if (isFormEmpty) this.emailForm.markAsPristine();
+        return isFormEmpty;
     }
 
     sendByEmail(): void {
         this.setupExportContext();
-        this.exportCtx.canvas.toBlob(
-            (blob: Blob) => {
-                this.emailService.postEmail(this.emailForm.value, blob, this.fullFileName());
-            },
-            'image/' + this.selectedFormat,
-            1,
-        );
+        this.exportCtx.canvas.toBlob(this.postEmail.bind(this), 'image/' + this.selectedFormat, 1);
+    }
 
-        // Will show an error in console : "input is null"
-        // this.emailForm.reset();
+    postEmail(blob: Blob): void {
+        this.emailService.postEmail(this.emailForm.value, blob, this.fullFileName());
     }
 
     fullFileName(): string {
