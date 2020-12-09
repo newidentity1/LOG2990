@@ -185,7 +185,7 @@ export class ExportDrawingDialogComponent implements AfterViewInit, OnInit, OnDe
         this.setupExportContext();
         this.exportCtx.canvas.toBlob(
             (blob: Blob) => {
-                this.emailService.setupPost(this.emailForm.value, blob, this.fullFileName());
+                this.emailService.postEmail(this.emailForm.value, blob, this.fullFileName());
             },
             'image/' + this.selectedFormat,
             1,
