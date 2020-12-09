@@ -10,6 +10,7 @@ import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { SelectionService } from '@app/services/tools/selection/selection.service';
 import { SprayService } from '@app/services/tools/spray/spray.service';
+import { StampService } from '@app/services/tools/stamp/stamp.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Observable, Subscription } from 'rxjs';
 
@@ -100,7 +101,8 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
             if (
                 (this.toolbarService.currentTool instanceof SelectionService && this.toolbarService.currentTool.activeMagnet) ||
                 this.toolbarService.currentTool instanceof PencilService ||
-                this.toolbarService.currentTool instanceof SprayService
+                this.toolbarService.currentTool instanceof SprayService ||
+                this.toolbarService.currentTool instanceof StampService
             ) {
                 this.toolbarService.onMouseMove(event);
             }
@@ -112,10 +114,14 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
     onMouseMove(event: MouseEvent): void {
         if (this.toolbarService.currentTool instanceof SelectionService && !this.toolbarService.currentTool.activeMagnet) {
             this.toolbarService.onMouseMove(event);
-        } else if (!(this.toolbarService.currentTool instanceof PencilService)) {
-            if (!(this.toolbarService.currentTool instanceof PencilService || this.toolbarService.currentTool instanceof SprayService)) {
-                this.toolbarService.onMouseMove(event);
-            }
+        } else if (
+            !(
+                this.toolbarService.currentTool instanceof PencilService ||
+                this.toolbarService.currentTool instanceof SprayService ||
+                this.toolbarService.currentTool instanceof StampService
+            )
+        ) {
+            this.toolbarService.onMouseMove(event);
         }
     }
 
