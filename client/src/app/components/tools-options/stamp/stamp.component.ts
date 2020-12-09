@@ -10,21 +10,19 @@ import { StampService } from '@app/services/tools/stamp/stamp.service';
 })
 export class StampComponent {
     stickersList: Sticker[] = [
-        { id: 0, src: '../../../../assets/stamp/1.png', srcPreview: '../../../assets/stamp/1.png' },
-        { id: 2, src: '../../../../assets/stamp/3.png', srcPreview: '../../../assets/stamp/3.png' },
-        { id: 3, src: '../../../../assets/stamp/4.png', srcPreview: '../../../assets/stamp/4.png' },
-        { id: 4, src: '../../../../assets/stamp/5.png', srcPreview: '../../../assets/stamp/5.png' },
-        { id: 5, src: '../../../../assets/stamp/6.png', srcPreview: '../../../assets/stamp/6.png' },
-        { id: 6, src: '../../../../assets/stamp/7.png', srcPreview: '../../../assets/stamp/7.png' },
-        { id: 7, src: '../../../../assets/stamp/8.png', srcPreview: '../../../assets/stamp/8.png' },
+        { id: 0, src: '../../../../assets/stamp/1.png' },
+        { id: 2, src: '../../../../assets/stamp/3.png' },
+        { id: 3, src: '../../../../assets/stamp/4.png' },
+        { id: 4, src: '../../../../assets/stamp/5.png' },
+        { id: 5, src: '../../../../assets/stamp/6.png' },
+        { id: 6, src: '../../../../assets/stamp/7.png' },
+        { id: 7, src: '../../../../assets/stamp/8.png' },
     ];
-    angle: number = 0;
     size: number = 100;
     currentSticker: Sticker = this.stickersList[0];
 
     constructor(private stampService: StampService) {
         const stampProperties = this.stampService.toolProperties as StampProperties;
-        this.angle = stampProperties.angle;
         this.size = stampProperties.size;
         this.currentSticker = stampProperties.currentSticker;
     }
@@ -35,6 +33,7 @@ export class StampComponent {
         this.currentSticker = sticker;
         this.stampService.updateImagePreviewURL();
     }
+
     onSizeChange(size: number): void {
         const stampProperties = this.stampService.toolProperties as StampProperties;
         stampProperties.size = size;
@@ -48,6 +47,11 @@ export class StampComponent {
     }
 
     isCurrentSticker(sticker: Sticker): boolean {
-        return sticker === this.currentSticker;
+        return sticker.id === this.currentSticker.id;
+    }
+
+    get stickerAngle(): number {
+        const stampProperties = this.stampService.toolProperties as StampProperties;
+        return stampProperties.angle;
     }
 }
