@@ -6,7 +6,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ResizeService } from '@app/services/resize/resize.service';
 import { ResizeSelectionService } from './resize-selection.service';
 
-fdescribe('ResizeSelectionService', () => {
+describe('ResizeSelectionService', () => {
     let service: ResizeSelectionService;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
     let resizeServiceSpy: jasmine.SpyObj<ResizeService>;
@@ -40,7 +40,7 @@ fdescribe('ResizeSelectionService', () => {
         canvas.height = canvasTestHelper.canvas.height;
         canvasWrapper = document.createElement('div');
         canvasWrapper.appendChild(canvas);
-        console.log(canvas.parentElement);
+
         // tslint:disable: no-string-literal / reason: accessing private member
         service['drawingService'].canvas = canvas;
         service['drawingService'].baseCtx = canvas.getContext('2d') as CanvasRenderingContext2D;
