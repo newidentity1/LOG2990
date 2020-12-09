@@ -28,6 +28,7 @@ export class EmailService {
             })
             .catch((error) => {
                 // handle error
+                console.log(error);
                 return error.response.status;
             });
     }

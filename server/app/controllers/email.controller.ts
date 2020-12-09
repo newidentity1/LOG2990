@@ -33,7 +33,6 @@ export class EmailController {
             this.emailService
                 .sendEmail(req.body.to, fs.createReadStream(req.files[0].path), req.body.title)
                 .then((response) => {
-                    console.log(response, '1');
                     switch (response) {
                         case HTTP_STATUS_OK:
                             res.status(response).send('Votre courriel a été envoyé');
@@ -59,7 +58,6 @@ export class EmailController {
                     }
                 })
                 .catch((error) => {
-                    console.log(error, 'a');
                     res.status(HTTP_STATUS_BAD_REQUEST).send(error.message);
                 });
         });
