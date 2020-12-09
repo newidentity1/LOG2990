@@ -13,8 +13,6 @@ export class ShapeToolTest extends ShapeTool {
     draw(ctx: CanvasRenderingContext2D): void {}
 }
 
-// tslint:disable:no-any / reason: spying on functions
-// tslint:disable:no-string-literal / reason : access private members
 describe('Class: ShapeTool', () => {
     let shapeTool: ShapeToolTest;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
@@ -193,6 +191,8 @@ describe('Class: ShapeTool', () => {
     });
 
     it('function setColors should call setFillColor with primaryColor and setStrokeColor with secondColor', () => {
+        drawingServiceSpy.canvas = canvasTestHelper.canvas;
+        drawingServiceSpy.previewCtx = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         shapeTool.setColors(firstColor, secondColor);
         expect(drawingServiceSpy.setFillColor).toHaveBeenCalledWith(firstColor.toStringRGBA());
         expect(drawingServiceSpy.setStrokeColor).toHaveBeenCalledWith(secondColor.toStringRGBA());

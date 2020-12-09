@@ -1,3 +1,4 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { StampProperties } from '@app/classes/tools-properties/stamp-properties';
 import { StampService } from '@app/services/tools/stamp/stamp.service';
@@ -15,6 +16,7 @@ describe('StampComponent', () => {
         TestBed.configureTestingModule({
             declarations: [StampComponent],
             providers: [{ provide: StampService, useValue: stampServiceMock }],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
         stampServiceMock = TestBed.inject(StampService) as jasmine.SpyObj<StampService>;
         stampServiceMock.toolProperties = new StampProperties();

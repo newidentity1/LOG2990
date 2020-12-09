@@ -4,10 +4,8 @@ import { StampProperties } from '@app/classes/tools-properties/stamp-properties'
 import * as CONSTANTS from '@app/constants/constants';
 import { StampService } from './stamp.service';
 // tslint:disable:no-string-literal // testing private variable
-// tslint:disable:no-any // use for testing
 describe('StampService', () => {
     let service: StampService;
-    // let keyboardEventShift: KeyboardEvent;
     let mouseEventclick: MouseEvent;
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
@@ -17,7 +15,6 @@ describe('StampService', () => {
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
         TestBed.configureTestingModule({});
         service = TestBed.inject(StampService);
-        // keyboardEventShift = new KeyboardEvent('keyDown', { key: 'Shift' });
         service['drawingService'].canvas = canvasTestHelper.canvas;
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
         service['drawingService'].previewCtx = previewCtxStub;
@@ -95,9 +92,8 @@ describe('StampService', () => {
         service.updateImagePreviewURL();
         setTimeout(() => {
             expect(firstImageSrc).not.toEqual(service['imagePreview'].src);
-            // tslint:disable-next-line: no-magic-numbers / reason: waiting for image to load
             done();
             // tslint:disable-next-line:no-magic-numbers // random time only for testing
-        }, 200);
+        }, 1000);
     });
 });
