@@ -35,6 +35,7 @@ export class StampService extends Tool {
     }
 
     onMouseMove(event: MouseEvent): void {
+        this.drawingService.previewCtx.canvas.style.cursor = 'none';
         const properties = this.toolProperties as StampProperties;
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.finalPosition.x = event.x - this.drawingService.baseCtx.canvas.getBoundingClientRect().x - properties.size / 2;
