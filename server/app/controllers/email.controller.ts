@@ -13,6 +13,15 @@ import * as fs from 'fs';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../types';
 
+//required for accessing files from req
+export interface MulterFile {
+    fieldname: string;
+    path: string;
+    mimetype: string;
+    originalname: string;
+    size: number;
+}
+
 @injectable()
 export class EmailController {
     router: Router;
@@ -24,10 +33,9 @@ export class EmailController {
     private configureRouter(): void {
         this.router = Router();
 
-        this.router.post('/', async (req: Request, res: Response, next: NextFunction) => {
-            const documentFile = (req as any).files[0].path;
+        this.router.post('/', (req: Request & { files: MulterFile[] }, res: Response, next: NextFunction) => {
             this.emailService
-                .sendEmail(req.body.to, fs.createReadStream(documentFile))
+                .sendEmail(req.body.to, fs.createReadStream(req.files[0].path))
                 .then((response) => {
                     switch (response) {
                         case HTTP_STATUS_OK:
