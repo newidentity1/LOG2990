@@ -79,23 +79,6 @@ describe('SidebarComponent', () => {
         expect(spySideNav).toHaveBeenCalled();
     });
 
-    it('onToolChanged should toggle the MatSideNav if the parameter is not the currentTool', () => {
-        toolbarServiceMock.currentTool = pencilToolMock;
-        const currentTool = pencilToolMock;
-        const spySideNav = spyOn(component.sidenavProperties, 'toggle');
-        component.onToolChanged(currentTool);
-        expect(spySideNav).toHaveBeenCalled();
-    });
-
-    it('onToolChanged should toggle the MatSideNav if the parameter is not the currentTool', () => {
-        const spySideNavClose = spyOn(component.sidenavProperties, 'close');
-        eyedropperToolMock.name = 'Eyedropper';
-        toolbarServiceMock.currentTool = pencilToolMock;
-        const currentTool = eyedropperToolMock;
-        component.onToolChanged(currentTool);
-        expect(spySideNavClose).toHaveBeenCalled();
-    });
-
     it('createNewDrawing should call the createNewDrawing of the CreateNewDrawingComponent child', () => {
         const spyNewDrawingChild = jasmine.createSpyObj('CreateNewDrawingComponent', ['createNewDrawing']);
         component.newDrawingRef = spyNewDrawingChild;

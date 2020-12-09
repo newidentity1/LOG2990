@@ -34,11 +34,12 @@ canvas {
 .resizable {
     position: absolute;
     margin: $margin-canvas;
+    z-index: 100;
 }
 
 .resizer {
-    width: 5px;
-    height: 5px;
+    width: 8px;
+    height: 8px;
     background: $primaryColor;
     position: absolute;
     border: 1px solid white;

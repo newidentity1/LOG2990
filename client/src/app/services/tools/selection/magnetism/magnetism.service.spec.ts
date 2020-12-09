@@ -149,6 +149,6 @@ describe('MagnetismService', () => {
         let position: Vec2 = { x: 25, y: 25 };
         position = service.moveKeyBord('ArrowDown', position);
         expect(position.x).toEqual(CONSTANTS.GRID_BEGIN_SIZE);
-        expect(position.y).toEqual(CONSTANTS.GRID_BEGIN_SIZE * 2 + CONSTANTS.GRID_BEGIN_SIZE);
+        expect(position.y).toEqual(CONSTANTS.GRID_BEGIN_SIZE * 2);
     });
 });

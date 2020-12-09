@@ -260,6 +260,12 @@ export class ToolbarService {
         }
     }
 
+    resizeSelection(event: MouseEvent): void {
+        if (this.isAreaSelected()) {
+            this.selectionService.resize(event);
+        }
+    }
+
     changeSelectionTool(type: SelectionType): void {
         this.selectionService.setSelectionType(type);
     }
