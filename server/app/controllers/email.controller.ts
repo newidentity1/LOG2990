@@ -1,6 +1,13 @@
-// import { HTTP_STATUS_OK, HTTP_STATUS_CREATED, HTTP_STATUS_ACCEPTED, HTTP_STATUS_NO_CONTENT, HTTP_STATUS_BAD_REQUEST, HTTP_STATUS_FORBIDDEN, HTTP_STATUS_NOT_FOUND, HTTP_STATUS_UNPROCESSABLE_ENTITY, HTTP_STATUS_TOO_MANY_REQUESTS, HTTP_STATUS_INTERNAL_SERVER_ERROR} from '@app/constants';
+import {
+    HTTP_STATUS_OK,
+    HTTP_STATUS_ACCEPTED,
+    HTTP_STATUS_BAD_REQUEST,
+    HTTP_STATUS_FORBIDDEN,
+    HTTP_STATUS_UNPROCESSABLE_ENTITY,
+    HTTP_STATUS_TOO_MANY_REQUESTS,
+    HTTP_STATUS_INTERNAL_SERVER_ERROR,
+} from '@app/constants';
 
-import { HTTP_STATUS_BAD_REQUEST } from '@app/constants';
 import { EmailService } from '@app/services/email.service';
 import { NextFunction, Request, Response, Router } from 'express';
 import * as fs from 'fs';
@@ -20,16 +27,39 @@ export class EmailController {
 
         this.router.post('/', async (req: Request, res: Response, next: NextFunction) => {
             // Request to API
-            // console.log(req.body, req.files[0].path);
+            console.log(req.body, req.files[0].path);
 
             // Response
             this.emailService
-                .sendEmail(req.body.to, fs.createReadStream(req.files[0].path))
+                .sendEmail(req.body.to, fs.createReadStream(req.files[0].path), req.body.title)
                 .then((response) => {
-                    res.status(response).send('allo du serveur');
-                    console.log(response);
+                    console.log(response, '1');
+                    switch (response) {
+                        case HTTP_STATUS_OK:
+                            res.status(response).send('Votre courriel a été envoyé');
+                            break;
+                        case HTTP_STATUS_ACCEPTED:
+                            res.status(response).send('Votre demande de courriel passe la validation (quick_return)');
+                            break;
+                        case HTTP_STATUS_BAD_REQUEST:
+                            res.status(response).send("L'adresse courriel n'est pas valide");
+                            break;
+                        case HTTP_STATUS_FORBIDDEN:
+                            res.status(response).send("L'entête de la requête ne contient pas de clé (X-Teamkey)");
+                            break;
+                        case HTTP_STATUS_UNPROCESSABLE_ENTITY:
+                            res.status(response).send('Requête ne passe pas la validation de base');
+                            break;
+                        case HTTP_STATUS_TOO_MANY_REQUESTS:
+                            res.status(response).send('Le nombre maximal de courriel par heure envoyé a été dépassé');
+                            break;
+                        case HTTP_STATUS_INTERNAL_SERVER_ERROR:
+                            res.status(response).send('Le mail API éprouve des difficultés à envoyé votre courriel pour le moment');
+                            break;
+                    }
                 })
                 .catch((error) => {
+                    console.log(error, 'a');
                     res.status(HTTP_STATUS_BAD_REQUEST).send(error.message);
                 });
         });

@@ -29,7 +29,7 @@ export class ExportDrawingDialogComponent implements AfterViewInit, OnInit, OnDe
 
     percentage: number = 1;
     sliderIsVisible: boolean = false;
-    titleForm: FormControl = new FormControl('', Validators.required);
+    titleForm: FormControl = new FormControl('', [Validators.pattern('^[a-zA-ZÀ-ÿ](\\d|[a-zA-ZÀ-ÿ ]){0,20}$'), Validators.required]);
     emailForm: FormControl = new FormControl('', [Validators.pattern(/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/i), Validators.required]);
 
     subscribeSendEmail: Subscription;
