@@ -9,6 +9,7 @@ describe('StampService', () => {
     let mouseEventclick: MouseEvent;
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
+    // tslint:disable:no-any / reason: jasmine spy on private fonctions
 
     beforeEach(() => {
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;

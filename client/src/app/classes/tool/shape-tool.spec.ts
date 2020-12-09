@@ -12,7 +12,7 @@ export class ShapeToolTest extends ShapeTool {
     // tslint:disable-next-line:no-empty / reason: mocking class for test
     draw(ctx: CanvasRenderingContext2D): void {}
 }
-
+// tslint:disable:no-any / reason: jasmine spy on private fonctions
 describe('Class: ShapeTool', () => {
     let shapeTool: ShapeToolTest;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
@@ -346,6 +346,7 @@ describe('Class: ShapeTool', () => {
     });
 
     it('copyShape should copy all attributes needed to draw shapes', () => {
+        // tslint:disable-next-line:no-string-literal / reason: accessing private member
         const shapeToolCopy: ShapeTool = new ShapeToolTest(shapeTool['drawingService']);
         shapeTool.copyShape(shapeToolCopy);
         const shapeProperties = shapeTool.toolProperties as BasicShapeProperties;
