@@ -43,4 +43,11 @@ describe('StampComponent', () => {
         const properties = component['stampService'].toolProperties as StampProperties;
         expect(properties.size).toEqual(1);
     });
+
+    it('onAngleChange should set the new angle', () => {
+        component.onAngleChange(1);
+        expect(stampServiceMock.updateImagePreviewURL).toHaveBeenCalled();
+        const properties = component['stampService'].toolProperties as StampProperties;
+        expect(properties.angle).toEqual(1);
+    });
 });

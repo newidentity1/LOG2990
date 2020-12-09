@@ -13,3 +13,8 @@
 <label class="label">Choisissez la taille de votre sicker: </label>
 <mat-slider id="sliderSize" thumbLabel (change)="onSizeChange($event.value)" [value]="this.size" tickInterval="10" step="10" min="50" max="300">
 </mat-slider>
+
+<hr />
+<label class="label">Choisissez l'angle de votre sicker: </label>
+<mat-slider id="sliderSize" thumbLabel (change)="onAngleChange($event.value)" [value]="this.angle"  min="0" max="360">
+</mat-slider>
