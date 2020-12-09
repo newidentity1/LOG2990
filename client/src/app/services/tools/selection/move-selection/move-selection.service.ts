@@ -4,6 +4,7 @@ import * as CONSTANTS from '@app/constants/constants';
 import { SelectionArrowIndex } from '@app/enums/selection-arrow-index.enum';
 import { SelectionType } from '@app/enums/selection-type.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { GridService } from '@app/services/tools/grid/grid.service';
 
 @Injectable({
     providedIn: 'root',
@@ -16,7 +17,7 @@ export class MoveSelectionService {
     private canMoveSelectionContiniously: boolean = false;
     private pressedKeys: number[] = [0, 0, 0, 0];
 
-    constructor(private drawingService: DrawingService) {}
+    constructor(private drawingService: DrawingService, private gridService: GridService) {}
 
     checkArrowKeysPressed(event: KeyboardEvent): boolean {
         let arrowKeyPressed = false;
@@ -31,12 +32,18 @@ export class MoveSelectionService {
             this.pressedKeys[SelectionArrowIndex.Down] =
                 event.key === 'ArrowDown' ? -CONSTANTS.SELECTION_MOVE_STEP : this.pressedKeys[SelectionArrowIndex.Down];
 
-            const moveX = this.pressedKeys[SelectionArrowIndex.Left] + this.pressedKeys[SelectionArrowIndex.Right];
-            const moveY = this.pressedKeys[SelectionArrowIndex.Up] + this.pressedKeys[SelectionArrowIndex.Down];
+            let moveX = this.pressedKeys[SelectionArrowIndex.Left] + this.pressedKeys[SelectionArrowIndex.Right];
+            let moveY = this.pressedKeys[SelectionArrowIndex.Up] + this.pressedKeys[SelectionArrowIndex.Down];
 
             if (moveX !== 0 || moveY !== 0) {
                 arrowKeyPressed = true;
-                this.moveSelection(moveX, moveY);
+                if (!this.isMagnet) {
+                    this.moveSelection(moveX, moveY);
+                } else {
+                    moveX = this.finalPosition.x + this.gridService.getGridSize();
+                    moveY += this.finalPosition.y + this.gridService.getGridSize();
+                    this.moveSelectionMagnetic(moveX, moveY);
+                }
             }
 
             if (!this.canMoveSelectionContiniously) {
@@ -76,13 +83,35 @@ export class MoveSelectionService {
         this.drawingService.previewCtx.canvas.style.left = this.finalPosition.x + 'px';
         this.drawingService.previewCtx.canvas.style.top = this.finalPosition.y + 'px';
 
+        const selectionCanvasOffsetLeft = this.drawingService.previewCtx.canvas.offsetLeft;
+        const selectionCanvasOffsetTop = this.drawingService.previewCtx.canvas.offsetTop;
+
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.drawingService.previewCtx.putImageData(
             this.imgData,
             0,
             0,
-            this.finalPosition.x >= 0 ? 0 : -this.finalPosition.x,
-            this.finalPosition.y >= 0 ? 0 : -this.finalPosition.y,
+            selectionCanvasOffsetLeft >= 0 ? 0 : -selectionCanvasOffsetLeft,
+            selectionCanvasOffsetTop >= 0 ? 0 : -selectionCanvasOffsetTop,
+            this.drawingService.canvas.width - selectionCanvasOffsetLeft,
+            this.drawingService.canvas.height - selectionCanvasOffsetTop,
+        );
+    }
+
+    moveSelectionMagnetic(moveX: number, moveY: number): void {
+        this.finalPosition.x = moveX;
+        this.finalPosition.y = moveY;
+
+        this.drawingService.previewCtx.canvas.style.left = this.finalPosition.x + 'px';
+        this.drawingService.previewCtx.canvas.style.top = this.finalPosition.y + 'px';
+
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.drawingService.previewCtx.putImageData(
+            this.imgData,
+            0,
+            0,
+            this.finalPosition.x >= 0 ? 0 : this.finalPosition.x,
+            this.finalPosition.y >= 0 ? 0 : this.finalPosition.y,
             this.drawingService.canvas.width - this.finalPosition.x,
             this.drawingService.canvas.height - this.finalPosition.y,
         );
@@ -102,25 +131,6 @@ export class MoveSelectionService {
             0,
             this.finalPosition.x >= 0 ? 0 : -this.finalPosition.x,
             this.finalPosition.y >= 0 ? 0 : -this.finalPosition.y,
-            this.drawingService.canvas.width - this.finalPosition.x,
-            this.drawingService.canvas.height - this.finalPosition.y,
-        );
-    }
-
-    moveSelectionMagnetic(moveX: number, moveY: number): void {
-        this.finalPosition.x = moveX;
-        this.finalPosition.y = moveY;
-
-        this.drawingService.previewCtx.canvas.style.left = this.finalPosition.x + 'px';
-        this.drawingService.previewCtx.canvas.style.top = this.finalPosition.y + 'px';
-
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        this.drawingService.previewCtx.putImageData(
-            this.imgData,
-            0,
-            0,
-            0,
-            0,
             this.drawingService.canvas.width - this.finalPosition.x,
             this.drawingService.canvas.height - this.finalPosition.y,
         );
@@ -168,7 +178,14 @@ export class MoveSelectionService {
         this.canMoveSelection = true;
     }
 
-    // todo move to math class
+    setFinalPosition(position: Vec2): void {
+        this.finalPosition = {
+            x: position.x,
+            y: position.y,
+        };
+    }
+
+    // TODO move to math class
     private isPositionInEllipse(position: Vec2, width: number, height: number): boolean {
         return Math.pow(position.x - width / 2, 2) / Math.pow(width / 2, 2) + Math.pow(position.y - height / 2, 2) / Math.pow(height / 2, 2) <= 1;
     }

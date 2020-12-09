@@ -29,7 +29,7 @@ export class DrawingService {
     }
 
     clearCanvas(context: CanvasRenderingContext2D): void {
-        context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        context.clearRect(0, 0, context.canvas.width, context.canvas.height);
     }
 
     // https://stackoverflow.com/questions/17386707/how-to-check-if-a-canvas-is-blank
