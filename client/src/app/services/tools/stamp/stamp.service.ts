@@ -52,7 +52,6 @@ export class StampService extends Tool {
         }
         this.updateImagePreviewURL();
         this.drawingService.previewCtx.drawImage(this.imagePreview, this.finalPosition.x, this.finalPosition.y);
-        // this.drawingService.baseCtx.drawImage(this.imagePreview, this.finalPosition.x, this.finalPosition.y);
     }
 
     onKeyDown(event: KeyboardEvent): void {
