@@ -41,6 +41,12 @@ export class StampComponent {
         this.stampService.updateImagePreviewURL();
     }
 
+    onAngleChange(angle: number): void {
+        const stampProperties = this.stampService.toolProperties as StampProperties;
+        stampProperties.angle = angle;
+        this.stampService.updateImagePreviewURL();
+    }
+
     isCurrentSticker(sticker: Sticker): boolean {
         return sticker === this.currentSticker;
     }
