@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
+import { StampProperties } from '@app/classes/tools-properties/stamp-properties';
 import { StampService } from './stamp.service';
 // tslint:disable:no-string-literal
 describe('StampService', () => {
@@ -55,10 +56,37 @@ describe('StampService', () => {
         expect(service['altDown']).toBeTrue();
     });
 
+    it('onKeyDown should not change altDown if alt was not pressed', () => {
+        service['altDown'] = false;
+        const keyboardEvent = new KeyboardEvent('keyDown', { key: '' });
+        service.onKeyDown(keyboardEvent);
+        expect(service['altDown']).toBeFalse();
+    });
+
+    it('onKeyUp should not change altDown if alt was not released', () => {
+        service['altDown'] = false;
+        const keyboardEvent = new KeyboardEvent('keyDown', { key: '' });
+        service.onKeyUp(keyboardEvent);
+        expect(service['altDown']).toBeFalse();
+    });
+
     it('onKeyUp should set altDown to false if alt was released', () => {
         service['altDown'] = true;
         const keyboardEvent = new KeyboardEvent('keyDown', { key: 'Alt' });
         service.onKeyUp(keyboardEvent);
         expect(service['altDown']).toBeFalse();
+    });
+
+    it('updateImagePreviewURL should return the new modifie image', (done) => {
+        service.updateImagePreviewURL();
+        const firstImageSrc = service['imagePreview'].src;
+        const properties = service.toolProperties as StampProperties;
+        properties.angle = 90;
+        service.updateImagePreviewURL();
+        setTimeout(() => {
+            expect(firstImageSrc).not.toEqual(service['imagePreview'].src);
+            // tslint:disable-next-line: no-magic-numbers / reason: waiting for image to load
+            done();
+        }, 200);
     });
 });
