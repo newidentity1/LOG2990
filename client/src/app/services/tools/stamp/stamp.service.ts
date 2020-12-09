@@ -66,28 +66,23 @@ export class StampService extends Tool {
         const properties = this.toolProperties as StampProperties;
         const image = new Image();
         image.crossOrigin = '';
-        image.src = this.resizeImage();
-        image.onload = () => {
-            this.rotateImageCanvas.width = properties.size;
-            this.rotateImageCanvas.height = properties.size;
-            const ctx = this.rotateImageCanvas.getContext('2d') as CanvasRenderingContext2D;
-            ctx.translate(this.rotateImageCanvas.width / 2, this.rotateImageCanvas.height / 2);
-            ctx.rotate((properties.angle * Math.PI) / CONSTANTS.ANGLE_180);
-            ctx.drawImage(image, -image.width / 2, -image.width / 2);
-            ctx.setTransform(1, 0, 0, 1, 0, 0);
-            this.imagePreview.src = ctx.canvas.toDataURL();
-        };
-    }
-
-    resizeImage(): string {
-        const properties = this.toolProperties as StampProperties;
-        const image = new Image();
-        image.crossOrigin = '';
         image.src = properties.currentSticker.src;
-        this.resizeImageCanvas.width = properties.size;
-        this.resizeImageCanvas.height = properties.size;
-        const ctx = this.resizeImageCanvas.getContext('2d') as CanvasRenderingContext2D;
-        ctx.drawImage(image, 0, 0, image.width, image.height, 0, 0, properties.size, properties.size);
-        return this.resizeImageCanvas.toDataURL();
+        image.onload = () => {
+            this.resizeImageCanvas.width = properties.size;
+            this.resizeImageCanvas.height = properties.size;
+            const ctx = this.resizeImageCanvas.getContext('2d') as CanvasRenderingContext2D;
+            ctx.drawImage(image, 0, 0, image.width, image.height, 0, 0, properties.size, properties.size);
+            image.src = this.resizeImageCanvas.toDataURL();
+            image.onload = () => {
+                this.rotateImageCanvas.width = properties.size;
+                this.rotateImageCanvas.height = properties.size;
+                const cctx = this.rotateImageCanvas.getContext('2d') as CanvasRenderingContext2D;
+                cctx.translate(this.rotateImageCanvas.width / 2, this.rotateImageCanvas.height / 2);
+                cctx.rotate((properties.angle * Math.PI) / CONSTANTS.ANGLE_180);
+                cctx.drawImage(image, -image.width / 2, -image.width / 2);
+                cctx.setTransform(1, 0, 0, 1, 0, 0);
+                this.imagePreview.src = cctx.canvas.toDataURL();
+            };
+        };
     }
 }
