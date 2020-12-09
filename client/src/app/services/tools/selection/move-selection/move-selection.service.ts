@@ -88,6 +88,25 @@ export class MoveSelectionService {
         );
     }
 
+    move(moveX: number, moveY: number): void {
+        this.finalPosition.x = moveX;
+        this.finalPosition.y = moveY;
+
+        this.drawingService.previewCtx.canvas.style.left = this.finalPosition.x + 'px';
+        this.drawingService.previewCtx.canvas.style.top = this.finalPosition.y + 'px';
+
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.drawingService.previewCtx.putImageData(
+            this.imgData,
+            0,
+            0,
+            this.finalPosition.x >= 0 ? 0 : -this.finalPosition.x,
+            this.finalPosition.y >= 0 ? 0 : -this.finalPosition.y,
+            this.drawingService.canvas.width - this.finalPosition.x,
+            this.drawingService.canvas.height - this.finalPosition.y,
+        );
+    }
+
     moveSelectionMagnetic(moveX: number, moveY: number): void {
         this.finalPosition.x = moveX;
         this.finalPosition.y = moveY;
