@@ -132,6 +132,7 @@ export class TextService extends Tool {
         const properties = this.toolProperties as TextProperties;
 
         const dimensions = this.calculateLongestWidth();
+        console.log(dimensions);
         this.textAreaDimensions = { x: dimensions + SPACE, y: -properties.size + 2 };
         this.textAreaStartingPoint = { x: this.mouseDownCoord.x - 2, y: this.mouseDownCoord.y + properties.size / HEIGHT_FACTOR };
 
