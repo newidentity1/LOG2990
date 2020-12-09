@@ -4,16 +4,17 @@ import { TYPES } from '@app/types';
 import * as FormData from 'form-data';
 import * as fs from 'fs';
 import { describe } from 'mocha';
+import * as path from 'path';
 import * as supertest from 'supertest';
 import { Stubbed, testingContainer } from '../../test/test-utils';
 import { EmailService } from '../services/email.service';
 
-describe('DrawingController', () => {
+describe('EmailController', () => {
     let emailService: Stubbed<EmailService>;
     let app: Express.Application;
     const validEmail = {
         to: 'test@polymtl.ca',
-        payload: '././test/image-test/menu.png',
+        payload: '.././test/image-test/menu.png',
     };
     // const invalidEmail = {
     //     to: '2112,dsa',
@@ -30,13 +31,15 @@ describe('DrawingController', () => {
 
     it('should send a email to axios', async () => {
         const formData: FormData = new FormData();
-        //const blob = new Blob(['hi', 'constructing', 'a', 'blob']);
         const stream = fs.createReadStream(validEmail.payload);
         formData.append('to', validEmail.to);
         formData.append('payload', stream);
         emailService.sendEmail.resolves(HTTP_STATUS_OK);
-        //emailService.sendEmail.resolves()
-        return supertest(app).post('/api/email/').send(validEmail).expect(HTTP_STATUS_OK);
+        return supertest(app)
+            .post('/api/email/')
+            .field('to', validEmail.to)
+            .attach('test', path.resolve(__dirname, validEmail.payload))
+            .expect(HTTP_STATUS_OK);
     });
 
     // it('should rejects if email format is invalid', async () => {
