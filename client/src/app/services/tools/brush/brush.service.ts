@@ -80,4 +80,5 @@ export class BrushService extends PencilService {
         brushCloneProperties.currentFilter = brushProperties.currentFilter;
         return brushClone;
     }
+
 }

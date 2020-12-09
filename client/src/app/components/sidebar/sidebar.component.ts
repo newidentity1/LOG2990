@@ -29,7 +29,6 @@ export class SidebarComponent {
     }
 
     onToolChanged(tool: Tool): void {
-        this.newDrawingRef.drawingService.previewCtx.canvas.style.cursor = '';
         if (tool !== this.currentTool) {
             this.toolbarService.changeTool(tool);
             this.sidenavProperties.open();
