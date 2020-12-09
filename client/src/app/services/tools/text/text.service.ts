@@ -14,16 +14,15 @@ import { TextActionKeysService } from './text-action-keys/text-action-keys.servi
     providedIn: 'root',
 })
 export class TextService extends Tool {
-    currentTexts: string[] = [''];
-    textConfirmed: boolean = false;
-    isInitialText: boolean = true;
-    currentStyle: string = '';
-    textAreaDimensions: Vec2 = { x: 0, y: 0 };
-    textAreaStartingPoint: Vec2 = { x: 0, y: 0 };
-    cursorPosition: Vec2 = { x: 0, y: 0 };
-    cursorIntervalRef: number;
-    cursorColumnIndex: number = 0;
-    cursorRowIndex: number = 0;
+    private currentTexts: string[] = [''];
+    private textConfirmed: boolean = false;
+    private isInitialText: boolean = true;
+    private currentStyle: string = '';
+    private textAreaDimensions: Vec2 = { x: 0, y: 0 };
+    private textAreaStartingPoint: Vec2 = { x: 0, y: 0 };
+    private cursorIntervalRef: number;
+    private cursorColumnIndex: number = 0;
+    private cursorRowIndex: number = 0;
 
     constructor(drawingService: DrawingService, private shortcutService: ShortcutService, private textActionKeysService: TextActionKeysService) {
         super(drawingService);
@@ -132,7 +131,6 @@ export class TextService extends Tool {
         const properties = this.toolProperties as TextProperties;
 
         const dimensions = this.calculateLongestWidth();
-        console.log(dimensions);
         this.textAreaDimensions = { x: dimensions + SPACE, y: -properties.size + 2 };
         this.textAreaStartingPoint = { x: this.mouseDownCoord.x - 2, y: this.mouseDownCoord.y + properties.size / HEIGHT_FACTOR };
 

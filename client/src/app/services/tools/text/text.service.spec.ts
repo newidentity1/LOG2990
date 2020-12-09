@@ -11,12 +11,13 @@ import { ShortcutService } from '@app/services/shortcut/shortcut.service';
 import { TextActionKeysService } from './text-action-keys/text-action-keys.service';
 import { TextService } from './text.service';
 
-fdescribe('TextService', () => {
+describe('TextService', () => {
     let service: TextService;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
     let shortcutServiceSpy: jasmine.SpyObj<ShortcutService>;
     let textActionKeysServiceStub: TextActionKeysService;
 
+    // tslint:disable: no-string-literal / reason: private function
     beforeEach(() => {
         drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setThickness', 'setTextStyle', 'setTextAlignment']);
         shortcutServiceSpy = jasmine.createSpyObj('ShortcutService', ['addShortcut']);
@@ -50,10 +51,11 @@ fdescribe('TextService', () => {
         expect(shortcutServiceSpy.disableShortcuts).toEqual(false);
         expect(drawingServiceSpy.clearCanvas).toHaveBeenCalled();
         expect(window.clearInterval).toHaveBeenCalled();
-        expect(service.isInitialText).toEqual(true);
-        expect(service.cursorColumnIndex).toEqual(0);
-        expect(service.cursorRowIndex).toEqual(0);
-        expect(service.currentTexts).toEqual(['']);
+
+        expect(service['isInitialText']).toEqual(true);
+        expect(service['cursorColumnIndex']).toEqual(0);
+        expect(service['cursorRowIndex']).toEqual(0);
+        expect(service['currentTexts']).toEqual(['']);
     });
 
     it('onKeyDown should not do anything if mouse down is false', () => {
@@ -67,10 +69,13 @@ fdescribe('TextService', () => {
     });
 
     it('onKeyDown should execute an action if the key is a action and mouse down is true', () => {
-        spyOn(textActionKeysServiceStub, 'onEnter').and.callThrough();
+        spyOn(textActionKeysServiceStub, 'onEnter').and.callFake(() => {
+            return [0, 0, ['']];
+        });
         spyOn(service, 'writeText');
         service.mouseDown = true;
         const enterEvent = { key: 'Enter' } as KeyboardEvent;
+        textActionKeysServiceStub.actionKeys.set('Enter', textActionKeysServiceStub.onEnter.bind(textActionKeysServiceStub));
         service.onKeyDown(enterEvent);
         expect(textActionKeysServiceStub.onEnter).toHaveBeenCalled();
         expect(service.writeText).toHaveBeenCalled();
@@ -91,8 +96,8 @@ fdescribe('TextService', () => {
         service.mouseDown = true;
         const enterEvent = { key: 'a' } as KeyboardEvent;
         service.onKeyDown(enterEvent);
-        expect(service.cursorColumnIndex).toEqual(1);
-        expect(service.currentTexts).toEqual(['a']);
+        expect(service['cursorColumnIndex']).toEqual(1);
+        expect(service['currentTexts']).toEqual(['a']);
         expect(service.writeText).toHaveBeenCalled();
     });
 
@@ -122,7 +127,7 @@ fdescribe('TextService', () => {
         const mouseEvent = { offsetX: 0, offsetY: 0, button: 0 } as MouseEvent;
         service.onClick(mouseEvent);
         expect(Tool.prototype.getPositionFromMouse).toHaveBeenCalled();
-        expect(service.textConfirmed).toEqual(false);
+        expect(service['textConfirmed']).toEqual(false);
         expect(service.writeText).toHaveBeenCalled();
     });
 
@@ -138,10 +143,10 @@ fdescribe('TextService', () => {
             return false;
         });
         const mouseEvent = { offsetX: 0, offsetY: 0, button: 1 } as MouseEvent;
-        service.textConfirmed = true;
+        service['textConfirmed'] = true;
         service.onClick(mouseEvent);
         expect(Tool.prototype.getPositionFromMouse).not.toHaveBeenCalled();
-        expect(service.textConfirmed).toBeTrue();
+        expect(service['textConfirmed']).toBeTrue();
         expect(service.writeText).not.toHaveBeenCalled();
     });
 
@@ -157,12 +162,12 @@ fdescribe('TextService', () => {
             return false;
         });
         const mouseEvent = { offsetX: 0, offsetY: 0, button: 0 } as MouseEvent;
-        service.textConfirmed = true;
-        service.isInitialText = false;
+        service['textConfirmed'] = true;
+        service['isInitialText'] = false;
         service.onClick(mouseEvent);
         expect(Tool.prototype.getPositionFromMouse).not.toHaveBeenCalled();
-        expect(service.textConfirmed).toBeFalse();
-        expect(service.isInitialText).toBeFalse();
+        expect(service['textConfirmed']).toBeFalse();
+        expect(service['isInitialText']).toBeFalse();
         expect(service.writeText).toHaveBeenCalled();
     });
 
@@ -260,12 +265,12 @@ fdescribe('TextService', () => {
     });
 
     it('writeTexts should write the text at the correct position', () => {
-        service.currentTexts = ['test'];
+        service['currentTexts'] = ['test'];
         spyOn(service, 'calculateXCoordText').and.callFake(() => {
             return 0;
         });
         service.writeTexts(drawingServiceSpy.previewCtx);
-        expect(service.calculateXCoordText).toHaveBeenCalledTimes(service.currentTexts.length);
+        expect(service.calculateXCoordText).toHaveBeenCalledTimes(service['currentTexts'].length);
     });
 
     it('confirmText should write text in base context and reset the state of the service', () => {
@@ -282,28 +287,28 @@ fdescribe('TextService', () => {
         expect(service.writeText).toHaveBeenCalledWith(drawingServiceSpy.baseCtx);
         expect(window.clearInterval).toHaveBeenCalled();
         expect(service.executedCommand.emit).toHaveBeenCalled();
-        expect(service.textConfirmed).toBeTrue();
+        expect(service['textConfirmed']).toBeTrue();
         expect(service.mouseDown).toBeFalse();
         expect(shortcutServiceSpy.disableShortcuts).toBeFalse();
-        expect(service.currentTexts).toEqual(['']);
-        expect(service.cursorRowIndex).toEqual(0);
-        expect(service.cursorColumnIndex).toEqual(0);
+        expect(service['currentTexts']).toEqual(['']);
+        expect(service['cursorRowIndex']).toEqual(0);
+        expect(service['cursorColumnIndex']).toEqual(0);
     });
 
     it('drawTextArea should draw a text area around the text', () => {
         spyOn(service, 'calculateLongestWidth').and.callFake(() => {
             return 0;
         });
-        service.currentTexts = [''];
+        service['currentTexts'] = [''];
         service.mouseDownCoord = { x: 2, y: 5 } as Vec2;
         service.drawTextArea();
         expect(service.calculateLongestWidth).toHaveBeenCalled();
         const HEIGHT_FACTOR = 5;
         const SPACE = 10;
         const properties = service.toolProperties as TextProperties;
-        expect(service.textAreaDimensions.x).toEqual(SPACE);
-        expect(service.textAreaDimensions.y).toEqual(-properties.size + 2);
-        expect(service.textAreaStartingPoint).toEqual({
+        expect(service['textAreaDimensions'].x).toEqual(SPACE);
+        expect(service['textAreaDimensions'].y).toEqual(-properties.size + 2);
+        expect(service['textAreaStartingPoint']).toEqual({
             x: service.mouseDownCoord.x - 2,
             y: service.mouseDownCoord.y + properties.size / HEIGHT_FACTOR,
         } as Vec2);
@@ -315,7 +320,7 @@ fdescribe('TextService', () => {
         });
 
         spyOn(window, 'setInterval').and.callThrough();
-        service.cursorIntervalRef = 1;
+        service['cursorIntervalRef'] = 1;
         service.setCursor();
         expect(window.clearInterval).toHaveBeenCalled();
         expect(window.setInterval).toHaveBeenCalled();
@@ -430,31 +435,31 @@ fdescribe('TextService', () => {
     });
 
     it('calculateLongestWidth should the width of the longest text row', () => {
-        service.currentTexts = ['1', '12'];
+        service['currentTexts'] = ['1', '12'];
         const longestWidth = drawingServiceSpy.previewCtx.measureText('12').width;
         spyOn(drawingServiceSpy.previewCtx, 'measureText').and.callThrough();
         expect(service.calculateLongestWidth()).toEqual(longestWidth);
-        expect(drawingServiceSpy.previewCtx.measureText).toHaveBeenCalledTimes(service.currentTexts.length + 1);
+        expect(drawingServiceSpy.previewCtx.measureText).toHaveBeenCalledTimes(service['currentTexts'].length + 1);
     });
 
     it('isClickInsideTextArea should return true if X and Y are inside the text area', () => {
         const mouseEvent = { offsetX: 1, offsetY: 3 } as MouseEvent;
-        service.textAreaStartingPoint = { x: 0, y: 2 } as Vec2;
-        service.textAreaDimensions = { x: 2, y: -2 } as Vec2;
+        service['textAreaStartingPoint'] = { x: 0, y: 2 } as Vec2;
+        service['textAreaDimensions'] = { x: 2, y: -2 } as Vec2;
         expect(service.isClickInsideTextArea(mouseEvent)).toBeTrue();
     });
 
     it('isClickInsideTextArea should return false if X is true and Y false are inside the text area', () => {
         const mouseEvent = { offsetX: 1, offsetY: 1 } as MouseEvent;
-        service.textAreaStartingPoint = { x: 0, y: 0 } as Vec2;
-        service.textAreaDimensions = { x: 2, y: 2 } as Vec2;
+        service['textAreaStartingPoint'] = { x: 0, y: 0 } as Vec2;
+        service['textAreaDimensions'] = { x: 2, y: 2 } as Vec2;
         expect(service.isClickInsideTextArea(mouseEvent)).toBeFalse();
     });
 
     it('isClickInsideTextArea should return false if X is false and Y true are inside the text area', () => {
         const mouseEvent = { offsetX: 20, offsetY: 3 } as MouseEvent;
-        service.textAreaStartingPoint = { x: 0, y: 0 } as Vec2;
-        service.textAreaDimensions = { x: 2, y: 2 } as Vec2;
+        service['textAreaStartingPoint'] = { x: 0, y: 0 } as Vec2;
+        service['textAreaDimensions'] = { x: 2, y: 2 } as Vec2;
         expect(service.isClickInsideTextArea(mouseEvent)).toBeFalse();
     });
 
@@ -577,7 +582,7 @@ fdescribe('TextService', () => {
         properties.size = 1;
         properties.font = TextFont.Arial;
         service.createStyle(properties);
-        expect(service.currentStyle).toEqual('italic bold 1px Arial');
+        expect(service['currentStyle']).toEqual('italic bold 1px Arial');
         expect(drawingServiceSpy.setTextStyle).toHaveBeenCalled();
         expect(drawingServiceSpy.setTextAlignment).toHaveBeenCalled();
     });
@@ -589,7 +594,7 @@ fdescribe('TextService', () => {
         properties.size = 1;
         properties.font = TextFont.Arial;
         service.createStyle(properties);
-        expect(service.currentStyle).toEqual('  1px Arial');
+        expect(service['currentStyle']).toEqual('  1px Arial');
         expect(drawingServiceSpy.setTextStyle).toHaveBeenCalled();
         expect(drawingServiceSpy.setTextAlignment).toHaveBeenCalled();
     });
