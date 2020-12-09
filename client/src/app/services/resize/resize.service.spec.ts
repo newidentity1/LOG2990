@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
 import { ResizeService } from '@app/services/resize/resize.service';
 
+// tslint:disable:no-string-literal / reason : access private members
 describe('ResizeService', () => {
     let service: ResizeService;
 
@@ -15,6 +16,20 @@ describe('ResizeService', () => {
 
     it('should be created', () => {
         expect(service).toBeTruthy();
+    });
+
+    it('resizeFromImage should resize from image size', () => {
+        const executeSpy = spyOn(service, 'execute');
+        const drawImageSpy = spyOn(service, 'drawImage');
+        const emitSpy = spyOn(service.executedCommand, 'emit');
+
+        const value = 10;
+        const image = new Image(value, value);
+        service.resizeFromImage(image);
+
+        expect(executeSpy).toHaveBeenCalled();
+        expect(drawImageSpy).toHaveBeenCalled();
+        expect(emitSpy).toHaveBeenCalled();
     });
 
     it('resize should should call execute', (done) => {
