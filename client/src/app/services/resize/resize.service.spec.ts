@@ -30,9 +30,11 @@ describe('ResizeService', () => {
         expect(executeSpy).toHaveBeenCalled();
         expect(drawImageSpy).toHaveBeenCalled();
         expect(emitSpy).toHaveBeenCalled();
+        expect(service['newWidth']).toEqual(value);
+        expect(service['newHeight']).toEqual(value);
     });
 
-    it('resize should should call execute', (done) => {
+    it('resize should should resize to the correct values', (done) => {
         const executeSpy = spyOn(service, 'execute');
         const drawImageSpy = spyOn(service, 'drawImage');
         const emitSpy = spyOn(service.executedCommand, 'emit');
@@ -43,8 +45,34 @@ describe('ResizeService', () => {
             expect(executeSpy).toHaveBeenCalled();
             expect(drawImageSpy).toHaveBeenCalled();
             expect(emitSpy).toHaveBeenCalled();
+            expect(service['newWidth']).toEqual(value);
+            expect(service['newHeight']).toEqual(value);
             done();
             // tslint:disable-next-line: no-magic-numbers / reason: waiting for image to load
         }, 200);
+    });
+
+    it('execute should resize baseCtx and previewCtx', () => {
+        const value = 10;
+        service['newWidth'] = value;
+        service['newHeight'] = value;
+        service.execute();
+
+        expect(service['drawingService'].baseCtx.canvas.width).toEqual(value);
+        expect(service['drawingService'].baseCtx.canvas.height).toEqual(value);
+        expect(service['drawingService'].previewCtx.canvas.width).toEqual(value);
+        expect(service['drawingService'].previewCtx.canvas.height).toEqual(value);
+        expect(service.canvasSize.x).toEqual(value);
+        expect(service.canvasSize.y).toEqual(value);
+    });
+
+    it('copyShape should copy all attributes needed to draw shapes', () => {
+        service['img'].src = '';
+        const resizeCopy = service.clone();
+        expect(resizeCopy['newWidth']).toEqual(service['newWidth']);
+        expect(resizeCopy['newHeight']).toEqual(service['newHeight']);
+        expect(resizeCopy['canvasSize']).toEqual(service['canvasSize']);
+        expect(resizeCopy['img'].src).toEqual(service['img'].src);
+        expect(resizeCopy['img'].crossOrigin).toEqual(service['img'].crossOrigin);
     });
 });
