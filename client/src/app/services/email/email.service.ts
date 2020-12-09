@@ -17,6 +17,7 @@ export class EmailService {
 
         formData.append('to', emailAddress);
         formData.append('payload', image, filename);
+        formData.append('title', filename);
 
         // Send for POST request
         this.communicationService.postEmail(formData).subscribe({
@@ -26,9 +27,8 @@ export class EmailService {
             },
             error: (error: HttpErrorResponse) => {
                 console.log(error);
-                // const message = error.status === 0 ? "Une erreur s'est produite, le courriel n'a pas été envoyé!" : error.error;
-
-                this.emitSendEmailSubjectEvent(new ResponseResult(false, "Une erreur s'est produite"));
+                const message = error.status === 0 ? "Une erreur s'est produite, le courriel n'a pas été envoyé!" : error.error;
+                this.emitSendEmailSubjectEvent(new ResponseResult(false, message));
             },
         });
     }
