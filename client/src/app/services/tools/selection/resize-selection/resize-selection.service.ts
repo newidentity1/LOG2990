@@ -10,7 +10,7 @@ import { ResizeService } from '@app/services/resize/resize.service';
 export class ResizeSelectionService {
     private startingPoint: Vec2;
     private renderer: Renderer2;
-    private selectionImageCanvas: HTMLCanvasElement;
+    private resizeImageCanvas: HTMLCanvasElement;
     private oppositeControlPointsWidth: Map<ControlPoint, ControlPoint> = new Map<ControlPoint, ControlPoint>();
     private oppositeControlPointsHeight: Map<ControlPoint, ControlPoint> = new Map<ControlPoint, ControlPoint>();
     isMirrorWidth: boolean = false;
@@ -21,7 +21,7 @@ export class ResizeSelectionService {
 
     constructor(private resizeService: ResizeService, private drawingService: DrawingService, private rendererFactory: RendererFactory2) {
         this.renderer = this.rendererFactory.createRenderer(null, null);
-        this.selectionImageCanvas = this.renderer.createElement('canvas');
+        this.resizeImageCanvas = this.renderer.createElement('canvas');
         this.oppositeControlPointsWidth
             .set(ControlPoint.CenterLeft, ControlPoint.CenterRight)
             .set(ControlPoint.CenterRight, ControlPoint.CenterLeft)
@@ -68,14 +68,14 @@ export class ResizeSelectionService {
     }
 
     private onResizeHeight(event: MouseEvent): void {
-        const isHeightOnlyControlPoint =
+        const isWidthOnlyControlPoint =
             this.resizeService.controlPoint === ControlPoint.CenterLeft || this.resizeService.controlPoint === ControlPoint.CenterRight;
         const isControlTopSide =
             this.resizeService.controlPoint === ControlPoint.TopLeft ||
             this.resizeService.controlPoint === ControlPoint.TopCenter ||
             this.resizeService.controlPoint === ControlPoint.TopRight;
 
-        if (isHeightOnlyControlPoint) return;
+        if (isWidthOnlyControlPoint) return;
         const heightDiff = event.clientY - this.drawingService.canvas.getBoundingClientRect().y - this.startingPoint.y;
         const oldHeight = this.drawingService.previewCtx.canvas.height;
         let newHeight = isControlTopSide ? oldHeight - heightDiff : heightDiff;
@@ -140,16 +140,16 @@ export class ResizeSelectionService {
     }
 
     applyScaleToImage(selectionImage: ImageData): ImageData {
-        this.selectionImageCanvas.width = selectionImage.width;
-        this.selectionImageCanvas.height = selectionImage.height;
-        const context = this.selectionImageCanvas.getContext('2d') as CanvasRenderingContext2D;
+        this.resizeImageCanvas.width = selectionImage.width;
+        this.resizeImageCanvas.height = selectionImage.height;
+        const context = this.resizeImageCanvas.getContext('2d') as CanvasRenderingContext2D;
         context.putImageData(selectionImage, 0, 0);
-
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.drawingService.previewCtx.scale(this.scaleX, this.scaleY);
         const posX = this.isMirrorWidth ? -selectionImage.width : 0;
         const posY = this.isMirrorHeight ? -selectionImage.height : 0;
-        this.drawingService.previewCtx.drawImage(this.selectionImageCanvas, posX, posY);
+
+        this.drawingService.previewCtx.drawImage(this.resizeImageCanvas, posX, posY);
         this.drawingService.previewCtx.setTransform(1, 0, 0, 1, 0, 0);
 
         this.scaledImage = this.drawingService.previewCtx.getImageData(
@@ -158,10 +158,8 @@ export class ResizeSelectionService {
             this.drawingService.previewCtx.canvas.width,
             this.drawingService.previewCtx.canvas.height,
         );
-
         const selectionCanvasOffsetLeft = this.drawingService.previewCtx.canvas.offsetLeft;
         const selectionCanvasOffsetTop = this.drawingService.previewCtx.canvas.offsetTop;
-
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.drawingService.previewCtx.putImageData(
             this.scaledImage,
@@ -176,7 +174,7 @@ export class ResizeSelectionService {
         return this.scaledImage;
     }
 
-    changeOppositeControlPoint(isWidth: boolean): void {
+    private changeOppositeControlPoint(isWidth: boolean): void {
         if (this.resizeService.controlPoint === null) return;
         const oppositeControlPoint = isWidth
             ? this.oppositeControlPointsWidth.get(this.resizeService.controlPoint)
