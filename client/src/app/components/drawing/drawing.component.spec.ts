@@ -68,6 +68,8 @@ describe('DrawingComponent', () => {
         component = fixture.componentInstance;
         component.dimensionsUpdatedEvent = dimensionsUpdatedSubjectStub.asObservable();
         component.requestDrawingContainerDimensions = new EventEmitter();
+        // tslint:disable:no-string-literal / reason : access private members
+        component['automaticSavingService'].clearStorage();
         fixture.detectChanges();
     });
 
@@ -113,6 +115,8 @@ describe('DrawingComponent', () => {
     });
 
     it('should call newCanvasSetSize when third parameter is true', () => {
+        // tslint:disable:no-string-literal / reason : access private members
+        component['automaticSavingService'].clearStorage();
         const spyNewCanvasSetSize = spyOn(component, 'newCanvasSetSize');
         component.ngOnInit();
         const delay = 1000;
@@ -408,6 +412,8 @@ describe('DrawingComponent', () => {
     });
 
     it('should update drawing container sizes when dimensionsUpdatedEvent is notified', () => {
+        // tslint:disable:no-string-literal / reason : access private members
+        component['automaticSavingService'].clearStorage();
         spyOn(component.requestDrawingContainerDimensions, 'emit');
         spyOn(component, 'newCanvasSetSize');
         component.ngAfterViewInit();
