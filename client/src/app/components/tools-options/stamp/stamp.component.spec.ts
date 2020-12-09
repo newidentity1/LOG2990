@@ -7,7 +7,7 @@ import { StampComponent } from './stamp.component';
 describe('StampComponent', () => {
     let component: StampComponent;
     let fixture: ComponentFixture<StampComponent>;
-    const sticker = { id: 0, src: '../../../../assets/stamp/1.png', srcPreview: '../../../assets/stamp/1.png' };
+    const sticker = { id: 0, src: '../../../../assets/stamp/1.png' };
     let stampServiceMock: jasmine.SpyObj<StampService>;
 
     beforeEach(async(() => {
