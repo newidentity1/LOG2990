@@ -34,6 +34,7 @@ export class EmailController {
         this.router = Router();
 
         this.router.post('/', (req: Request & { files: MulterFile[] }, res: Response, next: NextFunction) => {
+            console.log(req.body.to, req.files);
             this.emailService
                 .sendEmail(req.body.to, fs.createReadStream(req.files[0].path))
                 .then((response) => {
