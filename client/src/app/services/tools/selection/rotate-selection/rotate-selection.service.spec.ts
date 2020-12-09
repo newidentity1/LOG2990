@@ -1,9 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
-import { ANGLE_180, DEFAULT_ROTATION_ANGLE, ANGLE_360_RAD } from '@app/constants/constants';
+import { ANGLE_180, ANGLE_360_RAD, ANGLE_90_RAD, DEFAULT_ROTATION_ANGLE } from '@app/constants/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { RotateSelectionService } from '@app/services/tools/selection/rotate-selection/rotate-selection.service';
 
+// tslint:disable:no-string-literal / reason : access private members
 describe('RotateSelectionService', () => {
     let service: RotateSelectionService;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
@@ -82,11 +83,57 @@ describe('RotateSelectionService', () => {
         expect(rotateImageSpy).toHaveBeenCalled();
     });
 
-    it('rotateImage resize preview canvas correctly when rotation is less than 90 degrees', () => {
+    it('rotateImage should resize preview canvas correctly when rotation is less than 90 degrees', () => {
         service.rotateImage(new ImageData(1, 1));
-        // const diagonaleStartingAngle = Math.atan(service.originalHeight / service.originalWidth);
+        const width = service.originalWidth;
+        const height = service.originalHeight;
+        const diagonale = Math.sqrt(width * width + height * height);
+        const diagonaleStartingAngle = Math.atan(height / width);
 
-        // let newWidth = (diagonale / 2) * Math.cos(diagonaleStartingAngle - (this.angle % ANGLE_90_RAD)) * 2;
-        // let newHeight = (diagonale / 2) * Math.sin(diagonaleStartingAngle + (this.angle % ANGLE_90_RAD)) * 2;
+        const newWidth = (diagonale / 2) * Math.cos(diagonaleStartingAngle - (service.angle % ANGLE_90_RAD)) * 2;
+        const newHeight = (diagonale / 2) * Math.sin(diagonaleStartingAngle + (service.angle % ANGLE_90_RAD)) * 2;
+
+        expect(Math.floor(service.leftOffset)).toEqual(Math.floor((newWidth - width) / 2));
+        expect(Math.floor(service.topOffset)).toEqual(Math.floor((newHeight - height) / 2));
+        expect(Math.floor(service['drawingService'].previewCtx.canvas.width)).toEqual(Math.floor(newWidth));
+        expect(Math.floor(service['drawingService'].previewCtx.canvas.height)).toEqual(Math.floor(newHeight));
+    });
+
+    it('rotateImage should resize preview canvas correctly when rotation is more than 90 degrees and less than 180', () => {
+        const angleValue = 95;
+        service.angle = (angleValue * Math.PI) / ANGLE_180;
+        service.rotateImage(new ImageData(1, 1));
+        const width = service.originalWidth;
+        const height = service.originalHeight;
+        const diagonale = Math.sqrt(width * width + height * height);
+        const diagonaleStartingAngle = Math.atan(height / width);
+
+        let newWidth = (diagonale / 2) * Math.cos(diagonaleStartingAngle - (service.angle % ANGLE_90_RAD)) * 2;
+        let newHeight = (diagonale / 2) * Math.sin(diagonaleStartingAngle + (service.angle % ANGLE_90_RAD)) * 2;
+        [newWidth, newHeight] = [newHeight, newWidth];
+
+        expect(Math.floor(service.leftOffset)).toEqual(Math.floor((newWidth - width) / 2));
+        expect(Math.floor(service.topOffset)).toEqual(Math.floor((newHeight - height) / 2));
+        expect(Math.floor(service['drawingService'].previewCtx.canvas.width)).toEqual(Math.floor(newWidth));
+        expect(Math.floor(service['drawingService'].previewCtx.canvas.height)).toEqual(Math.floor(newHeight));
+    });
+
+    it('rotateImage should resize preview canvas correctly when rotation is more than 270 degrees and less than 360', () => {
+        const angleValue = 275;
+        service.angle = (angleValue * Math.PI) / ANGLE_180;
+        service.rotateImage(new ImageData(1, 1));
+        const width = service.originalWidth;
+        const height = service.originalHeight;
+        const diagonale = Math.sqrt(width * width + height * height);
+        const diagonaleStartingAngle = Math.atan(height / width);
+
+        let newWidth = (diagonale / 2) * Math.cos(diagonaleStartingAngle - (service.angle % ANGLE_90_RAD)) * 2;
+        let newHeight = (diagonale / 2) * Math.sin(diagonaleStartingAngle + (service.angle % ANGLE_90_RAD)) * 2;
+        [newWidth, newHeight] = [newHeight, newWidth];
+
+        expect(Math.floor(service.leftOffset)).toEqual(Math.floor((newWidth - width) / 2));
+        expect(Math.floor(service.topOffset)).toEqual(Math.floor((newHeight - height) / 2));
+        expect(Math.floor(service['drawingService'].previewCtx.canvas.width)).toEqual(Math.floor(newWidth));
+        expect(Math.floor(service['drawingService'].previewCtx.canvas.height)).toEqual(Math.floor(newHeight));
     });
 });
