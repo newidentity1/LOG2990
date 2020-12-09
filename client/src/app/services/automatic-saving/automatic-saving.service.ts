@@ -9,7 +9,7 @@ import { Subscription } from 'rxjs';
 })
 export class AutomaticSavingService implements OnDestroy {
     recovering: boolean = false;
-    subscribeImageDrawn: Subscription;
+    private subscribeImageDrawn: Subscription;
 
     constructor(private drawingService: DrawingService, private undoRedoService: UndoRedoService, private resizeService: ResizeService) {
         this.subscribeImageDrawn = this.resizeService.imageDrawn.subscribe(() => {
@@ -21,26 +21,30 @@ export class AutomaticSavingService implements OnDestroy {
         this.subscribeImageDrawn.unsubscribe();
     }
 
+    clearStorage(): void {
+        localStorage.clear();
+    }
+
     save(): void {
         const canvas = this.drawingService.canvas;
         const isCanvasEmpty = this.drawingService.canvasEmpty(this.drawingService.baseCtx, canvas);
         if (!isCanvasEmpty) localStorage.setItem('savedDrawing', canvas.toDataURL());
-        else localStorage.clear();
+        else this.clearStorage();
     }
 
     recover(): void {
         this.recovering = true;
-        const dataURL = localStorage.getItem('savedDrawing');
+        const dataURL = localStorage.getItem('savedDrawing') as string;
         const img = new Image();
         this.undoRedoService.resetUndoRedo();
-        img.src = dataURL ? dataURL : '';
+        img.src = dataURL;
         img.onload = () => {
             this.drawingService.clearCanvas(this.drawingService.baseCtx);
-            this.drawingService.baseCtx.drawImage(img, 0, 0);
+            this.resizeService.resizeFromImage(img);
         };
     }
 
     savedDrawingExists(): boolean {
-        return localStorage.getItem('savedDrawing') ? true : false;
+        return Boolean(localStorage.getItem('savedDrawing'));
     }
 }

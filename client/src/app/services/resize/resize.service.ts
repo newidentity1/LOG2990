@@ -8,10 +8,10 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
     providedIn: 'root',
 })
 export class ResizeService extends Command {
-    newWidth: number = 0;
-    newHeight: number = 0;
+    private newWidth: number = 0;
+    private newHeight: number = 0;
+    private img: HTMLImageElement = new Image();
     canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
-    img: HTMLImageElement = new Image();
     imageDrawn: EventEmitter<void> = new EventEmitter<void>();
 
     constructor(private drawingService: DrawingService) {

@@ -3,6 +3,7 @@ import { Command } from '@app/classes/commands/command';
 import { ResizerProperties } from '@app/classes/resizer-properties';
 import { CANVAS_MARGIN_LEFT, CANVAS_MIN_HEIGHT, CANVAS_MIN_WIDTH, SELECTION_CONTROL_POINT_SIZE } from '@app/constants/constants';
 import { MouseButton } from '@app/enums/mouse-button.enum';
+import { AutomaticSavingService } from '@app/services/automatic-saving/automatic-saving.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ResizeService } from '@app/services/resize/resize.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
@@ -42,6 +43,7 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
         private toolbarService: ToolbarService,
         private undoRedoService: UndoRedoService,
         private resizeService: ResizeService,
+        private automaticSavingService: AutomaticSavingService,
     ) {
         this.undoRedoService.resetUndoRedo();
     }
@@ -57,6 +59,10 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
             this.requestDrawingContainerDimensions.emit();
         });
         this.subscribeDimensionsUpdated = this.dimensionsUpdatedEvent.subscribe((dimensions) => {
+            if (this.automaticSavingService.savedDrawingExists()) {
+                this.automaticSavingService.recover();
+                return;
+            }
             this.drawingContainerWidth = dimensions[0];
             this.drawingContainerHeight = dimensions[1];
             if (!!dimensions[2]) this.newCanvasSetSize();
