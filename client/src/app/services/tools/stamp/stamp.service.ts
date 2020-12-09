@@ -47,9 +47,6 @@ export class StampService extends Tool {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         properties.angle =
             (properties.angle + Math.sign(event.deltaY) * (this.altDown ? 1 : CONSTANTS.DEFAULT_ROTATION_ANGLE)) % CONSTANTS.MAXIMUM_ROTATION_ANGLE;
-        if (properties.angle < 0) {
-            properties.angle = CONSTANTS.MAXIMUM_ROTATION_ANGLE + properties.angle;
-        }
         this.updateImagePreviewURL();
         this.drawingService.previewCtx.drawImage(this.imagePreview, this.finalPosition.x, this.finalPosition.y);
     }
