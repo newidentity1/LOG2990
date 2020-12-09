@@ -21,11 +21,9 @@ export class EmailService {
             headers: { 'Content-Type': 'multipart/form-data', 'X-Team-Key': EMAIL_API_KEY, ...bodyFormData.getHeaders() },
         })
             .then((response) => {
-                // handle success
                 return response.status;
             })
             .catch((error) => {
-                // handle error
                 console.log(error);
                 return error.response.status;
             });
