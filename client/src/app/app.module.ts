@@ -9,6 +9,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatGridListModule } from '@angular/material/grid-list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
@@ -57,6 +58,7 @@ import { RectangleComponent } from './components/tools-options/rectangle/rectang
 import { MagnetismComponent } from './components/tools-options/selection/magnetism/magnetism.component';
 import { SelectionComponent } from './components/tools-options/selection/selection.component';
 import { SprayComponent } from './components/tools-options/spray/spray.component';
+import { StampComponent } from './components/tools-options/stamp/stamp.component';
 import { TextComponent } from './components/tools-options/text/text.component';
 import { ThicknessSliderComponent } from './components/tools-options/thickness-slider/thickness-slider.component';
 import { UndoRedoComponent } from './components/undo-redo/undo-redo.component';
@@ -98,6 +100,7 @@ import { UploadComponent } from './components/upload/upload.component';
         UploadDialogComponent,
         WarningDialogComponent,
         TextComponent,
+        StampComponent,
         GridComponent,
         MagnetismComponent,
         ContinueDrawingComponent,
@@ -105,6 +108,7 @@ import { UploadComponent } from './components/upload/upload.component';
         SprayComponent,
     ],
     imports: [
+        MatGridListModule,
         NgImageSliderModule,
         AngularFireModule.initializeApp({
             apiKey: 'AIzaSyA-FAAkdvUBcaXpf87ypqLsMdPNW_ElUWU',

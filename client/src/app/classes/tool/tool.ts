@@ -66,6 +66,7 @@ export abstract class Tool extends Command {
     }
 
     setColors(primaryColor: Color, secondaryColor: Color): void {
+        this.drawingService.previewCtx.canvas.style.cursor = '';
         this.currentPrimaryColor = primaryColor;
         this.currentSecondaryColor = secondaryColor;
         this.drawingService.setColor(primaryColor.toStringRGBA());

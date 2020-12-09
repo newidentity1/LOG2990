@@ -20,6 +20,7 @@ import { PolygonService } from '@app/services/tools/polygon/polygon.service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle.service';
 import { SelectionService } from '@app/services/tools/selection/selection.service';
 import { SprayService } from '@app/services/tools/spray/spray.service';
+import { StampService } from '@app/services/tools/stamp/stamp.service';
 import { TextService } from '@app/services/tools/text/text.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Subscription } from 'rxjs';
@@ -55,6 +56,7 @@ export class ToolbarService {
         protected gridService: GridService,
         protected automaticSavingService: AutomaticSavingService,
         protected textService: TextService,
+        protected stampService: StampService,
         protected calligraphyService: CalligraphyService,
         protected sprayService: SprayService,
     ) {
@@ -70,6 +72,7 @@ export class ToolbarService {
             eyedropperService,
             bucketService,
             textService,
+            stampService,
             gridService,
             calligraphyService,
             sprayService,
@@ -89,6 +92,7 @@ export class ToolbarService {
             .set(KeyShortcut.MagicBrushSelect, selectionService)
             .set(KeyShortcut.Bucket, bucketService)
             .set(KeyShortcut.Text, textService)
+            .set(KeyShortcut.Stamp, stampService)
             .set(KeyShortcut.Grid, gridService)
             .set(KeyShortcut.Calligraphy, calligraphyService)
             .set(KeyShortcut.Spray, sprayService);
