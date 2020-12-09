@@ -7,7 +7,7 @@ import 'reflect-metadata';
 
 @injectable()
 export class EmailService {
-    async sendEmail(to: string, payload: ReadStream, filename: string): Promise<number> {
+    async sendEmail(to: string, payload: ReadStream): Promise<number> {
         if (!this.validateRequestEmail(to)) throw new Error("L'adresse courriel entrée est invalide");
         const bodyFormData = new FormData();
         bodyFormData.append('to', to);
@@ -24,7 +24,6 @@ export class EmailService {
                 return response.status;
             })
             .catch((error) => {
-                console.log(error);
                 return error.response.status;
             });
     }

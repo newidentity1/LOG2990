@@ -7,7 +7,6 @@ import {
     HTTP_STATUS_TOO_MANY_REQUESTS,
     HTTP_STATUS_UNPROCESSABLE_ENTITY,
 } from '@app/constants';
-
 import { EmailService } from '@app/services/email.service';
 import { NextFunction, Request, Response, Router } from 'express';
 import * as fs from 'fs';
@@ -26,8 +25,9 @@ export class EmailController {
         this.router = Router();
 
         this.router.post('/', async (req: Request, res: Response, next: NextFunction) => {
+            const documentFile = (req as any).files[0].path;
             this.emailService
-                .sendEmail(req.body.to, fs.createReadStream(req.files[0].path), req.body.title)
+                .sendEmail(req.body.to, fs.createReadStream(documentFile))
                 .then((response) => {
                     switch (response) {
                         case HTTP_STATUS_OK:
