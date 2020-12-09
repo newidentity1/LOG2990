@@ -47,23 +47,10 @@ describe('ResizeService', () => {
             expect(emitSpy).toHaveBeenCalled();
             expect(service['newWidth']).toEqual(value);
             expect(service['newHeight']).toEqual(value);
+
             done();
             // tslint:disable-next-line: no-magic-numbers / reason: waiting for image to load
         }, 200);
-    });
-
-    it('execute should resize baseCtx and previewCtx', () => {
-        const value = 10;
-        service['newWidth'] = value;
-        service['newHeight'] = value;
-        service.execute();
-
-        expect(service['drawingService'].baseCtx.canvas.width).toEqual(value);
-        expect(service['drawingService'].baseCtx.canvas.height).toEqual(value);
-        expect(service['drawingService'].previewCtx.canvas.width).toEqual(value);
-        expect(service['drawingService'].previewCtx.canvas.height).toEqual(value);
-        expect(service.canvasSize.x).toEqual(value);
-        expect(service.canvasSize.y).toEqual(value);
     });
 
     it('copyShape should copy all attributes needed to draw shapes', () => {
