@@ -15,7 +15,7 @@ describe('AutomaticSavingService', () => {
 
     beforeEach(() => {
         drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setStrokeColor', 'setThickness', 'canvasEmpty']);
-        undoRedoServiceSpy = jasmine.createSpyObj('UndoRdoService', ['resetUndoRedo']);
+        undoRedoServiceSpy = jasmine.createSpyObj('UndoRedoService', ['resetUndoRedo']);
         resizeServiceSpy = jasmine.createSpyObj('ResizeService', ['resizeFromImage'], { imageDrawn: new EventEmitter<void>() });
 
         TestBed.configureTestingModule({
