@@ -1,8 +1,8 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { ResponseResult } from '@app/classes/response-result';
+import { CommunicationService } from '@app/services/communication/communication.service';
 import { of, throwError } from 'rxjs';
-import { CommunicationService } from '../communication/communication.service';
 import { EmailService } from './email.service';
 
 describe('EmailService', () => {
