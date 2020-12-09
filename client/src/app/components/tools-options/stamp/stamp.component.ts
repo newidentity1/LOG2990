@@ -23,13 +23,16 @@ export class StampComponent implements OnInit {
 
     ngOnInit(): void {
         //
+        this.stampService.getImagePreviewURL();
     }
 
     onClick(src: string): void {
         console.log(src);
         this.stampService.src = src;
+        this.stampService.getImagePreviewURL();
     }
     onImageChange(size: number): void {
         this.stampService.size = size;
+        this.stampService.getImagePreviewURL();
     }
 }

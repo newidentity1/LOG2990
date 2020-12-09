@@ -17,7 +17,6 @@ export class StampService extends Tool {
     private renderer: Renderer2;
     private selectionImageCanvas: HTMLCanvasElement;
     private resizeImageCanvas: HTMLCanvasElement;
-    private imagePreviewURL: string = '../../../assets/stamp/1.png';
     private imagePreview = new Image();
     constructor(drawingService: DrawingService, private rendererFactory: RendererFactory2) {
         super(drawingService);
@@ -28,10 +27,10 @@ export class StampService extends Tool {
         this.renderer = this.rendererFactory.createRenderer(null, null);
         this.selectionImageCanvas = this.renderer.createElement('canvas');
         this.resizeImageCanvas = this.renderer.createElement('canvas');
+        this.imagePreview.src = this.src;
     }
 
     onClick(event: MouseEvent): void {
-        this.getImagePreviewURL();
         this.drawingService.baseCtx.drawImage(this.imagePreview, this.finalPosition.x, this.finalPosition.y);
     }
 
@@ -45,12 +44,12 @@ export class StampService extends Tool {
     onMouseScroll(event: WheelEvent): void {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.getImagePreviewURL();
-        this.angle =
-            (this.angle + Math.sign(event.deltaY) * (this.atlDown ? 1 : CONSTANTS.DEFAULT_ROTATION_ANGLE)) % CONSTANTS.MAXIMUM_ROTATION_ANGLE;
+        this.angle = (this.angle + Math.sign(event.y) * (this.atlDown ? 1 : CONSTANTS.DEFAULT_ROTATION_ANGLE)) % CONSTANTS.MAXIMUM_ROTATION_ANGLE;
         if (this.angle < 0) {
             this.angle = CONSTANTS.MAXIMUM_ROTATION_ANGLE + this.angle;
         }
         this.drawingService.previewCtx.drawImage(this.imagePreview, this.finalPosition.x, this.finalPosition.y);
+        console.log('ici');
     }
     onKeyDown(event: KeyboardEvent): void {
         this.atlDown = event.key === 'Alt' ? true : this.atlDown;
@@ -71,7 +70,7 @@ export class StampService extends Tool {
         ctx.rotate(this.angle);
         ctx.drawImage(image, -image.width / 2, -image.width / 2);
         ctx.setTransform(1, 0, 0, 1, 0, 0);
-        this.imagePreview.src = ctx.canvas.toDataURL();
+        this.imagePreview.src = this.selectionImageCanvas.toDataURL();
     }
 
     resizeImage(): string {
