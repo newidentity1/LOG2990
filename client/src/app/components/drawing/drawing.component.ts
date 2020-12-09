@@ -4,12 +4,14 @@ import { ResizerProperties } from '@app/classes/resizer-properties';
 import { CANVAS_MIN_HEIGHT, CANVAS_MIN_WIDTH, SELECTION_CONTROL_POINT_SIZE } from '@app/constants/constants';
 import { ControlPoint } from '@app/enums/control-point.enum';
 import { MouseButton } from '@app/enums/mouse-button.enum';
+import { AutomaticSavingService } from '@app/services/automatic-saving/automatic-saving.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ResizeService } from '@app/services/resize/resize.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { SelectionService } from '@app/services/tools/selection/selection.service';
 import { SprayService } from '@app/services/tools/spray/spray.service';
+import { StampService } from '@app/services/tools/stamp/stamp.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Observable, Subscription } from 'rxjs';
 
@@ -41,6 +43,7 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
         private toolbarService: ToolbarService,
         private undoRedoService: UndoRedoService,
         private resizeService: ResizeService,
+        private automaticSavingService: AutomaticSavingService,
     ) {
         this.undoRedoService.resetUndoRedo();
     }
@@ -56,6 +59,10 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
             this.requestDrawingContainerDimensions.emit();
         });
         this.subscribeDimensionsUpdated = this.dimensionsUpdatedEvent.subscribe((dimensions) => {
+            if (this.automaticSavingService.savedDrawingExists()) {
+                this.automaticSavingService.recover();
+                return;
+            }
             this.drawingContainerWidth = dimensions[0];
             this.drawingContainerHeight = dimensions[1];
             if (!!dimensions[2]) {
@@ -95,7 +102,8 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
             if (
                 (this.toolbarService.currentTool instanceof SelectionService && this.toolbarService.isAreaSelected()) ||
                 this.toolbarService.currentTool instanceof PencilService ||
-                this.toolbarService.currentTool instanceof SprayService
+                this.toolbarService.currentTool instanceof SprayService ||
+                this.toolbarService.currentTool instanceof StampService
             ) {
                 this.toolbarService.onMouseMove(event);
             }
@@ -111,10 +119,14 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
     onMouseMove(event: MouseEvent): void {
         if (this.toolbarService.currentTool instanceof SelectionService && !this.toolbarService.currentTool.activeMagnet) {
             this.toolbarService.onMouseMove(event);
-        } else if (!(this.toolbarService.currentTool instanceof PencilService)) {
-            if (!(this.toolbarService.currentTool instanceof PencilService || this.toolbarService.currentTool instanceof SprayService)) {
-                this.toolbarService.onMouseMove(event);
-            }
+        } else if (
+            !(
+                this.toolbarService.currentTool instanceof PencilService ||
+                this.toolbarService.currentTool instanceof SprayService ||
+                this.toolbarService.currentTool instanceof StampService
+            )
+        ) {
+            this.toolbarService.onMouseMove(event);
         }
     }
 

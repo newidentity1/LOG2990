@@ -8,12 +8,9 @@ import { SelectionService } from '@app/services/tools/selection/selection.servic
 })
 export class MagnetismComponent implements OnInit {
     activateOption: number = 1;
-    constructor(private selectionService: SelectionService) {
-        //
-    }
+    constructor(private selectionService: SelectionService) {}
 
     ngOnInit(): void {
-        //
         this.activateOption = this.selectionService.magnetismService.getMagnetismOption();
     }
 
