@@ -1,8 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
 import { StampProperties } from '@app/classes/tools-properties/stamp-properties';
+import * as CONSTANTS from '@app/constants/constants';
 import { StampService } from './stamp.service';
-// tslint:disable:no-string-literal
+// tslint:disable:no-string-literal // testing private variable
+// tslint:disable:no-any // use for testing
 describe('StampService', () => {
     let service: StampService;
     // let keyboardEventShift: KeyboardEvent;
@@ -48,6 +50,14 @@ describe('StampService', () => {
         service.onMouseScroll(scrollEvent);
         expect(drawSpy).toHaveBeenCalled();
     });
+    it('onMouseScroll should add 15 degrees to lineAngle if scrolling down and Alt key is not down', () => {
+        service['altDown'] = true;
+        const properties = service.toolProperties as StampProperties;
+        properties.angle = 0;
+        const scrollEvent = { deltaY: 1 } as WheelEvent;
+        service.onMouseScroll(scrollEvent);
+        expect(properties.angle).toEqual(1);
+    });
 
     it('onKeyDown should set altDown to true if alt was pressed', () => {
         service['altDown'] = false;
@@ -81,12 +91,13 @@ describe('StampService', () => {
         service.updateImagePreviewURL();
         const firstImageSrc = service['imagePreview'].src;
         const properties = service.toolProperties as StampProperties;
-        properties.angle = 90;
+        properties.angle = CONSTANTS.ANGLE_90;
         service.updateImagePreviewURL();
         setTimeout(() => {
             expect(firstImageSrc).not.toEqual(service['imagePreview'].src);
             // tslint:disable-next-line: no-magic-numbers / reason: waiting for image to load
             done();
+            // tslint:disable-next-line:no-magic-numbers // random time only for testing
         }, 200);
     });
 });
