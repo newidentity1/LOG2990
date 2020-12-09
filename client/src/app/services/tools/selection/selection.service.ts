@@ -271,6 +271,7 @@ export class SelectionService extends ShapeTool {
     }
 
     resetContext(): void {
+        this.magnetismService.firstmove = true;
         this.mouseDown = false;
         this.isAreaSelected = false;
         this.shiftDown = false;
