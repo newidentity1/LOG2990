@@ -1,11 +1,11 @@
 import {
-    HTTP_STATUS_OK,
     HTTP_STATUS_ACCEPTED,
     HTTP_STATUS_BAD_REQUEST,
     HTTP_STATUS_FORBIDDEN,
-    HTTP_STATUS_UNPROCESSABLE_ENTITY,
-    HTTP_STATUS_TOO_MANY_REQUESTS,
     HTTP_STATUS_INTERNAL_SERVER_ERROR,
+    HTTP_STATUS_OK,
+    HTTP_STATUS_TOO_MANY_REQUESTS,
+    HTTP_STATUS_UNPROCESSABLE_ENTITY,
 } from '@app/constants';
 
 import { EmailService } from '@app/services/email.service';
@@ -26,10 +26,6 @@ export class EmailController {
         this.router = Router();
 
         this.router.post('/', async (req: Request, res: Response, next: NextFunction) => {
-            // Request to API
-            console.log(req.body, req.files[0].path);
-
-            // Response
             this.emailService
                 .sendEmail(req.body.to, fs.createReadStream(req.files[0].path), req.body.title)
                 .then((response) => {
