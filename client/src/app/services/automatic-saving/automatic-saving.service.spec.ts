@@ -10,25 +10,25 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 describe('AutomaticSavingService', () => {
     let service: AutomaticSavingService;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
-    let undoRedoService: jasmine.SpyObj<UndoRedoService>;
-    let resizeService: jasmine.SpyObj<ResizeService>;
+    let undoRedoServiceSpy: jasmine.SpyObj<UndoRedoService>;
+    let resizeServiceSpy: jasmine.SpyObj<ResizeService>;
 
     beforeEach(() => {
         drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setStrokeColor', 'setThickness', 'canvasEmpty']);
-        undoRedoService = jasmine.createSpyObj('UndoRdoService', ['resetUndoRedo']);
-        resizeService = jasmine.createSpyObj('ResizeService', ['resizeFromImage'], { imageDrawn: new EventEmitter<void>() });
+        undoRedoServiceSpy = jasmine.createSpyObj('UndoRdoService', ['resetUndoRedo']);
+        resizeServiceSpy = jasmine.createSpyObj('ResizeService', ['resizeFromImage'], { imageDrawn: new EventEmitter<void>() });
 
         TestBed.configureTestingModule({
             providers: [
                 { provide: DrawingService, useValue: drawingServiceSpy },
-                { provide: UndoRedoService, useValue: undoRedoService },
-                { provide: ResizeService, useValue: resizeService },
+                { provide: UndoRedoService, useValue: undoRedoServiceSpy },
+                { provide: ResizeService, useValue: resizeServiceSpy },
             ],
         });
         service = TestBed.inject(AutomaticSavingService);
         drawingServiceSpy = TestBed.inject(DrawingService) as jasmine.SpyObj<DrawingService>;
-        undoRedoService = TestBed.inject(UndoRedoService) as jasmine.SpyObj<UndoRedoService>;
-        resizeService = TestBed.inject(ResizeService) as jasmine.SpyObj<ResizeService>;
+        undoRedoServiceSpy = TestBed.inject(UndoRedoService) as jasmine.SpyObj<UndoRedoService>;
+        resizeServiceSpy = TestBed.inject(ResizeService) as jasmine.SpyObj<ResizeService>;
 
         drawingServiceSpy.canvas = canvasTestHelper.canvas;
         drawingServiceSpy.baseCtx = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
@@ -43,5 +43,54 @@ describe('AutomaticSavingService', () => {
         const unsubscribeSpy = spyOn(service['subscribeImageDrawn'], 'unsubscribe');
         service.ngOnDestroy();
         expect(unsubscribeSpy).toHaveBeenCalled();
+    });
+
+    it('clearStorage should clear the localStorage', () => {
+        const clearStorageSpy = spyOn(Object.getPrototypeOf(localStorage), 'clear');
+        service.clearStorage();
+        expect(clearStorageSpy).toHaveBeenCalled();
+    });
+
+    it('save should set local storage if canvas is not empty', () => {
+        drawingServiceSpy.canvasEmpty.and.callFake(() => {
+            return false;
+        });
+        const localStorageSpy = spyOn(Object.getPrototypeOf(localStorage), 'setItem');
+        service.save();
+        expect(localStorageSpy).toHaveBeenCalled();
+    });
+
+    it('save should clear the storage if canvas is empty', () => {
+        drawingServiceSpy.canvasEmpty.and.callFake(() => {
+            return true;
+        });
+        const clearStorageSpy = spyOn(service, 'clearStorage');
+        service.save();
+        expect(clearStorageSpy).toHaveBeenCalled();
+    });
+
+    it('recover should call resetUndoRedo, clearCanvas and resizeFromImage', (done) => {
+        drawingServiceSpy.canvasEmpty.and.callFake(() => {
+            return false;
+        });
+        service.save();
+        service.recover();
+        setTimeout(() => {
+            expect(undoRedoServiceSpy.resetUndoRedo).toHaveBeenCalled();
+            expect(drawingServiceSpy.clearCanvas).toHaveBeenCalled();
+            expect(resizeServiceSpy.resizeFromImage).toHaveBeenCalled();
+            done();
+            // tslint:disable-next-line: no-magic-numbers / reason: waiting for image to load
+        }, 200);
+    });
+
+    it('savedDrawingExists should return true if localStorage is set', () => {
+        service.save();
+        expect(service.savedDrawingExists()).toEqual(true);
+    });
+
+    it('savedDrawingExists should return false if localStorage is empty', () => {
+        service.clearStorage();
+        expect(service.savedDrawingExists()).toEqual(false);
     });
 });
