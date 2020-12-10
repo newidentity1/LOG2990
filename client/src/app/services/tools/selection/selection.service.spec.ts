@@ -945,7 +945,7 @@ describe('SelectionService', () => {
 
     it('magneticMoveKeyboard should call magneticMove', () => {
         service.magnetismService.firstmove = false;
-        const moveSpy = spyOn(service['moveSelectionService'], 'move');
+        const moveSpy = spyOn(service['moveSelectionService'], 'moveSelectionMagnetic');
         service.magneticMoveKeyboard('ArrowLeft');
         expect(moveSpy).toHaveBeenCalled();
     });
