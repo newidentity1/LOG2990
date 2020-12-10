@@ -12,6 +12,10 @@ export class AutomaticSavingService implements OnDestroy {
     private subscribeImageDrawn: Subscription;
 
     constructor(private drawingService: DrawingService, private undoRedoService: UndoRedoService, private resizeService: ResizeService) {
+        this.subscribeToImageDrawing();
+    }
+
+    private subscribeToImageDrawing(): void {
         this.subscribeImageDrawn = this.resizeService.imageDrawn.subscribe(() => {
             this.save();
         });

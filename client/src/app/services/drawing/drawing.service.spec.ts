@@ -1,5 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
+import { TextAlignment } from '@app/enums/text-alignment.enum';
+import { TextFont } from '@app/enums/text-font.enum';
 import { DrawingService } from './drawing.service';
 
 describe('DrawingService', () => {
@@ -88,5 +90,19 @@ describe('DrawingService', () => {
         expect(spyFill).toHaveBeenCalledWith(color);
         expect(spyStroke).toHaveBeenCalled();
         expect(spyStroke).toHaveBeenCalledWith(color);
+    });
+
+    it('should set the font when setTextStyle is called', () => {
+        const font = `10px ${TextFont.Arial}`;
+        service.setTextStyle(font);
+        expect(service.previewCtx.font).toEqual(font);
+        expect(service.baseCtx.font).toEqual(font);
+    });
+
+    it('should set the alignment when setTextAlignment is called', () => {
+        const alignment = TextAlignment.Middle;
+        service.setTextAlignment(alignment);
+        expect(service.previewCtx.textAlign).toEqual(alignment);
+        expect(service.baseCtx.textAlign).toEqual(alignment);
     });
 });
