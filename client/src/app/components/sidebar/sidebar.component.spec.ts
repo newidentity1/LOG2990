@@ -79,6 +79,14 @@ describe('SidebarComponent', () => {
         expect(spySideNav).toHaveBeenCalled();
     });
 
+    it('onToolChanged should not call changeTool and open the MatSideNav if the parameter is same as currentTool', () => {
+        toolbarServiceMock.currentTool = pencilToolMock;
+        const spySideNav = spyOn(component.sidenavProperties, 'open');
+        component.onToolChanged(pencilToolMock);
+        expect(toolbarServiceMock.changeTool).not.toHaveBeenCalled();
+        expect(spySideNav).not.toHaveBeenCalled();
+    });
+
     it('createNewDrawing should call the createNewDrawing of the CreateNewDrawingComponent child', () => {
         const spyNewDrawingChild = jasmine.createSpyObj('CreateNewDrawingComponent', ['createNewDrawing']);
         component.newDrawingRef = spyNewDrawingChild;

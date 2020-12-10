@@ -9,7 +9,6 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ResizeService } from '@app/services/resize/resize.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 import { PencilService } from '@app/services/tools/pencil/pencil.service';
-import { SelectionService } from '@app/services/tools/selection/selection.service';
 import { SprayService } from '@app/services/tools/spray/spray.service';
 import { StampService } from '@app/services/tools/stamp/stamp.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
@@ -100,7 +99,7 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
     onMouseMoveWindow(event: MouseEvent): void {
         if (!this.isResizing()) {
             if (
-                (this.toolbarService.currentTool instanceof SelectionService && this.toolbarService.isAreaSelected()) ||
+                this.toolbarService.isAreaSelected() ||
                 this.toolbarService.currentTool instanceof PencilService ||
                 this.toolbarService.currentTool instanceof SprayService ||
                 this.toolbarService.currentTool instanceof StampService
@@ -117,13 +116,12 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     onMouseMove(event: MouseEvent): void {
-        if (this.toolbarService.currentTool instanceof SelectionService && !this.toolbarService.currentTool.activeMagnet) {
-            this.toolbarService.onMouseMove(event);
-        } else if (
+        if (
             !(
                 this.toolbarService.currentTool instanceof PencilService ||
                 this.toolbarService.currentTool instanceof SprayService ||
-                this.toolbarService.currentTool instanceof StampService
+                this.toolbarService.currentTool instanceof StampService ||
+                this.toolbarService.isAreaSelected()
             )
         ) {
             this.toolbarService.onMouseMove(event);
