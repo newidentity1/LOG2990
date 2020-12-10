@@ -32,7 +32,7 @@
             <mat-radio-button
                 class="image-radio-button"
                 [value]="textAlignments[0]"
-                (change)="onTextAlignment($event)"
+                (change)="onTextAlignmentChange($event)"
                 [ngClass]="{ currentAlignment: isCurrentAlignment(textAlignments[0]) }"
             >
                 <mat-icon>format_align_left</mat-icon>
@@ -41,7 +41,7 @@
             <mat-radio-button
                 class="image-radio-button"
                 [value]="textAlignments[1]"
-                (change)="onTextAlignment($event)"
+                (change)="onTextAlignmentChange($event)"
                 [ngClass]="{ currentAlignment: isCurrentAlignment(textAlignments[1]) }"
             >
                 <mat-icon>format_align_center</mat-icon>
@@ -50,7 +50,7 @@
             <mat-radio-button
                 class="image-radio-button"
                 [value]="textAlignments[2]"
-                (change)="onTextAlignment($event)"
+                (change)="onTextAlignmentChange($event)"
                 [ngClass]="{ currentAlignment: isCurrentAlignment(textAlignments[2]) }"
             >
                 <mat-icon>format_align_right</mat-icon>
