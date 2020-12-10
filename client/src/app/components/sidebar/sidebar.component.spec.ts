@@ -9,7 +9,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 import { EyedropperService } from '@app/services/tools/eyedropper/eyedropper.service';
-import { PencilService } from '@app/services/tools/pencil/pencil-service';
+import { PencilService } from '@app/services/tools/pencil/pencil.service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle.service';
 import { SidebarComponent } from './sidebar.component';
 

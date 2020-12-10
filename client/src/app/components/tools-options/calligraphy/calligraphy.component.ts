@@ -6,7 +6,7 @@ import { CalligraphyService } from '@app/services/tools/calligraphy/calligraphy.
 @Component({
     selector: 'app-calligraphy-options',
     templateUrl: './calligraphy.component.html',
-    styleUrls: ['../../../sidebar/sidebar.component.scss'],
+    styleUrls: ['../../sidebar/sidebar.component.scss'],
 })
 export class CalligraphyComponent {
     constructor(private calligraphyService: CalligraphyService) {}

@@ -11,7 +11,7 @@ import {
 } from '@app/constants/constants';
 import { MouseButton } from '@app/enums/mouse-button.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { PencilService } from '@app/services/tools/pencil/pencil-service';
+import { PencilService } from '@app/services/tools/pencil/pencil.service';
 import { CalligraphyService } from './calligraphy.service';
 
 describe('CalligraphyService', () => {
