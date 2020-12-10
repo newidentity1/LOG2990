@@ -25,7 +25,7 @@ import { StampService } from '@app/services/tools/stamp/stamp.service';
 import { TextService } from '@app/services/tools/text/text.service';
 
 // tslint:disable:no-string-literal / reason: accessing private members
-fdescribe('ToolbarService', () => {
+describe('ToolbarService', () => {
     let service: ToolbarService;
     let pencilServiceSpy: jasmine.SpyObj<PencilService>;
     let gridServiceSpy: jasmine.SpyObj<GridService>;
