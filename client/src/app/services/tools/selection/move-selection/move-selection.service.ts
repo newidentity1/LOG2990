@@ -9,6 +9,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
     providedIn: 'root',
 })
 export class MoveSelectionService {
+    isMagnet: boolean = false;
     imgData: ImageData;
     canMoveSelection: boolean = false;
     finalPosition: Vec2 = { x: 0, y: 0 };
@@ -32,6 +33,7 @@ export class MoveSelectionService {
 
             const moveX = this.pressedKeys[SelectionArrowIndex.Left] + this.pressedKeys[SelectionArrowIndex.Right];
             const moveY = this.pressedKeys[SelectionArrowIndex.Up] + this.pressedKeys[SelectionArrowIndex.Down];
+
             if (moveX !== 0 || moveY !== 0) {
                 arrowKeyPressed = true;
                 this.moveSelection(moveX, moveY);
@@ -73,7 +75,19 @@ export class MoveSelectionService {
 
         this.drawingService.previewCtx.canvas.style.left = this.finalPosition.x + 'px';
         this.drawingService.previewCtx.canvas.style.top = this.finalPosition.y + 'px';
+        this.redraw();
+    }
 
+    moveSelectionMagnetic(moveX: number, moveY: number): void {
+        this.finalPosition.x = moveX;
+        this.finalPosition.y = moveY;
+
+        this.drawingService.previewCtx.canvas.style.left = this.finalPosition.x + 'px';
+        this.drawingService.previewCtx.canvas.style.top = this.finalPosition.y + 'px';
+        this.redraw();
+    }
+
+    private redraw(): void {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.drawingService.previewCtx.putImageData(
             this.imgData,
@@ -96,11 +110,10 @@ export class MoveSelectionService {
         this.imgData = this.drawingService.baseCtx.getImageData(startingPos.x, startingPos.y, width, height);
         const areaToClear = this.drawingService.baseCtx.getImageData(startingPos.x, startingPos.y, width, height);
 
-        let y = 0;
         for (let i = 0; i < this.imgData.data.length; i += CONSTANTS.IMAGE_DATA_OPACITY_INDEX + 1) {
             if (currentType === SelectionType.EllipseSelection) {
                 const x = (i / (CONSTANTS.IMAGE_DATA_OPACITY_INDEX + 1)) % this.imgData.width;
-                if (x === 0) y++;
+                const y = Math.floor(i / (CONSTANTS.IMAGE_DATA_OPACITY_INDEX + 1) / this.imgData.width);
 
                 if (!this.isPositionInEllipse({ x, y }, width, height)) {
                     this.imgData.data[i] = 0;
@@ -127,6 +140,13 @@ export class MoveSelectionService {
         this.drawingService.baseCtx.putImageData(areaToClear, startingPos.x, startingPos.y, 0, 0, width, height);
         selectionCtx.canvas.style.cursor = 'move';
         this.canMoveSelection = true;
+    }
+
+    setFinalPosition(position: Vec2): void {
+        this.finalPosition = {
+            x: position.x,
+            y: position.y,
+        };
     }
 
     private isPositionInEllipse(position: Vec2, width: number, height: number): boolean {

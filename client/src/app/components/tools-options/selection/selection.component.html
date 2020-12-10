@@ -1,6 +1,6 @@
 <div class="property">
     <h3 class="title-property">Propriété de la selection</h3>
-    <label class="type-drawing-label">Choisissez le type de selection que vous souhaitez:</label>
+    <label class="label">Choisissez le type de selection que vous souhaitez:</label>
     <mat-radio-group aria-labelledby="type-selection-label" class="type-selection-group" ngDefaultControl>
         <mat-radio-button
             class="type-drawing"
@@ -18,5 +18,25 @@
             <mat-icon>select_all</mat-icon>
             <span>Sélectionner tout</span>
         </button>
+        <button mat-button (click)="triggerCopy()" [disabled]="!isAreaSelected()">
+            <mat-icon>content_copy</mat-icon>
+            <span>Copier</span>
+        </button>
+        <button mat-button (click)="triggerCut()" [disabled]="!isAreaSelected()">
+            <mat-icon>content_cut</mat-icon>
+            <span>Couper</span>
+        </button>
+        <button mat-button (click)="triggerPaste()" [disabled]="isClipboardEmpty()">
+            <mat-icon>content_paste</mat-icon>
+            <span>Coller</span>
+        </button>
+        <button mat-button (click)="triggerDelete()" [disabled]="!isAreaSelected()">
+            <mat-icon>clear</mat-icon>
+            <span>Supprimer</span>
+        </button>
+    </div>
+    <hr />
+    <div>
+        <app-magnetism-option></app-magnetism-option>
     </div>
 </div>

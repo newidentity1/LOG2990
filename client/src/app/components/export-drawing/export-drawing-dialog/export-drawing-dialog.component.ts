@@ -1,16 +1,20 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ResponseResult } from '@app/classes/response-result';
 import { BLUR_CONVERSION, HUE_CONVERSION, MAX_PREVIEW_SIZE } from '@app/constants/constants.ts';
 import { ExportFilterType } from '@app/enums/export-filter.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { EmailService } from '@app/services/email/email.service';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-export-drawing-dialog',
     templateUrl: './export-drawing-dialog.component.html',
     styleUrls: ['./export-drawing-dialog.component.scss'],
 })
-export class ExportDrawingDialogComponent implements AfterViewInit {
+export class ExportDrawingDialogComponent implements AfterViewInit, OnInit, OnDestroy {
     @ViewChild('drawingImageContainer') drawingImageContainer: ElementRef;
     @ViewChild('previewCanvas') previewCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('exportCanvas') exportCanvas: ElementRef<HTMLCanvasElement>;
@@ -25,10 +29,33 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
 
     percentage: number = 1;
     sliderIsVisible: boolean = false;
-    titleForm: FormControl = new FormControl('', Validators.required);
+    titleForm: FormControl = new FormControl('', [Validators.pattern('^[a-zA-ZÀ-ÿ](\\d|[a-zA-ZÀ-ÿ ]){0,20}$'), Validators.required]);
+    emailForm: FormControl = new FormControl('', [Validators.pattern(/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/i), Validators.required]);
 
-    constructor(public dialogRef: MatDialogRef<ExportDrawingDialogComponent>, public drawingService: DrawingService) {
+    subscribeSendEmail: Subscription;
+
+    constructor(
+        public dialogRef: MatDialogRef<ExportDrawingDialogComponent>,
+        public drawingService: DrawingService,
+        public emailService: EmailService,
+        private snackBar: MatSnackBar,
+    ) {
         this.titleForm.markAsDirty();
+    }
+
+    ngOnInit(): void {
+        this.subscribeSendEmail = this.emailService.sendEmailEventListener().subscribe((result: ResponseResult) => {
+            this.snackBar.open(result.message, 'Fermer', {
+                duration: 4000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+                panelClass: result.isSuccess ? ['sucess-snackbar'] : ['error-snackbar'],
+            });
+        });
+    }
+
+    ngOnDestroy(): void {
+        this.subscribeSendEmail.unsubscribe();
     }
 
     ngAfterViewInit(): void {
@@ -132,18 +159,41 @@ export class ExportDrawingDialogComponent implements AfterViewInit {
         this.setImageUrl();
     }
 
-    downloadImage(): void {
+    setupExportContext(): void {
         this.exportCtx.filter = this.exportFilter;
         this.setWhiteBackground(this.exportCtx);
         this.exportCtx.drawImage(this.drawingService.canvas, 0, 0);
         this.exportCtx.filter = 'none';
+    }
 
+    downloadImage(): void {
+        this.setupExportContext();
         this.setImageUrl();
-        this.drawingImageContainer.nativeElement.download = this.titleForm.value + '.' + this.selectedFormat;
+        this.drawingImageContainer.nativeElement.download = this.fullFileName();
         this.drawingImageContainer.nativeElement.click();
         this.dialogRef.close();
     }
 
+    isEmailInputEmpty(): boolean {
+        const isFormEmpty = this.emailForm.value.length === 0;
+        if (isFormEmpty) this.emailForm.markAsPristine();
+        return isFormEmpty;
+    }
+
+    sendByEmail(): void {
+        this.setupExportContext();
+        this.exportCtx.canvas.toBlob(this.postEmail.bind(this), 'image/' + this.selectedFormat, 1);
+    }
+
+    postEmail(blob: Blob): void {
+        this.emailService.postEmail(this.emailForm.value, blob, this.fullFileName());
+    }
+
+    fullFileName(): string {
+        return this.titleForm.value + '.' + this.selectedFormat;
+    }
+
+    // Keeps the filters ordered
     keepOriginalOrder(): number {
         return 0;
     }

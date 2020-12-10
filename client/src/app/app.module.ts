@@ -9,11 +9,13 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatGridListModule } from '@angular/material/grid-list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -27,6 +29,7 @@ import { ColorPickerFormComponent } from './components/color/color-picker-form/c
 import { ColorPickerComponent } from './components/color/color-picker/color-picker.component';
 import { ColorToolComponent } from './components/color/color-tool/color-tool.component';
 import { RecentColorsComponent } from './components/color/recent-colors/recent-colors.component';
+import { ContinueDrawingComponent } from './components/continue-drawing/continue-drawing.component';
 import { CreateNewDrawingComponent } from './components/create-new-drawing/create-new-drawing.component';
 import { NewDrawingDialogComponent } from './components/create-new-drawing/new-drawing-dialog/new-drawing-dialog.component';
 import { DrawingComponent } from './components/drawing/drawing.component';
@@ -43,14 +46,20 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { BrushComponent } from './components/tools-options/brush/brush.component';
 import { SVGFilterComponent } from './components/tools-options/brush/svgfilter/svgfilter.component';
 import { BucketComponent } from './components/tools-options/bucket/bucket.component';
+import { CalligraphyComponent } from './components/tools-options/calligraphy/calligraphy.component';
 import { EllipseComponent } from './components/tools-options/ellipse/ellipse.component';
 import { EraseComponent } from './components/tools-options/erase/erase.component';
 import { EyedropperComponent } from './components/tools-options/eyedropper/eyedropper.component';
+import { GridComponent } from './components/tools-options/grid/grid.component';
 import { LineComponent } from './components/tools-options/line/line.component';
 import { PencilComponent } from './components/tools-options/pencil/pencil.component';
 import { PolygonComponent } from './components/tools-options/polygon/polygon.component';
 import { RectangleComponent } from './components/tools-options/rectangle/rectangle.component';
+import { MagnetismComponent } from './components/tools-options/selection/magnetism/magnetism.component';
 import { SelectionComponent } from './components/tools-options/selection/selection.component';
+import { SprayComponent } from './components/tools-options/spray/spray.component';
+import { StampComponent } from './components/tools-options/stamp/stamp.component';
+import { TextComponent } from './components/tools-options/text/text.component';
 import { ThicknessSliderComponent } from './components/tools-options/thickness-slider/thickness-slider.component';
 import { UndoRedoComponent } from './components/undo-redo/undo-redo.component';
 import { UploadDialogComponent } from './components/upload/upload-dialog/upload-dialog.component';
@@ -90,8 +99,16 @@ import { UploadComponent } from './components/upload/upload.component';
         UploadComponent,
         UploadDialogComponent,
         WarningDialogComponent,
+        TextComponent,
+        StampComponent,
+        GridComponent,
+        MagnetismComponent,
+        ContinueDrawingComponent,
+        CalligraphyComponent,
+        SprayComponent,
     ],
     imports: [
+        MatGridListModule,
         NgImageSliderModule,
         AngularFireModule.initializeApp({
             apiKey: 'AIzaSyA-FAAkdvUBcaXpf87ypqLsMdPNW_ElUWU',
@@ -103,6 +120,7 @@ import { UploadComponent } from './components/upload/upload.component';
             appId: '1:408322091008:web:920757c8a7e33e14d910e5',
             measurementId: 'G-9X4P4RJB02',
         }),
+        MatSlideToggleModule,
         BrowserModule,
         HttpClientModule,
         AppRoutingModule,

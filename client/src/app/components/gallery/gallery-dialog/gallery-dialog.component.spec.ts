@@ -8,7 +8,7 @@ import { MatDialogMock } from '@app/classes/mat-dialog-test-helper';
 import * as CONSTANTS from '@app/constants/constants';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { FireBaseService } from '@app/services/firebase/fire-base.service';
+import { FireBaseService } from '@app/services/fire-base/fire-base.service';
 import { Drawing } from '@common/communication/drawing';
 import { NgImageSliderComponent, NgImageSliderModule } from 'ng-image-slider';
 import { of } from 'rxjs';
@@ -194,7 +194,7 @@ describe('GalleryDialogComponent', () => {
         // tslint:disable-next-line:no-string-literal / reason: accessing on private member
         component['transformData'](data);
 
-        expect(spy).toHaveBeenCalled();
+        expect(spy).not.toHaveBeenCalled();
         expect(component.isDrawing).toBeTrue();
     });
 
@@ -205,8 +205,7 @@ describe('GalleryDialogComponent', () => {
         // tslint:disable-next-line:no-string-literal / reason: accessing on private member
         component['transformData'](data);
 
-        expect(spy).toHaveBeenCalled();
-        expect(component.isDrawing).not.toBeTrue();
+        expect(spy).not.toHaveBeenCalled();
     });
 
     it('addTag should add the tag and call updateDrawingsBydrawingTags', () => {

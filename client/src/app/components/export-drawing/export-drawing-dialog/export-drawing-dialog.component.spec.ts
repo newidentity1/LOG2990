@@ -4,24 +4,35 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
+import { ResponseResult } from '@app/classes/response-result';
 import { MAX_COLOR_VALUE, MAX_PREVIEW_SIZE } from '@app/constants/constants';
 import { ExportFilterType } from '@app/enums/export-filter.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { EmailService } from '@app/services/email/email.service';
+import { of } from 'rxjs';
 import { ExportDrawingDialogComponent } from './export-drawing-dialog.component';
 
 describe('ExportDrawingDialogComponent', () => {
     let component: ExportDrawingDialogComponent;
     let fixture: ComponentFixture<ExportDrawingDialogComponent>;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
+    let emailServiceSpy: jasmine.SpyObj<EmailService>;
 
     const mockDialogRef = {
         close: jasmine.createSpy('close'),
     };
 
+    const mockSnackbar = {
+        open: jasmine.createSpy('open'),
+    };
+    // tslint:disable:no-string-literal / reason: accessing private members
+
     beforeEach(async(() => {
         drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setStrokeColor']);
+        emailServiceSpy = jasmine.createSpyObj('EmailService', ['sendEmailEventListener', 'postEmail']);
         TestBed.configureTestingModule({
             declarations: [ExportDrawingDialogComponent],
             imports: [ReactiveFormsModule, FormsModule, MatFormFieldModule, MatInputModule, BrowserAnimationsModule],
@@ -29,10 +40,14 @@ describe('ExportDrawingDialogComponent', () => {
                 { provide: MatDialogRef, useValue: mockDialogRef },
                 { provide: MAT_DIALOG_DATA, useValue: [] },
                 { provide: DrawingService, useValue: drawingServiceSpy },
+                { provide: MatSnackBar, useValue: mockSnackbar },
+                { provide: EmailService, useValue: emailServiceSpy },
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
         drawingServiceSpy = TestBed.inject(DrawingService) as jasmine.SpyObj<DrawingService>;
+        emailServiceSpy = TestBed.inject(EmailService) as jasmine.SpyObj<EmailService>;
+        emailServiceSpy.sendEmailEventListener.and.returnValue(of(new ResponseResult(true, '')));
         drawingServiceSpy.canvas = canvasTestHelper.canvas;
         drawingServiceSpy.baseCtx = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
     }));
@@ -47,10 +62,22 @@ describe('ExportDrawingDialogComponent', () => {
         expect(component).toBeTruthy();
     });
 
+    it('should open snackbar with ResponseResult true', () => {
+        component.ngOnInit();
+        expect(emailServiceSpy.sendEmailEventListener).toHaveBeenCalled();
+        expect(mockSnackbar.open).toHaveBeenCalled();
+    });
+
+    it('should open snackbar with ResponseResult false', () => {
+        emailServiceSpy.sendEmailEventListener.and.returnValue(of(new ResponseResult(false, '')));
+        component.ngOnInit();
+        expect(emailServiceSpy.sendEmailEventListener).toHaveBeenCalled();
+        expect(mockSnackbar.open).toHaveBeenCalled();
+    });
+
     it('setInitialCanvasSize should call setPreviewSize', () => {
-        // tslint:disable:no-any / reason: accessing private members
+        // tslint:disable-next-line: no-any / reason: spying on private method
         const setPreviewSizeSpy = spyOn<any>(component, 'setPreviewSize').and.callThrough();
-        // tslint:disable:no-string-literal / reason: accessing private members
         component['setInitialCanvasSize']();
         expect(setPreviewSizeSpy).toHaveBeenCalled();
     });
@@ -109,6 +136,7 @@ describe('ExportDrawingDialogComponent', () => {
     });
 
     it('setFilterPercentage should change percentage value and call setPreviewFilter ', () => {
+        // tslint:disable-next-line: no-any / reason: spying on private method
         const setPreviewFilterSpy = spyOn<any>(component, 'setPreviewFilter').and.callThrough();
         const expectedValue = 0.5;
         component.setFilterPercentage(expectedValue);
@@ -117,7 +145,9 @@ describe('ExportDrawingDialogComponent', () => {
     });
 
     it('setPreviewFilter should call drawImage and setWhiteBackground on previewCtx', () => {
+        // tslint:disable-next-line: no-any / reason: spying on private method
         const setWhiteBackgroundSpy = spyOn<any>(component, 'setWhiteBackground').and.callThrough();
+        // tslint:disable-next-line: no-any / reason: spying on private method
         const drawImageSpy = spyOn<any>(component.previewCtx, 'drawImage').and.callThrough();
         component.setPreviewFilter();
         expect(setWhiteBackgroundSpy).toHaveBeenCalledWith(component.previewCtx);
@@ -172,14 +202,27 @@ describe('ExportDrawingDialogComponent', () => {
         expect(component.drawingImageContainer.nativeElement.href).not.toEqual('');
     });
 
+    it('setupExportContext set filter of export context, setWhiteBackground, drawImage and reset filter', () => {
+        // tslint:disable-next-line: no-any / reason: spying on private method
+        spyOn<any>(component, 'setWhiteBackground');
+        spyOn(component.exportCtx, 'drawImage');
+        component.setupExportContext();
+        expect(component['setWhiteBackground']).toHaveBeenCalled();
+        expect(component.exportCtx.drawImage).toHaveBeenCalled();
+        expect(component.exportCtx.filter).toEqual('none');
+    });
+
     it('onFormatChange should call setImageUrl', () => {
+        // tslint:disable-next-line: no-any / reason: spying on private method
         const setImageUrlSpy = spyOn<any>(component, 'setImageUrl').and.callThrough();
         component['onFormatChange']();
         expect(setImageUrlSpy).toHaveBeenCalled();
     });
 
     it('downloadImage should call drawImage and setWhiteBackground on exportCtx', () => {
+        // tslint:disable-next-line: no-any / reason: spying on private method
         const setWhiteBackgroundSpy = spyOn<any>(component, 'setWhiteBackground').and.callThrough();
+        // tslint:disable-next-line: no-any / reason: spying on private method
         const drawImageSpy = spyOn<any>(component.exportCtx, 'drawImage').and.callThrough();
 
         spyOn(component.drawingImageContainer.nativeElement, 'click').and.callFake(() => {
@@ -191,12 +234,46 @@ describe('ExportDrawingDialogComponent', () => {
     });
 
     it('downloadImage should set image url and download image', () => {
+        // tslint:disable-next-line: no-any / reason: spying on private method
         const setImageUrlSpy = spyOn<any>(component, 'setImageUrl').and.callThrough();
-        // tslint:disable-next-line:no-empty / reason: calling fake function to avoid automatic image download
-        const clickSpy = spyOn<any>(component.drawingImageContainer.nativeElement, 'click').and.callFake(() => {});
+        // tslint:disable-next-line: no-any / reason: spying on private method
+        const clickSpy = spyOn<any>(component.drawingImageContainer.nativeElement, 'click').and.callFake(() => {
+            return;
+        });
         component['downloadImage']();
         expect(setImageUrlSpy).toHaveBeenCalled();
         expect(clickSpy).toHaveBeenCalled();
         expect(mockDialogRef.close).toHaveBeenCalled();
+    });
+
+    it('isEmailInputEmpty should markAsPristine if form value is 0', () => {
+        component.emailForm.setValue('');
+        spyOn(component.emailForm, 'markAsPristine');
+        expect(component.isEmailInputEmpty()).toBeTrue();
+        expect(component.emailForm.markAsPristine).toHaveBeenCalled();
+    });
+
+    it('isEmailInputEmpty should not markAsPristine if form value isnt 0', () => {
+        component.emailForm.setValue('123');
+        spyOn(component.emailForm, 'markAsPristine');
+        expect(component.isEmailInputEmpty()).toBeFalse();
+        expect(component.emailForm.markAsPristine).not.toHaveBeenCalled();
+    });
+
+    it('sendByEmail should call setupExportContext and call postEmail', () => {
+        spyOn(component, 'setupExportContext');
+        const spyToBlob = spyOn(component.exportCtx.canvas, 'toBlob').and.callFake(() => {
+            return;
+        });
+        component.sendByEmail();
+        expect(spyToBlob).toHaveBeenCalled();
+    });
+
+    it('postEmail should call postEmail of emailService', () => {
+        emailServiceSpy.postEmail.and.callFake(() => {
+            return;
+        });
+        component.postEmail(new Blob());
+        expect(emailServiceSpy.postEmail).toHaveBeenCalled();
     });
 });

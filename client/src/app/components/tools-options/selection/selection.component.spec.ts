@@ -11,7 +11,16 @@ describe('SelectionComponent', () => {
     let selectionServiceMock: jasmine.SpyObj<SelectionService>;
 
     beforeEach(async(() => {
-        selectionServiceMock = jasmine.createSpyObj('SelectionService', ['setSelectionType', 'selectAll']);
+        selectionServiceMock = jasmine.createSpyObj('SelectionService', [
+            'setSelectionType',
+            'selectAll',
+            'isClipboardEmpty',
+            'copySelection',
+            'cutSelection',
+            'pasteSelection',
+            'deleteSelection',
+            'isClipboardEmpty',
+        ]);
 
         TestBed.configureTestingModule({
             declarations: [SelectionComponent],
@@ -38,9 +47,34 @@ describe('SelectionComponent', () => {
         expect(selectionServiceMock.setSelectionType).toHaveBeenCalledWith(expectedType);
     });
 
-    it('onTypeSelectionChange should call selectAll of selection service', () => {
+    it('triggerSelectAll should call selectAll of selection service', () => {
         component.triggerSelectAll();
-        expect(selectionServiceMock.selectAll).toHaveBeenCalledWith();
+        expect(selectionServiceMock.selectAll).toHaveBeenCalled();
+    });
+
+    it('triggerCopy should call pasteSelection of selection service', () => {
+        component.triggerCopy();
+        expect(selectionServiceMock.copySelection).toHaveBeenCalled();
+    });
+
+    it('triggerCut should call cutSelection of selection service', () => {
+        component.triggerCut();
+        expect(selectionServiceMock.cutSelection).toHaveBeenCalled();
+    });
+
+    it('triggerPaste should call pasteSelection of selection service', () => {
+        component.triggerPaste();
+        expect(selectionServiceMock.pasteSelection).toHaveBeenCalled();
+    });
+
+    it('triggerDelete should call deleteSelection of selection service', () => {
+        component.triggerDelete();
+        expect(selectionServiceMock.deleteSelection).toHaveBeenCalled();
+    });
+
+    it('isClipboardEmpty should call isClipboardEmpty of selection service', () => {
+        component.isClipboardEmpty();
+        expect(selectionServiceMock.isClipboardEmpty).toHaveBeenCalled();
     });
 
     it('keepOriginalOrder should return 0', () => {

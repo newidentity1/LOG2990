@@ -5,7 +5,7 @@ import { SelectionService } from '@app/services/tools/selection/selection.servic
 @Component({
     selector: 'app-selection-option',
     templateUrl: './selection.component.html',
-    styleUrls: ['./selection.component.scss'],
+    styleUrls: ['../../sidebar/sidebar.component.scss'],
 })
 export class SelectionComponent {
     typesSelection: typeof SelectionType = SelectionType;
@@ -18,6 +18,30 @@ export class SelectionComponent {
 
     triggerSelectAll(): void {
         this.selectionService.selectAll();
+    }
+
+    triggerCopy(): void {
+        this.selectionService.copySelection();
+    }
+
+    triggerCut(): void {
+        this.selectionService.cutSelection();
+    }
+
+    triggerPaste(): void {
+        this.selectionService.pasteSelection();
+    }
+
+    triggerDelete(): void {
+        this.selectionService.deleteSelection();
+    }
+
+    isAreaSelected(): boolean {
+        return this.selectionService.isAreaSelected;
+    }
+
+    isClipboardEmpty(): boolean {
+        return this.selectionService.isClipboardEmpty();
     }
 
     keepOriginalOrder(): number {

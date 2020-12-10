@@ -23,6 +23,8 @@ export abstract class Tool extends Command {
 
     setTypeDrawing(value: string): void {}
 
+    onMouseScroll(event: WheelEvent): void {}
+
     onMouseDown(event: MouseEvent): void {}
 
     onMouseUp(event: MouseEvent): void {}
@@ -40,6 +42,8 @@ export abstract class Tool extends Command {
     onDoubleClick(event: MouseEvent): void {}
 
     onClick(event: MouseEvent): void {}
+
+    onContextMenu(event: MouseEvent): void {}
 
     draw(ctx: CanvasRenderingContext2D): void {}
 
@@ -62,13 +66,10 @@ export abstract class Tool extends Command {
     }
 
     setColors(primaryColor: Color, secondaryColor: Color): void {
+        this.drawingService.previewCtx.canvas.style.cursor = '';
         this.currentPrimaryColor = primaryColor;
         this.currentSecondaryColor = secondaryColor;
         this.drawingService.setColor(primaryColor.toStringRGBA());
-    }
-
-    signOf(num: number): number {
-        return num ? Math.abs(num) / num : 0;
     }
 
     applyCurrentSettings(): void {

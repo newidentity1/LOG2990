@@ -12,9 +12,7 @@ export class ShapeToolTest extends ShapeTool {
     // tslint:disable-next-line:no-empty / reason: mocking class for test
     draw(ctx: CanvasRenderingContext2D): void {}
 }
-
-// tslint:disable:no-any / reason: spying on functions
-// tslint:disable:no-string-literal / reason : access private members
+// tslint:disable:no-any / reason: jasmine spy on private fonctions
 describe('Class: ShapeTool', () => {
     let shapeTool: ShapeToolTest;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
@@ -193,6 +191,8 @@ describe('Class: ShapeTool', () => {
     });
 
     it('function setColors should call setFillColor with primaryColor and setStrokeColor with secondColor', () => {
+        drawingServiceSpy.canvas = canvasTestHelper.canvas;
+        drawingServiceSpy.previewCtx = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         shapeTool.setColors(firstColor, secondColor);
         expect(drawingServiceSpy.setFillColor).toHaveBeenCalledWith(firstColor.toStringRGBA());
         expect(drawingServiceSpy.setStrokeColor).toHaveBeenCalledWith(secondColor.toStringRGBA());
@@ -281,17 +281,6 @@ describe('Class: ShapeTool', () => {
         expect(shapeTool.height).toEqual(expectedResult);
     });
 
-    it('signOf should return 1 if number is positive', () => {
-        // tslint:disable:no-magic-numbers / reason: using random numbers
-        const result = shapeTool.signOf(10);
-        expect(result).toEqual(1);
-    });
-
-    it('signOf should return -1 if number is negative', () => {
-        const result = shapeTool.signOf(-10);
-        expect(result).toEqual(-1);
-    });
-
     it('drawBoxGuide should call stroke and setLineDash if mouse was down', () => {
         shapeTool.mouseDown = true;
         const spyStroke = spyOn(baseCtxStub, 'stroke');
@@ -346,6 +335,7 @@ describe('Class: ShapeTool', () => {
     });
 
     it('copyShape should copy all attributes needed to draw shapes', () => {
+        // tslint:disable-next-line:no-string-literal / reason: accessing private member
         const shapeToolCopy: ShapeTool = new ShapeToolTest(shapeTool['drawingService']);
         shapeTool.copyShape(shapeToolCopy);
         const shapeProperties = shapeTool.toolProperties as BasicShapeProperties;
