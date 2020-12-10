@@ -24,7 +24,6 @@ export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy 
     drawingTags: string[] = [];
     isDrawing: boolean = false;
     tagForm: FormControl;
-    isCanvasEmpty: boolean = true;
     private subscribeExecutedCommand: Subscription;
 
     constructor(
@@ -80,8 +79,7 @@ export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy 
     }
 
     continueDrawing(event: number): void {
-        const isCanvasEmpty = this.drawingService.canvasEmpty(this.drawingService.baseCtx, this.drawingService.canvas);
-        if (isCanvasEmpty) {
+        if (this.drawingService.canvasEmpty(this.drawingService.baseCtx, this.drawingService.canvas)) {
             const image = new Image();
             image.crossOrigin = '';
             image.src = this.drawings[event - 1].url;
