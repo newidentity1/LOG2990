@@ -82,10 +82,6 @@ export class ResizeService extends Command {
         }
     }
 
-    get currentPreviewCanvasSize(): Vec2 {
-        return { x: this.drawingService.previewCtx.canvas.width, y: this.drawingService.previewCtx.canvas.height } as Vec2;
-    }
-
     execute(): void {
         this.drawingService.baseCtx.canvas.width = this.newWidth;
         this.drawingService.baseCtx.canvas.height = this.newHeight;

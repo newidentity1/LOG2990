@@ -25,10 +25,7 @@ describe('EmailController', () => {
         to: 'test@polymtl.ca',
         payload: '../../test/image-test/menu.png',
     };
-    // const invalidEmail = {
-    //     to: '2112,dsa',
-    //     payload: 'ssdas',
-    // };
+
     beforeEach(async () => {
         const [container, sandbox] = await testingContainer();
         container.rebind(TYPES.EmailService).toConstantValue({

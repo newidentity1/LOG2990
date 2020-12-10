@@ -21,6 +21,9 @@ canvas {
 
 #previewLayer {
     z-index: 1;
+    &:focus {
+        outline: none;
+    }
 }
 
 .showOutline {

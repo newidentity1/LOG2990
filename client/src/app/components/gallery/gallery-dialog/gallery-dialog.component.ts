@@ -123,9 +123,7 @@ export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy 
             const image = new Image();
             image.src = draw.url;
             image.onload = () => {
-                console.log('image EXISTE PAS', name);
                 this.drawings.push(draw);
-                console.log(this.drawings);
                 this.updateDrawings(this.drawings);
                 this.isDrawing = this.drawings.length > 0 ? true : false;
             };

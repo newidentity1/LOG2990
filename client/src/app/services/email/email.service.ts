@@ -12,13 +12,11 @@ export class EmailService {
     constructor(private communicationService: CommunicationService) {}
 
     postEmail(emailAddress: string, image: Blob, filename: string): void {
-        // Creates Form
         const formData = new FormData();
 
         formData.append('to', emailAddress);
         formData.append('payload', image, filename);
 
-        // Send for POST request
         this.communicationService.postEmail(formData).subscribe({
             next: (response) => {
                 this.emitSendEmailSubjectEvent(new ResponseResult(true, response));
