@@ -18,9 +18,18 @@ describe('RotateSelectionService', () => {
         service = TestBed.inject(RotateSelectionService);
         drawingServiceSpy = TestBed.inject(DrawingService) as jasmine.SpyObj<DrawingService>;
 
-        drawingServiceSpy.canvas = canvasTestHelper.canvas;
-        drawingServiceSpy.baseCtx = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
-        drawingServiceSpy.previewCtx = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
+        const canvas = document.createElement('canvas');
+        canvas.width = canvasTestHelper.canvas.width;
+        canvas.height = canvasTestHelper.canvas.height;
+        // tslint:disable: no-string-literal / reason: accessing private member
+        service['drawingService'].canvas = canvas;
+        service['drawingService'].baseCtx = canvas.getContext('2d') as CanvasRenderingContext2D;
+
+        const previewCanvas = document.createElement('canvas');
+        previewCanvas.width = canvasTestHelper.canvas.width;
+        previewCanvas.height = canvasTestHelper.canvas.height;
+        service['drawingService'].previewCtx = previewCanvas.getContext('2d') as CanvasRenderingContext2D;
+
         service.initializeRotation();
     });
 

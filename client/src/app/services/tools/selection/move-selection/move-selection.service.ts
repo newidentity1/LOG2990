@@ -149,7 +149,6 @@ export class MoveSelectionService {
         };
     }
 
-    // TODO move to math class
     private isPositionInEllipse(position: Vec2, width: number, height: number): boolean {
         return Math.pow(position.x - width / 2, 2) / Math.pow(width / 2, 2) + Math.pow(position.y - height / 2, 2) / Math.pow(height / 2, 2) <= 1;
     }

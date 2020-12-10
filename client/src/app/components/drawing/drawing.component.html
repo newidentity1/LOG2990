@@ -14,7 +14,7 @@
         (mouseleave)="onMouseLeave($event)"
         (dblclick)="onDoubleClick($event)"
         (click)="onClick($event)"
-        (contextmenu)="onContextMenu()"
+        (contextmenu)="onContextMenu($event)"
         tabindex="1"
     ></canvas>
     <canvas id="gridLayer" #gridCanvas [attr.width]="width" [attr.height]="height" (mousedown)="onBaseCanvasMouseDown($event)"></canvas>

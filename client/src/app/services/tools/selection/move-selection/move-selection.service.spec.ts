@@ -244,8 +244,10 @@ describe('MoveSelectionService', () => {
         expect(returnedResult).toBeFalse();
     });
 
-    it('redraw should return false ', () => {
+    it('redraw should call putImageData', () => {
+        spyOn(drawingServiceSpy.previewCtx, 'putImageData');
         service.finalPosition = { x: -10, y: -10 };
         service['redraw']();
+        expect(drawingServiceSpy.previewCtx.putImageData).toHaveBeenCalled();
     });
 });
