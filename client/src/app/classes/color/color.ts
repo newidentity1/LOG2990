@@ -77,15 +77,14 @@ export class Color {
         return this.alpha;
     }
 
-    get getOpacity(): number {
-        return this.alpha;
-    }
-
-    // tslint:disable-next-line: adjacent-overload-signatures
     set opacity(value: number) {
         if (value >= 0 && value <= 1) {
             this.alpha = value;
         }
+    }
+
+    get getOpacity(): number {
+        return this.alpha;
     }
 
     setRedHex(hexValue: string): void {

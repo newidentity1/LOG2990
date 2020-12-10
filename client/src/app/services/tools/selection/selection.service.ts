@@ -179,7 +179,6 @@ export class SelectionService extends ShapeTool {
     }
 
     onKeyDown(event: KeyboardEvent): void {
-        console.log(event.key, this.moveSelectionService.finalPosition.x, this.positiveHeight);
         if (event.key === 'Escape' && (this.mouseDown || this.isAreaSelected)) {
             this.drawSelection();
         }
