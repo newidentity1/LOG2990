@@ -8,7 +8,7 @@ import { ControlPoint } from '@app/enums/control-point.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ResizeService } from '@app/services/resize/resize.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
-import { PencilService } from '@app/services/tools/pencil/pencil-service';
+import { PencilService } from '@app/services/tools/pencil/pencil.service';
 import { BehaviorSubject } from 'rxjs';
 import { DrawingComponent } from './drawing.component';
 

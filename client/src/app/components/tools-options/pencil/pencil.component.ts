@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { MatSliderChange } from '@angular/material/slider';
 import { MAXIMUM_THICKNESS, MINIMUM_THICKNESS } from '@app/constants/constants';
-import { PencilService } from '@app/services/tools/pencil/pencil-service';
+import { PencilService } from '@app/services/tools/pencil/pencil.service';
 
 @Component({
     selector: 'app-pencil-options',

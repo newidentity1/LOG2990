@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BrushProperties } from '@app/classes/tools-properties/brush-properties';
 import { BrushType } from '@app/enums/brush-filters.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { PencilService } from '@app/services/tools/pencil/pencil-service';
+import { PencilService } from '@app/services/tools/pencil/pencil.service';
 
 @Injectable({
     providedIn: 'root',

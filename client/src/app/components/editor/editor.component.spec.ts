@@ -13,7 +13,7 @@ import { SelectionType } from '@app/enums/selection-type.enum';
 import { ShortcutService } from '@app/services/shortcut/shortcut.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 import { BrushService } from '@app/services/tools/brush/brush.service';
-import { PencilService } from '@app/services/tools/pencil/pencil-service';
+import { PencilService } from '@app/services/tools/pencil/pencil.service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle.service';
 import { EditorComponent } from './editor.component';
 
