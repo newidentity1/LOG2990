@@ -194,7 +194,7 @@ describe('GalleryDialogComponent', () => {
         // tslint:disable-next-line:no-string-literal / reason: accessing on private member
         component['transformData'](data);
 
-        expect(spy).toHaveBeenCalled();
+        expect(spy).not.toHaveBeenCalled();
         expect(component.isDrawing).toBeTrue();
     });
 
@@ -205,8 +205,7 @@ describe('GalleryDialogComponent', () => {
         // tslint:disable-next-line:no-string-literal / reason: accessing on private member
         component['transformData'](data);
 
-        expect(spy).toHaveBeenCalled();
-        expect(component.isDrawing).not.toBeTrue();
+        expect(spy).not.toHaveBeenCalled();
     });
 
     it('addTag should add the tag and call updateDrawingsBydrawingTags', () => {
