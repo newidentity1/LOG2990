@@ -120,4 +120,10 @@ describe('SidebarComponent', () => {
         const currentTool = toolbarServiceMock.currentTool;
         expect(component.currentTool).toEqual(currentTool);
     });
+
+    it('onTextPropertyChange should emit requesCanvasFocus', () => {
+        const emitSpy = spyOn(component.requestCanvasFocus, 'emit');
+        component.onTextPropertyChange();
+        expect(emitSpy).toHaveBeenCalled();
+    });
 });
