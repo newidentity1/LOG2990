@@ -27,7 +27,7 @@ export class AutomaticSavingService implements OnDestroy {
 
     save(): void {
         const canvas = this.drawingService.canvas;
-        const isCanvasEmpty = this.drawingService.canvasEmpty(this.drawingService.baseCtx, canvas);
+        const isCanvasEmpty = this.drawingService.canvasEmpty(this.drawingService.baseCtx);
         if (!isCanvasEmpty) localStorage.setItem('savedDrawing', canvas.toDataURL());
         else this.clearStorage();
     }
