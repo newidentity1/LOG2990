@@ -4,7 +4,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ResponseResult } from '@app/classes/response-result';
 import { FireBaseService } from '@app/services/fire-base/fire-base.service';
-import { Drawing } from '@common/communication/drawing';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -13,11 +12,7 @@ import { Subscription } from 'rxjs';
     styleUrls: ['./upload-dialog.component.scss'],
 })
 export class UploadDialogComponent implements OnInit, OnDestroy {
-    drawingTitle: string = '';
-    drawings: Drawing[] = [];
     drawingTags: string[] = [];
-    tagToAdd: string = '';
-    tagEmpty: boolean = false;
     tagForm: FormControl;
     titleForm: FormControl;
     subscribeSaveDrawing: Subscription;
