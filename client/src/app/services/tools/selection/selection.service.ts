@@ -449,7 +449,7 @@ export class SelectionService extends ShapeTool {
     clone(): SelectionService {
         const selectionClone: SelectionService = new SelectionService(
             this.drawingService,
-            new MoveSelectionService(this.drawingService, this.gridService),
+            new MoveSelectionService(this.drawingService),
             this.resizeSelectionService,
             this.rotateSelectionService,
             new MagicWandService(this.drawingService),
