@@ -1,4 +1,4 @@
-# Exclusion des dépendences du projet. Elles peuvent être regénérées 
+# Exclusion des dépendences du projet. Elles peuvent être regénérées
 # automatiquement.
 .nyc_output/
 node_modules/
@@ -15,6 +15,8 @@ npm-debug.log
 *.js.map
 *.js
 
+#env
+.env
 
 # Garder les fichiers necessaires pour les tests
 !systemjs.config.js
