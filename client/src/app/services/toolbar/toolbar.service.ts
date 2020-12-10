@@ -4,18 +4,23 @@ import { Command } from '@app/classes/commands/command';
 import { Tool } from '@app/classes/tool/tool';
 import { KeyShortcut } from '@app/enums/key-shortcuts.enum';
 import { SelectionType } from '@app/enums/selection-type.enum';
+import { AutomaticSavingService } from '@app/services/automatic-saving/automatic-saving.service';
 import { ColorPickerService } from '@app/services/color-picker/color-picker.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { BrushService } from '@app/services/tools/brush/brush.service';
 import { BucketService } from '@app/services/tools/bucket/bucket.service';
+import { CalligraphyService } from '@app/services/tools/calligraphy/calligraphy.service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
 import { EraseService } from '@app/services/tools/erase/erase.service';
 import { EyedropperService } from '@app/services/tools/eyedropper/eyedropper.service';
+import { GridService } from '@app/services/tools/grid/grid.service';
 import { LineService } from '@app/services/tools/line/line.service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { PolygonService } from '@app/services/tools/polygon/polygon.service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle.service';
 import { SelectionService } from '@app/services/tools/selection/selection.service';
+import { SprayService } from '@app/services/tools/spray/spray.service';
+import { StampService } from '@app/services/tools/stamp/stamp.service';
 import { TextService } from '@app/services/tools/text/text.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Subscription } from 'rxjs';
@@ -48,7 +53,12 @@ export class ToolbarService {
         protected colorPickerService: ColorPickerService,
         protected bucketService: BucketService,
         protected undoRedoService: UndoRedoService,
+        protected gridService: GridService,
+        protected automaticSavingService: AutomaticSavingService,
         protected textService: TextService,
+        protected stampService: StampService,
+        protected calligraphyService: CalligraphyService,
+        protected sprayService: SprayService,
     ) {
         this.tools = [
             pencilService,
@@ -62,6 +72,10 @@ export class ToolbarService {
             eyedropperService,
             bucketService,
             textService,
+            stampService,
+            gridService,
+            calligraphyService,
+            sprayService,
         ];
         this.currentTool = this.tools[0];
         this.keyShortcuts
@@ -75,8 +89,13 @@ export class ToolbarService {
             .set(KeyShortcut.Eyedropper, eyedropperService)
             .set(KeyShortcut.RectangleSelect, selectionService)
             .set(KeyShortcut.EllipseSelect, selectionService)
+            .set(KeyShortcut.MagicBrushSelect, selectionService)
             .set(KeyShortcut.Bucket, bucketService)
-            .set(KeyShortcut.Text, textService);
+            .set(KeyShortcut.Text, textService)
+            .set(KeyShortcut.Stamp, stampService)
+            .set(KeyShortcut.Grid, gridService)
+            .set(KeyShortcut.Calligraphy, calligraphyService)
+            .set(KeyShortcut.Spray, sprayService);
     }
 
     unsubscribeListeners(): void {
@@ -111,6 +130,10 @@ export class ToolbarService {
         return this.tools;
     }
 
+    setGrid(): void {
+        this.gridService.draw();
+    }
+
     setColors(primaryColor: Color, secondaryColor: Color): void {
         this.primaryColor = primaryColor;
         this.secondaryColor = secondaryColor;
@@ -124,6 +147,8 @@ export class ToolbarService {
 
     changeTool(tool: Tool): void {
         if (tool !== this.currentTool) {
+            if (this.currentTool instanceof TextService && this.currentTool.isTextInProgress()) this.currentTool.confirmText();
+            if (this.currentTool instanceof SprayService) this.currentTool.clearSpray();
             this.resetSelection();
             this.currentTool = tool;
             this.applyCurrentTool();
@@ -136,6 +161,10 @@ export class ToolbarService {
 
     onKeyUp(event: KeyboardEvent): void {
         this.currentTool.onKeyUp(event);
+    }
+
+    onMouseScroll(event: WheelEvent): void {
+        this.currentTool.onMouseScroll(event);
     }
 
     onMouseMove(event: MouseEvent): void {
@@ -153,6 +182,7 @@ export class ToolbarService {
     }
 
     addCommand(command: Command): void {
+        this.automaticSavingService.save();
         this.undoRedoService.addCommand(command);
     }
 
@@ -174,6 +204,10 @@ export class ToolbarService {
     onClick(event: MouseEvent): void {
         this.mouseDown = this.currentTool === this.lineService;
         this.currentTool.onClick(event);
+    }
+
+    onContextMenu(event: MouseEvent): void {
+        this.currentTool.onContextMenu(event);
     }
 
     undo(): void {
