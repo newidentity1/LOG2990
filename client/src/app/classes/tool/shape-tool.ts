@@ -85,8 +85,8 @@ export abstract class ShapeTool extends Tool {
         if (Math.abs(this.width) === Math.abs(this.height)) return;
 
         const smallestSide = Math.min(Math.abs(this.width), Math.abs(this.height));
-        this.width = smallestSide * this.signOf(this.width);
-        this.height = smallestSide * this.signOf(this.height);
+        this.width = smallestSide * Math.sign(this.width);
+        this.height = smallestSide * Math.sign(this.height);
     }
 
     abstract draw(ctx: CanvasRenderingContext2D): void;
@@ -114,8 +114,8 @@ export abstract class ShapeTool extends Tool {
         const maxThickness = this.toolProperties.thickness < minRadius ? this.toolProperties.thickness : minRadius;
 
         const thickness = shapeProperties.currentType === DrawingType.Fill ? 0 : maxThickness;
-        this.dx = (thickness / 2) * this.signOf(this.width);
-        this.dy = (thickness / 2) * this.signOf(this.height);
+        this.dx = (thickness / 2) * Math.sign(this.width);
+        this.dy = (thickness / 2) * Math.sign(this.height);
         this.radius.x -= this.dx;
         this.radius.y -= this.dy;
         this.drawingService.setThickness(thickness);

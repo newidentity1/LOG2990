@@ -33,8 +33,8 @@ export class PolygonService extends ShapeTool {
         this.width = this.currentMousePosition.x - this.mouseDownCoord.x;
         this.height = this.currentMousePosition.y - this.mouseDownCoord.y;
         const min = Math.min(Math.abs(this.width), Math.abs(this.height));
-        this.width = min * this.signOf(this.width);
-        this.height = min * this.signOf(this.height);
+        this.width = min * Math.sign(this.width);
+        this.height = min * Math.sign(this.height);
     }
 
     draw(ctx: CanvasRenderingContext2D): void {
@@ -49,8 +49,8 @@ export class PolygonService extends ShapeTool {
         const numberOfSides = polygonProperties.numberOfSides;
         const thicknessRatio = numberOfSides / (numberOfSides / 2);
 
-        const centerX = this.mouseDownCoord.x + radiusX * this.signOf(this.width);
-        const centerY = this.mouseDownCoord.y + radiusY * this.signOf(this.height);
+        const centerX = this.mouseDownCoord.x + radiusX * Math.sign(this.width);
+        const centerY = this.mouseDownCoord.y + radiusY * Math.sign(this.height);
 
         ctx.beginPath();
         ctx.moveTo(centerX, centerY - (radiusY - thickness / thicknessRatio));
