@@ -16,7 +16,7 @@ export class CreateNewDrawingComponent {
     createNewDrawing(): void {
         const isCanvasEmpty = this.inMenu
             ? !this.automaticSavingService.savedDrawingExists()
-            : this.drawingService.canvasEmpty(this.drawingService.baseCtx, this.drawingService.canvas);
+            : this.drawingService.canvasEmpty(this.drawingService.baseCtx);
         if (isCanvasEmpty) {
             this.drawingService.emitCreateNewDrawingEvent();
         } else {
