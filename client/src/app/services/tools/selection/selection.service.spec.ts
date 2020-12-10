@@ -6,7 +6,6 @@ import { MouseButton } from '@app/enums/mouse-button.enum';
 import { SelectionAction } from '@app/enums/selection-action.enum';
 import { SelectionType } from '@app/enums/selection-type.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { GridService } from '@app/services/tools/grid/grid.service';
 import { MagicWandService } from './magic-wand/magic-wand.service';
 import { MoveSelectionService } from './move-selection/move-selection.service';
 import { ResizeSelectionService } from './resize-selection/resize-selection.service';
@@ -16,7 +15,6 @@ import { SelectionService } from './selection.service';
 describe('SelectionService', () => {
     let service: SelectionService;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
-    let gridServiceSpy: jasmine.SpyObj<GridService>;
     let moveSelectionService: jasmine.SpyObj<MoveSelectionService>;
     let resizeSelectionService: jasmine.SpyObj<ResizeSelectionService>;
     let rotateSelectionService: jasmine.SpyObj<RotateSelectionService>;
@@ -29,7 +27,6 @@ describe('SelectionService', () => {
 
     beforeEach(() => {
         drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setThickness', 'setStrokeColor']);
-        gridServiceSpy = jasmine.createSpyObj('GridServiceSpy', ['clearCanvas', 'setThickness', 'setStrokeColor']);
         moveSelectionService = jasmine.createSpyObj('MoveSelectionService', ['setFinalPosition']);
         resizeSelectionService = jasmine.createSpyObj('ResizeSelectionService', [
             'applyScaleToImage',
@@ -41,7 +38,7 @@ describe('SelectionService', () => {
         rotateSelectionService = jasmine.createSpyObj('RotateSelectionService', ['initializeRotation', 'scroll']);
         magicWandService = jasmine.createSpyObj('MagicWandService', ['copyMagicSelection']);
 
-        moveSelectionService = new MoveSelectionService(drawingServiceSpy, gridServiceSpy) as jasmine.SpyObj<MoveSelectionService>;
+        moveSelectionService = new MoveSelectionService(drawingServiceSpy) as jasmine.SpyObj<MoveSelectionService>;
         TestBed.configureTestingModule({
             providers: [
                 { provide: DrawingService, useValue: drawingServiceSpy },
@@ -937,6 +934,29 @@ describe('SelectionService', () => {
         service.execute();
         expect(copySelectionSpy).toHaveBeenCalled();
         expect(resetSelectionSpy).toHaveBeenCalled();
+    });
+
+    it('magneticMoveKeyboard should call magneticMove', () => {
+        service.magnetismService.firstmove = true;
+        const magneticMoveSpy = spyOn(service, 'magneticMove');
+        service.magneticMoveKeyboard('ArrowLeft');
+        expect(magneticMoveSpy).toHaveBeenCalled();
+    });
+
+    it('magneticMoveKeyboard should call magneticMove', () => {
+        service.magnetismService.firstmove = false;
+        const moveSpy = spyOn(service['moveSelectionService'], 'move');
+        service.magneticMoveKeyboard('ArrowLeft');
+        expect(moveSpy).toHaveBeenCalled();
+    });
+
+    it('onKeyDown with magnetism should call magneticMoveKeyboard', () => {
+        service.activeMagnet = true;
+        service.isAreaSelected = true;
+        const magneticMoveKeyboardSpy = spyOn(service, 'magneticMoveKeyboard');
+        const event = {} as KeyboardEvent;
+        service.onKeyDown(event);
+        expect(magneticMoveKeyboardSpy).toHaveBeenCalled();
     });
 
     // tslint:disable-next-line: max-file-line-count / reason: its a test file
