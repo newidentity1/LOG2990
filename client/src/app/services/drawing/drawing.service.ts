@@ -7,6 +7,7 @@ import { Observable, Subject } from 'rxjs';
 export class DrawingService {
     baseCtx: CanvasRenderingContext2D;
     previewCtx: CanvasRenderingContext2D;
+    gridCtx: CanvasRenderingContext2D;
     canvas: HTMLCanvasElement;
     createNewDrawingSubject: Subject<void> = new Subject<void>();
     resetCanvasSizeSubject: Subject<void> = new Subject<void>();
@@ -56,5 +57,15 @@ export class DrawingService {
     setStrokeColor(color: string): void {
         this.baseCtx.strokeStyle = color;
         this.previewCtx.strokeStyle = color;
+    }
+
+    setTextStyle(style: string): void {
+        this.baseCtx.font = style;
+        this.previewCtx.font = style;
+    }
+
+    setTextAlignment(alignment: string): void {
+        this.baseCtx.textAlign = alignment as CanvasTextAlign;
+        this.previewCtx.textAlign = alignment as CanvasTextAlign;
     }
 }

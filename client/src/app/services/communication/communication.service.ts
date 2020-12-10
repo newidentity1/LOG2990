@@ -8,6 +8,7 @@ import { Observable } from 'rxjs';
 })
 export class CommunicationService {
     private drawingUrl: string = 'http://localhost:3000/api/drawings/';
+    private emailUrl: string = 'http://localhost:3000/api/email/';
 
     constructor(private http: HttpClient) {}
 
@@ -21,5 +22,9 @@ export class CommunicationService {
 
     postDrawing(drawing: Drawing): Observable<string> {
         return this.http.post(this.drawingUrl, drawing, { responseType: 'text' });
+    }
+
+    postEmail(form: FormData): Observable<string> {
+        return this.http.post(this.emailUrl, form, { responseType: 'text' });
     }
 }

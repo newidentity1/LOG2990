@@ -1,0 +1,26 @@
+<div class="stamp">
+    <h2>Choisissez votre étampe :</h2>
+    <mat-grid-list cols="2" rowHeight="75px">
+        <mat-grid-tile *ngFor="let sticker of stickersList; let i = index" [colspan]="1" [rowspan]="1">
+            <div class="sticker">
+                <img
+                    [ngStyle]="{ 'background-color': isCurrentSticker(sticker) ? 'white' : 'transparent' }"
+                    [src]="sticker.src"
+                    width="75"
+                    height="75"
+                    (click)="onStickerChange(sticker)"
+                />
+            </div>
+        </mat-grid-tile>
+    </mat-grid-list>
+</div>
+
+<hr />
+<label class="label">Choisissez la taille de votre étampe: </label>
+<mat-slider id="sliderSize" thumbLabel (change)="onSizeChange($event.value)" [value]="this.size" tickInterval="10" step="10" min="50" max="300">
+</mat-slider>
+
+<hr />
+<label class="label">Choisissez l'angle de votre étampe: </label>
+<mat-slider id="sliderSize" thumbLabel [value]="this.stickerAngle" (change)="onAngleChange($event.value)" [value]="this.angle" min="0" max="360">
+</mat-slider>

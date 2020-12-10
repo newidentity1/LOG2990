@@ -92,6 +92,7 @@ export abstract class ShapeTool extends Tool {
     abstract draw(ctx: CanvasRenderingContext2D): void;
 
     setColors(primaryColor: Color, secondaryColor: Color): void {
+        this.drawingService.previewCtx.canvas.style.cursor = '';
         this.currentPrimaryColor = primaryColor;
         this.currentSecondaryColor = secondaryColor;
         this.drawingService.setFillColor(primaryColor.toStringRGBA());

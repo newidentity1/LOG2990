@@ -1,12 +1,12 @@
 import { EventEmitter } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
-import { ResizeCommand } from '@app/classes/commands/resize-command';
 import { ResizerProperties } from '@app/classes/resizer-properties';
 import { Tool } from '@app/classes/tool/tool';
 import { SVGFilterComponent } from '@app/components/tools-options/brush/svgfilter/svgfilter.component';
 import { CANVAS_MARGIN_LEFT, CANVAS_MARGIN_TOP, CANVAS_MIN_HEIGHT, CANVAS_MIN_WIDTH, SELECTION_CONTROL_POINT_SIZE } from '@app/constants/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ResizeService } from '@app/services/resize/resize.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
 import { BehaviorSubject } from 'rxjs';
@@ -16,6 +16,7 @@ describe('DrawingComponent', () => {
     let component: DrawingComponent;
     let fixture: ComponentFixture<DrawingComponent>;
     let drawingServiceStub: DrawingService;
+    let resizeServiceStub: ResizeService;
     const width: number = CANVAS_MIN_WIDTH;
     const height: number = CANVAS_MIN_HEIGHT;
     const dimensionsUpdatedSubjectStub: BehaviorSubject<number[]> = new BehaviorSubject([width, height]);
@@ -24,6 +25,7 @@ describe('DrawingComponent', () => {
 
     beforeEach(async(() => {
         drawingServiceStub = new DrawingService();
+        resizeServiceStub = new ResizeService(drawingServiceStub);
         toolbarServiceSpy = jasmine.createSpyObj('ToolbarService', [
             'onMouseMove',
             'onMouseDown',
@@ -32,6 +34,7 @@ describe('DrawingComponent', () => {
             'onMouseLeave',
             'onDoubleClick',
             'onClick',
+            'onContextMenu',
             'setColors',
             'setColors',
             'createNewDrawingEventListener',
@@ -47,6 +50,7 @@ describe('DrawingComponent', () => {
             declarations: [DrawingComponent, SVGFilterComponent],
             providers: [
                 { provide: DrawingService, useValue: drawingServiceStub },
+                { provide: ResizeService, useValue: resizeServiceStub },
                 { provide: ToolbarService, useValue: toolbarServiceSpy },
             ],
         }).compileComponents();
@@ -62,9 +66,10 @@ describe('DrawingComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(DrawingComponent);
         component = fixture.componentInstance;
-        component.resizeCommand = new ResizeCommand(drawingServiceStub);
         component.dimensionsUpdatedEvent = dimensionsUpdatedSubjectStub.asObservable();
         component.requestDrawingContainerDimensions = new EventEmitter();
+        // tslint:disable:no-string-literal / reason : access private members
+        component['automaticSavingService'].clearStorage();
         fixture.detectChanges();
     });
 
@@ -110,6 +115,8 @@ describe('DrawingComponent', () => {
     });
 
     it('should call newCanvasSetSize when third parameter is true', () => {
+        // tslint:disable:no-string-literal / reason : access private members
+        component['automaticSavingService'].clearStorage();
         const spyNewCanvasSetSize = spyOn(component, 'newCanvasSetSize');
         component.ngOnInit();
         const delay = 1000;
@@ -237,7 +244,8 @@ describe('DrawingComponent', () => {
     });
 
     it(' onContextMenu should return false to prevent context menu from showing', () => {
-        const result = component.onContextMenu();
+        const result = component.onContextMenu(mouseEvent);
+        expect(toolbarServiceSpy.onContextMenu).toHaveBeenCalled();
         expect(result).toBeFalse();
     });
 
@@ -404,6 +412,8 @@ describe('DrawingComponent', () => {
     });
 
     it('should update drawing container sizes when dimensionsUpdatedEvent is notified', () => {
+        // tslint:disable:no-string-literal / reason : access private members
+        component['automaticSavingService'].clearStorage();
         spyOn(component.requestDrawingContainerDimensions, 'emit');
         spyOn(component, 'newCanvasSetSize');
         component.ngAfterViewInit();
