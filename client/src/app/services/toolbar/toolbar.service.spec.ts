@@ -452,7 +452,6 @@ describe('ToolbarService', () => {
         const undoSpy = spyOn<any>(service['undoRedoService'], 'undo');
         service.undo();
         expect(undoSpy).toHaveBeenCalled();
-        jasmine.clock().uninstall();
     });
 
     it('redo should call redo from undoRedoService', () => {

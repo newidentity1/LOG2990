@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Tool } from '@app/classes/tool/tool';
+import { DrawingComponent } from '@app/components/drawing/drawing.component';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants/constants';
 import { SelectionType } from '@app/enums/selection-type.enum';
@@ -15,6 +16,7 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 })
 export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('drawingContainer', { static: true }) drawingContainer: ElementRef;
+    @ViewChild(DrawingComponent) drawingArea: DrawingComponent;
 
     @ViewChild(SidebarComponent) toolbarRef: SidebarComponent;
 
@@ -32,6 +34,10 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngOnInit(): void {
         this.initializeShortcuts();
+    }
+
+    focusCanvas(): void {
+        this.drawingArea.previewCanvas.nativeElement.focus();
     }
 
     ngAfterViewInit(): void {
