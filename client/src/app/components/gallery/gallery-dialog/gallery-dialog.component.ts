@@ -79,7 +79,7 @@ export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy 
     }
 
     continueDrawing(event: number): void {
-        if (this.drawingService.canvasEmpty(this.drawingService.baseCtx, this.drawingService.canvas)) {
+        if (this.drawingService.canvasEmpty(this.drawingService.baseCtx)) {
             const image = new Image();
             image.crossOrigin = '';
             image.src = this.drawings[event - 1].url;

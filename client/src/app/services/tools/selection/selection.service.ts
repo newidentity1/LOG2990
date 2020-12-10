@@ -183,7 +183,6 @@ export class SelectionService extends ShapeTool {
             if (this.activeMagnet) {
                 this.magneticMoveKeyboard(event.key);
             } else if (this.moveSelectionService.checkArrowKeysPressed(event)) {
-                if (event.key === 'Delete') this.deleteSelection();
                 this.drawSelectionBox({ x: 0, y: 0 }, this.positiveWidth, this.positiveHeight);
             }
         } else {
