@@ -11,8 +11,13 @@
             <app-selection-option class="tool-options" *ngSwitchCase="'Selection'"></app-selection-option>
             <app-bucket-option class="tool-options" *ngSwitchCase="'Bucket'"></app-bucket-option>
             <app-text class="tool-options" *ngSwitchCase="'Text'"></app-text>
+            <app-stamp-options class="tool-options" *ngSwitchCase="'Stamp'"></app-stamp-options>
+            <app-grid-option class="tool-options" *ngSwitchCase="'Grid'"></app-grid-option>
+            <app-calligraphy-options class="tool-options" *ngSwitchCase="'Calligraphy'"></app-calligraphy-options>
+            <app-spray-options class="tool-options" *ngSwitchCase="'Spray'"></app-spray-options>
         </div>
     </mat-sidenav>
+    <app-grid-option></app-grid-option>
     <mat-sidenav-content>
         <div id="tool-container">
             <ul id="tools">
