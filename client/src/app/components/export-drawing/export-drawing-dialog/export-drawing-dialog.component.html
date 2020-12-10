@@ -1,51 +1,45 @@
 <div id="wrap">
+    <h3>Format</h3>
+    <mat-radio-group
+        aria-labelledby="format-type-group"
+        class="options-group"
+        [(ngModel)]="selectedFormat"
+        (change)="onFormatChange()"
+        ngDefaultControl
+    >
+        <mat-radio-button class="type-filter" value="jpeg">JPG</mat-radio-button>
+        <mat-radio-button class="type-filter" value="png">PNG</mat-radio-button>
+    </mat-radio-group>
 
-    <mat-accordion id="top-elements">
-        <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                <mat-panel-title> Format </mat-panel-title>
-            </mat-expansion-panel-header>
+    <h3>Filtre</h3>
+    <div id="filter-names">
+        <mat-radio-group
+            aria-labelledby="type-filter-group"
+            class="options-group"
+            [(ngModel)]="selectedFilter"
+            (change)="setPreviewFilter()"
+            ngDefaultControl
+        >
+            <mat-radio-button class="type-filter" *ngFor="let type of typeExportFilter | keyvalue: keepOriginalOrder" [value]="type.value">
+                {{ type.value }}
+            </mat-radio-button>
+        </mat-radio-group>
+    </div>
 
-            <mat-radio-group aria-labelledby="format-type-group" class="options-group" [(ngModel)]="selectedFormat" (change)="onFormatChange()" ngDefaultControl>
-                <mat-radio-button value="jpeg">JPG</mat-radio-button>
-                <mat-radio-button value="png">PNG</mat-radio-button>
-            </mat-radio-group>
-
-        </mat-expansion-panel>
-
-        <mat-expansion-panel>
-            <mat-expansion-panel-header>
-                <mat-panel-title> Filtre </mat-panel-title>
-            </mat-expansion-panel-header>
-            <div id="filter-names">
-                <mat-radio-group aria-labelledby="type-filter-group" class="options-group" [(ngModel)]="selectedFilter" (change)="setPreviewFilter()" ngDefaultControl>
-                    <mat-radio-button class="type-filter" *ngFor="let type of typeExportFilter | keyvalue: keepOriginalOrder" [value]="type.value">
-                        {{ type.value }}
-                    </mat-radio-button>
-                </mat-radio-group>
-            </div>
-
-            <!-- filter slider -->
-            <div id="slider-container" [style.display]="sliderIsVisible ? 'block' : 'none'">
-                <label> Intensité du filtre: </label>
-                <mat-slider id="filterSlider" min="0" max="1" step="0.01" [value]="percentage" (input)="setFilterPercentage($event.value)">
-                </mat-slider>
-                <input
-                    #filterInput
-                    id="filter-input"
-                    type="text"
-                    [value]="percentage"
-                    (input)="setFilterPercentage(filterInput.value)"
-                    min="0"
-                    max="1"
-                    step="0.01"
-                    maxlength="4"
-                    matInput
-                    matSuffix
-                />
-            </div>
-        </mat-expansion-panel>
-    </mat-accordion>
+    <div id="slider-container" [style.display]="sliderIsVisible ? 'block' : 'none'">
+        <label> Intensité du filtre: </label>
+        <mat-slider
+            id="filterSlider"
+            thumbLabel
+            tickInterval="auto"
+            min="0"
+            max="1"
+            step="0.05"
+            [value]="percentage"
+            (change)="setFilterPercentage($event.value)"
+        >
+        </mat-slider>
+    </div>
     <div id="bottom-elements">
         <form>
             <mat-form-field>
@@ -57,7 +51,7 @@
 
         <h3>Prévisualisation de l'image</h3>
         <a #drawingImageContainer href="" download=""> </a>
-        <!-- default width and height  -->
+
         <canvas id="previewCanvas" #previewCanvas width="250" height="250"></canvas>
 
         <!-- disabled in css -->
@@ -66,15 +60,18 @@
         <div>
             <mat-form-field>
                 <mat-label>Adresse courriel</mat-label>
-                <input matInput name="emailInput" type="email" [formControl]="emailForm"/>
+                <input matInput name="emailInput" type="email" [formControl]="emailForm" />
                 <mat-error *ngIf="!isEmailInputEmpty()">Adresse courriel non-valide</mat-error>
-
             </mat-form-field>
             <button
                 class="buttons"
-                id="emailbutton"
-                mat-raised-button [disabled]="titleForm.value.length === 0 || !emailForm.valid"
-                (click)="sendByEmail()">Envoyer par courriel</button>
+                id="emailButton"
+                mat-raised-button
+                [disabled]="titleForm.value.length === 0 || !emailForm.valid"
+                (click)="sendByEmail()"
+            >
+                Envoyer par courriel
+            </button>
         </div>
         <div>
             <button class="buttons" id="downloadButton" mat-raised-button (click)="downloadImage()" [disabled]="titleForm.value.length === 0">
@@ -85,7 +82,4 @@
             <h3 id="canvas-size-string">Taille de l'image: {{ drawingService.canvas.width }} x {{ drawingService.canvas.height }} px</h3>
         </div>
     </div>
-
-    <!-- form resetting -->
-    <!-- <mat-error *ngIf="resetEmailFormWhenEmpty()"></mat-error> -->
 </div>
