@@ -52,12 +52,11 @@ describe('CreateNewDrawingComponent', () => {
         expect(spyWarningClearCanvas).toHaveBeenCalled();
     });
 
-    it('createNewDrawing should call clearCanvas and emitCreateNewDrawingEvent when canvas is empty', () => {
+    it('createNewDrawing should emitCreateNewDrawingEvent when canvas is empty', () => {
         drawingServiceSpy.canvasEmpty.and.callFake(() => {
             return true;
         });
         component.createNewDrawing();
-        expect(drawingServiceSpy.clearCanvas).toHaveBeenCalled();
         expect(drawingServiceSpy.emitCreateNewDrawingEvent).toHaveBeenCalled();
     });
 

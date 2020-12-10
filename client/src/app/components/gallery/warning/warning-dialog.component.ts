@@ -1,6 +1,8 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ResizeService } from '@app/services/resize/resize.service';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Drawing } from '@common/communication/drawing';
 
 @Component({
@@ -10,9 +12,16 @@ import { Drawing } from '@common/communication/drawing';
 })
 export class WarningDialogComponent {
     private image: HTMLImageElement = new Image();
-    constructor(public drawingService: DrawingService, public dialog: MatDialog, @Inject(MAT_DIALOG_DATA) public data: { drawing: Drawing }) {}
+    constructor(
+        public drawingService: DrawingService,
+        private undoRedoService: UndoRedoService,
+        private resizeService: ResizeService,
+        public dialog: MatDialog,
+        @Inject(MAT_DIALOG_DATA) public data: { drawing: Drawing },
+    ) {}
 
     deleteCanvas(): void {
+        this.undoRedoService.resetUndoRedo();
         this.image.crossOrigin = '';
         this.image.src = this.data.drawing.url;
         this.image.onload = () => {
@@ -21,13 +30,9 @@ export class WarningDialogComponent {
     }
 
     loadImage(): void {
-        this.drawingService.clearCanvas(this.drawingService.baseCtx);
-        this.drawingService.baseCtx.canvas.width = this.image.width;
-        this.drawingService.baseCtx.canvas.height = this.image.height;
-        this.drawingService.previewCtx.canvas.width = this.image.width;
-        this.drawingService.previewCtx.canvas.height = this.image.height;
-        this.drawingService.baseCtx.drawImage(this.image, 0, 0);
         this.cancel();
+        this.drawingService.clearCanvas(this.drawingService.baseCtx);
+        this.resizeService.resizeFromImage(this.image);
     }
 
     cancel(): void {

@@ -187,7 +187,7 @@ describe('EditorComponent', () => {
 
     it('keydown event should call onKeyDown of toolbar', () => {
         const shortcutEvent = new KeyboardEvent('keydown', { key: 'Escape' });
-        document.dispatchEvent(shortcutEvent);
+        component.onKeyDown(shortcutEvent);
         expect(toolbarServiceMock.onKeyDown).toHaveBeenCalledWith(shortcutEvent);
     });
 });
