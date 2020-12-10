@@ -281,8 +281,6 @@ describe('Class: ShapeTool', () => {
         expect(shapeTool.height).toEqual(expectedResult);
     });
 
-
-
     it('drawBoxGuide should call stroke and setLineDash if mouse was down', () => {
         shapeTool.mouseDown = true;
         const spyStroke = spyOn(baseCtxStub, 'stroke');
