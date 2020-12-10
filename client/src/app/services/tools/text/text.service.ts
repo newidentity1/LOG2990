@@ -113,7 +113,6 @@ export class TextService extends Tool {
     }
 
     setFontText(value: string): void {
-        console.log(value);
         const testProperties = this.toolProperties as TextProperties;
         if (testProperties.fonts.includes(value)) {
             testProperties.font = value;
