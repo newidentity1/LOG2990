@@ -1,3 +1,4 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatSlider, MatSliderChange } from '@angular/material/slider';
 import * as CONSTANTS from '@app/constants/constants';
@@ -18,6 +19,7 @@ describe('GridComponent', () => {
         TestBed.configureTestingModule({
             declarations: [GridComponent],
             providers: [{ provide: GridService, useValue: gridServiceMock }],
+            schemas:[CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
         gridServiceMock = TestBed.inject(GridService) as jasmine.SpyObj<GridService>;
     }));

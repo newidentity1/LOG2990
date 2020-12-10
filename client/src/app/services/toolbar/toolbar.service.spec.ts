@@ -23,6 +23,7 @@ import { RectangleService } from '@app/services/tools/rectangle/rectangle.servic
 import { SelectionService } from '@app/services/tools/selection/selection.service';
 import { SprayService } from '@app/services/tools/spray/spray.service';
 import { StampService } from '@app/services/tools/stamp/stamp.service';
+import { TextActionKeysService } from '@app/services/tools/text/text-action-keys/text-action-keys.service';
 import { TextService } from '@app/services/tools/text/text.service';
 
 // tslint:disable:no-string-literal / reason: accessing private members
@@ -44,6 +45,7 @@ describe('ToolbarService', () => {
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
     let sprayServiceSpy: jasmine.SpyObj<SprayService>;
     let stampServiceSpy: jasmine.SpyObj<StampService>;
+    let textActionKeysServiceStub: TextActionKeysService;
 
     beforeEach(() => {
         pencilServiceSpy = jasmine.createSpyObj('PencilService', [
@@ -88,7 +90,7 @@ describe('ToolbarService', () => {
         calligraphyServiceSpy = jasmine.createSpyObj('CalligraphyService', ['onClick']);
         sprayServiceSpy = jasmine.createSpyObj('SprayService', ['onMouseDown', 'clearSpray']);
         stampServiceSpy = jasmine.createSpyObj('StampService', ['onMouseDown']);
-
+        textActionKeysServiceStub = new TextActionKeysService(drawingServiceSpy);
         TestBed.configureTestingModule({
             providers: [
                 { provide: PencilService, useValue: pencilServiceSpy },
@@ -257,7 +259,7 @@ describe('ToolbarService', () => {
     it('changeTool should call confirmText if current tool is text ', () => {
         const shortcutService = jasmine.createSpyObj(ShortcutService, ['addShortcut']);
 
-        const textTool = new TextService(drawingServiceSpy, shortcutService);
+        const textTool = new TextService(drawingServiceSpy, shortcutService, textActionKeysServiceStub);
         // tslint:disable: no-any / reason: spying on function
         spyOn<any>(textTool, 'isTextInProgress').and.returnValue(true);
         const confirmTextSpy = spyOn<any>(textTool, 'confirmText').and.returnValue(true);
