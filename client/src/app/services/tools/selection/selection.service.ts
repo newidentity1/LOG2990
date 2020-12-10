@@ -217,7 +217,7 @@ export class SelectionService extends ShapeTool {
             this.magneticMove(position.x, position.y);
         } else {
             position = this.magnetismService.moveKeyBord(key, this.moveSelectionService.finalPosition);
-            this.moveSelectionService.move(position.x, position.y);
+            this.moveSelectionService.moveSelectionMagnetic(position.x, position.y);
         }
     }
 
@@ -272,7 +272,6 @@ export class SelectionService extends ShapeTool {
         const selectionCtx = this.drawingService.previewCtx;
 
         this.drawingService.clearCanvas(selectionCtx);
-        if (this.currentType === SelectionType.MagicWandSelection) this.selectionImageData = this.magicWandService.imgData;
         selectionCtx.putImageData(this.selectionImageData, 0, 0);
         this.drawingService.baseCtx.drawImage(
             selectionCtx.canvas,
@@ -409,15 +408,18 @@ export class SelectionService extends ShapeTool {
             image = this.rotateSelectionService.rotatedImage.image;
         }
 
-        this.moveSelectionService.finalPosition = this.resizeSelectionService.onResize(event, this.moveSelectionService.finalPosition);
+        this.resizeSelectionService.onResize(event, this.moveSelectionService.finalPosition);
         if (this.shiftDown) this.resizeSelectionService.scaleImageKeepRatio(image);
         else this.resizeSelectionService.scaleImage(image);
 
+        this.moveSelectionService.finalPosition.x = this.drawingService.previewCtx.canvas.offsetLeft;
+        this.moveSelectionService.finalPosition.y = this.drawingService.previewCtx.canvas.offsetTop;
         this.rotateSelectionService.originalWidth = this.drawingService.previewCtx.canvas.width;
         this.rotateSelectionService.originalHeight = this.drawingService.previewCtx.canvas.height;
         this.rotateSelectionService.originalOffsetLeft = this.moveSelectionService.finalPosition.x;
         this.rotateSelectionService.originalOffsetTop = this.moveSelectionService.finalPosition.y;
         this.drawSelectionBox({ x: 0, y: 0 }, this.drawingService.previewCtx.canvas.width, this.drawingService.previewCtx.canvas.height);
+        this.lastAction = SelectionAction.Resize;
     }
 
     isClipboardEmpty(): boolean {
