@@ -4,8 +4,10 @@ import * as cors from 'cors';
 import * as express from 'express';
 import { inject, injectable } from 'inversify';
 import * as logger from 'morgan';
+import * as multer from 'multer';
 import { DateController } from './controllers/date.controller';
 import { DrawingController } from './controllers/drawing.controller';
+import { EmailController } from './controllers/email.controller';
 import { IndexController } from './controllers/index.controller';
 import { TYPES } from './types';
 
@@ -13,13 +15,23 @@ import { TYPES } from './types';
 export class Application {
     private readonly internalError: number = 500;
     app: express.Application;
+    upload: multer.Multer;
 
     constructor(
         @inject(TYPES.IndexController) private indexController: IndexController,
         @inject(TYPES.DateController) private dateController: DateController,
         @inject(TYPES.DrawingController) private drawingController: DrawingController,
+        @inject(TYPES.EmailController) private emailController: EmailController,
     ) {
         this.app = express();
+
+        const storage = multer.diskStorage({
+            filename: (req, file, cb) => {
+                cb(null, file.originalname);
+            },
+        });
+
+        this.upload = multer({ storage });
 
         this.config();
 
@@ -33,6 +45,7 @@ export class Application {
         this.app.use(bodyParser.urlencoded({ extended: true }));
         this.app.use(cookieParser());
         this.app.use(cors());
+        this.app.use(this.upload.any());
     }
 
     bindRoutes(): void {
@@ -40,6 +53,7 @@ export class Application {
         this.app.use('/api/index', this.indexController.router);
         this.app.use('/api/date', this.dateController.router);
         this.app.use('/api/drawings', this.drawingController.router);
+        this.app.use('/api/email', this.emailController.router);
         this.errorHandling();
     }
 
