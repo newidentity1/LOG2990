@@ -5,6 +5,7 @@ import { ResizerProperties } from '@app/classes/resizer-properties';
 import { SVGFilterComponent } from '@app/components/tools-options/brush/svgfilter/svgfilter.component';
 import { CANVAS_MIN_HEIGHT, CANVAS_MIN_WIDTH, SELECTION_CONTROL_POINT_SIZE } from '@app/constants/constants';
 import { ControlPoint } from '@app/enums/control-point.enum';
+import { AutomaticSavingService } from '@app/services/automatic-saving/automatic-saving.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ResizeService } from '@app/services/resize/resize.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
@@ -21,11 +22,13 @@ describe('DrawingComponent', () => {
     const height: number = CANVAS_MIN_HEIGHT;
     const dimensionsUpdatedSubjectStub: BehaviorSubject<number[]> = new BehaviorSubject([width, height]);
     let toolbarServiceSpy: jasmine.SpyObj<ToolbarService>;
+    let automaticSavingServiceSpy: jasmine.SpyObj<AutomaticSavingService>;
     let mouseEvent: MouseEvent;
 
     beforeEach(async(() => {
         drawingServiceStub = new DrawingService();
         resizeServiceStub = new ResizeService(drawingServiceStub);
+        automaticSavingServiceSpy = jasmine.createSpyObj('AutomaticSavingService', ['savedDrawingExists', 'recover', 'clearStorage']);
         toolbarServiceSpy = jasmine.createSpyObj('ToolbarService', [
             'onMouseMove',
             'onMouseDown',
@@ -54,6 +57,7 @@ describe('DrawingComponent', () => {
                 { provide: DrawingService, useValue: drawingServiceStub },
                 { provide: ResizeService, useValue: resizeServiceStub },
                 { provide: ToolbarService, useValue: toolbarServiceSpy },
+                { provide: AutomaticSavingService, useValue: automaticSavingServiceSpy },
             ],
         }).compileComponents();
 
@@ -61,6 +65,9 @@ describe('DrawingComponent', () => {
         drawingServiceStub.canvas = canvasTestHelper.canvas;
         drawingServiceStub.previewCtx = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
         drawingServiceStub.baseCtx = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
+
+        automaticSavingServiceSpy = TestBed.inject(AutomaticSavingService) as jasmine.SpyObj<AutomaticSavingService>;
+
         // tslint:disable-next-line:no-empty / reason: mocking mouse event
         mouseEvent = { preventDefault: () => {} } as MouseEvent;
     }));
@@ -127,6 +134,17 @@ describe('DrawingComponent', () => {
         jasmine.clock().tick(delay);
         expect(spyNewCanvasSetSize).toHaveBeenCalled();
         expect(toolbarServiceSpy.applyCurrentTool).toHaveBeenCalled();
+        jasmine.clock().uninstall();
+    });
+
+    it('should recover saved drawing if exists', () => {
+        automaticSavingServiceSpy.savedDrawingExists.and.returnValue(true);
+        component.ngOnInit();
+        const delay = 1000;
+        jasmine.clock().install();
+        dimensionsUpdatedSubjectStub.next([0, 0, +true]);
+        jasmine.clock().tick(delay);
+        expect(automaticSavingServiceSpy.recover).toHaveBeenCalled();
         jasmine.clock().uninstall();
     });
 
