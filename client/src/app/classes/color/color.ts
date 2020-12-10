@@ -83,10 +83,6 @@ export class Color {
         }
     }
 
-    get getOpacity(): number {
-        return this.alpha;
-    }
-
     setRedHex(hexValue: string): void {
         const dec = Color.hexToDec(hexValue);
         if (dec !== null) {
