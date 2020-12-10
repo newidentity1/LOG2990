@@ -9,7 +9,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 import { EyedropperService } from '@app/services/tools/eyedropper/eyedropper.service';
-import { PencilService } from '@app/services/tools/pencil/pencil-service';
+import { PencilService } from '@app/services/tools/pencil/pencil.service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle.service';
 import { SidebarComponent } from './sidebar.component';
 
@@ -79,21 +79,12 @@ describe('SidebarComponent', () => {
         expect(spySideNav).toHaveBeenCalled();
     });
 
-    it('onToolChanged should toggle the MatSideNav if the parameter is not the currentTool', () => {
+    it('onToolChanged should not call changeTool and open the MatSideNav if the parameter is same as currentTool', () => {
         toolbarServiceMock.currentTool = pencilToolMock;
-        const currentTool = pencilToolMock;
-        const spySideNav = spyOn(component.sidenavProperties, 'toggle');
-        component.onToolChanged(currentTool);
-        expect(spySideNav).toHaveBeenCalled();
-    });
-
-    it('onToolChanged should toggle the MatSideNav if the parameter is not the currentTool', () => {
-        const spySideNavClose = spyOn(component.sidenavProperties, 'close');
-        eyedropperToolMock.name = 'Eyedropper';
-        toolbarServiceMock.currentTool = pencilToolMock;
-        const currentTool = eyedropperToolMock;
-        component.onToolChanged(currentTool);
-        expect(spySideNavClose).toHaveBeenCalled();
+        const spySideNav = spyOn(component.sidenavProperties, 'open');
+        component.onToolChanged(pencilToolMock);
+        expect(toolbarServiceMock.changeTool).not.toHaveBeenCalled();
+        expect(spySideNav).not.toHaveBeenCalled();
     });
 
     it('createNewDrawing should call the createNewDrawing of the CreateNewDrawingComponent child', () => {

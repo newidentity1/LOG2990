@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { PencilService } from '@app/services/tools/pencil/pencil-service';
+import { PencilService } from '@app/services/tools/pencil/pencil.service';
 
 @Injectable({
     providedIn: 'root',
@@ -16,13 +15,13 @@ export class EraseService extends PencilService {
     }
 
     onMouseMove(event: MouseEvent): void {
-        const mousePosition = this.getPositionFromMouse(event);
+        this.currentMousePosition = this.getPositionFromMouse(event);
         if (this.mouseDown) {
-            this.pathData.push(mousePosition);
+            this.pathData.push(this.currentMousePosition);
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.draw(this.drawingService.previewCtx);
         }
-        this.drawCursor(mousePosition);
+        this.drawCursor();
     }
 
     onMouseUp(event: MouseEvent): void {
@@ -56,7 +55,7 @@ export class EraseService extends PencilService {
         ctx.stroke();
     }
 
-    protected drawCursor(position: Vec2): void {
+    protected drawCursor(): void {
         const cursorCtx = this.drawingService.previewCtx;
         if (!this.mouseDown) {
             this.drawingService.clearCanvas(cursorCtx);
@@ -65,16 +64,16 @@ export class EraseService extends PencilService {
         this.drawingService.setStrokeColor('black');
         cursorCtx.beginPath();
         cursorCtx.fillRect(
-            position.x - this.toolProperties.thickness / 2,
-            position.y - this.toolProperties.thickness / 2,
+            this.currentMousePosition.x - this.toolProperties.thickness / 2,
+            this.currentMousePosition.y - this.toolProperties.thickness / 2,
             this.toolProperties.thickness,
             this.toolProperties.thickness,
         );
 
         cursorCtx.lineWidth = 1;
         cursorCtx.strokeRect(
-            position.x - this.toolProperties.thickness / 2,
-            position.y - this.toolProperties.thickness / 2,
+            this.currentMousePosition.x - this.toolProperties.thickness / 2,
+            this.currentMousePosition.y - this.toolProperties.thickness / 2,
             this.toolProperties.thickness,
             this.toolProperties.thickness,
         );

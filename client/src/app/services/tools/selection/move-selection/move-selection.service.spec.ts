@@ -195,6 +195,16 @@ describe('MoveSelectionService', () => {
         expect(drawingServiceSpy.previewCtx.canvas.style.top).toEqual('20px');
     });
 
+    it('moveSelectionMagnetic should use a magnetic position', () => {
+        drawingServiceSpy.previewCtx.canvas.width = 0;
+        drawingServiceSpy.previewCtx.canvas.height = 0;
+        drawingServiceSpy.previewCtx.canvas.style.left = '0px';
+        drawingServiceSpy.previewCtx.canvas.style.top = '0px';
+        service.moveSelectionMagnetic(25, 25);
+        expect(service.finalPosition.x).toEqual(25);
+        expect(service.finalPosition.y).toEqual(25);
+    });
+
     it('copySelection should call isPositionInEllipse if selection is ellipse', () => {
         drawingServiceSpy.previewCtx.canvas.width = 0;
         drawingServiceSpy.previewCtx.canvas.height = 0;
@@ -217,6 +227,13 @@ describe('MoveSelectionService', () => {
         expect(imageData).toEqual(expectedImageData);
     });
 
+    it('setFinalPosition should change final position ', () => {
+        service.finalPosition = { x: 0, y: 0 };
+        const position = { x: 100, y: 100 };
+        service.setFinalPosition(position);
+        expect(service.finalPosition).toEqual(position);
+    });
+
     it('isPositionInEllipse should return true ', () => {
         const returnedResult = service['isPositionInEllipse']({ x: 100, y: 50 }, 200, 100);
         expect(returnedResult).toBeTrue();
@@ -225,5 +242,12 @@ describe('MoveSelectionService', () => {
     it('isPositionInEllipse should return false ', () => {
         const returnedResult = service['isPositionInEllipse']({ x: 0, y: 0 }, 200, 100);
         expect(returnedResult).toBeFalse();
+    });
+
+    it('redraw should call putImageData', () => {
+        spyOn(drawingServiceSpy.previewCtx, 'putImageData');
+        service.finalPosition = { x: -10, y: -10 };
+        service['redraw']();
+        expect(drawingServiceSpy.previewCtx.putImageData).toHaveBeenCalled();
     });
 });

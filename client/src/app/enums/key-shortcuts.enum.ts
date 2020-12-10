@@ -9,5 +9,11 @@ export enum KeyShortcut {
     Eyedropper = 'i',
     RectangleSelect = 'r',
     EllipseSelect = 's',
+    MagicBrushSelect = 'v',
     Bucket = 'b',
+    Text = 't',
+    Stamp = 'd',
+    Grid = 'g',
+    Calligraphy = 'p',
+    Spray = 'a',
 }

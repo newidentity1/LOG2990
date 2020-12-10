@@ -2,12 +2,12 @@ import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular
 import { FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Command } from '@app/classes/commands/command';
-import { ResizeCommand } from '@app/classes/commands/resize-command';
 import { ImageGallery } from '@app/classes/image-gallery';
 import { WarningDialogComponent } from '@app/components/gallery/warning/warning-dialog.component';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { FireBaseService } from '@app/services/firebase/fire-base.service';
+import { FireBaseService } from '@app/services/fire-base/fire-base.service';
+import { ResizeService } from '@app/services/resize/resize.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Drawing } from '@common/communication/drawing';
 import { NgImageSliderComponent } from 'ng-image-slider';
@@ -24,8 +24,6 @@ export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy 
     drawingTags: string[] = [];
     isDrawing: boolean = false;
     tagForm: FormControl;
-    isCanvasEmpty: boolean = true;
-    resizeCommand: ResizeCommand;
     private subscribeExecutedCommand: Subscription;
 
     constructor(
@@ -34,12 +32,13 @@ export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy 
         private fireBaseService: FireBaseService,
         private communicationService: CommunicationService,
         private undoRedoService: UndoRedoService,
+        private resizeService: ResizeService,
     ) {}
 
     ngOnInit(): void {
         this.tagForm = new FormControl('', [Validators.pattern('^(\\d|[a-zA-ZÀ-ÿ]){0,15}$'), Validators.required]);
-        this.resizeCommand = new ResizeCommand(this.drawingService);
-        this.subscribeExecutedCommand = this.resizeCommand.executedCommand.subscribe((command: Command) => {
+        this.resizeService = new ResizeService(this.drawingService);
+        this.subscribeExecutedCommand = this.resizeService.executedCommand.subscribe((command: Command) => {
             this.undoRedoService.addCommand(command);
         });
     }
@@ -80,25 +79,14 @@ export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy 
     }
 
     continueDrawing(event: number): void {
-        const isCanvasEmpty = this.drawingService.canvasEmpty(this.drawingService.baseCtx, this.drawingService.canvas);
-        if (isCanvasEmpty) {
+        if (this.drawingService.canvasEmpty(this.drawingService.baseCtx)) {
             const image = new Image();
             image.crossOrigin = '';
             image.src = this.drawings[event - 1].url;
             image.onload = () => {
-                const ctx = this.drawingService.canvas.getContext('2d') as CanvasRenderingContext2D;
-                this.drawingService.clearCanvas(ctx as CanvasRenderingContext2D);
-                this.drawingService.baseCtx.canvas.width = image.width;
-                this.drawingService.baseCtx.canvas.height = image.height;
-                this.drawingService.previewCtx.canvas.width = image.width;
-                this.drawingService.previewCtx.canvas.height = image.height;
-                this.drawingService.baseCtx.drawImage(image, 0, 0);
-
-                this.undoRedoService.resetUndoRedo();
-                this.resizeCommand.resize(image.width, image.height);
                 this.drawingService.clearCanvas(this.drawingService.baseCtx);
-                this.resizeCommand.drawImage();
-
+                this.undoRedoService.resetUndoRedo();
+                this.resizeService.resizeFromImage(image);
                 this.dialog.closeAll();
             };
         } else {
@@ -132,10 +120,14 @@ export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy 
     private transformData(data: Drawing[]): void {
         this.drawings = [];
         for (const draw of data) {
-            this.drawings.push(draw);
+            const image = new Image();
+            image.src = draw.url;
+            image.onload = () => {
+                this.drawings.push(draw);
+                this.updateDrawings(this.drawings);
+                this.isDrawing = this.drawings.length > 0 ? true : false;
+            };
         }
-        this.updateDrawings(this.drawings);
-        this.isDrawing = this.drawings.length > 0 ? true : false;
     }
 
     addTag(tag: string): void {

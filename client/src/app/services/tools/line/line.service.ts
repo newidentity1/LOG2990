@@ -29,7 +29,7 @@ export class LineService extends Tool {
     onClick(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
         const mousePosition = this.getPositionFromMouse(event);
-        if (this.pathData.length > 1 && this.shift) {
+        if (this.pathData.length > 0 && this.shift) {
             this.angleTransform(mousePosition);
             this.draw(this.drawingService.previewCtx);
         }
@@ -42,7 +42,7 @@ export class LineService extends Tool {
         } else if (this.lock45) {
             const dx = mousePosition.x - this.pathData[this.pathData.length - 1].x;
             const dy = mousePosition.y - this.pathData[this.pathData.length - 1].y;
-            const sign = this.signOf(dx) * this.signOf(dy);
+            const sign = Math.sign(dx) * Math.sign(dy);
             mousePosition.y =
                 sign * Math.tan(CONSTANTS.ANGLE_45) * (mousePosition.x - this.pathData[this.pathData.length - 1].x) +
                 this.pathData[this.pathData.length - 1].y;
@@ -198,7 +198,7 @@ export class LineService extends Tool {
             case CONSTANTS.ANGLE_45:
                 const dx = mousePosition.x - this.pathData[this.pathData.length - 1].x;
                 const dy = mousePosition.y - this.pathData[this.pathData.length - 1].y;
-                const sign = this.signOf(dy) * this.signOf(dx);
+                const sign = Math.sign(dy) * Math.sign(dx);
                 this.lock45 = true;
                 const defaultValue = +!sign * mousePosition.y;
                 point.y =

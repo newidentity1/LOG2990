@@ -58,8 +58,7 @@ export class EyedropperService extends Tool {
             this.drawingService.canvas.height - CONSTANTS.EYEDROPPER_PREVIEW_SCALE_SIZE,
         );
 
-        const scaledZoneStartingPos = { x: cappedXPos, y: cappedYPos } as Vec2;
-        this.drawScaledZone(scaledZoneStartingPos);
+        this.drawScaledZone({ x: cappedXPos, y: cappedYPos } as Vec2);
 
         const cursorX = ((mousePosition.x - cappedXPos) * CONSTANTS.EYEDROPPER_PREVIEW_CANVAS_WIDTH) / CONSTANTS.EYEDROPPER_PREVIEW_SCALE_SIZE;
         const cursorY = ((mousePosition.y - cappedYPos) * CONSTANTS.EYEDROPPER_PREVIEW_CANVAS_HEIGHT) / CONSTANTS.EYEDROPPER_PREVIEW_SCALE_SIZE;

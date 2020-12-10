@@ -3,7 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatSliderChange, MatSliderModule } from '@angular/material/slider';
 import { ThicknessSliderComponent } from '@app/components/tools-options/thickness-slider/thickness-slider.component';
 import { MAXIMUM_THICKNESS, MINIMUM_THICKNESS } from '@app/constants/constants';
-import { PencilService } from '@app/services/tools/pencil/pencil-service';
+import { PencilService } from '@app/services/tools/pencil/pencil.service';
 import { PencilComponent } from './pencil.component';
 
 describe('PencilComponent', () => {

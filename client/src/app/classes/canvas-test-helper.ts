@@ -13,6 +13,10 @@ const selectionCanvas = document.createElement('canvas');
 selectionCanvas.width = WIDTH;
 selectionCanvas.height = HEIGHT;
 
-const canvasTestHelper = { canvas, drawCanvas, selectionCanvas };
+const gridCanvas = document.createElement('canvas');
+gridCanvas.width = WIDTH;
+gridCanvas.height = HEIGHT;
+
+const canvasTestHelper = { canvas, drawCanvas, selectionCanvas, gridCanvas };
 
 export { canvasTestHelper };

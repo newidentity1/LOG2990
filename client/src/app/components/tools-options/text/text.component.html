@@ -1,0 +1,60 @@
+<div class="property">
+    <h3 class="title-property">Propriété du texte</h3>
+    <div>
+        <label class="label">Choisissez la police du texte:</label>
+        <mat-radio-group aria-labelledby="font-label" class="type-drawing-group" [(ngModel)]="font" ngDefaultControl>
+            <mat-radio-button class="type-drawing" *ngFor="let font of fonts | keyvalue" [value]="font.value" (change)="onFontChange($event)">
+                {{ font.value }}
+            </mat-radio-button>
+        </mat-radio-group>
+    </div>
+
+    <div>
+        <label class="label">Choisissez la taille du texte: </label>
+        <mat-slider thumbLabel (change)="onSizeChange($event)" tickInterval="1" [min]="minimumTextSize" [max]="maximumTextSize" [value]="size">
+        </mat-slider>
+    </div>
+
+    <div>
+        <label class="label">Choisissez le style du texte:</label>
+        <mat-radio-button class="image-radio-button" [value]="this.isBold" (click)="onBoldChange()" [ngClass]="{ isStyleApplied: this.isBold }">
+            <mat-icon>format_bold</mat-icon>
+        </mat-radio-button>
+
+        <mat-radio-button class="image-radio-button" [value]="this.isItalic" (click)="onItalicChange()" [ngClass]="{ isStyleApplied: this.isItalic }">
+            <mat-icon>format_italic</mat-icon>
+        </mat-radio-button>
+    </div>
+
+    <div>
+        <label class="label">Choisissez l'alignement du texte:</label>
+        <mat-radio-group aria-labelledby="text-alignment-label" [(ngModel)]="textAlignment" ngDefaultControl>
+            <mat-radio-button
+                class="image-radio-button"
+                [value]="textAlignments[0]"
+                (change)="onTextAlignmentChange($event)"
+                [ngClass]="{ currentAlignment: isCurrentAlignment(textAlignments[0]) }"
+            >
+                <mat-icon>format_align_left</mat-icon>
+            </mat-radio-button>
+
+            <mat-radio-button
+                class="image-radio-button"
+                [value]="textAlignments[1]"
+                (change)="onTextAlignmentChange($event)"
+                [ngClass]="{ currentAlignment: isCurrentAlignment(textAlignments[1]) }"
+            >
+                <mat-icon>format_align_center</mat-icon>
+            </mat-radio-button>
+
+            <mat-radio-button
+                class="image-radio-button"
+                [value]="textAlignments[2]"
+                (change)="onTextAlignmentChange($event)"
+                [ngClass]="{ currentAlignment: isCurrentAlignment(textAlignments[2]) }"
+            >
+                <mat-icon>format_align_right</mat-icon>
+            </mat-radio-button>
+        </mat-radio-group>
+    </div>
+</div>

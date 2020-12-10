@@ -3,8 +3,7 @@ import { FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ResponseResult } from '@app/classes/response-result';
-import { FireBaseService } from '@app/services/firebase/fire-base.service';
-import { Drawing } from '@common/communication/drawing';
+import { FireBaseService } from '@app/services/fire-base/fire-base.service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -13,11 +12,7 @@ import { Subscription } from 'rxjs';
     styleUrls: ['./upload-dialog.component.scss'],
 })
 export class UploadDialogComponent implements OnInit, OnDestroy {
-    drawingTitle: string = '';
-    drawings: Drawing[] = [];
     drawingTags: string[] = [];
-    tagToAdd: string = '';
-    tagEmpty: boolean = false;
     tagForm: FormControl;
     titleForm: FormControl;
     subscribeSaveDrawing: Subscription;
@@ -27,6 +22,7 @@ export class UploadDialogComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         this.tagForm = new FormControl('', [Validators.pattern('^(\\d|[a-zA-ZÀ-ÿ]){0,15}$'), Validators.required]);
         this.titleForm = new FormControl('', [Validators.pattern('^[a-zA-ZÀ-ÿ](\\d|[a-zA-ZÀ-ÿ ]){0,20}$'), Validators.required]);
+        this.titleForm.markAsDirty();
         this.subscribeSaveDrawing = this.fireBaseService.saveDrawingEventListener().subscribe((result: ResponseResult) => {
             this.snackBar.open(result.message, 'Fermer', {
                 duration: 4000,
@@ -72,6 +68,9 @@ export class UploadDialogComponent implements OnInit, OnDestroy {
     }
 
     isTagInputEmpty(): boolean {
+        if (this.tagForm.value.length === 0) {
+            this.tagForm.markAsPristine();
+        }
         return this.tagForm.value.length === 0;
     }
 }
