@@ -58,17 +58,6 @@ describe('EllipseService', () => {
         expect(spyFill).toHaveBeenCalled();
     });
 
-    it('signOf should return 1 if number is positive', () => {
-        // tslint:disable:no-magic-numbers / reason: using random numbers
-        const result = service['signOf'](10);
-        expect(result).toEqual(1);
-    });
-
-    it('signOf should return -1 if number is negative', () => {
-        const result = service['signOf'](-10);
-        expect(result).toEqual(-1);
-    });
-
     it('drawBoxGuide should call stroke and setLineDash if mouse was down', () => {
         service.mouseDown = true;
         const spyStroke = spyOn(baseCtxStub, 'stroke');

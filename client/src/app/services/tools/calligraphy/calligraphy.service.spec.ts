@@ -11,7 +11,7 @@ import {
 } from '@app/constants/constants';
 import { MouseButton } from '@app/enums/mouse-button.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { PencilService } from '@app/services/tools/pencil/pencil-service';
+import { PencilService } from '@app/services/tools/pencil/pencil.service';
 import { CalligraphyService } from './calligraphy.service';
 
 describe('CalligraphyService', () => {
@@ -38,7 +38,11 @@ describe('CalligraphyService', () => {
         // tslint:disable: no-string-literal / reason: accessing private member
         service['drawingService'].canvas = canvas;
         service['drawingService'].baseCtx = canvas.getContext('2d') as CanvasRenderingContext2D;
-        service['drawingService'].previewCtx = canvas.getContext('2d') as CanvasRenderingContext2D;
+
+        const previewCanvas = document.createElement('canvas');
+        previewCanvas.width = canvasTestHelper.canvas.width;
+        previewCanvas.height = canvasTestHelper.canvas.height;
+        service['drawingService'].previewCtx = previewCanvas.getContext('2d') as CanvasRenderingContext2D;
 
         mouseEvent = {
             clientX: 25,

@@ -6,7 +6,7 @@ import { ImageGallery } from '@app/classes/image-gallery';
 import { WarningDialogComponent } from '@app/components/gallery/warning/warning-dialog.component';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { FireBaseService } from '@app/services/firebase/fire-base.service';
+import { FireBaseService } from '@app/services/fire-base/fire-base.service';
 import { ResizeService } from '@app/services/resize/resize.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Drawing } from '@common/communication/drawing';
@@ -24,7 +24,6 @@ export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy 
     drawingTags: string[] = [];
     isDrawing: boolean = false;
     tagForm: FormControl;
-    isCanvasEmpty: boolean = true;
     private subscribeExecutedCommand: Subscription;
 
     constructor(
@@ -80,8 +79,7 @@ export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy 
     }
 
     continueDrawing(event: number): void {
-        const isCanvasEmpty = this.drawingService.canvasEmpty(this.drawingService.baseCtx, this.drawingService.canvas);
-        if (isCanvasEmpty) {
+        if (this.drawingService.canvasEmpty(this.drawingService.baseCtx)) {
             const image = new Image();
             image.crossOrigin = '';
             image.src = this.drawings[event - 1].url;
@@ -122,10 +120,14 @@ export class GalleryDialogComponent implements OnInit, AfterViewInit, OnDestroy 
     private transformData(data: Drawing[]): void {
         this.drawings = [];
         for (const draw of data) {
-            this.drawings.push(draw);
+            const image = new Image();
+            image.src = draw.url;
+            image.onload = () => {
+                this.drawings.push(draw);
+                this.updateDrawings(this.drawings);
+                this.isDrawing = this.drawings.length > 0 ? true : false;
+            };
         }
-        this.updateDrawings(this.drawings);
-        this.isDrawing = this.drawings.length > 0 ? true : false;
     }
 
     addTag(tag: string): void {

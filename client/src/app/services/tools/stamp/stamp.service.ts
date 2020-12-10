@@ -30,7 +30,12 @@ export class StampService extends Tool {
         this.imagePreview.crossOrigin = '';
     }
 
-    onClick(event: MouseEvent): void {
+    onClick(): void {
+        this.draw();
+        this.executedCommand.emit(this.clone());
+    }
+
+    draw(): void {
         this.drawingService.baseCtx.drawImage(this.imagePreview, this.finalPosition.x, this.finalPosition.y);
     }
 
@@ -82,5 +87,14 @@ export class StampService extends Tool {
                 this.imagePreview.src = cctx.canvas.toDataURL();
             };
         };
+    }
+
+    clone(): Tool {
+        const stampClone: StampService = new StampService(this.drawingService, this.rendererFactory);
+        stampClone.imagePreview = new Image(this.imagePreview.width, this.imagePreview.height);
+        stampClone.imagePreview.src = this.imagePreview.src;
+        stampClone.finalPosition.x = this.finalPosition.x;
+        stampClone.finalPosition.y = this.finalPosition.y;
+        return stampClone;
     }
 }

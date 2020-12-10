@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Tool } from '@app/classes/tool/tool';
 import { CreateNewDrawingComponent } from '@app/components/create-new-drawing/create-new-drawing.component';
@@ -19,6 +19,7 @@ export class SidebarComponent {
     @ViewChild(ExportDrawingComponent) exportRef: ExportDrawingComponent;
     @ViewChild(UploadComponent) uploadRef: UploadComponent;
     @ViewChild(GalleryComponent) galleryRef: GalleryComponent;
+    @Output() requestCanvasFocus: EventEmitter<void> = new EventEmitter();
 
     constructor(protected toolbarService: ToolbarService) {
         this.tools = this.toolbarService.getTools();
@@ -32,11 +33,7 @@ export class SidebarComponent {
         if (tool !== this.currentTool) {
             this.toolbarService.changeTool(tool);
             this.sidenavProperties.open();
-        } else {
-            this.sidenavProperties.toggle();
         }
-
-        if (tool.name === 'Eyedropper') this.sidenavProperties.close();
     }
 
     createNewDrawing(): void {
@@ -53,6 +50,10 @@ export class SidebarComponent {
 
     uploadImage(): void {
         this.uploadRef.uploadImage();
+    }
+
+    onTextPropertyChange(): void {
+        this.requestCanvasFocus.emit();
     }
 
     get currentTool(): Tool {

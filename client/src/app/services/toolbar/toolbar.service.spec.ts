@@ -7,6 +7,7 @@ import { Tool } from '@app/classes/tool/tool';
 import { KeyShortcut } from '@app/enums/key-shortcuts.enum';
 import { SelectionType } from '@app/enums/selection-type.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ShortcutService } from '@app/services/shortcut/shortcut.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 import { BrushService } from '@app/services/tools/brush/brush.service';
 import { BucketService } from '@app/services/tools/bucket/bucket.service';
@@ -16,15 +17,16 @@ import { EraseService } from '@app/services/tools/erase/erase.service';
 import { EyedropperService } from '@app/services/tools/eyedropper/eyedropper.service';
 import { GridService } from '@app/services/tools/grid/grid.service';
 import { LineService } from '@app/services/tools/line/line.service';
-import { PencilService } from '@app/services/tools/pencil/pencil-service';
+import { PencilService } from '@app/services/tools/pencil/pencil.service';
 import { PolygonService } from '@app/services/tools/polygon/polygon.service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle.service';
 import { SelectionService } from '@app/services/tools/selection/selection.service';
 import { SprayService } from '@app/services/tools/spray/spray.service';
 import { StampService } from '@app/services/tools/stamp/stamp.service';
+import { TextActionKeysService } from '@app/services/tools/text/text-action-keys/text-action-keys.service';
 import { TextService } from '@app/services/tools/text/text.service';
 
-// tslint:disable:no-string-literal
+// tslint:disable:no-string-literal / reason: accessing private members
 describe('ToolbarService', () => {
     let service: ToolbarService;
     let pencilServiceSpy: jasmine.SpyObj<PencilService>;
@@ -43,6 +45,7 @@ describe('ToolbarService', () => {
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
     let sprayServiceSpy: jasmine.SpyObj<SprayService>;
     let stampServiceSpy: jasmine.SpyObj<StampService>;
+    let textActionKeysServiceStub: TextActionKeysService;
 
     beforeEach(() => {
         pencilServiceSpy = jasmine.createSpyObj('PencilService', [
@@ -59,6 +62,8 @@ describe('ToolbarService', () => {
             'setColors',
             'resetContext',
             'clone',
+            'onMouseScroll',
+            'onContextMenu',
         ]);
 
         brushServiceSpy = jasmine.createSpyObj('BrushService', ['onKeyDown', 'resetContext', 'setColors']);
@@ -67,16 +72,25 @@ describe('ToolbarService', () => {
         lineServiceSpy = jasmine.createSpyObj('LineService', ['onKeyDown']);
         eraseServiceSpy = jasmine.createSpyObj('LineService', ['onKeyDown']);
         eyedropperServiceSpy = jasmine.createSpyObj('EyedropperService', ['onKeyDown']);
-        selectionServiceSpy = jasmine.createSpyObj('SelectionService', ['selectAll', 'resetSelection', 'setSelectionType', 'setThickness']);
+        selectionServiceSpy = jasmine.createSpyObj('SelectionService', [
+            'selectAll',
+            'resetSelection',
+            'resize',
+            'setSelectionType',
+            'setThickness',
+            'copySelection',
+            'cutSelection',
+            'pasteSelection',
+        ]);
         bucketServiceSpy = jasmine.createSpyObj('BucketService', ['onMouseDown']);
         drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setStrokeColor', 'setThickness', 'canvasEmpty']);
         polygonServiceSpy = jasmine.createSpyObj('PolygonService', ['onKeyDown']);
-        textServiceSpy = jasmine.createSpyObj('TextService', ['onClick']);
-        gridServiceSpy = jasmine.createSpyObj('GridService', ['onClick']);
+        textServiceSpy = jasmine.createSpyObj('TextService', ['onClick', 'confirmText', 'isTextInProgress']);
+        gridServiceSpy = jasmine.createSpyObj('GridService', ['onClick', 'draw']);
         calligraphyServiceSpy = jasmine.createSpyObj('CalligraphyService', ['onClick']);
-        sprayServiceSpy = jasmine.createSpyObj('SprayService', ['onMouseDown']);
+        sprayServiceSpy = jasmine.createSpyObj('SprayService', ['onMouseDown', 'clearSpray']);
         stampServiceSpy = jasmine.createSpyObj('StampService', ['onMouseDown']);
-
+        textActionKeysServiceStub = new TextActionKeysService(drawingServiceSpy);
         TestBed.configureTestingModule({
             providers: [
                 { provide: PencilService, useValue: pencilServiceSpy },
@@ -179,6 +193,11 @@ describe('ToolbarService', () => {
         ]);
     });
 
+    it('setGrid should call draw of gridService ', () => {
+        service.setGrid();
+        expect(gridServiceSpy.draw).toHaveBeenCalled();
+    });
+
     it('initializeListeners should set primary and secondary colors ', () => {
         // tslint:disable-next-line:no-any / reason: spying on function
         const setColorsSpy = spyOn<any>(service, 'setColors').and.callThrough();
@@ -237,6 +256,39 @@ describe('ToolbarService', () => {
         expect(applyColorSpy).not.toHaveBeenCalled();
     });
 
+    it('changeTool should call confirmText if current tool is text ', () => {
+        const shortcutService = jasmine.createSpyObj(ShortcutService, ['addShortcut']);
+
+        const textTool = new TextService(drawingServiceSpy, shortcutService, textActionKeysServiceStub);
+        // tslint:disable: no-any / reason: spying on function
+        spyOn<any>(textTool, 'isTextInProgress').and.returnValue(true);
+        const confirmTextSpy = spyOn<any>(textTool, 'confirmText').and.returnValue(true);
+        // tslint:disable-next-line: no-any / reason: spying on function
+        spyOn<any>(service, 'applyCurrentTool').and.callFake(() => {
+            return;
+        });
+        // tslint:denable: no-any
+
+        service.currentTool = textTool;
+        service.changeTool(pencilServiceSpy);
+        expect(confirmTextSpy).toHaveBeenCalled();
+    });
+
+    it('changeTool should call clearSpray if current tool is spray ', () => {
+        const sprayTool = new SprayService(drawingServiceSpy);
+        // tslint:disable-next-line: no-any / reason: spying on function
+        const clearSpraySpy = spyOn<any>(sprayTool, 'clearSpray').and.callFake(() => {
+            return;
+        });
+        // tslint:disable-next-line: no-any / reason: spying on function
+        spyOn<any>(service, 'applyCurrentTool').and.callFake(() => {
+            return;
+        });
+        service.currentTool = sprayTool;
+        service.changeTool(pencilServiceSpy);
+        expect(clearSpraySpy).toHaveBeenCalled();
+    });
+
     it('onKeyDown should call the onKeyDown of the currentTool', () => {
         service.currentTool = pencilServiceSpy;
         const keyboardEvent = { key: '' } as KeyboardEvent;
@@ -251,6 +303,14 @@ describe('ToolbarService', () => {
         service.onKeyUp(keyboardEvent);
 
         expect(service.currentTool.onKeyUp).toHaveBeenCalledWith(keyboardEvent);
+    });
+
+    it('onMouseScroll should call the onMouseScroll of the currentTool', () => {
+        service.currentTool = pencilServiceSpy;
+        const wheelEvent = {} as WheelEvent;
+        service.onMouseScroll(wheelEvent);
+
+        expect(service.currentTool.onMouseScroll).toHaveBeenCalledWith(wheelEvent);
     });
 
     it('onMouseMove should call the onMouseMove of the currentTool', () => {
@@ -313,11 +373,12 @@ describe('ToolbarService', () => {
         expect(service.currentTool.onClick).toHaveBeenCalledWith(mouseEvent);
     });
 
-    it('triggerSelectAll should change current tool to selection tool', () => {
+    it('onContextMenu should call the onContextMenu of the currentTool', () => {
         service.currentTool = pencilServiceSpy;
-        service.triggerSelectAll();
+        const mouseEvent = {} as MouseEvent;
+        service.onContextMenu(mouseEvent);
 
-        expect(service.currentTool).toEqual(selectionServiceSpy);
+        expect(service.currentTool.onContextMenu).toHaveBeenCalledWith(mouseEvent);
     });
 
     it('triggerSelectAll should call selectAll of selectionService', () => {
@@ -393,7 +454,6 @@ describe('ToolbarService', () => {
         const undoSpy = spyOn<any>(service['undoRedoService'], 'undo');
         service.undo();
         expect(undoSpy).toHaveBeenCalled();
-        jasmine.clock().uninstall();
     });
 
     it('redo should call redo from undoRedoService', () => {
@@ -459,6 +519,50 @@ describe('ToolbarService', () => {
         expect(applyCurrentToolSpy).not.toHaveBeenCalled();
     });
 
+    it('canUndo should return canUndo of undoRedoService', () => {
+        // tslint:disable-next-line:no-any / reason : spying on function
+        const undoSpy = spyOn<any>(service['undoRedoService'], 'canUndo');
+        service.canUndo();
+        expect(undoSpy).toHaveBeenCalled();
+    });
+
+    it('canRedo should return canRedo of undoRedoService', () => {
+        // tslint:disable-next-line:no-any / reason : spying on function
+        const redoSpy = spyOn<any>(service['undoRedoService'], 'canRedo');
+        service.canRedo();
+        expect(redoSpy).toHaveBeenCalled();
+    });
+
+    it('triggerCopySelection should call copySelection of selectionService', () => {
+        // tslint:disable-next-line: no-any / reason: spying on function
+        const spyCopySelection = spyOn<any>(selectionServiceSpy, 'copySelection').and.callFake(() => {
+            return;
+        });
+
+        service.triggerCopySelection();
+        expect(spyCopySelection).toHaveBeenCalled();
+    });
+
+    it('triggerCutSelection should call cutSelection of selectionService', () => {
+        // tslint:disable-next-line: no-any / reason: spying on function
+        const spyCutSelection = spyOn<any>(selectionServiceSpy, 'cutSelection').and.callFake(() => {
+            return;
+        });
+
+        service.triggerCutSelection();
+        expect(spyCutSelection).toHaveBeenCalled();
+    });
+
+    it('triggerPatseSelection should call pasteSelection of selectionService', () => {
+        // tslint:disable-next-line: no-any / reason: spying on function
+        const spyPasteSelection = spyOn<any>(selectionServiceSpy, 'pasteSelection').and.callFake(() => {
+            return;
+        });
+
+        service.triggerPasteSelection();
+        expect(spyPasteSelection).toHaveBeenCalled();
+    });
+
     it('isDrawing should call isAreaSelected() and return true an area is selected', () => {
         // tslint:disable-next-line:no-any / reason : spying on function
         const isAreaSelectedSpy = spyOn<any>(service, 'isAreaSelected').and.callFake(() => {
@@ -477,6 +581,28 @@ describe('ToolbarService', () => {
         service.mouseDown = true;
         const isDrawing = service.isDrawing();
         expect(isDrawing).toEqual(true);
+    });
+
+    it('resizeSelection should call resizeSelection of selection service if area is selected', () => {
+        const mouseEvent = {} as MouseEvent;
+        // tslint:disable-next-line:no-any / reason : spying on function
+        const resizeSelectionSpy = spyOn<any>(selectionServiceSpy, 'resize').and.callFake(() => {
+            return;
+        });
+        selectionServiceSpy.isAreaSelected = true;
+        service.resizeSelection(mouseEvent);
+        expect(resizeSelectionSpy).toHaveBeenCalled();
+    });
+
+    it('resizeSelection should not call resizeSelection of selection service if area is not selected', () => {
+        const mouseEvent = {} as MouseEvent;
+        // tslint:disable-next-line:no-any / reason : spying on function
+        const resizeSelectionSpy = spyOn<any>(selectionServiceSpy, 'resize').and.callFake(() => {
+            return;
+        });
+        selectionServiceSpy.isAreaSelected = false;
+        service.resizeSelection(mouseEvent);
+        expect(resizeSelectionSpy).not.toHaveBeenCalled();
     });
     // tslint:disable-next-line: max-file-line-count / reason: its a test file
 });

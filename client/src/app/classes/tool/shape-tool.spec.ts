@@ -281,17 +281,6 @@ describe('Class: ShapeTool', () => {
         expect(shapeTool.height).toEqual(expectedResult);
     });
 
-    it('signOf should return 1 if number is positive', () => {
-        // tslint:disable:no-magic-numbers / reason: using random numbers
-        const result = shapeTool.signOf(10);
-        expect(result).toEqual(1);
-    });
-
-    it('signOf should return -1 if number is negative', () => {
-        const result = shapeTool.signOf(-10);
-        expect(result).toEqual(-1);
-    });
-
     it('drawBoxGuide should call stroke and setLineDash if mouse was down', () => {
         shapeTool.mouseDown = true;
         const spyStroke = spyOn(baseCtxStub, 'stroke');

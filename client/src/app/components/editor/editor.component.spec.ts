@@ -10,10 +10,11 @@ import { MatDialogMock } from '@app/classes/mat-dialog-test-helper';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { KeyShortcut } from '@app/enums/key-shortcuts.enum';
 import { SelectionType } from '@app/enums/selection-type.enum';
+import { AutomaticSavingService } from '@app/services/automatic-saving/automatic-saving.service';
 import { ShortcutService } from '@app/services/shortcut/shortcut.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 import { BrushService } from '@app/services/tools/brush/brush.service';
-import { PencilService } from '@app/services/tools/pencil/pencil-service';
+import { PencilService } from '@app/services/tools/pencil/pencil.service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle.service';
 import { EditorComponent } from './editor.component';
 
@@ -24,6 +25,7 @@ describe('EditorComponent', () => {
     let pencilServiceSpy: jasmine.SpyObj<PencilService>;
     let brushServiceSpy: jasmine.SpyObj<BrushService>;
     let rectangleServiceSpy: jasmine.SpyObj<RectangleService>;
+    let automaticSavingServiceSpy: jasmine.SpyObj<AutomaticSavingService>;
     let shortcutService: ShortcutService;
 
     beforeEach(async(() => {
@@ -35,7 +37,11 @@ describe('EditorComponent', () => {
             'triggerSelectAll',
             'undo',
             'redo',
+            'triggerPasteSelection',
+            'triggerCutSelection',
+            'triggerCopySelection',
         ]);
+        automaticSavingServiceSpy = jasmine.createSpyObj('AutomaticSavingService', ['save']);
 
         pencilServiceSpy = jasmine.createSpyObj('PencilService', ['resetContext']);
         brushServiceSpy = jasmine.createSpyObj('BrushService', ['resetContext']);
@@ -47,11 +53,13 @@ describe('EditorComponent', () => {
             providers: [
                 { provide: MatDialog, useClass: MatDialogMock },
                 { provide: ToolbarService, useValue: toolbarServiceMock },
+                { provide: AutomaticSavingService, useValue: automaticSavingServiceSpy },
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
 
         toolbarServiceMock = TestBed.inject(ToolbarService);
+        automaticSavingServiceSpy = TestBed.inject(AutomaticSavingService) as jasmine.SpyObj<AutomaticSavingService>;
 
         toolbarServiceMock.keyShortcuts = new Map();
         toolbarServiceMock.keyShortcuts
@@ -81,11 +89,23 @@ describe('EditorComponent', () => {
 
     it('should call computeDimensionsDrawingContainer with parameter true', () => {
         const spyComputeDims = spyOn(component, 'computeDimensionsDrawingContainer');
+        automaticSavingServiceSpy.recovering = false;
         const delay = 1000;
         jasmine.clock().install();
         component.ngAfterViewInit();
         jasmine.clock().tick(delay);
         expect(spyComputeDims).toHaveBeenCalledWith(true);
+        jasmine.clock().uninstall();
+    });
+
+    it('should call computeDimensionsDrawingContainer with parameter false', () => {
+        const spyComputeDims = spyOn(component, 'computeDimensionsDrawingContainer');
+        automaticSavingServiceSpy.recovering = true;
+        const delay = 1000;
+        jasmine.clock().install();
+        component.ngAfterViewInit();
+        jasmine.clock().tick(delay);
+        expect(spyComputeDims).toHaveBeenCalledWith(false);
         jasmine.clock().uninstall();
     });
 
@@ -126,6 +146,12 @@ describe('EditorComponent', () => {
         const shortcutEvent = new KeyboardEvent('keydown', { key: KeyShortcut.EllipseSelect });
         document.dispatchEvent(shortcutEvent);
         expect(toolbarServiceMock.changeSelectionTool).toHaveBeenCalledWith(SelectionType.EllipseSelection);
+    });
+
+    it('magic wand selection tool shortcut should call changeSelectionTool of toolbar service', () => {
+        const shortcutEvent = new KeyboardEvent('keydown', { key: KeyShortcut.MagicBrushSelect });
+        document.dispatchEvent(shortcutEvent);
+        expect(toolbarServiceMock.changeSelectionTool).toHaveBeenCalledWith(SelectionType.MagicWandSelection);
     });
 
     it('tool shortcut should call createNewDrawing of SidebarComponent', () => {
@@ -171,6 +197,24 @@ describe('EditorComponent', () => {
         const shortcutEvent = new KeyboardEvent('keydown', { key: 'control.a' });
         document.dispatchEvent(shortcutEvent);
         expect(toolbarServiceMock.triggerSelectAll).toHaveBeenCalled();
+    });
+
+    it('copy shortcut should call triggerCopySelection of toolbar service', () => {
+        const shortcutEvent = new KeyboardEvent('keydown', { key: 'control.c' });
+        document.dispatchEvent(shortcutEvent);
+        expect(toolbarServiceMock.triggerCopySelection).toHaveBeenCalled();
+    });
+
+    it('cut shortcut should call triggerCutSelection of toolbar service', () => {
+        const shortcutEvent = new KeyboardEvent('keydown', { key: 'control.x' });
+        document.dispatchEvent(shortcutEvent);
+        expect(toolbarServiceMock.triggerCutSelection).toHaveBeenCalled();
+    });
+
+    it('paste shortcut should call triggerPasteSelection of toolbar service', () => {
+        const shortcutEvent = new KeyboardEvent('keydown', { key: 'control.v' });
+        document.dispatchEvent(shortcutEvent);
+        expect(toolbarServiceMock.triggerPasteSelection).toHaveBeenCalled();
     });
 
     it('tool shortcut should call undo of toolbar service', () => {

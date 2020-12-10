@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Color } from '@app/classes/color/color';
 import { Tool } from '@app/classes/tool/tool';
 import { TextProperties } from '@app/classes/tools-properties/text-properties';
 import { Vec2 } from '@app/classes/vec2';
@@ -7,120 +8,54 @@ import { MouseButton } from '@app/enums/mouse-button.enum';
 import { TextAlignment } from '@app/enums/text-alignment.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ShortcutService } from '@app/services/shortcut/shortcut.service';
+import { TextActionKeysService } from './text-action-keys/text-action-keys.service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class TextService extends Tool {
-    currentTexts: string[] = [''];
-    textConfirmed: boolean = false;
-    isInitialText: boolean = true;
-    currentStyle: string = '';
-    actionKeys: Map<string, () => void> = new Map<string, () => void>();
-    textAreaDimensions: Vec2 = { x: 0, y: 0 };
-    textAreaStartingPoint: Vec2 = { x: 0, y: 0 };
-    cursorPosition: Vec2 = { x: 0, y: 0 };
-    cursorIntervalRef: number;
-    cursorColumnIndex: number = 0;
-    cursorRowIndex: number = 0;
+    private currentTexts: string[] = [''];
+    private textConfirmed: boolean = false;
+    private isInitialText: boolean = true;
+    private currentStyle: string = '';
+    private textAreaDimensions: Vec2 = { x: 0, y: 0 };
+    private textAreaStartingPoint: Vec2 = { x: 0, y: 0 };
+    private cursorIntervalRef: number;
+    private cursorColumnIndex: number = 0;
+    private cursorRowIndex: number = 0;
 
-    constructor(drawingService: DrawingService, private shortcutService: ShortcutService) {
+    constructor(drawingService: DrawingService, private shortcutService: ShortcutService, private textActionKeysService: TextActionKeysService) {
         super(drawingService);
         this.name = 'Text';
         this.tooltip = 'Texte(t)';
         this.iconName = 'title';
         this.toolProperties = new TextProperties();
-        this.actionKeys.set('Backspace', this.onBackspace.bind(this));
-        this.actionKeys.set('Delete', this.onDelete.bind(this));
-        this.actionKeys.set('Escape', this.onEscape.bind(this));
-        this.actionKeys.set('ArrowLeft', this.onArrowLeft.bind(this));
-        this.actionKeys.set('ArrowRight', this.onArrowRight.bind(this));
-        this.actionKeys.set('ArrowUp', this.onArrowUp.bind(this));
-        this.actionKeys.set('ArrowDown', this.onArrowDown.bind(this));
-        this.actionKeys.set('Enter', this.onEnter.bind(this));
+        this.textActionKeysService.actionKeys.set('Escape', this.onEscape.bind(this));
     }
 
-    onBackspace(): void {
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        if (this.cursorColumnIndex !== 0) {
-            this.currentTexts[this.cursorRowIndex] =
-                this.currentTexts[this.cursorRowIndex].substring(0, this.cursorColumnIndex - 1) +
-                this.currentTexts[this.cursorRowIndex].substring(this.cursorColumnIndex);
-            this.cursorColumnIndex -= 1;
-        } else if (this.cursorRowIndex !== 0) {
-            const textRightOfCursor = this.currentTexts[this.cursorRowIndex];
-            this.currentTexts.splice(this.cursorRowIndex, 1);
-            this.cursorRowIndex -= 1;
-            this.cursorColumnIndex = this.currentTexts[this.cursorRowIndex].length;
-            if (textRightOfCursor.length > 0) this.currentTexts[this.cursorRowIndex] += textRightOfCursor;
-        }
-        this.writeText(this.drawingService.previewCtx);
-    }
-
-    onDelete(): void {
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        if (this.cursorColumnIndex !== this.currentTexts[this.cursorRowIndex].length) {
-            this.currentTexts[this.cursorRowIndex] =
-                this.currentTexts[this.cursorRowIndex].substring(0, this.cursorColumnIndex) +
-                this.currentTexts[this.cursorRowIndex].substring(this.cursorColumnIndex + 1);
-        }
-        this.writeText(this.drawingService.previewCtx);
-    }
-
-    onEscape(): void {
+    onEscape(): [number, number, string[]] {
         this.mouseDown = false;
         this.shortcutService.disableShortcuts = false;
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         clearInterval(this.cursorIntervalRef);
         this.isInitialText = true;
-        this.currentTexts = [''];
+        this.cursorColumnIndex = 0;
         this.cursorRowIndex = 0;
-        this.cursorColumnIndex = 0;
-    }
-
-    onArrowLeft(): void {
-        this.cursorColumnIndex = this.cursorColumnIndex === 0 ? this.cursorColumnIndex : this.cursorColumnIndex - 1;
-        this.setCursor();
-    }
-
-    onArrowRight(): void {
-        this.cursorColumnIndex =
-            this.cursorColumnIndex === this.currentTexts[this.cursorRowIndex].length ? this.cursorColumnIndex : this.cursorColumnIndex + 1;
-        this.setCursor();
-    }
-
-    onArrowUp(): void {
-        this.cursorRowIndex = this.cursorRowIndex === 0 ? this.cursorRowIndex : this.cursorRowIndex - 1;
-        this.setCursor();
-    }
-
-    onArrowDown(): void {
-        this.cursorRowIndex = this.cursorRowIndex === this.currentTexts.length ? this.cursorRowIndex : this.cursorRowIndex + 1;
-        this.setCursor();
-    }
-
-    onEnter(): void {
-        const textRightOfCursor = this.currentTexts[this.cursorRowIndex].substring(this.cursorColumnIndex);
-
-        const isTextWithLineJump = textRightOfCursor.length !== 0;
-
-        this.currentTexts[this.cursorRowIndex] = this.currentTexts[this.cursorRowIndex].substring(0, this.cursorColumnIndex);
-
-        this.cursorRowIndex += 1;
-
-        this.currentTexts.splice(this.cursorRowIndex, 0, isTextWithLineJump ? textRightOfCursor : '');
-
-        this.cursorColumnIndex = 0;
-
-        this.writeText(this.drawingService.previewCtx);
+        this.currentTexts = [''];
+        return [this.cursorColumnIndex, this.cursorRowIndex, this.currentTexts];
     }
 
     onKeyDown(event: KeyboardEvent): void {
         if (this.mouseDown) {
-            const action = this.actionKeys.get(event.key);
+            const action = this.textActionKeysService.actionKeys.get(event.key);
 
             if (action !== undefined) {
-                action();
+                [this.cursorColumnIndex, this.cursorRowIndex, this.currentTexts] = action(
+                    this.cursorColumnIndex,
+                    this.cursorRowIndex,
+                    this.currentTexts,
+                );
+                this.writeText(this.drawingService.previewCtx);
             } else if (event.key.length === 1) {
                 this.currentTexts[this.cursorRowIndex] =
                     this.currentTexts[this.cursorRowIndex].substring(0, this.cursorColumnIndex) +
@@ -154,16 +89,16 @@ export class TextService extends Tool {
         if (this.isInitialText) this.isInitialText = false;
     }
 
-    writeText(context: CanvasRenderingContext2D): void {
+    writeText(context: CanvasRenderingContext2D, callCursor: boolean = true): void {
+        if (!this.mouseDown) return;
         const properties = this.toolProperties as TextProperties;
         this.createStyle(properties);
-        if (context === this.drawingService.previewCtx) {
-            this.drawTextArea();
-            this.setCursor();
-        }
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.writeTexts(context);
 
-        for (let i = 0; i < this.currentTexts.length; ++i) {
-            context.fillText(this.currentTexts[i], this.calculateXCoordText(), this.mouseDownCoord.y - this.textAreaDimensions.y * i);
+        if (context === this.drawingService.previewCtx) {
+            if (callCursor) this.setCursor();
+            this.drawTextArea();
         }
     }
 
@@ -171,12 +106,19 @@ export class TextService extends Tool {
         return this.mouseDown && !this.textConfirmed && !this.isInitialText;
     }
 
+    writeTexts(context: CanvasRenderingContext2D): void {
+        for (let i = 0; i < this.currentTexts.length; ++i) {
+            context.fillText(this.currentTexts[i], this.calculateXCoordText(), this.mouseDownCoord.y - this.textAreaDimensions.y * i);
+        }
+    }
+
     confirmText(): void {
         this.writeText(this.drawingService.baseCtx);
+        clearInterval(this.cursorIntervalRef);
+        this.executedCommand.emit(this.clone());
         this.textConfirmed = true;
         this.mouseDown = false;
         this.shortcutService.disableShortcuts = false;
-        clearInterval(this.cursorIntervalRef);
         this.currentTexts = [''];
         this.cursorRowIndex = 0;
         this.cursorColumnIndex = 0;
@@ -184,29 +126,27 @@ export class TextService extends Tool {
 
     drawTextArea(): void {
         const HEIGHT_FACTOR = 5;
-        const CURSOR_WIDTH = 5;
+        const SPACE = 10;
         const context = this.drawingService.previewCtx;
         const properties = this.toolProperties as TextProperties;
 
         const dimensions = this.calculateLongestWidth();
-        this.textAreaDimensions = { x: dimensions + CURSOR_WIDTH, y: -properties.size + 2 };
+        this.textAreaDimensions = { x: dimensions + SPACE, y: -properties.size + 2 };
         this.textAreaStartingPoint = { x: this.mouseDownCoord.x - 2, y: this.mouseDownCoord.y + properties.size / HEIGHT_FACTOR };
-
-        this.drawingService.clearCanvas(context);
 
         context.setLineDash([DASHED_SEGMENTS]);
         context.lineWidth = 1;
         context.strokeRect(
-            this.textAreaStartingPoint.x,
-            this.textAreaStartingPoint.y - this.textAreaDimensions.y * (this.currentTexts.length - 1),
-            this.textAreaDimensions.x,
-            this.textAreaDimensions.y * this.currentTexts.length,
+            this.textAreaStartingPoint.x - SPACE / 2,
+            this.textAreaStartingPoint.y - this.textAreaDimensions.y * (this.currentTexts.length - 1) + SPACE / 2,
+            this.textAreaDimensions.x + SPACE / 2,
+            this.textAreaDimensions.y * this.currentTexts.length - SPACE,
         );
         context.setLineDash([]);
     }
 
     setCursor(): void {
-        const BLINKING_CURSOR_SPEED = 1200;
+        const BLINKING_CURSOR_SPEED = 500;
         if (this.cursorIntervalRef) clearInterval(this.cursorIntervalRef);
 
         this.cursorIntervalRef = window.setInterval(this.drawCursor.bind(this), BLINKING_CURSOR_SPEED);
@@ -217,7 +157,6 @@ export class TextService extends Tool {
         const BLINKING_CURSOR_SPEED = 800;
         const context = this.drawingService.previewCtx;
 
-        context.fillStyle = '#000000';
         context.lineWidth = 1;
 
         const cursorX = Math.round(this.calculateXCoordCursor());
@@ -226,11 +165,11 @@ export class TextService extends Tool {
         );
         const cursorWidth = 2;
         const cursorHeight = Math.round(this.textAreaDimensions.y);
-
         context.fillRect(cursorX, cursorY, cursorWidth, cursorHeight);
 
         setTimeout(() => {
             context.clearRect(cursorX, cursorY, cursorWidth, cursorHeight);
+            this.writeText(this.drawingService.previewCtx, false);
         }, BLINKING_CURSOR_SPEED);
     }
 
@@ -256,6 +195,7 @@ export class TextService extends Tool {
         const context = this.drawingService.previewCtx;
         let cursorTextWidth = 0;
         let x = 0;
+
         switch (properties.textAlignment) {
             case TextAlignment.Left:
                 cursorTextWidth = context.measureText(this.currentTexts[this.cursorRowIndex].substring(0, this.cursorColumnIndex)).width;
@@ -300,12 +240,16 @@ export class TextService extends Tool {
         return isXInsideTextArea && isYInsideTextArea;
     }
 
+    private rewriteText(): void {
+        if (this.isTextInProgress()) this.writeText(this.drawingService.previewCtx);
+    }
+
     setFontText(value: string): void {
         const testProperties = this.toolProperties as TextProperties;
         if (testProperties.fonts.includes(value)) {
             testProperties.font = value;
         }
-        this.writeText(this.drawingService.previewCtx);
+        this.rewriteText();
     }
 
     setTextAlignment(value: string): void {
@@ -313,7 +257,7 @@ export class TextService extends Tool {
         if (testProperties.textAlignments.includes(value)) {
             testProperties.textAlignment = value;
         }
-        this.writeText(this.drawingService.previewCtx);
+        this.rewriteText();
     }
 
     setSizeText(value: number | null): void {
@@ -321,19 +265,19 @@ export class TextService extends Tool {
         value = value === null ? 1 : value;
         testProperties.size = value;
         this.drawingService.setThickness(value);
-        this.writeText(this.drawingService.previewCtx);
+        this.rewriteText();
     }
 
     setBold(value: boolean): void {
         const testProperties = this.toolProperties as TextProperties;
         testProperties.isBold = value;
-        this.writeText(this.drawingService.previewCtx);
+        this.rewriteText();
     }
 
     setItalic(value: boolean): void {
         const testProperties = this.toolProperties as TextProperties;
         testProperties.isItalic = value;
-        this.writeText(this.drawingService.previewCtx);
+        this.rewriteText();
     }
 
     createStyle(textProperties: TextProperties): void {
@@ -344,5 +288,47 @@ export class TextService extends Tool {
         this.currentStyle += textProperties.font;
         this.drawingService.setTextStyle(this.currentStyle);
         this.drawingService.setTextAlignment(textProperties.textAlignment);
+    }
+
+    setColors(primaryColor: Color, secondaryColor: Color): void {
+        super.setColors(primaryColor, secondaryColor);
+        this.rewriteText();
+    }
+
+    applyCurrentSettings(): void {
+        super.applyCurrentSettings();
+        const properties = this.toolProperties as TextProperties;
+        this.setFontText(properties.font);
+        this.setItalic(properties.isItalic);
+        this.setBold(properties.isBold);
+        this.setSizeText(properties.size);
+        this.setTextAlignment(properties.textAlignment);
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+    }
+
+    execute(): void {
+        this.writeText(this.drawingService.baseCtx);
+    }
+
+    copyTool(tool: Tool): void {
+        super.copyTool(tool);
+        const cloneProperties = tool.toolProperties as TextProperties;
+        const properties = this.toolProperties as TextProperties;
+        cloneProperties.font = properties.font;
+        cloneProperties.isBold = properties.isBold;
+        cloneProperties.isItalic = properties.isItalic;
+        cloneProperties.size = properties.size;
+        cloneProperties.textAlignment = properties.textAlignment;
+        const cloneTool = tool as TextService;
+        cloneTool.currentTexts = this.currentTexts;
+        cloneTool.textAreaDimensions = this.textAreaDimensions;
+        cloneTool.textAreaStartingPoint = this.textAreaStartingPoint;
+        cloneTool.mouseDown = this.mouseDown;
+    }
+
+    clone(): Tool {
+        const textServiceClone = new TextService(this.drawingService, this.shortcutService, this.textActionKeysService);
+        this.copyTool(textServiceClone);
+        return textServiceClone;
     }
 }

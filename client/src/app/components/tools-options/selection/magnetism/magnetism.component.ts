@@ -15,11 +15,12 @@ export class MagnetismComponent implements OnInit {
     }
 
     activeMagnetism(): void {
+        this.selectionService.magnetismService.firstmove = true;
         this.selectionService.activeMagnet = !this.selectionService.activeMagnet;
-        this.selectionService.setMoveSelectionMagnet(this.selectionService.activeMagnet);
     }
 
     setMagnetismeOption(option: number): void {
+        this.selectionService.magnetismService.firstmove = true;
         this.activateOption = option;
         this.selectionService.magnetismService.setMagnetismOption(option);
     }
