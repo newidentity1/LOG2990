@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatSliderChange } from '@angular/material/slider';
 import { GridService } from '@app/services/tools/grid/grid.service';
 
@@ -7,13 +7,9 @@ import { GridService } from '@app/services/tools/grid/grid.service';
     templateUrl: './grid.component.html',
     styleUrls: ['../../sidebar/sidebar.component.scss'],
 })
-export class GridComponent implements OnInit {
+export class GridComponent {
     opacity: number = 255;
     constructor(public gridService: GridService) {}
-
-    ngOnInit(): void {
-        //
-    }
 
     showGrid(): void {
         this.gridService.draw();
