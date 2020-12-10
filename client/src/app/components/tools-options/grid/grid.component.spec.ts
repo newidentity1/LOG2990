@@ -19,7 +19,7 @@ describe('GridComponent', () => {
         TestBed.configureTestingModule({
             declarations: [GridComponent],
             providers: [{ provide: GridService, useValue: gridServiceMock }],
-            schemas:[CUSTOM_ELEMENTS_SCHEMA],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
         gridServiceMock = TestBed.inject(GridService) as jasmine.SpyObj<GridService>;
     }));
