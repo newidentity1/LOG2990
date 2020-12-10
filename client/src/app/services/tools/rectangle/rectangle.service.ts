@@ -23,10 +23,10 @@ export class RectangleService extends ShapeTool {
 
         ctx.beginPath();
         ctx.rect(
-            this.mouseDownCoord.x + (thickness / 2) * this.signOf(this.width),
-            this.mouseDownCoord.y + (thickness / 2) * this.signOf(this.height),
-            this.width - thickness * this.signOf(this.width),
-            this.height - thickness * this.signOf(this.height),
+            this.mouseDownCoord.x + (thickness / 2) * Math.sign(this.width),
+            this.mouseDownCoord.y + (thickness / 2) * Math.sign(this.height),
+            this.width - thickness * Math.sign(this.width),
+            this.height - thickness * Math.sign(this.height),
         );
         switch (rectangleProperties.currentType) {
             case DrawingType.Fill:
