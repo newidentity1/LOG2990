@@ -7,6 +7,7 @@ import { Tool } from '@app/classes/tool/tool';
 import { KeyShortcut } from '@app/enums/key-shortcuts.enum';
 import { SelectionType } from '@app/enums/selection-type.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ShortcutService } from '@app/services/shortcut/shortcut.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
 import { BrushService } from '@app/services/tools/brush/brush.service';
 import { BucketService } from '@app/services/tools/bucket/bucket.service';
@@ -251,6 +252,39 @@ describe('ToolbarService', () => {
         service.changeTool(pencilServiceSpy);
         expect(service.currentTool).toEqual(pencilServiceSpy);
         expect(applyColorSpy).not.toHaveBeenCalled();
+    });
+
+    it('changeTool should call confirmText if current tool is text ', () => {
+        const shortcutService = jasmine.createSpyObj(ShortcutService, ['addShortcut']);
+
+        const textTool = new TextService(drawingServiceSpy, shortcutService);
+        // tslint:disable: no-any / reason: spying on function
+        spyOn<any>(textTool, 'isTextInProgress').and.returnValue(true);
+        const confirmTextSpy = spyOn<any>(textTool, 'confirmText').and.returnValue(true);
+        // tslint:disable-next-line: no-any / reason: spying on function
+        spyOn<any>(service, 'applyCurrentTool').and.callFake(() => {
+            return;
+        });
+        // tslint:denable: no-any
+
+        service.currentTool = textTool;
+        service.changeTool(pencilServiceSpy);
+        expect(confirmTextSpy).toHaveBeenCalled();
+    });
+
+    it('changeTool should call clearSpray if current tool is spray ', () => {
+        const sprayTool = new SprayService(drawingServiceSpy);
+        // tslint:disable-next-line: no-any / reason: spying on function
+        const clearSpraySpy = spyOn<any>(sprayTool, 'clearSpray').and.callFake(() => {
+            return;
+        });
+        // tslint:disable-next-line: no-any / reason: spying on function
+        spyOn<any>(service, 'applyCurrentTool').and.callFake(() => {
+            return;
+        });
+        service.currentTool = sprayTool;
+        service.changeTool(pencilServiceSpy);
+        expect(clearSpraySpy).toHaveBeenCalled();
     });
 
     it('onKeyDown should call the onKeyDown of the currentTool', () => {
