@@ -1,6 +1,7 @@
 import { Renderer2, RendererFactory2 } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { canvasTestHelper } from '@app/classes/canvas-test-helper';
+import { IMAGE_DATA_OPACITY_INDEX, MAX_COLOR_VALUE } from '@app/constants/constants';
 import { ControlPoint } from '@app/enums/control-point.enum';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ResizeService } from '@app/services/resize/resize.service';
@@ -481,6 +482,45 @@ describe('ResizeSelectionService', () => {
         expect(drawingServiceSpy.previewCtx.getImageData).toHaveBeenCalled();
         expect(drawingServiceSpy.previewCtx.putImageData).toHaveBeenCalled();
         expect(drawingServiceSpy.clearCanvas).toHaveBeenCalled();
+    });
+
+    it('applyScaleToImage should hide image outside of canvas when scaling', () => {
+        drawingServiceSpy.clearCanvas.and.callFake(() => {
+            drawingServiceSpy.previewCtx.clearRect(0, 0, drawingServiceSpy.previewCtx.canvas.width, drawingServiceSpy.previewCtx.canvas.height);
+        });
+        spyOn(drawingServiceSpy.previewCtx, 'putImageData').and.callThrough();
+        const selectionImageDataWidth = 10;
+        const selectionImageDataHeight = 10;
+
+        drawingServiceSpy.previewCtx.fillStyle = 'black';
+        drawingServiceSpy.previewCtx.fillRect(0, 0, selectionImageDataWidth, selectionImageDataHeight);
+        const selectionImageData = drawingServiceSpy.previewCtx.getImageData(0, 0, selectionImageDataWidth, selectionImageDataHeight);
+
+        // forcing selection to be placed outside of canvas
+        const canvasContainer = document.createElement('div');
+        canvasContainer.style.position = 'relative';
+        canvasContainer.appendChild(drawingServiceSpy.previewCtx.canvas);
+        const body = document.getElementsByTagName('body')[0];
+        body.appendChild(canvasContainer);
+        drawingServiceSpy.previewCtx.canvas.style.position = 'absolute';
+        drawingServiceSpy.previewCtx.canvas.style.left = `${-selectionImageDataWidth / 2}px`;
+        drawingServiceSpy.previewCtx.canvas.style.top = `${-selectionImageDataHeight / 2}px`;
+
+        service.applyScaleToImage(selectionImageData);
+
+        // checking pixel isn't drawn outside canvas
+        let imageData = drawingServiceSpy.previewCtx.getImageData(0, 0, 1, 1).data;
+        expect(imageData[0]).toEqual(0);
+        expect(imageData[1]).toEqual(0);
+        expect(imageData[2]).toEqual(0);
+        expect(imageData[IMAGE_DATA_OPACITY_INDEX]).toEqual(0);
+
+        imageData = drawingServiceSpy.previewCtx.getImageData(selectionImageDataWidth / 2, selectionImageDataWidth / 2, 1, 1).data;
+        expect(imageData[0]).toEqual(0);
+        expect(imageData[1]).toEqual(0);
+        expect(imageData[2]).toEqual(0);
+        expect(imageData[IMAGE_DATA_OPACITY_INDEX]).toEqual(MAX_COLOR_VALUE);
+        body.removeChild(canvasContainer);
     });
 
     it('changeOppositeControlPoint should not change the control point if current control point is null', () => {
