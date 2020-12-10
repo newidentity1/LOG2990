@@ -6,7 +6,7 @@ import { ImageGallery } from '@app/classes/image-gallery';
 import { WarningDialogComponent } from '@app/components/gallery/warning/warning-dialog.component';
 import { CommunicationService } from '@app/services/communication/communication.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { FireBaseService } from '@app/services/firebase/fire-base.service';
+import { FireBaseService } from '@app/services/fire-base/fire-base.service';
 import { ResizeService } from '@app/services/resize/resize.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Drawing } from '@common/communication/drawing';

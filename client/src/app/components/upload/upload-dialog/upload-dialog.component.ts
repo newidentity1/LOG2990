@@ -3,7 +3,7 @@ import { FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ResponseResult } from '@app/classes/response-result';
-import { FireBaseService } from '@app/services/firebase/fire-base.service';
+import { FireBaseService } from '@app/services/fire-base/fire-base.service';
 import { Drawing } from '@common/communication/drawing';
 import { Subscription } from 'rxjs';
 
