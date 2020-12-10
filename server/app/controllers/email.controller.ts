@@ -13,7 +13,7 @@ import * as fs from 'fs';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../types';
 
-//required for accessing files from req
+// required for accessing files from req
 export interface MulterFile {
     fieldname: string;
     path: string;
@@ -34,7 +34,6 @@ export class EmailController {
         this.router = Router();
 
         this.router.post('/', (req: Request & { files: MulterFile[] }, res: Response, next: NextFunction) => {
-            console.log(req.body.to, req.files);
             this.emailService
                 .sendEmail(req.body.to, fs.createReadStream(req.files[0].path))
                 .then((response) => {
