@@ -32,7 +32,7 @@ describe('StampService', () => {
 
     it('OnClick should draw the sticker', () => {
         const drawSpy = spyOn<any>(service['drawingService'].baseCtx, 'drawImage');
-        service.onClick(mouseEventclick);
+        service.onClick();
         expect(drawSpy).toHaveBeenCalled();
     });
 
@@ -96,5 +96,12 @@ describe('StampService', () => {
             done();
             // tslint:disable-next-line:no-magic-numbers // random time only for testing
         }, 1000);
+    });
+
+    it('clone should copy tool properties', () => {
+        const position = { x: 25, y: 25 };
+        service.finalPosition = position;
+        const clonedTool = service.clone() as StampService;
+        expect(clonedTool.finalPosition).toEqual(position);
     });
 });

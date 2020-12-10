@@ -39,6 +39,17 @@ describe('AutomaticSavingService', () => {
         expect(service).toBeTruthy();
     });
 
+    it('subscribeToImageDrawing call save when image is drawn ', () => {
+        const saveSpy = spyOn(service, 'save');
+        service['subscribeToImageDrawing']();
+        resizeServiceSpy.imageDrawn.emit();
+        const delay = 1000;
+        jasmine.clock().install();
+        jasmine.clock().tick(delay);
+        expect(saveSpy).toHaveBeenCalled();
+        jasmine.clock().uninstall();
+    });
+
     it('ngOnDestroy should unsubscribe listeners', () => {
         const unsubscribeSpy = spyOn(service['subscribeImageDrawn'], 'unsubscribe');
         service.ngOnDestroy();
