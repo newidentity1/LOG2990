@@ -1,3 +1,4 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MagnetismOption } from '@app/enums/magnetism-option.enum';
 // import * as CONSTANTS from '@app/constants/constants';
@@ -15,6 +16,7 @@ describe('MagnetismComponent', () => {
         TestBed.configureTestingModule({
             declarations: [MagnetismComponent],
             providers: [{ provide: selectionServiceMock, useValue: SelectionService }],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
         selectionServiceMock = TestBed.inject(SelectionService) as jasmine.SpyObj<SelectionService>;
     }));
