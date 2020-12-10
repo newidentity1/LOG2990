@@ -3,7 +3,7 @@ import { canvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Color } from '@app/classes/color/color';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { PencilService } from './pencil-service';
+import { PencilService } from './pencil.service';
 
 // tslint:disable:no-any
 describe('PencilService', () => {

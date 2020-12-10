@@ -4,7 +4,7 @@ import { BrushProperties } from '@app/classes/tools-properties/brush-properties'
 import { Vec2 } from '@app/classes/vec2';
 import { ANGLE_180, DEFAULT_CALLIGRAPHY_LINE_LENGTH, DEFAULT_ROTATION_ANGLE, MAXIMUM_ROTATION_ANGLE } from '@app/constants/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { PencilService } from '@app/services/tools/pencil/pencil-service';
+import { PencilService } from '@app/services/tools/pencil/pencil.service';
 
 @Injectable({
     providedIn: 'root',

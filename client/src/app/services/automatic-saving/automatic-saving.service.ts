@@ -12,6 +12,10 @@ export class AutomaticSavingService implements OnDestroy {
     private subscribeImageDrawn: Subscription;
 
     constructor(private drawingService: DrawingService, private undoRedoService: UndoRedoService, private resizeService: ResizeService) {
+        this.subscribeToImageDrawing();
+    }
+
+    private subscribeToImageDrawing(): void {
         this.subscribeImageDrawn = this.resizeService.imageDrawn.subscribe(() => {
             this.save();
         });
@@ -27,7 +31,7 @@ export class AutomaticSavingService implements OnDestroy {
 
     save(): void {
         const canvas = this.drawingService.canvas;
-        const isCanvasEmpty = this.drawingService.canvasEmpty(this.drawingService.baseCtx, canvas);
+        const isCanvasEmpty = this.drawingService.canvasEmpty(this.drawingService.baseCtx);
         if (!isCanvasEmpty) localStorage.setItem('savedDrawing', canvas.toDataURL());
         else this.clearStorage();
     }

@@ -1,14 +1,14 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { Command } from '@app/classes/commands/command';
 import { ResizerProperties } from '@app/classes/resizer-properties';
-import { CANVAS_MARGIN_LEFT, CANVAS_MIN_HEIGHT, CANVAS_MIN_WIDTH, SELECTION_CONTROL_POINT_SIZE } from '@app/constants/constants';
+import { CANVAS_MIN_HEIGHT, CANVAS_MIN_WIDTH, SELECTION_CONTROL_POINT_SIZE } from '@app/constants/constants';
+import { ControlPoint } from '@app/enums/control-point.enum';
 import { MouseButton } from '@app/enums/mouse-button.enum';
 import { AutomaticSavingService } from '@app/services/automatic-saving/automatic-saving.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ResizeService } from '@app/services/resize/resize.service';
 import { ToolbarService } from '@app/services/toolbar/toolbar.service';
-import { PencilService } from '@app/services/tools/pencil/pencil-service';
-import { SelectionService } from '@app/services/tools/selection/selection.service';
+import { PencilService } from '@app/services/tools/pencil/pencil.service';
 import { SprayService } from '@app/services/tools/spray/spray.service';
 import { StampService } from '@app/services/tools/stamp/stamp.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
@@ -36,8 +36,6 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
     private subscribeResetCanvasSize: Subscription;
     private subscribeDimensionsUpdated: Subscription;
     private subscribeExecutedCommand: Subscription;
-    isResizingWidth: boolean = false;
-    isResizingHeight: boolean = false;
 
     constructor(
         private drawingService: DrawingService,
@@ -66,10 +64,12 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             this.drawingContainerWidth = dimensions[0];
             this.drawingContainerHeight = dimensions[1];
-            if (!!dimensions[2]) this.newCanvasSetSize();
-            setTimeout(() => {
-                this.toolbarService.applyCurrentTool();
-            }, 0);
+            if (!!dimensions[2]) {
+                this.newCanvasSetSize();
+                setTimeout(() => {
+                    this.toolbarService.applyCurrentTool();
+                }, 0);
+            }
         });
         this.subscribeExecutedCommand = this.resizeService.executedCommand.subscribe((command: Command) => {
             this.toolbarService.addCommand(command);
@@ -97,9 +97,9 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
 
     @HostListener('window:mousemove', ['$event'])
     onMouseMoveWindow(event: MouseEvent): void {
-        if (!this.isResizingWidth && !this.isResizingHeight) {
+        if (!this.isResizing()) {
             if (
-                (this.toolbarService.currentTool instanceof SelectionService && this.toolbarService.currentTool.activeMagnet) ||
+                this.toolbarService.isAreaSelected() ||
                 this.toolbarService.currentTool instanceof PencilService ||
                 this.toolbarService.currentTool instanceof SprayService ||
                 this.toolbarService.currentTool instanceof StampService
@@ -107,18 +107,21 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.toolbarService.onMouseMove(event);
             }
         } else {
-            this.onResize(event);
+            if (!this.isAreaSelected()) {
+                this.onResize(event);
+            } else {
+                this.toolbarService.resizeSelection(event);
+            }
         }
     }
 
     onMouseMove(event: MouseEvent): void {
-        if (this.toolbarService.currentTool instanceof SelectionService && !this.toolbarService.currentTool.activeMagnet) {
-            this.toolbarService.onMouseMove(event);
-        } else if (
+        if (
             !(
                 this.toolbarService.currentTool instanceof PencilService ||
                 this.toolbarService.currentTool instanceof SprayService ||
-                this.toolbarService.currentTool instanceof StampService
+                this.toolbarService.currentTool instanceof StampService ||
+                this.toolbarService.isAreaSelected()
             )
         ) {
             this.toolbarService.onMouseMove(event);
@@ -127,7 +130,8 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
 
     onMouseDown(event: MouseEvent): void {
         event.preventDefault();
-        if (!this.isResizingWidth && !this.isResizingHeight) {
+        this.previewCanvas.nativeElement.focus();
+        if (!this.isResizing()) {
             this.toolbarService.onMouseDown(event);
         }
     }
@@ -135,18 +139,18 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
     @HostListener('window:mouseup', ['$event'])
     onMouseUp(event: MouseEvent): void {
         event.preventDefault();
-        if (this.isResizingWidth || this.isResizingHeight) {
+        if (this.isResizing()) {
             this.toolbarService.mouseDown = false;
-            const newWidth = this.isResizingWidth ? this.previewCanvas.nativeElement.width : this.width;
-            const newHeight = this.isResizingHeight ? this.previewCanvas.nativeElement.height : this.height;
-
-            this.resizeService.resize(newWidth, newHeight);
+            if (!this.isAreaSelected()) {
+                this.resizeService.resize(this.previewCanvas.nativeElement.width, this.previewCanvas.nativeElement.height);
+            } else {
+                this.toolbarService.resizeSelection(event);
+            }
 
             setTimeout(() => {
-                this.toolbarService.applyCurrentTool();
+                if (!this.isAreaSelected()) this.toolbarService.applyCurrentTool();
             }, 0);
-            this.isResizingWidth = false;
-            this.isResizingHeight = false;
+            this.resizeService.resetResize();
         } else {
             this.toolbarService.onMouseUp(event);
         }
@@ -179,49 +183,19 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     onResize(event: MouseEvent): void {
-        if (this.isResizingWidth) {
-            event.preventDefault();
-            let newWidth = event.clientX - this.baseCanvas.nativeElement.getBoundingClientRect().x;
-            const widthLimit = this.drawingContainerWidth - CANVAS_MARGIN_LEFT;
-            if (newWidth < CANVAS_MIN_WIDTH) {
-                newWidth = CANVAS_MIN_WIDTH;
-            } else if (newWidth > widthLimit) {
-                newWidth = widthLimit;
-            }
-            this.previewCanvas.nativeElement.width = newWidth;
-            this.gridCanvas.nativeElement.width = newWidth;
-        }
-
-        if (this.isResizingHeight) {
-            event.preventDefault();
-            let newHeight = event.clientY - this.baseCanvas.nativeElement.getBoundingClientRect().y;
-            const heightLimit = this.drawingContainerHeight - CANVAS_MARGIN_LEFT;
-            if (newHeight < CANVAS_MIN_HEIGHT) {
-                newHeight = CANVAS_MIN_HEIGHT;
-            } else if (newHeight > heightLimit) {
-                newHeight = heightLimit;
-            }
-            this.previewCanvas.nativeElement.height = newHeight;
-            this.gridCanvas.nativeElement.height = newHeight;
+        if (!this.isAreaSelected() && this.isResizing()) {
+            this.resizeService.onResizeWidth(event, this.drawingContainerWidth);
+            this.resizeService.onResizeHeight(event, this.drawingContainerHeight);
+        } else if (this.isResizing()) {
+            this.toolbarService.resizeSelection(event);
         }
     }
 
-    onResizeWidthStart(event: MouseEvent): void {
+    onResizeStart(event: MouseEvent, controlPoint: ControlPoint): void {
         if (event.button === MouseButton.Left) {
-            this.isResizingWidth = true;
+            this.toolbarService.mouseDown = true;
+            this.resizeService.onResizeStart(controlPoint);
         }
-    }
-
-    onResizeHeightStart(event: MouseEvent): void {
-        if (event.button === MouseButton.Left) {
-            this.isResizingHeight = true;
-        }
-    }
-
-    onResizeBothStart(event: MouseEvent): void {
-        this.toolbarService.mouseDown = true;
-        this.onResizeWidthStart(event);
-        this.onResizeHeightStart(event);
     }
 
     newCanvasSetSize(): void {
@@ -235,6 +209,10 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
 
     isAreaSelected(): boolean {
         return this.toolbarService.isAreaSelected();
+    }
+
+    isResizing(): boolean {
+        return this.resizeService.isResizing;
     }
 
     get width(): number {
@@ -271,5 +249,9 @@ export class DrawingComponent implements OnInit, AfterViewInit, OnDestroy {
             };
         }
         return resizerPosition;
+    }
+
+    get ControlPoint(): typeof ControlPoint {
+        return ControlPoint;
     }
 }

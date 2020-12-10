@@ -74,7 +74,7 @@ export class BucketService extends Tool {
                 this.image.data[i] = targetColor.getRed;
                 this.image.data[i + 1] = targetColor.getGreen;
                 this.image.data[i + 2] = targetColor.getBlue;
-                this.image.data[i + CONSTANTS.IMAGE_DATA_OPACITY_INDEX] = targetColor.getOpacity * CONSTANTS.MAX_COLOR_VALUE;
+                this.image.data[i + CONSTANTS.IMAGE_DATA_OPACITY_INDEX] = targetColor.opacity * CONSTANTS.MAX_COLOR_VALUE;
             }
         }
     }
@@ -122,7 +122,7 @@ export class BucketService extends Tool {
         this.image.data[pixel] = targetColor.getRed;
         this.image.data[pixel + 1] = targetColor.getGreen;
         this.image.data[pixel + 2] = targetColor.getBlue;
-        this.image.data[pixel + CONSTANTS.IMAGE_DATA_OPACITY_INDEX] = targetColor.getOpacity * CONSTANTS.MAX_COLOR_VALUE;
+        this.image.data[pixel + CONSTANTS.IMAGE_DATA_OPACITY_INDEX] = targetColor.opacity * CONSTANTS.MAX_COLOR_VALUE;
     }
 
     copyBucket(bucket: BucketService): void {
